@@ -11,7 +11,7 @@ import { loadPdfMapping, getPdfUrl } from '@/data/resourceLoader';
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
 import type { Topic, Question, QuestionOrigin, QuestionType } from '@/domain/models';
 import { slugify } from '@/domain/normalize';
-
+import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
 type TabId = 'topics' | 'questions' | 'practice' | 'resources';
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
@@ -154,34 +154,65 @@ export function SubjectView() {
   }, [tab, subject?.name]);
 
   const loadResources = async () => {
-    if (!subject) return;
-    setResourcesLoading(true);
-    const slug = slugify(subject.name);
-    const categories: ResourceCategory[] = [];
+  if (!subject || !subjectId) return;
+  setResourcesLoading(true);
+  const slug = slugify(subject.name);
+  const categories: ResourceCategory[] = [];
 
-    // Try to load each resource category
-    for (const cat of [
-      { name: 'Exámenes', slug: 'Examenes' },
-      { name: 'Práctica', slug: 'Practica' },
-      { name: 'Resúmenes', slug: 'Resumenes' },
-    ]) {
-      try {
-        const res = await fetch(`./resources/${slug}/${cat.slug}/index.json`, { cache: 'no-cache' });
-        if (res.ok) {
-          const data = await res.json();
-          categories.push({ name: cat.name, slug: cat.slug, files: data.files ?? [], subcategories: data.subcategories });
-        } else {
-          // No index.json — category might still exist, add empty
-          categories.push({ name: cat.name, slug: cat.slug, files: [] });
+  // Try to load each resource category
+  for (const cat of [
+    { name: 'Exámenes', slug: 'Examenes' },
+    { name: 'Práctica', slug: 'Practica' },
+    { name: 'Resúmenes', slug: 'Resumenes' },
+  ]) {
+    try {
+      // First, try to load from static files
+      const res = await fetch(`./resources/${slug}/${cat.slug}/index.json`, { cache: 'no-cache' });
+      if (res.ok) {
+        const data = await res.json();
+        const hasFiles = (data.files && data.files.length > 0) || 
+                        (data.subcategories && data.subcategories.some((sc: any) => sc.files.length > 0));
+        
+        if (hasFiles) {
+          categories.push({ 
+            name: cat.name, 
+            slug: cat.slug, 
+            files: data.files ?? [], 
+            subcategories: data.subcategories 
+          });
+          continue; // Skip IndexedDB if we have static files
         }
-      } catch {
-        categories.push({ name: cat.name, slug: cat.slug, files: [] });
       }
+    } catch {
+      // Static file not available, will try IndexedDB
     }
 
-    setResources(categories);
-    setResourcesLoading(false);
-  };
+    // Fallback: try to load from IndexedDB
+    try {
+      const dbData = await loadCategoryFromDB(subjectId, cat.slug);
+      const hasFiles = (dbData.files && dbData.files.length > 0) || 
+                      (dbData.subcategories && dbData.subcategories.length > 0);
+      
+      if (hasFiles) {
+        categories.push({
+          name: cat.name,
+          slug: cat.slug,
+          files: dbData.files,
+          subcategories: dbData.subcategories,
+        });
+      } else {
+        // Empty category
+        categories.push({ name: cat.name, slug: cat.slug, files: [] });
+      }
+    } catch (err) {
+      console.error(`Error loading ${cat.slug} from IndexedDB:`, err);
+      categories.push({ name: cat.name, slug: cat.slug, files: [] });
+    }
+  }
+
+  setResources(categories);
+  setResourcesLoading(false);
+};
 
   // Limpiar blob URL al cerrar el modal
   useEffect(() => {
@@ -590,6 +621,37 @@ interface ResourcesTabProps {
 
 function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
   const slug = slugify(subject.name);
+  // Helper para abrir archivos desde static o IndexedDB
+  const handleFileClick = async (file: ResourceFile, categorySlug: string, subcategoryName?: string) => {
+    // Construir la URL estática
+    const staticPath = subcategoryName 
+      ? `${categorySlug}/${subcategoryName}/${file.name}`
+      : `${categorySlug}/${file.name}`;
+    const staticUrl = `./resources/${slug}/${staticPath}`;
+    
+    // Intentar abrir desde archivos estáticos
+    try {
+      const res = await fetch(staticUrl, { method: 'HEAD' });
+      if (res.ok) {
+        window.open(staticUrl, '_blank');
+        return;
+      }
+    } catch {}
+    
+    // Fallback a IndexedDB
+    const dbPath = subcategoryName 
+      ? `${categorySlug}/${subcategoryName}/${file.name}`
+      : `${categorySlug}/${file.name}`;
+    const blobUrl = await getResourceBlobUrl(subject.id, dbPath);
+    
+    if (blobUrl) {
+      window.open(blobUrl, '_blank');
+      // Liberar memoria después de 1 minuto
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+    } else {
+      alert('Archivo no encontrado');
+    }
+  };
 
   if (loading) {
     return (
@@ -627,42 +689,38 @@ function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
 
             {/* Direct files */}
             {cat.files.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
-                {cat.files.map((f) => (
-                  <a
-                    key={f.path || f.name}
-                    href={`./resources/${slug}/${cat.slug}/${f.name}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group"
-                  >
-                    <span className="text-lg">{getFileIcon(f.name)}</span>
-                    <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
-                  </a>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
+              {cat.files.map((f) => (
+                <button
+                  key={f.path || f.name}
+                  onClick={() => handleFileClick(f, cat.slug)}
+                  className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group text-left w-full"
+                >
+                  <span className="text-lg">{getFileIcon(f.name)}</span>
+                  <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
             {/* Subcategories */}
             {cat.subcategories && cat.subcategories.filter((sc) => sc.files.length > 0).map((sc) => (
-              <div key={sc.name} className="ml-4 mb-3">
-                <p className="text-sm text-ink-400 font-medium mb-2">{sc.name}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                  {sc.files.map((f) => (
-                    <a
-                      key={f.path || f.name}
-                      href={`./resources/${slug}/${cat.slug}/${sc.name}/${f.name}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group"
-                    >
-                      <span className="text-lg">{getFileIcon(f.name)}</span>
-                      <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
-                    </a>
-                  ))}
-                </div>
+            <div key={sc.name} className="ml-4 mb-3">
+              <p className="text-sm text-ink-400 font-medium mb-2">{sc.name}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {sc.files.map((f) => (
+                  <button
+                    key={f.path || f.name}
+                    onClick={() => handleFileClick(f, cat.slug, sc.name)}
+                    className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group text-left w-full"
+                  >
+                    <span className="text-lg">{getFileIcon(f.name)}</span>
+                    <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
+          ))}
           </div>
         );
       })}

@@ -6,8 +6,10 @@
  *
  * ⚠️  Nunca sobreescribe archivos existentes.
  *
- * También expone (solo en dev) el endpoint POST /api/upload-pdf para guardar
- * PDFs directamente en resources/[slug]/Temas/ y actualizar el index.json.
+ * También expone (solo en dev) endpoints para:
+ * - POST /api/upload-pdf: guardar PDFs en resources/[slug]/Temas/
+ * - POST /api/sync-pdf-mapping: sincronizar el index.json de Temas
+ * - POST /api/upload-resource: guardar recursos en Examenes/Resumenes/Practica y generar index.json
  */
 
 import fs from 'node:fs';
@@ -251,7 +253,144 @@ function registerSyncMappingEndpoint(server: import('vite').ViteDevServer, root:
   });
 }
 
+// ─── NEW: Resource upload endpoint for Examenes/Resumenes/Practica (dev only) ─
 
+function registerResourceUploadEndpoint(server: import('vite').ViteDevServer, root: string): void {
+  server.middlewares.use('/api/upload-resource', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method === 'OPTIONS') {
+      res.statusCode = 204;
+      res.end();
+      return;
+    }
+
+    if (req.method !== 'POST') {
+      res.statusCode = 405;
+      res.end(JSON.stringify({ error: 'Method not allowed' }));
+      return;
+    }
+
+    let body = '';
+    req.setEncoding('utf-8');
+    req.on('data', (chunk: string) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { slug, category, path: filePath, data, mime } = JSON.parse(body) as {
+          slug: string;
+          category: string; // Examenes, Resumenes, Practica
+          path: string;     // Ruta relativa dentro de la categoría (puede incluir subdirectorios)
+          data: string;     // base64
+          mime: string;
+        };
+
+        if (!slug || !category || !filePath || !data) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Faltan campos: slug, category, path, data' }));
+          return;
+        }
+
+        const safeSlug = slugify(slug);
+        const categoryDir = path.join(root, 'resources', safeSlug, category);
+        
+        // Crear la estructura de directorios necesaria
+        const fullPath = path.join(categoryDir, filePath);
+        const dirPath = path.dirname(fullPath);
+        fs.mkdirSync(dirPath, { recursive: true });
+
+        // Escribir el archivo
+        fs.writeFileSync(fullPath, Buffer.from(data, 'base64'));
+        console.log(`\x1b[36m[init-resources]\x1b[0m 📥 Recurso guardado: resources/${safeSlug}/${category}/${filePath}`);
+
+        // Actualizar/crear index.json en la categoría
+        const indexPath = path.join(categoryDir, 'index.json');
+        
+        interface ResourceFile {
+          name: string;
+          path: string;
+          type: string;
+        }
+
+        interface SubCategory {
+          name: string;
+          files: ResourceFile[];
+        }
+
+        interface IndexData {
+          files: ResourceFile[];
+          subcategories?: SubCategory[];
+        }
+
+        let indexData: IndexData = { files: [], subcategories: [] };
+        
+        if (fs.existsSync(indexPath)) {
+          try {
+            indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+            if (!indexData.files) indexData.files = [];
+            if (!indexData.subcategories) indexData.subcategories = [];
+          } catch {
+            indexData = { files: [], subcategories: [] };
+          }
+        }
+
+        // Determinar si el archivo va en files o en una subcategoría
+        const pathParts = filePath.split('/');
+        const filename = pathParts[pathParts.length - 1];
+        const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+        
+        if (pathParts.length === 1) {
+          // Archivo en la raíz de la categoría
+          const existingFileIndex = indexData.files.findIndex(f => f.path === filePath);
+          const fileEntry: ResourceFile = {
+            name: filename,
+            path: filePath,
+            type: ext,
+          };
+          
+          if (existingFileIndex >= 0) {
+            indexData.files[existingFileIndex] = fileEntry;
+          } else {
+            indexData.files.push(fileEntry);
+          }
+        } else {
+          // Archivo en subdirectorio - añadir a subcategories
+          const subCategoryName = pathParts[0];
+          let subCategory = indexData.subcategories!.find(sc => sc.name === subCategoryName);
+          
+          if (!subCategory) {
+            subCategory = { name: subCategoryName, files: [] };
+            indexData.subcategories!.push(subCategory);
+          }
+          
+          const relativePathInSubcat = pathParts.slice(1).join('/');
+          const existingFileIndex = subCategory.files.findIndex(f => f.path === relativePathInSubcat);
+          const fileEntry: ResourceFile = {
+            name: filename,
+            path: relativePathInSubcat,
+            type: ext,
+          };
+          
+          if (existingFileIndex >= 0) {
+            subCategory.files[existingFileIndex] = fileEntry;
+          } else {
+            subCategory.files.push(fileEntry);
+          }
+        }
+
+        fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2) + '\n', 'utf-8');
+        console.log(`\x1b[36m[init-resources]\x1b[0m 📝 ${category}/index.json actualizado`);
+
+        res.statusCode = 200;
+        res.end(JSON.stringify({ ok: true, path: filePath }));
+      } catch (e) {
+        console.error('\x1b[31m[init-resources]\x1b[0m ❌ Error en upload-resource:', e);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: String(e) }));
+      }
+    });
+  });
+}
 
 export function initResourcesPlugin(): Plugin {
   let root: string;
@@ -272,6 +411,7 @@ export function initResourcesPlugin(): Plugin {
       initResources(server.config.root);
       registerUploadEndpoint(server, server.config.root);
       registerSyncMappingEndpoint(server, server.config.root);
+      registerResourceUploadEndpoint(server, server.config.root); // ← NUEVO
     },
   };
 }
