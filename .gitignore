@@ -1,10 +1,10 @@
 /node_modules
 
 # Ignorar TODOS los "Temas" dentro de resources/<asignatura>/Temas
-# Ignora TODO lo que haya dentro de resources/<asignatura>/Temas
 /resources/**/Temas/**
-
+/resources/**/Examenes/**
 # ...pero NO ignores el index.json de cada Temas
 !/resources/**/Temas/index.json
+!/resources/**/Examenes/index.json
 
 vite.config.ts.timestamp*
