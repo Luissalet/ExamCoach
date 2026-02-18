@@ -1,4 +1,4 @@
-# StudyApp 📚
+# ExamCoach 📚
 
 App web **local-first** para crear bancos de preguntas y practicar exámenes. Sin backend, sin servidor, tus datos son tuyos.
 
