@@ -1,6 +1,6 @@
 // ─── Core types ──────────────────────────────────────────────────────────────
 
-export type QuestionType = 'TEST' | 'DESARROLLO' | 'COMPLETAR';
+export type QuestionType = 'TEST' | 'DESARROLLO' | 'COMPLETAR' | 'PRACTICO';
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
 
 /**
@@ -62,6 +62,12 @@ export interface Question {
   id: string;
   subjectId: string;
   topicId: string;
+  /**
+   * ITER3 — Temas adicionales. Una pregunta puede abarcar varios temas.
+   * topicId sigue siendo el tema principal (para backward-compat e indexación).
+   * topicIds incluye TODOS los temas (incluido topicId) cuando hay más de uno.
+   */
+  topicIds?: string[];
   type: QuestionType;
   prompt: string;
   explanation?: string;
@@ -75,9 +81,11 @@ export interface Question {
   options?: QuestionOption[];
   correctOptionIds?: string[];
 
-  // DESARROLLO
+  // DESARROLLO / PRACTICO
   modelAnswer?: string;
   keywords?: string[];
+  /** ITER3 — Resultado numérico esperado (para preguntas de tipo PRACTICO). */
+  numericAnswer?: string;
 
   // COMPLETAR
   clozeText?: string;
@@ -132,7 +140,7 @@ export interface PdfResource {
   id: string;
   subjectId: string;
   filename: string;
-  mime: 'application/pdf';
+  mime: string;
   blob: Blob;
   createdAt: string;
 }
@@ -166,6 +174,16 @@ export interface SubjectExtraInfo {
    * Ej: ["Tema1.pdf", "Tema2.pdf"]
    */
   pdfs?: string[];
+  /** ITER3 — Enlaces externos útiles (webs de consulta, apps de ayuda). */
+  externalLinks?: ExternalLink[];
+}
+
+// ─── ITER3: Enlaces externos útiles ──────────────────────────────────────────
+
+export interface ExternalLink {
+  name: string;
+  url: string;
+  icon?: string; // URL del favicon o emoji
 }
 
 // ─── Export formats ───────────────────────────────────────────────────────────
@@ -184,12 +202,14 @@ export interface ContributionQuestion {
   id: string;
   subjectKey: string;
   topicKey: string;
+  topicKeys?: string[]; // ITER3 — temas adicionales
   type: QuestionType;
   prompt: string;
   options?: QuestionOption[];
   correctOptionIds?: string[];
   modelAnswer?: string;
   keywords?: string[];
+  numericAnswer?: string; // ITER3 — resultado numérico (PRACTICO)
   clozeText?: string;
   blanks?: ClozeBlank[];
   explanation?: string;

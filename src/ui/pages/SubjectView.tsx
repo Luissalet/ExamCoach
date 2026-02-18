@@ -9,9 +9,10 @@ import { QuestionForm } from '@/ui/components/QuestionForm';
 import { PdfViewer, type PdfViewerHandle } from '@/ui/components/PdfViewer';
 import { loadPdfMapping, getPdfUrl } from '@/data/resourceLoader';
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
-import type { Topic, Question, QuestionOrigin } from '@/domain/models';
+import type { Topic, Question, QuestionOrigin, QuestionType } from '@/domain/models';
+import { slugify } from '@/domain/normalize';
 
-type TabId = 'topics' | 'questions' | 'practice';
+type TabId = 'topics' | 'questions' | 'practice' | 'resources';
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   test: 'Test',
@@ -26,6 +27,27 @@ const ORIGIN_COLORS: Record<QuestionOrigin, 'amber' | 'rose' | 'blue' | 'sage'> 
   clase: 'blue',
   alumno: 'sage',
 };
+
+// ── Helper: check if question belongs to a topic (supports multi-topic) ─────
+function questionBelongsToTopic(q: Question, topicId: string): boolean {
+  if (q.topicId === topicId) return true;
+  if (q.topicIds && q.topicIds.includes(topicId)) return true;
+  return false;
+}
+
+// ── Resource file entry ─────────────────────────────────────────────────────
+interface ResourceFile {
+  name: string;
+  path: string;
+  type: string; // extension
+}
+
+interface ResourceCategory {
+  name: string;
+  slug: string;
+  files: ResourceFile[];
+  subcategories?: { name: string; files: ResourceFile[] }[];
+}
 
 export function SubjectView() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -63,6 +85,10 @@ export function SubjectView() {
   const [viewPdfUrl, setViewPdfUrl] = useState<string | null>(null);
   const topicPdfViewerRef = useRef<PdfViewerHandle>(null);
   const activeObjectUrlRef = useRef<string | null>(null);
+
+  // Resources tab state
+  const [resources, setResources] = useState<ResourceCategory[]>([]);
+  const [resourcesLoading, setResourcesLoading] = useState(false);
 
   useEffect(() => {
     if (!subjects.length) loadSubjects();
@@ -104,7 +130,6 @@ export function SubjectView() {
         .map(t => ({ topicTitle: t.title, pdf: t.pdfFilename! }));
 
       if (entriesToSync.length > 0) {
-        const { slugify } = await import('@/domain/normalize');
         fetch('/api/sync-pdf-mapping', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -121,6 +146,42 @@ export function SubjectView() {
   useEffect(() => {
     refreshPdfList();
   }, [refreshPdfList]);
+
+  // Load resources when tab changes to 'resources'
+  useEffect(() => {
+    if (tab !== 'resources' || !subject) return;
+    loadResources();
+  }, [tab, subject?.name]);
+
+  const loadResources = async () => {
+    if (!subject) return;
+    setResourcesLoading(true);
+    const slug = slugify(subject.name);
+    const categories: ResourceCategory[] = [];
+
+    // Try to load each resource category
+    for (const cat of [
+      { name: 'Exámenes', slug: 'Examenes' },
+      { name: 'Práctica', slug: 'Practica' },
+      { name: 'Resúmenes', slug: 'Resumenes' },
+    ]) {
+      try {
+        const res = await fetch(`./resources/${slug}/${cat.slug}/index.json`, { cache: 'no-cache' });
+        if (res.ok) {
+          const data = await res.json();
+          categories.push({ name: cat.name, slug: cat.slug, files: data.files ?? [], subcategories: data.subcategories });
+        } else {
+          // No index.json — category might still exist, add empty
+          categories.push({ name: cat.name, slug: cat.slug, files: [] });
+        }
+      } catch {
+        categories.push({ name: cat.name, slug: cat.slug, files: [] });
+      }
+    }
+
+    setResources(categories);
+    setResourcesLoading(false);
+  };
 
   // Limpiar blob URL al cerrar el modal
   useEffect(() => {
@@ -148,7 +209,7 @@ export function SubjectView() {
   const subjectQuestions = questions.filter((q) => q.subjectId === subjectId);
 
   const filteredQuestions = subjectQuestions.filter((q) => {
-    if (filterTopic && q.topicId !== filterTopic) return false;
+    if (filterTopic && !questionBelongsToTopic(q, filterTopic)) return false;
     if (filterType && q.type !== filterType) return false;
     if (filterOrigin && q.origin !== filterOrigin) return false;
     if (filterText) {
@@ -243,6 +304,7 @@ export function SubjectView() {
     { id: 'topics', label: 'Temas' },
     { id: 'questions', label: `Preguntas (${subjectQuestions.length})` },
     { id: 'practice', label: 'Practicar' },
+    { id: 'resources', label: 'Otros recursos' },
   ];
 
   return (
@@ -277,7 +339,7 @@ export function SubjectView() {
             ) : (
               <div className="flex flex-col gap-2">
                 {subjectTopics.map((t) => {
-                  const qs = subjectQuestions.filter((q) => q.topicId === t.id);
+                  const qs = subjectQuestions.filter((q) => questionBelongsToTopic(q, t.id));
                   const isDragging = draggingOver === t.id;
                   const isUploading = uploading === t.id;
 
@@ -315,7 +377,6 @@ export function SubjectView() {
                               >
                                 👁 Ver PDF
                               </button>
-                              {/* Reemplazar PDF */}
                               <label
                                 onClick={(e) => e.stopPropagation()}
                                 className="text-xs text-ink-500 hover:text-ink-300 hover:bg-ink-700 transition-all px-1.5 py-0.5 rounded cursor-pointer"
@@ -390,6 +451,7 @@ export function SubjectView() {
                   <option value="TEST">Test</option>
                   <option value="DESARROLLO">Desarrollo</option>
                   <option value="COMPLETAR">Completar</option>
+                  <option value="PRACTICO">Práctico</option>
                 </Select>
                 <Select value={filterOrigin} onChange={(e) => setFilterOrigin(e.target.value)} className="text-xs py-1.5">
                   <option value="">Todos los orígenes</option>
@@ -419,6 +481,9 @@ export function SubjectView() {
               <div className="flex flex-col gap-2">
                 {filteredQuestions.map((q) => {
                   const topic = subjectTopics.find((t) => t.id === q.topicId);
+                  const extraTopics = q.topicIds?.length
+                    ? q.topicIds.filter((id) => id !== q.topicId).map((id) => subjectTopics.find((t) => t.id === id)).filter(Boolean)
+                    : [];
                   return (
                     <Card key={q.id} className="group">
                       <div className="flex items-start gap-3">
@@ -427,6 +492,9 @@ export function SubjectView() {
                             <TypeBadge type={q.type} />
                             {q.origin && <Badge color={ORIGIN_COLORS[q.origin]}>{ORIGIN_LABELS[q.origin]}</Badge>}
                             {topic && <span className="text-xs text-ink-500">{topic.title}</span>}
+                            {extraTopics.map((et) => (
+                              <span key={et!.id} className="text-xs text-ink-600">+{et!.title}</span>
+                            ))}
                             <Difficulty level={q.difficulty} />
                             {(q.tags ?? []).map((tag) => <Badge key={tag}>{tag}</Badge>)}
                           </div>
@@ -454,6 +522,15 @@ export function SubjectView() {
         {/* PRACTICAR */}
         {tab === 'practice' && (
           <PracticeConfig subjectId={subjectId!} topics={subjectTopics} questions={subjectQuestions} defaultTopicId={filterTopic} />
+        )}
+
+        {/* OTROS RECURSOS */}
+        {tab === 'resources' && (
+          <ResourcesTab
+            subject={subject}
+            resources={resources}
+            loading={resourcesLoading}
+          />
         )}
       </main>
 
@@ -503,7 +580,114 @@ export function SubjectView() {
   );
 }
 
+// ─── Resources Tab ──────────────────────────────────────────────────────────
+
+interface ResourcesTabProps {
+  subject: import('@/domain/models').Subject;
+  resources: ResourceCategory[];
+  loading: boolean;
+}
+
+function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
+  const slug = slugify(subject.name);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <p className="text-ink-400 text-sm animate-pulse">Cargando recursos…</p>
+      </div>
+    );
+  }
+
+  const hasAnyFiles = resources.some((cat) => cat.files.length > 0 || (cat.subcategories && cat.subcategories.some((sc) => sc.files.length > 0)));
+
+  if (!hasAnyFiles) {
+    return (
+      <EmptyState
+        icon={<span>📁</span>}
+        title="Sin recursos adicionales"
+        description="Los recursos se cargan al importar un ZIP con la estructura resources/[asignatura]/Examenes|Practica|Resumenes."
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {resources.map((cat) => {
+        const totalFiles = cat.files.length + (cat.subcategories?.reduce((acc, sc) => acc + sc.files.length, 0) ?? 0);
+        if (totalFiles === 0) return null;
+
+        return (
+          <div key={cat.slug}>
+            <h3 className="font-display text-lg text-ink-200 mb-3 flex items-center gap-2">
+              {cat.name === 'Exámenes' ? '📝' : cat.name === 'Práctica' ? '💻' : '📋'}
+              {cat.name}
+              <span className="text-xs text-ink-500 font-body">({totalFiles} archivo{totalFiles !== 1 ? 's' : ''})</span>
+            </h3>
+
+            {/* Direct files */}
+            {cat.files.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
+                {cat.files.map((f) => (
+                  <a
+                    key={f.path || f.name}
+                    href={`./resources/${slug}/${cat.slug}/${f.name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group"
+                  >
+                    <span className="text-lg">{getFileIcon(f.name)}</span>
+                    <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Subcategories */}
+            {cat.subcategories && cat.subcategories.filter((sc) => sc.files.length > 0).map((sc) => (
+              <div key={sc.name} className="ml-4 mb-3">
+                <p className="text-sm text-ink-400 font-medium mb-2">{sc.name}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {sc.files.map((f) => (
+                    <a
+                      key={f.path || f.name}
+                      href={`./resources/${slug}/${cat.slug}/${sc.name}/${f.name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group"
+                    >
+                      <span className="text-lg">{getFileIcon(f.name)}</span>
+                      <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function getFileIcon(filename: string): string {
+  const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+  const icons: Record<string, string> = {
+    pdf: '📄', docx: '📝', doc: '📝', xlsx: '📊', xls: '📊',
+    ipynb: '🔬', py: '🐍', txt: '📃', md: '📃', zip: '📦',
+    png: '🖼', jpg: '🖼', jpeg: '🖼',
+  };
+  return icons[ext] ?? '📁';
+}
+
 // ─── Practice config ──────────────────────────────────────────────────────────
+
+const ALL_TYPES: { type: QuestionType; label: string }[] = [
+  { type: 'TEST', label: 'Test' },
+  { type: 'DESARROLLO', label: 'Desarrollo' },
+  { type: 'COMPLETAR', label: 'Completar' },
+  { type: 'PRACTICO', label: 'Práctico' },
+];
 
 interface PracticeConfigProps {
   subjectId: string;
@@ -517,40 +701,95 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
   const [mode, setMode] = useState<'random' | 'all' | 'failed' | 'topic'>('random');
   const [count, setCount] = useState('20');
   const [topicId, setTopicId] = useState(defaultTopicId ?? '');
-  const failedCount = questions.filter((q) => q.stats.lastResult === 'WRONG').length;
+
+  // Type filter checklist — all enabled by default
+  const [enabledTypes, setEnabledTypes] = useState<Set<QuestionType>>(new Set(['TEST', 'DESARROLLO', 'COMPLETAR', 'PRACTICO']));
+
+  const toggleType = (t: QuestionType) => {
+    setEnabledTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(t)) {
+        // Don't allow deselecting all
+        if (next.size > 1) next.delete(t);
+      } else {
+        next.add(t);
+      }
+      return next;
+    });
+  };
+
+  // Count questions by type (to show next to checkbox)
+  const countByType = (type: QuestionType) => questions.filter((q) => q.type === type).length;
+
+  // Filtered questions by enabled types
+  const typeFilteredQuestions = questions.filter((q) => enabledTypes.has(q.type));
+
+  const failedCount = typeFilteredQuestions.filter((q) => q.stats.lastResult === 'WRONG').length;
   const getAvailableCount = () => {
     if (mode === 'failed') return failedCount;
-    if (mode === 'topic') return questions.filter((q) => q.topicId === topicId).length;
-    return questions.length;
+    if (mode === 'topic') return typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, topicId)).length;
+    return typeFilteredQuestions.length;
   };
   const available = getAvailableCount();
+
   const handleStart = async () => {
     if (available === 0) return;
     let pool: Question[] = [];
-    if (mode === 'all') pool = [...questions];
-    else if (mode === 'failed') pool = questions.filter((q) => q.stats.lastResult === 'WRONG');
-    else if (mode === 'topic') pool = questions.filter((q) => q.topicId === topicId);
-    else { const n = Math.min(parseInt(count) || 20, questions.length); pool = [...questions].sort(() => Math.random() - 0.5).slice(0, n); }
+    if (mode === 'all') pool = [...typeFilteredQuestions];
+    else if (mode === 'failed') pool = typeFilteredQuestions.filter((q) => q.stats.lastResult === 'WRONG');
+    else if (mode === 'topic') pool = typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, topicId));
+    else { const n = Math.min(parseInt(count) || 20, typeFilteredQuestions.length); pool = [...typeFilteredQuestions].sort(() => Math.random() - 0.5).slice(0, n); }
     pool = pool.sort(() => Math.random() - 0.5);
     const { sessionRepo } = await import('@/data/repos');
     const session = await sessionRepo.create({ subjectId, mode, topicId: mode === 'topic' ? topicId : undefined, questionIds: pool.map((q) => q.id) });
     navigate(`/practice/${session.id}`);
   };
+
   return (
     <Card className="max-w-md">
       <div className="flex flex-col gap-4">
         <h3 className="font-display text-ink-200">Configurar sesión</h3>
+
+        {/* Type filter checklist */}
+        <div>
+          <p className="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">Tipos de pregunta</p>
+          <div className="flex flex-wrap gap-2">
+            {ALL_TYPES.map(({ type, label }) => {
+              const c = countByType(type);
+              const active = enabledTypes.has(type);
+              return (
+                <label
+                  key={type}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm cursor-pointer transition-all ${
+                    active
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                      : 'bg-ink-800 border-ink-700 text-ink-500'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => toggleType(type)}
+                    className="accent-amber-500 w-3.5 h-3.5"
+                  />
+                  {label} <span className="text-xs opacity-60">({c})</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
         <Select label="Modo" value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
           <option value="random">Aleatorio</option>
           <option value="all">Todas las preguntas</option>
           <option value="failed">Sólo falladas ({failedCount})</option>
           <option value="topic">Por tema</option>
         </Select>
-        {mode === 'random' && <Input label="Número de preguntas" type="number" min="1" max={questions.length} value={count} onChange={(e) => setCount(e.target.value)} />}
+        {mode === 'random' && <Input label="Número de preguntas" type="number" min="1" max={typeFilteredQuestions.length} value={count} onChange={(e) => setCount(e.target.value)} />}
         {mode === 'topic' && (
           <Select label="Tema" value={topicId} onChange={(e) => setTopicId(e.target.value)}>
             <option value="">Selecciona un tema…</option>
-            {topics.map((t) => { const n = questions.filter((q) => q.topicId === t.id).length; return <option key={t.id} value={t.id}>{t.title} ({n})</option>; })}
+            {topics.map((t) => { const n = typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, t.id)).length; return <option key={t.id} value={t.id}>{t.title} ({n})</option>; })}
           </Select>
         )}
         <Button onClick={handleStart} disabled={available === 0 || (mode === 'topic' && !topicId)}>Empezar ({available} preguntas)</Button>

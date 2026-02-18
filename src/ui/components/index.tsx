@@ -269,7 +269,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
 // ─── Question type badge ───────────────────────────────────────────────────────
 
 interface TypeBadgeProps {
-  type: 'TEST' | 'DESARROLLO' | 'COMPLETAR';
+  type: 'TEST' | 'DESARROLLO' | 'COMPLETAR' | 'PRACTICO';
 }
 
 export function TypeBadge({ type }: TypeBadgeProps) {
@@ -277,6 +277,7 @@ export function TypeBadge({ type }: TypeBadgeProps) {
     TEST: { color: 'amber' as const, label: 'Test' },
     DESARROLLO: { color: 'blue' as const, label: 'Desarrollo' },
     COMPLETAR: { color: 'sage' as const, label: 'Completar' },
+    PRACTICO: { color: 'rose' as const, label: 'Práctico' },
   };
   const { color, label } = config[type];
   return <Badge color={color}>{label}</Badge>;

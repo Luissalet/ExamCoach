@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { Button, Card, Modal, Input, Countdown, Progress, EmptyState } from '@/ui/components';
 import { exportBank, exportGlobalBank, importBank, parseImportFile, downloadJSON } from '@/data/exportImport';
 import { loadSubjectExtraInfo } from '@/data/resourceLoader'; // ← ITER2
-import type { Subject, SubjectExtraInfo } from '@/domain/models'; // ← ITER2 añade SubjectExtraInfo
+import { importResourceZip } from '@/data/resourceImporter'; // ← ITER3
+import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
 import { db } from '@/data/db';
 
 const SUBJECT_COLORS = [
@@ -34,6 +35,13 @@ export function Dashboard() {
   const [importLoading, setImportLoading] = useState(false);
   const [importMsg, setImportMsg] = useState('');
   const [syncMsg, setSyncMsg] = useState('');
+
+  // ── ITER3: ZIP import + external links ───────────────────────────────────
+  const [zipImporting, setZipImporting] = useState(false);
+  const [zipMsg, setZipMsg] = useState('');
+  const [zipDragOver, setZipDragOver] = useState(false);
+  const zipInputRef = useRef<HTMLInputElement>(null);
+  const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
 
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -80,6 +88,47 @@ export function Dashboard() {
     }
     loadExtra();
   }, [subjects]);
+
+  // ── ITER3: cargar enlaces externos de todas las asignaturas ───────────────
+  useEffect(() => {
+    if (!subjects.length) return;
+    const allLinks: ExternalLink[] = [];
+    for (const sid of Object.keys(extraInfo)) {
+      const info = extraInfo[sid];
+      if (info?.externalLinks) {
+        for (const link of info.externalLinks) {
+          if (!allLinks.some((l) => l.url === link.url)) {
+            allLinks.push(link);
+          }
+        }
+      }
+    }
+    setExternalLinks(allLinks);
+  }, [extraInfo]);
+
+  // ── ITER3: ZIP import ───────────────────────────────────────────────────────
+  const handleZipImport = async (file: File) => {
+    if (!file.name.endsWith('.zip')) {
+      setZipMsg('Error: solo se aceptan archivos .zip');
+      return;
+    }
+    setZipImporting(true);
+    setZipMsg('');
+    try {
+      const result = await importResourceZip(file);
+      if (result.errors.length > 0) {
+        setZipMsg(`⚠ Importado con errores: ${result.totalFiles} archivos. Errores: ${result.errors[0]}`);
+      } else {
+        const cats = Object.entries(result.categories).map(([k, v]) => `${k}: ${v}`).join(', ');
+        setZipMsg(`✓ Importados ${result.totalFiles} archivos de ${result.subjects.length} asignatura(s). ${cats}`);
+      }
+    } catch (err) {
+      setZipMsg('Error: ' + String(err));
+    } finally {
+      setZipImporting(false);
+      setZipDragOver(false);
+    }
+  };
 
   // ── Crear asignatura ───────────────────────────────────────────────────────
   const handleCreate = async () => {
@@ -212,6 +261,29 @@ export function Dashboard() {
                 }`}
               >
                 ↓ Importar backup
+              </span>
+            </label>
+
+            {/* ITER3: Import ZIP de recursos */}
+            <label className="cursor-pointer">
+              <input
+                ref={zipInputRef}
+                type="file"
+                accept=".zip"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleZipImport(f);
+                  e.target.value = '';
+                }}
+                disabled={zipImporting}
+              />
+              <span
+                className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all ${
+                  zipImporting ? 'text-ink-500 bg-ink-800 animate-pulse' : 'text-amber-400 hover:text-amber-300 hover:bg-ink-800 border border-amber-500/30'
+                }`}
+              >
+                {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
               </span>
             </label>
 
@@ -385,6 +457,77 @@ export function Dashboard() {
             >
               <span className="text-3xl">+</span>
             </Card>
+          </div>
+        )}
+        {/* ITER3: ZIP import message */}
+        {zipMsg && (
+          <div className={`mt-6 px-4 py-3 rounded-lg text-sm font-body border ${
+            zipMsg.startsWith('Error') || zipMsg.startsWith('⚠')
+              ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+              : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
+          }`}>
+            {zipMsg}
+          </div>
+        )}
+
+        {/* ITER3: ZIP drop zone */}
+        <div
+          onDragOver={(e) => { e.preventDefault(); setZipDragOver(true); }}
+          onDragLeave={() => setZipDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file) handleZipImport(file);
+          }}
+          className={`mt-8 border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer ${
+            zipDragOver
+              ? 'border-amber-500 bg-amber-500/5 text-amber-300'
+              : 'border-ink-700 text-ink-600 hover:border-ink-500 hover:text-ink-400'
+          }`}
+          onClick={() => zipInputRef.current?.click()}
+        >
+          <p className="text-sm font-body">
+            {zipDragOver
+              ? '📦 Suelta el ZIP aquí'
+              : '📦 Arrastra un ZIP de recursos aquí o haz clic para importar'}
+          </p>
+          <p className="text-xs text-ink-600 mt-1">
+            Estructura: resources/[asignatura]/Temas|Examenes|Practica|Resumenes
+          </p>
+        </div>
+
+        {/* ITER3: Enlaces externos útiles */}
+        {externalLinks.length > 0 && (
+          <div className="mt-10">
+            <h2 className="font-display text-xl text-ink-200 mb-4">Otros recursos</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {externalLinks.map((link) => (
+                <a
+                  key={link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-xl px-4 py-3 hover:border-ink-500 hover:bg-ink-800/80 transition-all group"
+                >
+                  {link.icon ? (
+                    link.icon.startsWith('http') ? (
+                      <img src={link.icon} alt="" className="w-5 h-5 rounded" />
+                    ) : (
+                      <span className="text-lg">{link.icon}</span>
+                    )
+                  ) : (
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${new URL(link.url).hostname}&sz=32`}
+                      alt=""
+                      className="w-5 h-5 rounded"
+                    />
+                  )}
+                  <span className="text-sm text-ink-200 group-hover:text-amber-300 transition-colors truncate">
+                    {link.name}
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
         )}
       </main>

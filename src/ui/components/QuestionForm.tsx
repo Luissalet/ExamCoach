@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { Question, Topic, QuestionType, QuestionOption, ClozeBlank, QuestionOrigin } from '@/domain/models';
 import { Button, Input, Textarea, Select } from './index';
+import { marked } from 'marked';
 
 interface QuestionFormProps {
   topics: Topic[];
@@ -18,9 +19,201 @@ const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   alumno: 'Alumno',
 };
 
+// ─── Expandable Textarea with optional MD preview ────────────────────────────
+
+interface ExpandableTextareaProps {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  placeholder?: string;
+  rows?: number;
+  required?: boolean;
+  supportsMd?: boolean;
+}
+
+function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, required, supportsMd }: ExpandableTextareaProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize when expanded
+  useEffect(() => {
+    if (expanded && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [expanded, value]);
+
+  const renderedMd = useCallback(() => {
+    if (!value) return '';
+    return marked.parse(value, { async: false }) as string;
+  }, [value]);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">{label}</label>
+        <div className="flex items-center gap-2">
+          {supportsMd && value && (
+            <button
+              type="button"
+              onClick={() => setShowPreview(!showPreview)}
+              className="text-xs text-ink-500 hover:text-ink-300 transition-colors px-1.5 py-0.5 rounded hover:bg-ink-700"
+              title={showPreview ? 'Editar' : 'Vista previa MD'}
+            >
+              {showPreview ? '✎ Editar' : '👁 Preview'}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            className="text-xs text-ink-500 hover:text-ink-300 transition-colors px-1.5 py-0.5 rounded hover:bg-ink-700"
+            title={expanded ? 'Contraer' : 'Expandir'}
+          >
+            {expanded ? '↗ Contraer' : '↙ Expandir'}
+          </button>
+        </div>
+      </div>
+      {showPreview && supportsMd ? (
+        <div
+          className="bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body prose prose-invert prose-sm max-w-none min-h-[60px] overflow-auto"
+          style={expanded ? { maxHeight: '60vh' } : { maxHeight: '200px' }}
+          dangerouslySetInnerHTML={{ __html: renderedMd() }}
+        />
+      ) : (
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          required={required}
+          rows={expanded ? undefined : rows}
+          className={`bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all ${
+            expanded ? 'min-h-[200px] max-h-[60vh] overflow-auto resize-y' : 'resize-none'
+          }`}
+          style={expanded ? { height: 'auto', minHeight: '200px' } : undefined}
+        />
+      )}
+      {supportsMd && (
+        <p className="text-xs text-ink-600">Soporta Markdown: **negrita**, *cursiva*, tablas, listas…</p>
+      )}
+    </div>
+  );
+}
+
+// ─── Multi-topic selector ────────────────────────────────────────────────────
+
+interface MultiTopicSelectorProps {
+  topics: Topic[];
+  selectedIds: string[];
+  onChange: (ids: string[]) => void;
+}
+
+function MultiTopicSelector({ topics, selectedIds, onChange }: MultiTopicSelectorProps) {
+  const [showAll, setShowAll] = useState(false);
+
+  const toggleTopic = (id: string) => {
+    if (selectedIds.includes(id)) {
+      // Don't remove the last one
+      if (selectedIds.length > 1) {
+        onChange(selectedIds.filter((s) => s !== id));
+      }
+    } else {
+      onChange([...selectedIds, id]);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">
+          Temas ({selectedIds.length} seleccionado{selectedIds.length !== 1 ? 's' : ''})
+        </label>
+        <button
+          type="button"
+          onClick={() => setShowAll(!showAll)}
+          className="text-xs text-ink-500 hover:text-ink-300 transition-colors"
+        >
+          {showAll ? 'Ocultar' : 'Mostrar todos'}
+        </button>
+      </div>
+      {!showAll ? (
+        // Compact: show selected as badges + dropdown to add more
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap gap-1.5">
+            {selectedIds.map((id) => {
+              const t = topics.find((tp) => tp.id === id);
+              if (!t) return null;
+              return (
+                <span
+                  key={id}
+                  className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-300 border border-amber-500/25 rounded-md px-2 py-0.5 text-xs"
+                >
+                  {t.title}
+                  {selectedIds.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => toggleTopic(id)}
+                      className="text-amber-500/60 hover:text-amber-300 ml-0.5"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+          <select
+            value=""
+            onChange={(e) => { if (e.target.value) toggleTopic(e.target.value); }}
+            className="bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+          >
+            <option value="">+ Añadir tema…</option>
+            {topics.filter((t) => !selectedIds.includes(t.id)).map((t) => (
+              <option key={t.id} value={t.id}>{t.title}</option>
+            ))}
+          </select>
+        </div>
+      ) : (
+        // Full: show all topics with checkboxes
+        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto rounded-lg border border-ink-700 p-2 bg-ink-800/50">
+          {topics.map((t) => (
+            <label
+              key={t.id}
+              className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer text-sm transition-colors ${
+                selectedIds.includes(t.id) ? 'bg-amber-500/10 text-amber-300' : 'text-ink-300 hover:bg-ink-700'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={selectedIds.includes(t.id)}
+                onChange={() => toggleTopic(t.id)}
+                className="accent-amber-500"
+              />
+              {t.title}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main form ───────────────────────────────────────────────────────────────
+
 export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: QuestionFormProps) {
   const [type, setType] = useState<QuestionType>(initial?.type ?? 'TEST');
-  const [topicId, setTopicId] = useState(initial?.topicId ?? topics[0]?.id ?? '');
+
+  // Multi-topic support
+  const initialTopicIds = initial?.topicIds?.length
+    ? initial.topicIds
+    : initial?.topicId
+    ? [initial.topicId]
+    : topics[0]?.id
+    ? [topics[0].id]
+    : [];
+  const [selectedTopicIds, setSelectedTopicIds] = useState<string[]>(initialTopicIds);
+
   const [prompt, setPrompt] = useState(initial?.prompt ?? '');
   const [explanation, setExplanation] = useState(initial?.explanation ?? '');
   const [difficulty, setDifficulty] = useState<string>(String(initial?.difficulty ?? ''));
@@ -36,9 +229,10 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
   );
   const [correctOptionIds, setCorrectOptionIds] = useState<string[]>(initial?.correctOptionIds ?? []);
 
-  // DESARROLLO
+  // DESARROLLO / PRACTICO
   const [modelAnswer, setModelAnswer] = useState(initial?.modelAnswer ?? '');
   const [keywords, setKeywords] = useState(initial?.keywords?.join(', ') ?? '');
+  const [numericAnswer, setNumericAnswer] = useState(initial?.numericAnswer ?? '');
 
   // COMPLETAR
   const [clozeText, setClozeText] = useState(initial?.clozeText ?? '');
@@ -75,9 +269,12 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
     const parsedKeywords = keywords.split(',').map((k) => k.trim()).filter(Boolean);
     const diff = difficulty ? (parseInt(difficulty) as Question['difficulty']) : undefined;
 
+    const primaryTopicId = selectedTopicIds[0] ?? '';
+
     onSave({
       subjectId,
-      topicId,
+      topicId: primaryTopicId,
+      topicIds: selectedTopicIds.length > 1 ? selectedTopicIds : undefined,
       type,
       prompt,
       explanation: explanation || undefined,
@@ -86,8 +283,9 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       origin: origin || undefined,
       options: type === 'TEST' ? options.filter((o) => o.text.trim()) : undefined,
       correctOptionIds: type === 'TEST' ? correctOptionIds : undefined,
-      modelAnswer: type === 'DESARROLLO' ? modelAnswer : undefined,
-      keywords: type === 'DESARROLLO' && parsedKeywords.length > 0 ? parsedKeywords : undefined,
+      modelAnswer: (type === 'DESARROLLO' || type === 'PRACTICO') ? modelAnswer : undefined,
+      keywords: (type === 'DESARROLLO' || type === 'PRACTICO') && parsedKeywords.length > 0 ? parsedKeywords : undefined,
+      numericAnswer: type === 'PRACTICO' && numericAnswer ? numericAnswer : undefined,
       clozeText: type === 'COMPLETAR' ? clozeText : undefined,
       blanks: type === 'COMPLETAR' ? blanks : undefined,
     });
@@ -95,7 +293,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      {/* Row 1: type + topic */}
+      {/* Row 1: type + origin */}
       <div className="grid grid-cols-2 gap-4">
         <Select
           label="Tipo"
@@ -105,20 +303,8 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
           <option value="TEST">Test</option>
           <option value="DESARROLLO">Desarrollo</option>
           <option value="COMPLETAR">Completar</option>
+          <option value="PRACTICO">Práctico</option>
         </Select>
-        <Select
-          label="Tema"
-          value={topicId}
-          onChange={(e) => setTopicId(e.target.value)}
-        >
-          {topics.map((t) => (
-            <option key={t.id} value={t.id}>{t.title}</option>
-          ))}
-        </Select>
-      </div>
-
-      {/* Row 2: origin + difficulty */}
-      <div className="grid grid-cols-2 gap-4">
         <Select
           label="Origen"
           value={origin}
@@ -129,27 +315,38 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
             <option key={key} value={key}>{ORIGIN_LABELS[key]}</option>
           ))}
         </Select>
-        <Select
-          label="Dificultad"
-          value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-        >
-          <option value="">Sin especificar</option>
-          <option value="1">★ Muy fácil</option>
-          <option value="2">★★ Fácil</option>
-          <option value="3">★★★ Media</option>
-          <option value="4">★★★★ Difícil</option>
-          <option value="5">★★★★★ Muy difícil</option>
-        </Select>
       </div>
 
-      <Textarea
+      {/* Multi-topic selector */}
+      <MultiTopicSelector
+        topics={topics}
+        selectedIds={selectedTopicIds}
+        onChange={setSelectedTopicIds}
+      />
+
+      {/* Row 2: difficulty */}
+      <Select
+        label="Dificultad"
+        value={difficulty}
+        onChange={(e) => setDifficulty(e.target.value)}
+      >
+        <option value="">Sin especificar</option>
+        <option value="1">★ Muy fácil</option>
+        <option value="2">★★ Fácil</option>
+        <option value="3">★★★ Media</option>
+        <option value="4">★★★★ Difícil</option>
+        <option value="5">★★★★★ Muy difícil</option>
+      </Select>
+
+      {/* Prompt - expandable + MD */}
+      <ExpandableTextarea
         label="Enunciado"
         value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
+        onChange={setPrompt}
         required
         rows={3}
         placeholder="Escribe la pregunta aquí..."
+        supportsMd
       />
 
       {/* TEST options */}
@@ -201,15 +398,16 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         </div>
       )}
 
-      {/* DESARROLLO */}
-      {type === 'DESARROLLO' && (
+      {/* DESARROLLO / PRACTICO */}
+      {(type === 'DESARROLLO' || type === 'PRACTICO') && (
         <div className="flex flex-col gap-3">
-          <Textarea
+          <ExpandableTextarea
             label="Respuesta modelo"
             value={modelAnswer}
-            onChange={(e) => setModelAnswer(e.target.value)}
+            onChange={setModelAnswer}
             rows={4}
             placeholder="Respuesta esperada…"
+            supportsMd
           />
           <Input
             label="Palabras clave (separadas por coma)"
@@ -217,6 +415,14 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
             onChange={(e) => setKeywords(e.target.value)}
             placeholder="ej: fotosíntesis, cloroplasto, ATP"
           />
+          {type === 'PRACTICO' && (
+            <Input
+              label="Resultado numérico esperado (opcional)"
+              value={numericAnswer}
+              onChange={(e) => setNumericAnswer(e.target.value)}
+              placeholder="ej: 42.5, 3.14159, 0.95"
+            />
+          )}
         </div>
       )}
 
@@ -224,12 +430,13 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       {type === 'COMPLETAR' && (
         <div className="flex flex-col gap-3">
           <div>
-            <Textarea
+            <ExpandableTextarea
               label="Texto cloze (usa {{respuesta}} para los huecos)"
               value={clozeText}
-              onChange={(e) => setClozeText(e.target.value)}
+              onChange={setClozeText}
               rows={4}
               placeholder="La mitocondria es la {{central eléctrica}} de la célula."
+              supportsMd
             />
             <button
               type="button"
@@ -269,13 +476,14 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         </div>
       )}
 
-      {/* Explanation + tags */}
-      <Textarea
+      {/* Explanation + tags - expandable + MD */}
+      <ExpandableTextarea
         label="Explicación / feedback (opcional)"
         value={explanation}
-        onChange={(e) => setExplanation(e.target.value)}
+        onChange={setExplanation}
         rows={2}
         placeholder="Se muestra al revisar resultados…"
+        supportsMd
       />
       <Input
         label="Tags (separados por coma)"
@@ -287,7 +495,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       {/* Actions */}
       <div className="flex gap-3 justify-end pt-1">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancelar</Button>
-        <Button type="submit" disabled={!prompt.trim() || !topicId}>
+        <Button type="submit" disabled={!prompt.trim() || selectedTopicIds.length === 0}>
           {initial?.id ? 'Guardar cambios' : 'Crear pregunta'}
         </Button>
       </div>

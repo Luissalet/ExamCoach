@@ -23,7 +23,7 @@ export async function computeContentHash(
       .join('|');
     parts.push(optionTexts);
     parts.push([...(q.correctOptionIds ?? [])].sort().join(','));
-  } else if (q.type === 'DESARROLLO') {
+  } else if (q.type === 'DESARROLLO' || q.type === 'PRACTICO') {
     parts.push(normalizeText(q.modelAnswer ?? ''));
   } else if (q.type === 'COMPLETAR') {
     parts.push(normalizeText(q.clozeText ?? ''));

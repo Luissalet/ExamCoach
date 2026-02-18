@@ -48,7 +48,8 @@ const QuestionSchema = z.object({
   id: z.string(),
   subjectId: z.string(),
   topicId: z.string(),
-  type: z.enum(['TEST', 'DESARROLLO', 'COMPLETAR']),
+  topicIds: z.array(z.string()).optional(), // ITER3
+  type: z.enum(['TEST', 'DESARROLLO', 'COMPLETAR', 'PRACTICO']),
   prompt: z.string(),
   explanation: z.string().optional(),
   difficulty: z.number().min(1).max(5).optional(),
@@ -57,6 +58,7 @@ const QuestionSchema = z.object({
   correctOptionIds: z.array(z.string()).optional(),
   modelAnswer: z.string().optional(),
   keywords: z.array(z.string()).optional(),
+  numericAnswer: z.string().optional(), // ITER3
   clozeText: z.string().optional(),
   blanks: z.array(ClozeBlankSchema).optional(),
   pdfAnchorId: z.string().optional(),

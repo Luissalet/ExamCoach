@@ -12,7 +12,7 @@ const ContributionQuestionSchema = z.object({
   id: z.string(),
   subjectKey: z.string(),
   topicKey: z.string(),
-  type: z.enum(['TEST', 'DESARROLLO', 'COMPLETAR']),
+  type: z.enum(['TEST', 'DESARROLLO', 'COMPLETAR', 'PRACTICO']),
   prompt: z.string(),
   options: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
   correctOptionIds: z.array(z.string()).optional(),

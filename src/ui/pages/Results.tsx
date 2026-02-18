@@ -110,7 +110,7 @@ export function ResultsPage() {
             </div>
           </div>
           {pending > 0 && (
-            <p className="text-xs text-ink-500 mt-1">{pending} preguntas de desarrollo pendientes de corrección manual</p>
+            <p className="text-xs text-ink-500 mt-1">{pending} pregunta{pending !== 1 ? 's' : ''} de desarrollo/práctico pendiente{pending !== 1 ? 's' : ''} de corrección manual</p>
           )}
         </div>
 

@@ -42,7 +42,8 @@ export function scoreAnswer(question: Question, answer: UserAnswer): 'CORRECT' |
     case 'COMPLETAR':
       return scoreCompletar(question, answer);
     case 'DESARROLLO':
-      // Manual correction only
+    case 'PRACTICO':
+      // Manual correction only (PRACTICO is similar to DESARROLLO)
       return answer.manualResult ?? null;
     default:
       return null;

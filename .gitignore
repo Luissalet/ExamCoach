@@ -6,3 +6,5 @@
 
 # ...pero NO ignores el index.json de cada Temas
 !/resources/**/Temas/index.json
+
+vite.config.ts.timestamp*

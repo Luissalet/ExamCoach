@@ -6,6 +6,15 @@ import { scoreAnswer } from '@/domain/scoring';
 import { Button, Progress, TypeBadge } from '@/ui/components';
 import type { Question, PracticeSession, UserAnswer } from '@/domain/models';
 import { v4 as uuidv4 } from 'uuid';
+import { marked } from 'marked';
+
+function renderMd(text: string): string {
+  try {
+    return marked.parse(text, { async: false }) as string;
+  } catch {
+    return text;
+  }
+}
 
 export function PracticeSessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -201,9 +210,12 @@ export function PracticeSessionPage() {
           ))}
         </div>
 
-        {/* Prompt */}
+        {/* Prompt (supports MD) */}
         <div className="bg-ink-800/60 border border-ink-700 rounded-xl p-6">
-          <p className="text-ink-100 text-base leading-relaxed whitespace-pre-wrap">{currentQuestion.prompt}</p>
+          <div
+            className="text-ink-100 text-base leading-relaxed prose prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: renderMd(currentQuestion.prompt) }}
+          />
         </div>
 
         {/* Answer area */}
@@ -371,15 +383,20 @@ function AnswerInput({
     );
   }
 
-  // DESARROLLO
+  // DESARROLLO / PRACTICO
   return (
-    <textarea
-      value={freeText}
-      onChange={(e) => onFreeTextChange(e.target.value)}
-      rows={6}
-      placeholder="Escribe tu respuesta aquí..."
-      className="w-full bg-ink-800 border border-ink-700 text-ink-100 rounded-xl px-4 py-3 text-sm font-body placeholder:text-ink-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none leading-relaxed"
-    />
+    <div className="flex flex-col gap-2">
+      <textarea
+        value={freeText}
+        onChange={(e) => onFreeTextChange(e.target.value)}
+        rows={6}
+        placeholder={question.type === 'PRACTICO' ? 'Desarrolla tu solución y/o indica el resultado numérico...' : 'Escribe tu respuesta aquí...'}
+        className="w-full bg-ink-800 border border-ink-700 text-ink-100 rounded-xl px-4 py-3 text-sm font-body placeholder:text-ink-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none leading-relaxed"
+      />
+      {question.type === 'PRACTICO' && question.numericAnswer && (
+        <p className="text-xs text-ink-500">Esta pregunta tiene un resultado numérico esperado.</p>
+      )}
+    </div>
   );
 }
 
@@ -428,8 +445,8 @@ function AnswerResult({ question, answer, result, onManualResult }: AnswerResult
         </div>
       </div>
 
-      {/* DESARROLLO manual correction */}
-      {question.type === 'DESARROLLO' && isPending && !manualSet && (
+      {/* DESARROLLO/PRACTICO manual correction */}
+      {(question.type === 'DESARROLLO' || question.type === 'PRACTICO') && isPending && !manualSet && (
         <div className="flex flex-col gap-2">
           <p className="text-sm text-ink-400 text-center">¿Es correcta tu respuesta?</p>
           <div className="flex gap-3 justify-center">
@@ -451,11 +468,22 @@ function AnswerResult({ question, answer, result, onManualResult }: AnswerResult
         </div>
       )}
 
-      {/* Explanation */}
+      {/* Explanation (supports MD) */}
       {question.explanation && (
         <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
           <p className="text-xs text-amber-600 uppercase tracking-widest mb-2">Explicación</p>
-          <p className="text-sm text-ink-300 leading-relaxed">{question.explanation}</p>
+          <div
+            className="text-sm text-ink-300 leading-relaxed prose prose-invert prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: renderMd(question.explanation) }}
+          />
+        </div>
+      )}
+
+      {/* Numeric answer for PRACTICO */}
+      {question.type === 'PRACTICO' && question.numericAnswer && (
+        <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
+          <p className="text-xs text-blue-400 uppercase tracking-widest mb-2">Resultado numérico esperado</p>
+          <p className="text-lg font-mono text-blue-300">{question.numericAnswer}</p>
         </div>
       )}
     </div>
@@ -488,7 +516,7 @@ function UserAnswerDisplay({ question, answer }: { question: Question; answer: U
       </div>
     );
   }
-  // DESARROLLO
+  // DESARROLLO / PRACTICO
   return <p className="text-sm text-ink-200 whitespace-pre-wrap">{answer.freeText || <span className="italic text-ink-600">Sin respuesta</span>}</p>;
 }
 
@@ -516,10 +544,13 @@ function CorrectAnswerDisplay({ question }: { question: Question }) {
       </div>
     );
   }
-  // DESARROLLO
+  // DESARROLLO / PRACTICO
   return (
     <div>
-      <p className="text-sm text-sage-400 whitespace-pre-wrap">{question.modelAnswer ?? 'Sin respuesta modelo'}</p>
+      <div
+        className="text-sm text-sage-400 prose prose-invert prose-sm max-w-none"
+        dangerouslySetInnerHTML={{ __html: renderMd(question.modelAnswer ?? 'Sin respuesta modelo') }}
+      />
       {(question.keywords ?? []).length > 0 && (
         <div className="mt-3 flex gap-2 flex-wrap">
           <span className="text-xs text-ink-500">Keywords:</span>
