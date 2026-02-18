@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db } from '@/data/db';
-import { Button, Input, Card, Select, Modal } from '@/ui/components';
+import { Button, Input, Card, Select } from '@/ui/components';
 import { exportContributionPack, importContributionPack } from '@/data/contributionImport';
+import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
-import type { Subject } from '@/domain/models';
 
 export function SettingsPage() {
   const navigate = useNavigate();
@@ -13,8 +13,8 @@ export function SettingsPage() {
   const [alias, setAlias] = useState('');
   const [importMsg, setImportMsg] = useState('');
   const [exportSubjectId, setExportSubjectId] = useState('');
-  const [showContribModal, setShowContribModal] = useState(false);
   const [importedPacks, setImportedPacks] = useState<string[]>([]);
+  const [compactExportSubjectId, setCompactExportSubjectId] = useState('');
 
   useEffect(() => {
     loadSettings();
@@ -62,6 +62,30 @@ export function SettingsPage() {
       const subject = subjects.find((s) => s.id === exportSubjectId);
       const filename = `contribution-${alias || 'yo'}-${subject?.name.slice(0, 20).replace(/\s+/g, '-') ?? exportSubjectId}-${new Date().toISOString().split('T')[0]}.json`;
       downloadJSON(pack, filename);
+    } catch (err) {
+      setImportMsg('Error al exportar: ' + String(err));
+    }
+  };
+
+  const handleExportCompactSubject = async () => {
+    if (!compactExportSubjectId) return;
+    try {
+      const compact = await exportCompactSubject(compactExportSubjectId);
+      const filename = `compact-${compact.slug}-${new Date().toISOString().split('T')[0]}.json`;
+      downloadJSON(compact, filename);
+      setImportMsg(`✓ Exportado banco compacto: ${compact.total} preguntas`);
+    } catch (err) {
+      setImportMsg('Error al exportar: ' + String(err));
+    }
+  };
+
+  const handleExportAllCompact = async () => {
+    try {
+      const allCompact = await exportAllCompactSubjects();
+      const totalQuestions = allCompact.reduce((sum, s) => sum + s.total, 0);
+      const filename = `compact-all-subjects-${new Date().toISOString().split('T')[0]}.json`;
+      downloadJSON(allCompact, filename);
+      setImportMsg(`✓ Exportado ${allCompact.length} asignaturas, ${totalQuestions} preguntas en total`);
     } catch (err) {
       setImportMsg('Error al exportar: ' + String(err));
     }
@@ -136,6 +160,79 @@ export function SettingsPage() {
               >
                 ↑ Exportar contribution pack
               </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Exportar banco compacto para ChatGPT */}
+        <Card>
+          <h2 className="font-display text-base text-ink-200 mb-1">
+            Exportar banco compacto (para ChatGPT)
+          </h2>
+          <p className="text-sm text-ink-500 mb-4">
+            Exporta preguntas en formato ultra-compacto (solo tipo, prompt y hash).
+            Ideal para pasarle a ChatGPT el banco de preguntas existente y evitar repeticiones
+            al crear contribution packs.
+          </p>
+
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <Select
+                  label="Asignatura"
+                  value={compactExportSubjectId}
+                  onChange={(e) => setCompactExportSubjectId(e.target.value)}
+                >
+                  <option value="">Selecciona una asignatura...</option>
+                  {subjects.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={handleExportCompactSubject}
+                  disabled={!compactExportSubjectId}
+                >
+                  ⚡ Exportar una asignatura
+                </Button>
+              </div>
+
+              <div className="flex flex-col justify-end">
+                <Button
+                  size="sm"
+                  onClick={handleExportAllCompact}
+                  disabled={subjects.length === 0}
+                >
+                  📦 Exportar todas
+                </Button>
+              </div>
+            </div>
+
+            <div className="bg-ink-800 border border-ink-700 rounded-lg p-3">
+              <p className="text-xs text-ink-400 mb-2 font-medium">Formato de salida:</p>
+              <pre className="text-xs text-ink-300 font-mono overflow-x-auto">
+{`{
+  "asignatura": "Técnicas de Aprendizaje Automático",
+  "slug": "tecnicas-de-aprendizaje-automatico",
+  "total": 150,
+  "preguntas": [
+    {
+      "t": "T",  // T=TEST, D=DESARROLLO, C=COMPLETAR, P=PRACTICO
+      "p": "¿Qué puede aprender examinando...",
+      "h": "sha256:...",
+      "tp": "tema-8-aprendizaje-supervisado"
+    }
+  ]
+}`}
+              </pre>
+            </div>
+
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+              <p className="text-xs text-amber-400">
+                <strong>💡 Uso recomendado:</strong> Exporta la asignatura, copia el JSON y pégaselo a ChatGPT
+                junto con tu prompt de "crea 20 preguntas nuevas para el tema X". ChatGPT verá las preguntas
+                existentes y evitará duplicarlas. El formato compacto usa ~90% menos caracteres que el global-bank.json.
+              </p>
             </div>
           </div>
         </Card>

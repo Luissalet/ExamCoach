@@ -264,6 +264,203 @@ El orden en el array determina el orden en el selector del visor.
 - Las preguntas con ancla PDF muestran un botón **"📄 Abrir PDF en página X"** que lleva directamente a esa página
 - El indicador **📝 Apuntes** / **🚫 Sin apuntes** aparece en las tarjetas del Dashboard según `allowsNotes`
 
+# Exportación Compacta de Preguntas por Asignatura
+
+## 📋 Problema
+
+El archivo `global-bank.json` es demasiado largo y tiene toda la información completa de las preguntas (opciones, explicaciones, stats, etc.), lo que hace difícil pasárselo a ChatGPT para que evite repetir preguntas al crear contribution packs.
+
+## ✨ Solución
+
+Una exportación **ultra-compacta** que solo incluye:
+- **Tipo** (1 char: T, D, C, P)
+- **Prompt** (para que ChatGPT identifique la pregunta)
+- **Hash** (para deduplicación)
+- **Tema** (slug del tema)
+
+Esto reduce el tamaño del JSON en aproximadamente **90%** comparado con el global-bank.json.
+
+---
+
+## 🚀 Implementación
+
+### 1. Copiar archivo principal
+
+Copia el archivo `exportCompact.ts` a:
+```
+src/data/exportCompact.ts
+```
+
+### 2. Modificar Settings.tsx
+
+#### 2.1 Añadir import al inicio:
+```typescript
+import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
+```
+
+#### 2.2 Añadir estado (dentro del componente SettingsPage):
+```typescript
+const [compactExportSubjectId, setCompactExportSubjectId] = useState('');
+```
+
+#### 2.3 Añadir handlers (dentro del componente SettingsPage):
+Copia los handlers de `settings-integration.tsx`:
+- `handleExportCompactSubject`
+- `handleExportAllCompact`
+
+#### 2.4 Añadir Card en el JSX:
+Copia el `<Card>` completo de `settings-integration.tsx` y pégalo en el JSX de Settings, justo después del card de "Exportar mis preguntas".
+
+---
+
+## 📖 Uso
+
+### Para exportar una asignatura:
+
+1. Ve a **Ajustes** en la app
+2. Busca la sección "Exportar banco compacto (para ChatGPT)"
+3. Selecciona la asignatura
+4. Haz click en "⚡ Exportar una asignatura"
+5. Se descargará un archivo JSON como `compact-tecnicas-de-aprendizaje-automatico-2026-02-18.json`
+
+### Para exportar todas las asignaturas:
+
+1. En la misma sección
+2. Haz click en "📦 Exportar todas"
+3. Se descargará un archivo con todas las asignaturas en formato array
+
+---
+
+## 💡 Cómo usar con ChatGPT
+
+### Ejemplo de prompt:
+
+```
+Tengo un banco de preguntas para la asignatura "Técnicas de Aprendizaje Automático".
+Aquí está el banco actual en formato compacto:
+
+[PEGA AQUÍ EL JSON EXPORTADO]
+
+Por favor, crea 20 preguntas nuevas de tipo TEST para el tema "Redes Neuronales", 
+asegurándote de NO repetir ninguna pregunta que ya existe en el banco (compara 
+los prompts). Las preguntas deben ser diferentes en contenido y formulación.
+```
+
+ChatGPT podrá:
+- Ver todas las preguntas existentes
+- Identificarlas por el prompt
+- Evitar duplicados
+- Crear preguntas nuevas y originales
+
+El formato compacto permite incluir **cientos de preguntas** sin alcanzar los límites de tokens de ChatGPT.
+
+---
+
+## 📊 Formato de salida
+
+### Para una asignatura:
+```json
+{
+  "asignatura": "Técnicas de Aprendizaje Automático",
+  "slug": "tecnicas-de-aprendizaje-automatico",
+  "total": 150,
+  "preguntas": [
+    {
+      "t": "T",
+      "p": "¿Qué puede aprender examinando las estadísticas...",
+      "h": "sha256:888a1858caba...",
+      "tp": "tema-8-aprendizaje-supervisado"
+    }
+  ]
+}
+```
+
+### Para todas las asignaturas:
+```json
+[
+  {
+    "asignatura": "Técnicas de Aprendizaje Automático",
+    "slug": "tecnicas-de-aprendizaje-automatico",
+    "total": 150,
+    "preguntas": [...]
+  },
+  {
+    "asignatura": "Visión Artificial",
+    "slug": "vision-artificial",
+    "total": 120,
+    "preguntas": [...]
+  }
+]
+```
+
+---
+
+## 🔑 Campos
+
+| Campo | Descripción | Ejemplo |
+|-------|-------------|---------|
+| `t` | Tipo de pregunta | `T` (TEST), `D` (DESARROLLO), `C` (COMPLETAR), `P` (PRACTICO) |
+| `p` | Prompt/enunciado de la pregunta | `"¿Qué puede aprender examinando..."` |
+| `h` | Hash SHA-256 de contenido | `"sha256:888a1858..."` |
+| `tp` | Slug del tema | `"tema-8-aprendizaje-supervisado"` |
+
+---
+
+## ⚡ Ventajas
+
+1. **90% más pequeño** que global-bank.json
+2. **Fácil de procesar** por ChatGPT
+3. **Permite incluir cientos de preguntas** en un prompt
+4. **Deduplicación efectiva** por hash
+5. **Identificación clara** por prompt
+
+---
+
+## 📝 Notas
+
+- El hash se usa para deduplicación (dos preguntas con el mismo contenido tendrán el mismo hash)
+- El tema ayuda a ChatGPT a entender el contexto
+- El tipo ayuda a ChatGPT a generar preguntas del mismo formato
+- Solo se incluye información esencial, nada de stats, opciones completas, etc.
+
+---
+
+## 🎯 Casos de uso
+
+1. **Crear contribution packs sin duplicados**
+   - Exporta la asignatura
+   - Pásale el JSON a ChatGPT
+   - Pide que cree N preguntas nuevas
+
+2. **Revisar cobertura de temas**
+   - Exporta todas las asignaturas
+   - Analiza qué temas tienen pocas preguntas
+   - Pide a ChatGPT que cree preguntas para esos temas
+
+3. **Generar variaciones**
+   - Exporta las preguntas existentes
+   - Pide a ChatGPT que cree variaciones (misma pregunta, diferente formulación)
+
+---
+
+## 🐛 Solución de problemas
+
+### "Cannot read property 'getBySubject' of undefined"
+Asegúrate de que `questionRepo` y `topicRepo` estén importados correctamente en `exportCompact.ts`:
+```typescript
+import { questionRepo, topicRepo } from './repos';
+```
+
+### "Función no encontrada"
+Verifica que hayas importado las funciones en Settings.tsx:
+```typescript
+import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
+```
+
+### El archivo se descarga vacío
+Revisa que la asignatura tenga preguntas creadas.
+
 ## Licencia
 
 MIT — úsalo libremente para estudiar.
+

@@ -125,7 +125,23 @@ A continuación se muestran los índices de temas de varias asignaturas del más
 11. **Tema 11- Investigación en computación bioinspirada** → `tema-11-investigacion-en-computacion-bioinspirada`
 12. **Tema 12- Implicaciones filosóficas éticas y legales en la aplicación de la IA** → `tema-12-implicaciones-filosoficas-eticas-y-legales-en-la-aplicacion-de-la-inteligencia-artificial`
 
----
+Ejecmplo de banco de preguntas compacto para evitar duplicados
+
+{
+  "asignatura": "Técnicas de Aprendizaje Automático",
+  "total": 150,
+  "preguntas": [
+    {
+      "t": "T",  // T=TEST, D=DESARROLLO, C=COMPLETAR, P=PRACTICO
+      "p": "¿Qué puede aprender examinando las estadísticas...",
+      "h": "sha256:888a1858...",
+      "tp": "tema-8-clasificacion"
+    }
+  ]
+}
+
+
+
 
 ## Tipos de Preguntas
 
