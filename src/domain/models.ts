@@ -10,6 +10,10 @@ export interface Subject {
   name: string;
   color?: string;
   icon?: string;
+  /**
+   * Fecha de examen personal — NUNCA se exporta al banco global ni se importa
+   * desde él. Cada usuario la configura localmente.
+   */
   examDate?: string; // ISO YYYY-MM-DD
   createdAt: string;
   updatedAt: string;
@@ -181,4 +185,9 @@ export interface ContributionPack {
 export interface AppSettings {
   alias: string;
   importedPackIds: string[];
+  /**
+   * ISO timestamp de la última vez que se sincronizó con el banco global.
+   * Si es undefined, nunca se ha sincronizado.
+   */
+  globalBankSyncedAt?: string;
 }

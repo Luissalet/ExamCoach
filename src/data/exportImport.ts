@@ -89,6 +89,7 @@ const BankExportSchema = z.object({
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
+/** Exporta el banco completo tal cual (backup personal, incluye examDate y stats). */
 export async function exportBank(subjectIds?: string[]): Promise<BankExport> {
   let subjects: Subject[];
   let topics: Topic[];
@@ -96,7 +97,7 @@ export async function exportBank(subjectIds?: string[]): Promise<BankExport> {
   let pdfAnchors: PdfAnchor[];
 
   if (subjectIds && subjectIds.length > 0) {
-    subjects = (await db.subjects.where('id').anyOf(subjectIds).toArray());
+    subjects = await db.subjects.where('id').anyOf(subjectIds).toArray();
     topics = [];
     questions = [];
     pdfAnchors = [];
@@ -123,6 +124,27 @@ export async function exportBank(subjectIds?: string[]): Promise<BankExport> {
   };
 }
 
+/**
+ * Exporta el banco global — versión pensada para committear al repositorio.
+ *
+ * Diferencias respecto a exportBank():
+ *  - examDate eliminado de todas las asignaturas (es dato personal de cada usuario)
+ *  - stats reseteadas a 0 (cada usuario empieza desde cero)
+ */
+export async function exportGlobalBank(subjectIds?: string[]): Promise<BankExport> {
+  const bank = await exportBank(subjectIds);
+
+  return {
+    ...bank,
+    exportedAt: new Date().toISOString(),
+    subjects: bank.subjects.map(({ examDate: _examDate, ...rest }) => rest as Subject),
+    questions: bank.questions.map((q) => ({
+      ...q,
+      stats: { seen: 0, correct: 0, wrong: 0 },
+    })),
+  };
+}
+
 export function downloadJSON(data: unknown, filename: string): void {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -134,7 +156,10 @@ export function downloadJSON(data: unknown, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-// ─── Import ───────────────────────────────────────────────────────────────────
+// ─── Import (backup personal / legacy) ────────────────────────────────────────
+//
+// ⚠️  Este import siempre crea UUIDs nuevos — es para restaurar backups personales.
+//     Para sincronizar con el banco global usa mergeGlobalBank() en globalBank.ts.
 
 export interface ImportBankResult {
   subjectsAdded: number;
@@ -160,58 +185,37 @@ export async function importBank(raw: unknown): Promise<ImportBankResult> {
   const bank = parsed.data;
   const now = new Date().toISOString();
 
-  // Map old IDs -> new IDs
   const subjectIdMap = new Map<string, string>();
   const topicIdMap = new Map<string, string>();
   const anchorIdMap = new Map<string, string>();
 
-  // Import subjects (always duplicate with new UUIDs)
   for (const s of bank.subjects) {
     const newId = uuidv4();
     subjectIdMap.set(s.id, newId);
-    await db.subjects.add({
-      ...s,
-      id: newId,
-      createdAt: now,
-      updatedAt: now,
-    });
+    await db.subjects.add({ ...s, id: newId, createdAt: now, updatedAt: now });
     result.subjectsAdded++;
   }
 
-  // Import topics
   for (const t of bank.topics) {
     const newId = uuidv4();
     topicIdMap.set(t.id, newId);
     const newSubjectId = subjectIdMap.get(t.subjectId) ?? t.subjectId;
-    await db.topics.add({
-      ...t,
-      id: newId,
-      subjectId: newSubjectId,
-      createdAt: now,
-      updatedAt: now,
-    });
+    await db.topics.add({ ...t, id: newId, subjectId: newSubjectId, createdAt: now, updatedAt: now });
     result.topicsAdded++;
   }
 
-  // Import anchors
   for (const a of bank.pdfAnchors) {
     const newId = uuidv4();
     anchorIdMap.set(a.id, newId);
     const newSubjectId = subjectIdMap.get(a.subjectId) ?? a.subjectId;
-    await db.pdfAnchors.add({
-      ...a,
-      id: newId,
-      subjectId: newSubjectId,
-    });
+    await db.pdfAnchors.add({ ...a, id: newId, subjectId: newSubjectId });
   }
 
-  // Import questions
   for (const q of bank.questions) {
     const newId = uuidv4();
     const newSubjectId = subjectIdMap.get(q.subjectId) ?? q.subjectId;
     const newTopicId = topicIdMap.get(q.topicId) ?? q.topicId;
     const newAnchorId = q.pdfAnchorId ? (anchorIdMap.get(q.pdfAnchorId) ?? q.pdfAnchorId) : undefined;
-
     await db.questions.add({
       ...q,
       id: newId,
