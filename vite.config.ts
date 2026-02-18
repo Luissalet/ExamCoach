@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { initResourcesPlugin } from './vite-plugin-init-resources'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    initResourcesPlugin(),
+  ],
   base: './',
   resolve: {
     alias: {
