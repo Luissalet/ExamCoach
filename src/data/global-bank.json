@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-18T11:00:56.691Z",
+  "exportedAt": "2026-02-18T12:21:57.847Z",
   "subjects": [
     {
       "name": "Razonamiento y Planificación Automática",
@@ -43,7 +43,7 @@
       "color": "#f59e0b",
       "id": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "createdAt": "2026-02-18T06:49:36.030Z",
-      "updatedAt": "2026-02-18T08:20:54.851Z"
+      "updatedAt": "2026-02-18T11:17:32.544Z"
     }
   ],
   "topics": [
@@ -590,6 +590,86 @@
   ],
   "questions": [
     {
+      "id": "047a1dff-9b08-42d2-b068-29291bcc572e",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "Un científico de datos utiliza la un modelo de SVM para crear un modelo de detección de fraude. El modelo tiene una exactitud del 99%, pero no detecta el 85% de los casos de fraude. ¿Qué puede estar pasando?",
+      "explanation": "✅ **A.** El conjunto de datos está muy desbalanceado...\n\nUna **accuracy** del 99% puede ocurrir si casi todo son *no fraude* y el modelo predice casi siempre *no fraude*. Eso da mucha exactitud, pero **recall/sensibilidad** para fraude se desploma (no detecta la mayoría de fraudes).",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "f8a44275-f52f-4a73-ac19-202482ad0bbe",
+          "text": "El conjunto de datos está muy desbalanceado y existen más instancias de transacciones no fraudulentas que fraudulentas, por eso una exactitud tan alta."
+        },
+        {
+          "id": "31a85bb7-5b4d-4cee-90bd-50b2c3bc6e38",
+          "text": "Un valor de exactitud del 99% es muy improbable, debe revisarse la forma en que se calcula está métrica."
+        },
+        {
+          "id": "46a504e2-435a-484f-86a5-21161200c957",
+          "text": "Debe existir un error en las instancias categorizadas como fraudulentas, si la exactitud es alta debería detectarlas."
+        },
+        {
+          "id": "9b4f418b-7546-48e9-ab18-af11ca05071c",
+          "text": "Debe existir un error en las instancias categorizadas como no fraudulentas."
+        }
+      ],
+      "correctOptionIds": [
+        "f8a44275-f52f-4a73-ac19-202482ad0bbe"
+      ],
+      "contentHash": "sha256:c4480cb90529186f2a747287c59b0f0d67daa18c61017e2d0532ff1756fa7dfa",
+      "createdBy": "",
+      "sourcePackId": "aa1821f9-18ef-4a2c-aabc-27494a5f97b1",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:07:10.886Z",
+      "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "id": "0fd0d4c6-b258-4350-a8f3-b682dcc3dc41",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "68f33661-e359-4655-b124-93d9c2981d18",
+      "type": "TEST",
+      "prompt": "Un científico de datos está utilizando árboles de decisión para clasificar clientes en dos categorías: \"Comprador\" y \"No Comprador\". Durante el proceso de construcción del árbol, elige la variable \"Ingresos Anuales\" como la primera característica para dividir los datos. Sin embargo, nota que el árbol resultante tiene muchas divisiones, algunas de las cuales parecen específicas para casos excepcionales en el conjunto de entrenamiento.¿Cuál de las siguientes acciones sería una estrategia efectiva para abordar el sobreajuste en este árbol de decisión?",
+      "explanation": "✅ C. Aplicar la poda del árbol (pruning).\n\nLa poda reduce complejidad y elimina ramas específicas del entrenamiento, mitigando el sobreajuste.\n\nPor qué no:\n- A: más profundidad suele empeorar el sobreajuste.\n- B: menos datos normalmente empeora generalización.\n- D: tasa de aprendizaje no aplica a árboles de decisión clásicos.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "40f16cd7-5c4b-45bd-bfb5-4ec998e5684d",
+          "text": "Incrementar la profundidad máxima del árbol."
+        },
+        {
+          "id": "6ee902d9-77ae-4d4a-8c70-01cc9702233f",
+          "text": "Utilizar un conjunto de datos de entrenamiento más pequeño."
+        },
+        {
+          "id": "582af831-7cb4-42a6-b380-2019fd79d67a",
+          "text": "Aplicar la poda del árbol (pruning)."
+        },
+        {
+          "id": "e8427a60-ed0d-4415-ae2c-05273cd1e97d",
+          "text": "Aumentar la tasa de aprendizaje."
+        }
+      ],
+      "correctOptionIds": [
+        "582af831-7cb4-42a6-b380-2019fd79d67a"
+      ],
+      "contentHash": "sha256:d00ba6582f44eb3194721fa1a53b46e07f87031e3653be0617f5c6f37d2f344c",
+      "createdBy": "",
+      "sourcePackId": "9a48d918-0ffe-4d28-9f78-0c2350dcfe9c",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:59:55.148Z",
+      "updatedAt": "2026-02-18T11:59:55.148Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
       "type": "TEST",
@@ -627,6 +707,126 @@
       },
       "createdAt": "2026-02-18T10:43:48.312Z",
       "updatedAt": "2026-02-18T10:43:48.312Z"
+    },
+    {
+      "id": "151cd310-aaa8-40af-a6c9-f85cb483ba4e",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "Usted ha desarrollado un modelo para una tarea de clasificación donde la clase minoritaria aparece en el 10% del conjunto de datos. Ejecutó el entrenamiento en el conjunto de datos desequilibrado original y verificó el rendimiento del modelo resultante. La matriz de confusión indica que el modelo no aprendió la clase minoritaria. Usted desea mejorar el rendimiento del modelo mientras minimiza el tiempo de ejecución y mantiene las predicciones calibradas. ¿Qué debería hacer?",
+      "explanation": "✅ **D.** Reducir la muestra de la clase mayoritaria y **ajustar pesos** por el factor de muestreo.\n\nSi el modelo ignora la minoritaria, necesitas “forzarle” a verla. **Downsampling** de la mayoritaria:\n- **reduce tiempo de entrenamiento** (menos datos),\n- mejora la atención a la minoritaria,\n- y el **reajuste de pesos** corrige el cambio de prior, ayudando a mantener la **calibración**.\n\n**Por qué no las otras:**\n- **A**: class weights puede ayudar, pero no garantiza calibración y no reduce tiempo.\n- **B**: calibrar/ajustar umbral puede arreglar probabilidades, pero si “no aprendió” la clase minoritaria, no lo arreglas solo moviendo el umbral.\n- **C**: upsampling suele **aumentar** tiempo (más datos) y aunque re-pese, no es la opción más rápida.",
+      "difficulty": 5,
+      "options": [
+        {
+          "id": "336ae564-f915-4318-bb2c-d5b743009aa1",
+          "text": "Actualizar los pesos de la función de clasificación para penalizar clasificaciones erróneas de la clase minoritaria."
+        },
+        {
+          "id": "6ed95309-c770-450e-854c-26469f696393",
+          "text": "Ajuste el umbral de clasificación y calibre el modelo con una regresión en el conjunto de validación, de modo que la línea ajustada no sea decreciente en todas partes y se encuentre lo más cerca posible de las observaciones."
+        },
+        {
+          "id": "f80443d3-a75b-4142-ab71-91eb8505ac62",
+          "text": "Realice un muestreo ascendente de la clase minoritaria en el conjunto de entrenamiento y actualice el peso de la clase muestreada ascendentemente con el mismo factor de muestreo."
+        },
+        {
+          "id": "c0389cde-7cd9-4d9d-9679-53b24fd8a7b3",
+          "text": "Reduzca la muestra de la clase mayoritaria en el conjunto de entrenamiento y actualice el peso de la clase reducida por el mismo factor de muestreo"
+        }
+      ],
+      "correctOptionIds": [
+        "c0389cde-7cd9-4d9d-9679-53b24fd8a7b3"
+      ],
+      "contentHash": "sha256:01c498780ebbe9930666101488005a9c74eac1c0afb6957f4daa7a0e76680114",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
+    },
+    {
+      "id": "15233561-849e-4593-b60e-57fbc4e183d6",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "TEST",
+      "prompt": "La matriz de gráficos de dispersión facilita:",
+      "explanation": "✅ **C. La comparación de las variables en una sola pantalla e identificar dependencias.**\n\nUna **matriz de dispersión** (scatterplot matrix) muestra todos los pares de variables numéricas para ver **relaciones, correlaciones, patrones y outliers** de un vistazo.\n\n**Por qué no las otras:**\n- **A**: eso es un 3D plot, no una matriz.\n- **B**: describe un solo par; la matriz es precisamente *muchos pares a la vez*.\n- **D**: es ambiguo; lo relevante es la comparación sistemática de pares (C).",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "608d5620-ce0a-4aa8-8a47-3213e08e2818",
+          "text": "Graficar tres atributos o variables en un mismo gráfico."
+        },
+        {
+          "id": "6f47737d-0814-4e8e-ba7d-9e0e761fe323",
+          "text": "Emparejar datos numéricos y saber si una variable afecta a la otra."
+        },
+        {
+          "id": "fc84fc8a-9450-4f91-a92d-7289d06ab04d",
+          "text": "La comparación de las variables en una sola pantalla e identificar dependencias."
+        },
+        {
+          "id": "feb4d671-551f-45ec-9711-58432115221b",
+          "text": "En un espacio pequeño asociar múltiples variables."
+        }
+      ],
+      "correctOptionIds": [
+        "fc84fc8a-9450-4f91-a92d-7289d06ab04d"
+      ],
+      "contentHash": "sha256:f12f10771a741d8c9685991ac057b9e661e8664ea1611d5e6631a1d56b7efd33",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
+    },
+    {
+      "id": "1a57b0df-325b-4158-b8a7-6a59baf2abad",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
+      "type": "TEST",
+      "prompt": "En cada iteración de AdaBoost, la penalización por clasificación errónea para una observación de entrenamiento en particular aumenta pasando de la ronda t a la ronda t + 1 si la observación fue:",
+      "explanation": "✅ **A.** Clasificada incorrectamente por el **modelo débil** entrenado en la ronda *t*.\n\nEn AdaBoost, tras entrenar el clasificador débil de la ronda *t*, se **aumenta el peso** de las observaciones que ese débil **ha fallado**, para que la siguiente ronda se enfoque en ellas.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "40d5d802-2467-4a63-8073-499dc906a634",
+          "text": "Clasificada incorrectamente por el modelo débil entrenado en la ronda t."
+        },
+        {
+          "id": "107b046c-1a2e-4e77-88a2-78771d25a267",
+          "text": "Clasificada incorrectamente por el conjunto completo entrenado hasta la ronda t."
+        },
+        {
+          "id": "63bc9e84-be69-4a45-aabc-647561e2ee0a",
+          "text": "Clasificada incorrectamente por la mayoría de los modelos débiles entrenados hasta la ronda t."
+        },
+        {
+          "id": "01f1c880-0043-483e-8a8b-57a2793ae5dd",
+          "text": "B y C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "40d5d802-2467-4a63-8073-499dc906a634"
+      ],
+      "contentHash": "sha256:2b51327bac3c1fb01fdfc2fa456ae03d37c2d53568093059411b66ca6a81bf20",
+      "createdBy": "",
+      "sourcePackId": "aa1821f9-18ef-4a2c-aabc-27494a5f97b1",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:07:10.886Z",
+      "updatedAt": "2026-02-18T12:07:10.886Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -749,6 +949,46 @@
       "updatedAt": "2026-02-18T10:02:59.694Z"
     },
     {
+      "id": "2f754f62-640a-422b-9a30-b1a18ee44424",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "type": "TEST",
+      "prompt": "Un científico de datos está desarrollando un modelo de clasificación utilizando Naïve Bayes para predecir si un correo electrónico es spam o no spam. Ha calculado la tabla de verosimilitud para dos palabras clave: \"oferta\" y \"urgente\". Los resultados se presentan a continuación: Basándose en esta información y haciendo uso de la fórmula de la probabilidad a posteriori: P(A|B)=P(A)·P(B|A)/P(B). Responda la siguiente pregunta: ¿Cuál es la probabilidad a posteriori de que un correo electrónico sea spam dado que contiene la palabra clave \"oferta\"?",
+      "explanation": "✅ D. 0.8\n\nCálculo (Bayes):\n- P(spam)=20/100=0.2; P(no spam)=0.8\n- P(\"oferta\"|spam)=4/20=0.2; P(\"oferta\"|no spam)=1/80=0.0125\n- P(\"oferta\")=0.2·0.2 + 0.8·0.0125 = 0.05\n- P(spam|\"oferta\") = (0.2·0.2)/0.05 = 0.8",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "3a53be38-80ed-4e83-ab1a-77ff1fc87665",
+          "text": "0.12"
+        },
+        {
+          "id": "d310d3b1-67c5-473e-9ecf-a6b123eb9b43",
+          "text": "3.63"
+        },
+        {
+          "id": "a5802ae4-50b6-410c-a141-71dfd14fe7d3",
+          "text": "4.65"
+        },
+        {
+          "id": "11f9ae7f-3587-4633-bd57-0a54158c3cec",
+          "text": "0.8"
+        }
+      ],
+      "correctOptionIds": [
+        "11f9ae7f-3587-4633-bd57-0a54158c3cec"
+      ],
+      "contentHash": "sha256:535229561e85012a54de87a8781faeb413f7591764fc1e758bd41503796ae422",
+      "createdBy": "",
+      "sourcePackId": "9a48d918-0ffe-4d28-9f78-0c2350dcfe9c",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:59:55.148Z",
+      "updatedAt": "2026-02-18T11:59:55.148Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
       "type": "TEST",
@@ -787,6 +1027,46 @@
       },
       "createdAt": "2026-02-18T10:36:58.364Z",
       "updatedAt": "2026-02-18T10:36:58.364Z"
+    },
+    {
+      "id": "378b9292-5566-4904-b744-fa76d63efcf9",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "¿Cuál es la principal característica del método de hold-out en el contexto de validación de modelos en machine learning?",
+      "explanation": "✅ B. Consiste en separar los datos disponibles en dos conjuntos: uno para entrenamiento y otro para test.\n\nHold-out = una partición simple train/test (a veces con validación aparte).",
+      "difficulty": 1,
+      "options": [
+        {
+          "id": "06c66ba6-f822-453e-a80a-ab92a12b0a19",
+          "text": "Consiste en dividir los datos en k particiones para realizar múltiples iteraciones de entrenamiento y evaluación."
+        },
+        {
+          "id": "97ac6f01-264d-4f9b-85d0-b0ab788567ce",
+          "text": "Consiste en separar los datos disponibles en dos conjuntos: uno para entrenamiento y otro para test."
+        },
+        {
+          "id": "347dad5c-a4e0-4d2b-a32b-a9f3f4c322b6",
+          "text": "Se utiliza para realizar ajustes continuos de los hiperparámetros del modelo durante la fase de entrenamiento."
+        },
+        {
+          "id": "841c37d4-3a90-44a1-a7c0-fa26aa2111c6",
+          "text": "Es exclusivamente aplicable a problemas de clasificación y no a problemas de regresión."
+        }
+      ],
+      "correctOptionIds": [
+        "97ac6f01-264d-4f9b-85d0-b0ab788567ce"
+      ],
+      "contentHash": "sha256:3dfa8de8c69f39b466e9b02ef44f12e4259d90d474f9414db9281031821d5d15",
+      "createdBy": "",
+      "sourcePackId": "9a48d918-0ffe-4d28-9f78-0c2350dcfe9c",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:59:55.148Z",
+      "updatedAt": "2026-02-18T11:59:55.148Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -909,6 +1189,46 @@
       "updatedAt": "2026-02-18T10:16:52.488Z"
     },
     {
+      "id": "5b5bf6ac-bf66-47f2-a646-b339c75e030f",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "Señale la afirmación falsa sobre el aprendizaje automático:",
+      "explanation": "✅ **A. Existe un solo algoritmo...** (falsa)\n\nNo hay un “algoritmo universal” que sirva para todo: el rendimiento depende del tipo de datos, ruido, dimensionalidad, sesgo-varianza, etc.\n\n**Las otras son correctas:**\n- **B**: ML es un subcampo de IA.\n- **C**: el aprendizaje profundo es parte de ML.\n- **D**: *machine learning* y *aprendizaje automático* son sinónimos.",
+      "difficulty": 1,
+      "options": [
+        {
+          "id": "c73770ac-46b4-45d5-a519-a9d27ff98845",
+          "text": "Existe un solo algoritmo de aprendizaje automático que se puede adaptar a cualquier circunstancia."
+        },
+        {
+          "id": "57dfff53-d4f7-4aab-8e3b-53da8fc95201",
+          "text": "El aprendizaje automático es una de las áreas de la inteligencia artificial."
+        },
+        {
+          "id": "ffebe8c2-bb83-4e67-aec7-1dcfbe28debd",
+          "text": "El aprendizaje profundo es un área del aprendizaje automático."
+        },
+        {
+          "id": "df23e115-155b-49be-9173-02479e47c080",
+          "text": "Aprendizaje automático y machine learning hacen referencia a lo mismo."
+        }
+      ],
+      "correctOptionIds": [
+        "c73770ac-46b4-45d5-a519-a9d27ff98845"
+      ],
+      "contentHash": "sha256:7c987d0bd864f80bcbb51d6edecf16b1e79820333964059246e28b752d80c33a",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
       "type": "TEST",
@@ -989,6 +1309,86 @@
       "updatedAt": "2026-02-18T10:21:35.270Z"
     },
     {
+      "id": "72d5e1c3-1ecd-43b6-b4d4-95b175654637",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "¿Qué representa el intercepto en un modelo de regresión lineal?",
+      "explanation": "✅ A. El valor esperado de la variable de respuesta cuando todas las variables predictoras son cero.\n\nEl intercepto es el término independiente: la predicción cuando X=0.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "544ce67d-9cb0-4bf9-b216-ae8303dd3235",
+          "text": "El valor esperado de la variable de respuesta cuando todas las variables predictoras son cero."
+        },
+        {
+          "id": "cc8f2569-8824-4772-8943-ac665749e3fd",
+          "text": "La pendiente de la línea de regresión."
+        },
+        {
+          "id": "a8f4b3e2-87d3-4ec0-9614-f6a05d0c3237",
+          "text": "La suma de los cuadrados de los residuos."
+        },
+        {
+          "id": "4c8d7d05-f47e-43ba-af02-27b5cfa593b8",
+          "text": "La varianza explicada por el modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "544ce67d-9cb0-4bf9-b216-ae8303dd3235"
+      ],
+      "contentHash": "sha256:0b66a63e1bff791954f3dba6975de8aec65403a9e148855e0001b0a9c52a3b0c",
+      "createdBy": "",
+      "sourcePackId": "9a48d918-0ffe-4d28-9f78-0c2350dcfe9c",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:59:55.148Z",
+      "updatedAt": "2026-02-18T11:59:55.148Z"
+    },
+    {
+      "id": "731b1357-4e69-4e7f-b43e-d580fef4a839",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "Un científico de datos está trabajando en la evaluación de varios modelos de clasificación binaria para una tarea empresarial crítica. La empresa valora más la identificación correcta de casos positivos que la identificación de casos negativos, y se establece que un resultado falso positivo es 8 veces más costoso que un resultado falso negativo. Enumere dos métricas de evaluación de modelos que podrían ser relevantes, teniendo en cuenta que la tasa de falsos positivos debe ser máximo del 8 % y la proporción de casos positivos reales identificados por el algoritmo debe ser superior al 80%.",
+      "explanation": "✅ A. Sensibilidad y tasa de falsos positivos.\n\nPor qué las otras no:\n\nB: “tasa de verdaderos positivos” es sensibilidad; aquí te exigen además controlar explícitamente la tasa de falsos positivos (≤ 8%).\n\nC: exactitud no es clave con costes asimétricos y restricciones sobre TPR/FPR.\n\nD: especificidad = 1−FPR, pero no incluye la condición de TPR (sensibilidad) ≥ 80%.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "6e16bd8f-abb0-436a-a1c3-c3406d3ba95f",
+          "text": "Sensibilidad y tasa de falsos positivos."
+        },
+        {
+          "id": "43b7c847-07e8-4bbd-80da-96c92f6781fe",
+          "text": "Especificidad y tasa de verdaderos positivos."
+        },
+        {
+          "id": "2096db5d-62dd-4203-a7cb-4dea6d849776",
+          "text": "Exactitud y tasa de falsos positivos."
+        },
+        {
+          "id": "8c11f259-49d9-4a0d-bdc6-e3f127e70922",
+          "text": "Especificidad y tasa de falsos positivos."
+        }
+      ],
+      "correctOptionIds": [
+        "6e16bd8f-abb0-436a-a1c3-c3406d3ba95f"
+      ],
+      "contentHash": "sha256:e05257cee8b676e37f2cec45a613cb3d20aad994be37fed628ba0aa0614a1238",
+      "createdBy": "",
+      "sourcePackId": "778c30fd-9df1-4385-9961-39a237b103e9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:52:26.355Z",
+      "updatedAt": "2026-02-18T11:52:26.355Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
       "type": "TEST",
@@ -1030,6 +1430,46 @@
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "type": "TEST",
+      "prompt": "Un científico de datos está desarrollando un modelo de clasificación utilizando **Naïve Bayes** para predecir si un correo electrónico es **spam** o **no spam**. Ha calculado la tabla de verosimilitud para dos palabras clave: **\"oferta\"** y **\"urgente\"**. Los resultados se presentan a continuación:\n\n| Clase    | oferta (Sí) | oferta (No) | urgente (Sí) | urgente (No) |\n|----------|-------------|-------------|--------------|--------------|\n| spam     | 4/20        | 16/20       | 10/20        | 10/20        |\n| No spam  | 1/80        | 79/80       | 1/80         | 79/80        |\n\nBasándose en esta información y haciendo uso de la fórmula de la probabilidad a posteriori:\n\n`P(A|B) = P(A) · P(B|A) / P(B)`\n\n¿Cuál es la probabilidad a posteriori de que un correo electrónico sea **spam** dado que contiene la palabra clave **\"urgente\"**?",
+      "explanation": "✅ 0.9 (aprox. 0.909)\n\nPor qué:\nDel enunciado:\n\n𝑃\n(\nspam\n)\n=\n20\n/\n100\nP(spam)=20/100, \n𝑃\n(\nno spam\n)\n=\n80\n/\n100\nP(no spam)=80/100\n\n𝑃\n(\nurgente\n∣\nspam\n)\n=\n10\n/\n20\nP(urgente∣spam)=10/20\n\n𝑃\n(\nurgente\n∣\nno spam\n)\n=\n1\n/\n80\nP(urgente∣no spam)=1/80 \n\nExamen_TAA_2024_ModeloB\n\nEntonces\n\n𝑃\n(\nurgente\n)\n=\n0.2\n⋅\n0.5\n+\n0.8\n⋅\n0.0125\n=\n0.11\nP(urgente)=0.2⋅0.5+0.8⋅0.0125=0.11\n\n𝑃\n(\nspam\n∣\nurgente\n)\n=\n(\n0.2\n⋅\n0.5\n)\n/\n0.11\n≈\n0.909\n⇒\n0.9\nP(spam∣urgente)=(0.2⋅0.5)/0.11≈0.909⇒0.9\n\nPor qué las otras no:\nA/B/C no cuadran: B y C son >1 (imposible como probabilidad) y A se queda demasiado baja para los números de la tabla.",
+      "difficulty": 4,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "9b0cd367-1a07-4a03-ae5a-1a39441b33dd",
+          "text": "0.12"
+        },
+        {
+          "id": "0667c9d3-c3d0-4da9-80d4-a14038919b42",
+          "text": "3.63"
+        },
+        {
+          "id": "72e2e0a7-25f0-4d6c-9794-0d8d2c5a70d4",
+          "text": "4.65"
+        },
+        {
+          "id": "98a5dbd8-fbc5-4870-a10d-9a0cb1d595e3",
+          "text": "0.9"
+        }
+      ],
+      "correctOptionIds": [
+        "98a5dbd8-fbc5-4870-a10d-9a0cb1d595e3"
+      ],
+      "id": "84f4ed84-9b7b-427e-a667-eecfb8806740",
+      "contentHash": "sha256:a4c28559768939b0c209349590eb1caeaa4086762851bab5e60b1e7282832990",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:22:18.432Z",
+      "updatedAt": "2026-02-18T11:22:18.432Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
       "type": "TEST",
       "prompt": "Si la probabilidad de pertenencia de una instancia es de 0,55 para la clase 1 y de 0,45 para la clase 2. Se puede afirmar que:",
@@ -1065,6 +1505,46 @@
       },
       "createdAt": "2026-02-18T10:58:04.508Z",
       "updatedAt": "2026-02-18T10:58:04.508Z"
+    },
+    {
+      "id": "8a4e64ee-1066-49bf-bbc2-8a76b11c2ad8",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
+      "type": "TEST",
+      "prompt": "Un científico de datos está utilizando Máquinas de Vectores de Soporte (SVM) para un problema de clasificación binaria. Después de entrenar el modelo, observa que hay un pequeño margen de separación entre las clases y sospecha que el modelo podría beneficiarse de una transformación no lineal de las características. ¿Qué técnica sería más apropiada para introducir no linealidades en el espacio de características y mejorar la capacidad del SVM para clasificar datos más complejos?",
+      "explanation": "✅ **B. Utilizar la función de kernel.**\n\nEn SVM, el **kernel trick** permite trabajar en un *feature space* (implícito) donde la separación puede ser lineal aunque en el espacio original no lo sea.\n\n**Por qué no las otras:**\n- **A (C)**: cambia regularización/margen, pero no introduce no linealidad por sí sola.\n- **C**: “subir dimensión” a mano no es la idea; el kernel ya lo hace de forma implícita.\n- **D**: puede ayudar, pero no es la técnica específica para no linealidades.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "acdb0c2b-f575-4c1b-a39d-d45cc10e890c",
+          "text": "Ajustar el parámetro de regularización (C)."
+        },
+        {
+          "id": "75fd7f13-097a-456d-bb5a-592a6743ee0c",
+          "text": "Utilizar la función de kernel."
+        },
+        {
+          "id": "40a1a980-8138-4b71-b4d3-e1afa07d291e",
+          "text": "Incrementar la dimensión del espacio de características."
+        },
+        {
+          "id": "961aa092-6c75-41b4-a58d-68f1fd9cd151",
+          "text": "Reducir el ruido en los datos de entrenamiento."
+        }
+      ],
+      "correctOptionIds": [
+        "75fd7f13-097a-456d-bb5a-592a6743ee0c"
+      ],
+      "contentHash": "sha256:875aa57f0cb44e192a7ca3e204a8a8b4255cce9e7a4005eb8421fe9d07583f82",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -1107,6 +1587,326 @@
       "updatedAt": "2026-02-18T10:28:30.621Z"
     },
     {
+      "id": "98f2eeac-cd3e-4885-8a95-a34f68f4005f",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "Cuál de las siguientes afirmaciones describe el aprendizaje automático.",
+      "explanation": "✅ **A.** Definición estándar: algoritmos/modelos que **infieren patrones a partir de datos** en vez de reglas/instrucciones explícitas.\n\nLas otras opciones hablan de autonomía/robots o directamente de programación basada en reglas.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "d0285816-8d40-450f-8d83-37b611398c8e",
+          "text": "El estudio científico de algoritmos y modelos estadísticos para realizar tareas mediante el uso de inferencia en lugar de instrucciones."
+        },
+        {
+          "id": "4a7eb243-5149-4726-b5dc-844fe1ebfef5",
+          "text": "La creación de máquinas que pueden realizar tareas de manera autónoma mediante el aprendizaje."
+        },
+        {
+          "id": "2906b9d3-ec41-45f4-a1ae-0533fbf54a5e",
+          "text": "La compilación de un gran número de reglas estadísticas que cubre todas las posibles soluciones."
+        },
+        {
+          "id": "f94b821a-5ca9-4ec3-abbd-3837499ea5b6",
+          "text": "Un conjunto de instrucciones que describen cómo lograr un resultado deseado."
+        }
+      ],
+      "correctOptionIds": [
+        "d0285816-8d40-450f-8d83-37b611398c8e"
+      ],
+      "contentHash": "sha256:c5153dd7fd0a81f14d006452dabddf495beb7f144fc7f2768823c6a4291ed8ff",
+      "createdBy": "",
+      "sourcePackId": "aa1821f9-18ef-4a2c-aabc-27494a5f97b1",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:07:10.886Z",
+      "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "id": "9b2a1405-da8c-4a0a-81e2-f4ddca0ed59c",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "type": "TEST",
+      "prompt": "Si decimos que la probabilidad de tener cáncer de mama es de 0.15 estamos hablando de:",
+      "explanation": "✅ B. Probabilidad a priori.\n\nEs una probabilidad sin condicionar a ninguna evidencia (no hay datos observados como síntomas/prueba). La a posteriori y la condicionada dependen de una condición/evidencia.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "52a51ff1-18ee-469c-8367-8a57521cef26",
+          "text": "Probabilidad a posteriori."
+        },
+        {
+          "id": "e0978ffb-00f6-4934-97a2-7d156a5d347a",
+          "text": "Probabilidad a priori."
+        },
+        {
+          "id": "b353f815-f1f9-41cd-bed2-35abb249d344",
+          "text": "Probabilidad condicionada."
+        },
+        {
+          "id": "56c66a62-8479-43b3-9097-1a8753d9e950",
+          "text": "Probabilidad de cáncer dada una condición."
+        }
+      ],
+      "correctOptionIds": [
+        "e0978ffb-00f6-4934-97a2-7d156a5d347a"
+      ],
+      "contentHash": "sha256:4410bc9887c891a4f638d71dfa93d297722f4dbf2750581d397d9b41af158216",
+      "createdBy": "",
+      "sourcePackId": "83ed9a7f-3b02-4cb4-8f99-707db11fdbe8",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:01:54.448Z",
+      "updatedAt": "2026-02-18T12:01:54.448Z"
+    },
+    {
+      "id": "9d423955-fc15-4fa3-bd46-b60a56730ca5",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes visualizaciones es más adecuada para evaluar los errores en un modelo de regresión?",
+      "explanation": "✅ B. Gráfico de dispersión de residuos vs. valores predichos.\n\nPor qué las otras no:\n\nA: un histograma/frecuencias ayuda a ver la distribución, pero no revela patrones (heterocedasticidad, no linealidad).\n\nC: no es un diagnóstico estándar de regresión y además depende del tipo de entrenamiento.\n\nD: un gráfico de pastel no sirve para diagnosticar errores.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "a5653a9f-4ff1-4afb-b1e0-3a175997db71",
+          "text": "Gráfico de barras de frecuencia de errores absolutos."
+        },
+        {
+          "id": "09a452d1-5e9a-40bd-9a3a-e6bacadc46ad",
+          "text": "Gráfico de dispersión de residuos vs. valores predichos."
+        },
+        {
+          "id": "640626ec-bb7c-4894-9ced-2e28acf9abaa",
+          "text": "Gráfico de línea de errores relativos vs. iteraciones de entrenamiento."
+        },
+        {
+          "id": "b566a99f-58ab-4d48-847e-99951f9148ed",
+          "text": "Gráfico de pastel de errores cuadráticos medios."
+        }
+      ],
+      "correctOptionIds": [
+        "09a452d1-5e9a-40bd-9a3a-e6bacadc46ad"
+      ],
+      "contentHash": "sha256:a046452813b795dc05e351bb2460568b38b48cd2d00ec3fe914e2c8ba1b552e4",
+      "createdBy": "",
+      "sourcePackId": "778c30fd-9df1-4385-9961-39a237b103e9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:52:26.355Z",
+      "updatedAt": "2026-02-18T11:52:26.355Z"
+    },
+    {
+      "id": "a302b2cd-fd55-4823-8c52-b700c45db9d6",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
+      "type": "TEST",
+      "prompt": "Se tiene un conjunto de datos médicos de registro de signos vitales de pacientes de un servicio de UCI adulto: presión arterial, frecuencia cardiaca, temperatura y frecuencia respiratoria. En este conjunto de datos existe un 5% de datos faltantes en la presión arterial y en la frecuencia respiratoria. ¿Cuál sería la mejor estrategia para trabajar con los datos faltantes?",
+      "explanation": "✅ **D.** Reemplazar por una **medición anterior del mismo paciente**.\n\nEn UCI, los signos vitales son **series temporales por paciente**. Usar el último valor válido (*forward fill*) suele preservar mejor la dinámica del paciente que imputar con un promedio global.\n\nPor qué no:\n- **A:** perderías datos sin necesidad.\n- **B:** el promedio global puede distorsionar y borrar patrones individuales.\n- **C:** la moda no tiene sentido en variables continuas.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "f362792a-093c-407b-b141-a65b7d582cd5",
+          "text": "Eliminarlos."
+        },
+        {
+          "id": "860dd7a8-9b65-4bb6-97f5-a85af244b42a",
+          "text": "Reemplazarlos por el promedio de todos los los valores de presión arterial y frecuencia respiratoria.."
+        },
+        {
+          "id": "854fce9b-2c37-4232-9a3a-2ef2eba8a78a",
+          "text": "Reemplazarlos por la moda de todos los valores de presión arterial y frecuencia respiratoria."
+        },
+        {
+          "id": "7bec8ee5-3e70-45f7-b859-2acca4b257df",
+          "text": "Reemplazar el valor faltante de presión arterial y frecuencia respiratoria por una medición anterior del mismo paciente."
+        }
+      ],
+      "correctOptionIds": [
+        "7bec8ee5-3e70-45f7-b859-2acca4b257df"
+      ],
+      "contentHash": "sha256:60153c13682b36c6128de0ecdb44e7a42a201bf096fe39f6d610c43f820d6aa9",
+      "createdBy": "",
+      "sourcePackId": "aa1821f9-18ef-4a2c-aabc-27494a5f97b1",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:07:10.886Z",
+      "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "type": "TEST",
+      "prompt": "Un científico de datos está desarrollando un modelo de clasificación utilizando **Naïve Bayes** para predecir si un correo electrónico es **spam** o **no spam**. Ha calculado la tabla de verosimilitud para dos palabras clave: **\"oferta\"** y **\"urgente\"**. Los resultados se presentan a continuación:\n\n| Clase    | oferta (Sí) | oferta (No) | urgente (Sí) | urgente (No) |\n|----------|-------------|-------------|--------------|--------------|\n| spam     | 4/20        | 16/20       | 10/20        | 10/20        |\n| No spam  | 1/80        | 79/80       | 1/80         | 79/80        |\n\nBasándose en esta información y haciendo uso de la fórmula de la probabilidad a posteriori:\n\n`P(A|B) = P(A) · P(B|A) / P(B)`\n\n¿Cuál es la probabilidad a posteriori de que un correo electrónico sea **spam** dado que contiene **ambas** palabras clave **\"oferta\"** y **\"urgente\"**?\n",
+      "explanation": "¿Qué sale realmente (bien hecho)?\n\nCon Naïve Bayes (asumiendo independencia):\n\n𝑃\n(\n𝑠\n𝑝\n𝑎\n𝑚\n)\n=\n20\n/\n100\n=\n0.2\nP(spam)=20/100=0.2, \n𝑃\n(\n𝑛\n𝑜\n)\n=\n0.8\nP(no)=0.8\n\n𝑃\n(\n𝑜\n𝑓\n𝑒\n𝑟\n𝑡\n𝑎\n∣\n𝑠\n𝑝\n𝑎\n𝑚\n)\n=\n4\n/\n20\n=\n0.2\nP(oferta∣spam)=4/20=0.2, \n𝑃\n(\n𝑢\n𝑟\n𝑔\n𝑒\n𝑛\n𝑡\n𝑒\n∣\n𝑠\n𝑝\n𝑎\n𝑚\n)\n=\n10\n/\n20\n=\n0.5\nP(urgente∣spam)=10/20=0.5 → \n𝑃\n(\n𝑎\n𝑚\n𝑏\n𝑎\n𝑠\n∣\n𝑠\n𝑝\n𝑎\n𝑚\n)\n=\n0.2\n⋅\n0.5\n=\n0.1\nP(ambas∣spam)=0.2⋅0.5=0.1\n\n𝑃\n(\n𝑜\n𝑓\n𝑒\n𝑟\n𝑡\n𝑎\n∣\n𝑛\n𝑜\n)\n=\n1\n/\n80\n=\n0.0125\nP(oferta∣no)=1/80=0.0125, \n𝑃\n(\n𝑢\n𝑟\n𝑔\n𝑒\n𝑛\n𝑡\n𝑒\n∣\n𝑛\n𝑜\n)\n=\n1\n/\n80\n=\n0.0125\nP(urgente∣no)=1/80=0.0125 → \n𝑃\n(\n𝑎\n𝑚\n𝑏\n𝑎\n𝑠\n∣\n𝑛\n𝑜\n)\n=\n0.0125\n⋅\n0.0125\n=\n0.00015625\nP(ambas∣no)=0.0125⋅0.0125=0.00015625\n\nEntonces:\n\nNumerador spam = \n0.2\n⋅\n0.1\n=\n0.02\n0.2⋅0.1=0.02\n\nNumerador no = \n0.8\n⋅\n0.00015625\n=\n0.000125\n0.8⋅0.00015625=0.000125\n\n𝑃\n(\n𝑠\n𝑝\n𝑎\n𝑚\n∣\n𝑎\n𝑚\n𝑏\n𝑎\n𝑠\n)\n=\n0.02\n/\n(\n0.02\n+\n0.000125\n)\n=\n0.9938\nP(spam∣ambas)=0.02/(0.02+0.000125)=0.9938\n\nResultado correcto ≈ 0.994, pero no está en las opciones (0.12, 3.63, 4.65, 0.48). \n\nExamen_TAA_2024_ModeloE\n\nSi HAY que elegir una opción sí o sí…\n\n✅ D. 0.48 (porque es la única “probabilidad” medianamente plausible y es la más cercana a 0.994 dentro de lo que hay). \n\nPor qué no las otras (si te estás jugando puntos)\n\nB (3.63) y C (4.65): imposibles como probabilidad (>1).\n\nA (0.12): demasiado baja; contradice los números de la tabla (con “ambas palabras” el spam debería dispararse, no caer a 0.12)",
+      "difficulty": 4,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "c24dc513-6fe1-4c3e-ae4c-f0d5e93cb02c",
+          "text": "0.12"
+        },
+        {
+          "id": "a4b6655e-3ab7-4bed-bc18-8da119babd16",
+          "text": "3.63"
+        },
+        {
+          "id": "2786387a-fefc-4834-a1b0-a58861277273",
+          "text": "4.65"
+        },
+        {
+          "id": "c6314303-81bc-40dd-a754-53c41cc11f05",
+          "text": "0.48"
+        }
+      ],
+      "correctOptionIds": [
+        "c6314303-81bc-40dd-a754-53c41cc11f05"
+      ],
+      "id": "a3a6e700-b5a1-4542-8bec-e5f668490c5c",
+      "contentHash": "sha256:61b98b737b8de45f8e6474f420a0cb3ebeff88646a8f32323a9abac04aeff703",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:36:09.828Z",
+      "updatedAt": "2026-02-18T11:36:09.828Z"
+    },
+    {
+      "id": "b073a639-9e31-4127-8632-7b10429df253",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "54c32f8a-a162-493b-9dc3-89e6ab77b28b",
+      "type": "TEST",
+      "prompt": "Un científico de datos está trabajando en un problema de clasificación utilizando un modelo de Random Forest. Observa que su modelo tiene un rendimiento excepcionalmente alto en el conjunto de entrenamiento, pero cuando evalúa el modelo en un conjunto de prueba, nota una disminución significativa en la precisión. ¿Cuál de las siguientes estrategias podría ayudar a mejorar la generalización del modelo de Random Forest?",
+      "explanation": "✅ A. Aumentar el número de árboles en el bosque.\n\nPor qué las otras no:\n\nB: menos datos suele empeorar la generalización.\n\nC: más profundidad suele aumentar el sobreajuste.\n\nD: puede ayudar en algunos casos (p.ej. limitar max_features), pero la respuesta estándar para reducir varianza en Random Forest es aumentar el número de árboles.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "e1931f15-a66f-4d12-a8b8-dc84083f8bfe",
+          "text": "Aumentar el número de árboles en el bosque."
+        },
+        {
+          "id": "e2770ed7-8135-4aef-b617-9c99eba3f1db",
+          "text": "Reducir la cantidad de datos de entrenamiento."
+        },
+        {
+          "id": "3db3e6f5-b231-474d-abf6-297a43f88687",
+          "text": "Aumentar la profundidad máxima de cada árbol."
+        },
+        {
+          "id": "049df430-c553-42aa-9a8a-8ac170d90fd6",
+          "text": "Utilizar un conjunto de características más pequeño."
+        }
+      ],
+      "correctOptionIds": [
+        "e1931f15-a66f-4d12-a8b8-dc84083f8bfe"
+      ],
+      "contentHash": "sha256:444129a9b639fde79ed9f37fb35d9522c8b97f31a619d0cf8a89ab235af8b9ec",
+      "createdBy": "",
+      "sourcePackId": "778c30fd-9df1-4385-9961-39a237b103e9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:52:26.355Z",
+      "updatedAt": "2026-02-18T11:52:26.355Z"
+    },
+    {
+      "id": "b77c730d-5078-4e6a-a1bd-7cc981caeb91",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
+      "type": "TEST",
+      "prompt": "Cuál de las siguientes afirmaciones sobre el parámetro de regularización C en SVM es falsa.",
+      "explanation": "✅ D. Aumentar el valor de C en SVM siempre mejora el rendimiento del modelo en datos no vistos.\n\nEs falsa porque aumentar C puede reducir errores en entrenamiento pero aumentar el riesgo de sobreajuste y empeorar en datos no vistos.\n\nLas otras describen correctamente el efecto de C (trade-off margen vs errores).",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "9f422931-edb4-4f74-9791-4d143c168c64",
+          "text": "El parámetro de regularización C en SVM controla el equilibrio entre maximizar el margen y minimizar el error de clasificación en los datos de entrenamiento."
+        },
+        {
+          "id": "cd97eb4d-c5a7-423e-992b-6bfc05fc9e83",
+          "text": "Un valor más pequeño de C conduce a un margen más amplio, pero puede dar lugar a más errores de entrenamiento permitidos por el modelo."
+        },
+        {
+          "id": "52b42299-22c5-49ae-ae29-a6b93d9bc7e2",
+          "text": "Un valor mayor de C da como resultado un margen más estrecho, pero reduce la cantidad de errores de entrenamiento tolerados por el modelo, lo que podría provocar un sobreajuste de los datos de entrenamiento."
+        },
+        {
+          "id": "616067db-850f-41ef-85aa-5151062ab13d",
+          "text": "Aumentar el valor de C en SVM siempre mejora el rendimiento del modelo en datos no vistos."
+        }
+      ],
+      "correctOptionIds": [
+        "616067db-850f-41ef-85aa-5151062ab13d"
+      ],
+      "contentHash": "sha256:d4cc82c494b40a5d5b95d8af9768773c48aeb311e3cc804aea287156d313d984",
+      "createdBy": "",
+      "sourcePackId": "9a48d918-0ffe-4d28-9f78-0c2350dcfe9c",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:59:55.148Z",
+      "updatedAt": "2026-02-18T11:59:55.148Z"
+    },
+    {
+      "id": "b96b4bc8-4e1e-4d0f-8c67-383d817cfe7d",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "Si usted está entrenando un modelo con un conjunto de datos médicos para diagnóstico de una enfermedad rara. ¿Qué métricas de validación del modelo debería compartir para que los especialistas puedan concluir que es un buen modelo?",
+      "explanation": "✅ **C. Calcular y explicar exactitud, sensibilidad y especificidad.**\n\nEn diagnóstico médico (y más si es una enfermedad rara), **accuracy sola** puede engañar; lo importante es reportar también:\n- **Sensibilidad (recall/TPR)**: cuántos enfermos detectas.\n- **Especificidad (TNR)**: cuántos sanos no etiquetas como enfermos.\n\n**Por qué no las otras:**\n- **A**: TP/TN sueltos no permiten comparar bien sin contexto (FP/FN).\n- **B**: la matriz de confusión ayuda, pero sin métricas resumidas obliga al médico a calcularlo “a mano”.\n- **D**: solo especificidad ignora la parte crítica (no dejar enfermos sin detectar).",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "5e237480-d1c8-4666-80d5-297168b927e7",
+          "text": "Presentar los valores de verdaderos positivos y verdaderos negativos."
+        },
+        {
+          "id": "c96e0aae-d318-43db-9e73-1fb00251f237",
+          "text": "Mostrar la matriz de confusión."
+        },
+        {
+          "id": "5c93b694-4276-49d0-bd34-883935099937",
+          "text": "Calcular y explicar los resultados de exactitud, sensibilidad y especificidad."
+        },
+        {
+          "id": "7a9ffce0-b691-4713-a9cb-2b80dc831d8c",
+          "text": "Mostrar el resultado de especificidad ya que mide la tasa de casos negativos clasificados correctamente."
+        }
+      ],
+      "correctOptionIds": [
+        "5c93b694-4276-49d0-bd34-883935099937"
+      ],
+      "contentHash": "sha256:dca1ce9fe4b01f45cad09a743794687538015db54976b7622e6c8ee8739e4ce9",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
       "type": "TEST",
@@ -1145,6 +1945,46 @@
       },
       "createdAt": "2026-02-18T10:53:46.526Z",
       "updatedAt": "2026-02-18T10:53:46.526Z"
+    },
+    {
+      "id": "c8ef11f2-d02f-4990-a460-7ace8054ebc4",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "El término varianza de un modelo habla de:",
+      "explanation": "✅ C. Cuánto cambia un modelo dependiendo de los datos de entrenamiento utilizados.\n\nPor qué las otras no:\n\nA: no define varianza.\n\nB: describe un síntoma, pero no la definición (la clave es la sensibilidad al dataset).\n\nD: describe el extremo de baja varianza, no la definición.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "6da418a3-88de-44d9-ac10-5c8a09eea02c",
+          "text": "Un modelo que cambia constantemente en su ejecución."
+        },
+        {
+          "id": "be7697c8-a465-4f0b-b136-79658755976e",
+          "text": "Un modelo que se entrena varias veces y da resultados diferentes."
+        },
+        {
+          "id": "84571460-545a-4f9a-bab3-cc2b9d0626d6",
+          "text": "Cuánto cambia un modelo dependiendo de los datos de entrenamiento utilizados."
+        },
+        {
+          "id": "19b30d0b-c6cb-400e-b609-3eae49b2452f",
+          "text": "Construir modelos que no cambien cuando se modifican los datos de entrenamiento."
+        }
+      ],
+      "correctOptionIds": [
+        "84571460-545a-4f9a-bab3-cc2b9d0626d6"
+      ],
+      "contentHash": "sha256:cd4666cdf3365f9fdea3ccf315e8dd5dfa3beca9d6d9f0568aae4264dfa3b893",
+      "createdBy": "",
+      "sourcePackId": "778c30fd-9df1-4385-9961-39a237b103e9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T11:52:26.355Z",
+      "updatedAt": "2026-02-18T11:52:26.355Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -1187,6 +2027,126 @@
       "updatedAt": "2026-02-18T10:23:44.519Z"
     },
     {
+      "id": "dd15620f-6937-4669-a403-81ba25a2b3c8",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
+      "type": "TEST",
+      "prompt": "El kernel lineal es la única opción eficaz en SVM para manejar conjuntos de datos no linealmente separables.",
+      "explanation": "✅ **A.** **Falso**: SVM puede usar **kernels no lineales** (polinómico, RBF, etc.) para manejar datos no linealmente separables.\n\nPor qué no las otras:\n- **B/D:** afirman *verdadero* para un caso donde el kernel lineal no tiene por qué funcionar.\n- **C:** mezcla conceptos: el kernel lineal **no** introduce una transformación no lineal; es el caso más simple.",
+      "difficulty": 2,
+      "options": [
+        {
+          "id": "6e7e941d-66fd-47c9-89aa-3511fa948173",
+          "text": "Falso. SVM con kernels no lineales, como el polinómico o el radial, son opciones efectivas para manejar conjuntos de datos no linealmente separables."
+        },
+        {
+          "id": "133c2185-3187-4f8c-9231-cfa9f7e882c2",
+          "text": "Verdadero. Las funciones de kernel lineal en SVM, a pesar de su aparente simplicidad, demuestran ser eficaces en escenarios donde la relación entre las características no es lineal."
+        },
+        {
+          "id": "f1fe06ce-2890-4135-ab1f-c0e3c326612b",
+          "text": "Falso. El kernel lineal realiza una transformación en los datos de entrada para trabajar con datos complejos y con relaciones no lineales."
+        },
+        {
+          "id": "c274223c-979c-4f15-ad28-e101068bc8f1",
+          "text": "Verdadero. Las funciones de kernel lineal en Máquinas de Soporte Vectorial (SVM) ofrecen simplicidad y eficiencia computacional al proporcionar una solución elegante para conjuntos de datos no linealmente separables."
+        }
+      ],
+      "correctOptionIds": [
+        "6e7e941d-66fd-47c9-89aa-3511fa948173"
+      ],
+      "contentHash": "sha256:9ee76d82b91c224c2f8f74d0203442f51723d3e7fb60d7783e94571c9d86b80a",
+      "createdBy": "",
+      "sourcePackId": "aa1821f9-18ef-4a2c-aabc-27494a5f97b1",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:07:10.886Z",
+      "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "id": "e05dc48f-6414-46b0-bb0e-d0e566022c15",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes métricas MAE, MSE o RMSE de los modelos de regresión es más robusta a los valores anómalos?",
+      "explanation": "✅ **C.** **MAE** es la más robusta a outliers.\n\nMAE usa **error absoluto** (penalización lineal). En cambio **MSE/RMSE** elevan al cuadrado, y por eso los errores grandes (outliers) pesan muchísimo más.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "a2550a11-b9b3-4fc8-b5b1-5b41746a65e1",
+          "text": "La métrica más robusta es el MAE ya que El MAE penaliza de manera significativa los errores grandes en las predicciones, asignando un peso proporcional al cuadrado de la diferencia entre la predicción y el valor real."
+        },
+        {
+          "id": "6fc2ad96-5bf1-4b1c-ba7a-575e60bdbe41",
+          "text": "Las métricas más robustas son MSE o RMSE dado que no se ven afectadas por los valores extremos debido al término del cuadrado."
+        },
+        {
+          "id": "7724d155-839f-4813-bb2a-dd30253a6439",
+          "text": "La métrica más robusta es el MAE dado que se calcula tomando el promedio de las diferencias absolutas de las predicciones y los valores reales."
+        },
+        {
+          "id": "eb6bad5d-ea7b-4001-be6e-cec388892880",
+          "text": "El RMSE siempre produce un valor más pequeño que MAE, lo que demuestra que es una métrica más precisa y robusta en todos los casos de evaluación de modelos de regresión."
+        }
+      ],
+      "correctOptionIds": [
+        "7724d155-839f-4813-bb2a-dd30253a6439"
+      ],
+      "contentHash": "sha256:7cc8a05e36c8bc1e81a8b77843305fe547caf9d06c743838db13383a973dae8e",
+      "createdBy": "",
+      "sourcePackId": "aa1821f9-18ef-4a2c-aabc-27494a5f97b1",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:07:10.886Z",
+      "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "id": "e1d5f90e-2abe-4703-b449-bc2078e9022c",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "type": "TEST",
+      "prompt": "Un científico de datos está desarrollando un modelo de clasificación utilizando Naïve Bayes para predecir si un correo electrónico es spam o no spam. Ha calculado la tabla de verosimilitud para dos palabras clave: \"oferta\" y \"urgente\". Los resultados se presentan a continuación:\n\n|  | oferta (Sí) | oferta (No) | urgente (Sí) | urgente (No) |\n|---|---|---|---|---|\n| spam | 4/20 | 16/20 | 10/20 | 10/20 |\n| No spam | 1/80 | 79/80 | 1/80 | 79/80 |\n\n\nBasándose en esta información y haciendo uso de la fórmula de la probabilidad a posteriori: P(A|B)=P(A)·P(B|A)/P(B). Responda la siguiente pregunta:\n¿Cuál es la probabilidad a posteriori de que un correo electrónico sea spam dado que contiene la palabra clave \"urgente\"?",
+      "explanation": "✅ **D. 0.9**\n\nTomando los conteos como probabilidades:\n\n- Priors: `P(spam)=20/100=0.2`, `P(no_spam)=80/100=0.8`\n- Likelihoods: `P(urgente|spam)=10/20=0.5`, `P(urgente|no_spam)=1/80=0.0125`\n\nEntonces:\n\n`P(spam|urgente) = P(spam)·P(urgente|spam) / (P(spam)·P(urgente|spam) + P(no_spam)·P(urgente|no_spam))`\n\n`= 0.2·0.5 / (0.2·0.5 + 0.8·0.0125) = 0.1 / 0.11 ≈ 0.909` → **≈ 0.9**.",
+      "difficulty": 4,
+      "options": [
+        {
+          "id": "a36075ba-3b72-4305-823b-36bbe4a9d938",
+          "text": "0.12"
+        },
+        {
+          "id": "02a00543-cbec-4f76-a230-8a34ea0caf1c",
+          "text": "3.63"
+        },
+        {
+          "id": "98820223-7779-4e4b-b209-60eeeac6dac9",
+          "text": "4.65"
+        },
+        {
+          "id": "8a28c826-eb31-4704-b923-87109c3eb536",
+          "text": "0.9"
+        }
+      ],
+      "correctOptionIds": [
+        "8a28c826-eb31-4704-b923-87109c3eb536"
+      ],
+      "contentHash": "sha256:56e76684873f97b3262967cb743850c18da89e261534ee6369e1ac0065143f8b",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
       "type": "TEST",
@@ -1225,6 +2185,46 @@
       },
       "createdAt": "2026-02-18T10:35:11.048Z",
       "updatedAt": "2026-02-18T10:35:11.048Z"
+    },
+    {
+      "id": "e9a131f0-8ae3-46db-bc62-958b2a1b98a6",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "68f33661-e359-4655-b124-93d9c2981d18",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe incorrectamente el índice Gini en árboles de decisión?",
+      "explanation": "✅ **D.** (incorrecta)\n\nEl **índice Gini** mide **impureza** y se usa para elegir splits minimizando esa impureza. La opción D mezcla conceptos: la **ganancia de información** se asocia típicamente a **entropía/information gain** (ID3/C4.5), no al Gini como tal.\n\n**A, B y C** describen correctamente el papel del Gini.",
+      "difficulty": 3,
+      "options": [
+        {
+          "id": "05252c66-2718-4cef-a227-464a1d04ece0",
+          "text": "El índice Gini mide la impureza de un conjunto de datos, donde un valor más alto indica una mayor impureza y una mezcla más desigual de clases."
+        },
+        {
+          "id": "05f13abd-da18-4db3-8dd5-c74aedc70871",
+          "text": "El índice Gini se utiliza para seleccionar la mejor división en un nodo de un árbol de decisión, buscando minimizar la impureza en los nodos hijos."
+        },
+        {
+          "id": "13a8ca1a-54da-486f-8669-1b8419e16658",
+          "text": "El índice Gini asigna un valor de 0 cuando todos los ejemplos en un nodo pertenecen a la misma clase, lo que indica una pureza máxima."
+        },
+        {
+          "id": "a1b589fd-527e-4021-a094-6a64d4fd6e0c",
+          "text": "El índice Gini es una medida de la ganancia de información, utilizada para determinar qué característica proporciona la mayor separación entre las clases objetivo en un conjunto de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "a1b589fd-527e-4021-a094-6a64d4fd6e0c"
+      ],
+      "contentHash": "sha256:2b2d611bcc9e9d33cf517e5913968f61bbc477c14849aa0427bd4226637fb06c",
+      "createdBy": "",
+      "sourcePackId": "contribution-2026-02-18-julio-modelosB-C-new-6f543832",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T12:21:52.982Z",
+      "updatedAt": "2026-02-18T12:21:52.982Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
