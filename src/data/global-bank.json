@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-18T12:21:57.847Z",
+  "exportedAt": "2026-02-18T18:25:08.829Z",
   "subjects": [
     {
       "name": "Razonamiento y Planificación Automática",
@@ -355,11 +355,11 @@
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
-      "title": "Tema 9- Combinacion de clasificadores.Bootstrapping Bagging y Boosting",
+      "title": "Tema 9- Combinacion de clasificadores. Bootstrapping Bagging y Boosting",
       "order": 8,
       "id": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
       "createdAt": "2026-02-18T07:08:15.049Z",
-      "updatedAt": "2026-02-18T08:58:51.539Z",
+      "updatedAt": "2026-02-18T13:47:57.681Z",
       "pdfFilename": "Tema_9._Combinacion_de_clasificadores._Bootstrapping_Bagging_y_Boosting.pdf"
     },
     {
@@ -590,6 +590,39 @@
   ],
   "questions": [
     {
+      "id": "035ec08b-2c16-493c-a3e1-c24d8aac49dc",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "Imagina que formas parte del equipo de diseño de un robot aspirador. Enumera tres funcionalidades basadas en IA que incorporarías, las técnicas a utilizar y la utilidad del almacenamiento en la nube de sus datos para el cliente y para terceros.",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "robotica",
+        "IoT"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Robot Aspirador con IA\n\n### Funcionalidad 1: Navegación autónoma y mapeo (SLAM)\n- **Técnica**: SLAM (Simultaneous Localization and Mapping) con filtros de partículas. Construye un mapa 2D del hogar en tiempo real y calcula rutas de cobertura óptimas.\n- **Valor**: Limpieza sistemática sin zonas sin cubrir ni recorridos repetidos.\n\n### Funcionalidad 2: Detección y clasificación de obstáculos\n- **Técnica**: CNN (Red Neuronal Convolucional) entrenada para clasificar objetos (cables, juguetes, mascotas, umbrales) y decidir si esquivar o aspirar.\n- **Valor**: Evita daños al robot y a los objetos del hogar.\n\n### Funcionalidad 3: Optimización del plan de limpieza\n- **Técnica**: Aprendizaje por refuerzo (RL) que aprende qué zonas se ensucian más y a qué horas, para programar la limpieza de forma inteligente.\n- **Valor**: Eficiencia energética y mayor satisfacción del usuario.\n\n### Utilidad del almacenamiento en la nube\n\n**Para el cliente (usuario):**\n- Acceso al historial y mapa del hogar desde el móvil.\n- Actualizaciones automáticas del firmware que mejoran la navegación.\n- Alertas predictivas de fallos mecánicos antes de que ocurran.\n\n**Para terceros (fabricante):**\n- Análisis (datos anonimizados) de patrones de fallos para mejorar futuras versiones del hardware.\n- Identificar nuevas funcionalidades demandadas basándose en uso real.\n- Ofrecer servicios de mantenimiento predictivo y venta de recambios en el momento óptimo.",
+      "keywords": [
+        "SLAM",
+        "CNN",
+        "aprendizaje refuerzo",
+        "robot aspirador",
+        "cloud",
+        "mantenimiento predictivo"
+      ],
+      "contentHash": "sha256:a40028b4ba6717b1e2be2a240721a4c6093e207c21fb52235375026def27df11",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "id": "047a1dff-9b08-42d2-b068-29291bcc572e",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
@@ -627,7 +660,42 @@
         "wrong": 0
       },
       "createdAt": "2026-02-18T12:07:10.886Z",
-      "updatedAt": "2026-02-18T12:07:10.886Z"
+      "updatedAt": "2026-02-18T14:08:05.642Z",
+      "origin": "examen_anterior"
+    },
+    {
+      "id": "09f1b76a-4025-44d0-83e3-e3b7c4d681b5",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "e37b155a-f5e5-490b-a8fe-99a11ea63110",
+      "type": "DESARROLLO",
+      "prompt": "Indica distintas formas (al menos 3) en las que los servicios cognitivos de IBM Watson pueden ayudar a un proyecto de aprendizaje automático con Big Data.",
+      "difficulty": 2,
+      "tags": [
+        "sistemas-cognitivos",
+        "big-data",
+        "herramientas"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## IBM Watson para Proyectos de ML con Big Data\n\n### 1. Watson Natural Language Understanding — PLN\nAnaliza grandes volúmenes de texto no estructurado (reseñas, correos, noticias) extrayendo entidades, relaciones, sentimiento y conceptos. Transforma texto crudo en **features estructuradas** listas para alimentar modelos de clasificación o clustering.\n\n*Ejemplo*: Analizar millones de opiniones de clientes para detectar patrones de insatisfacción y predecir churn.\n\n### 2. Watson Studio / AutoAI — Machine Learning Automatizado\nIntegra **AutoML** que automatiza la selección del mejor modelo, la ingeniería de características y la optimización de hiperparámetros sobre grandes datasets. Reduce el tiempo de desarrollo sin expertise profundo en ML.\n\n*Ejemplo*: A partir de un dataset de transacciones financieras, AutoAI identifica y entrena automáticamente el mejor clasificador de fraude.\n\n### 3. Watson Machine Learning — Despliegue y Monitorización a Escala\nPermite entrenar, desplegar y monitorizar modelos a escala sobre grandes volúmenes de datos, con integración nativa con Spark y Hadoop. Facilita el despliegue en producción y la detección automática de data drift.\n\n*Ejemplo*: Entrenamiento de un modelo de mantenimiento predictivo sobre petabytes de datos de sensores industriales.\n\n### 4. Watson Discovery — Búsqueda Inteligente\nIndexa y analiza repositorios de documentos (papers, contratos) permitiendo búsquedas semánticas. Acelera enormemente la revisión del estado del arte en proyectos de investigación.\n\n### 5. Watson Visual Recognition — Visión Artificial\nAPI de clasificación de imágenes para integrar en pipelines de visión por computador sobre grandes datasets (imágenes médicas, control de calidad industrial).",
+      "keywords": [
+        "IBM Watson",
+        "Big Data",
+        "NLP",
+        "AutoML",
+        "Watson Studio",
+        "Watson Discovery",
+        "servicios cognitivos"
+      ],
+      "contentHash": "sha256:e06b30546b4e2416465f6f2c6e388fa0dfc286c490eec871b9a686c81fd7c9ee",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "id": "0fd0d4c6-b258-4350-a8f3-b682dcc3dc41",
@@ -667,7 +735,217 @@
         "wrong": 0
       },
       "createdAt": "2026-02-18T11:59:55.148Z",
-      "updatedAt": "2026-02-18T11:59:55.148Z"
+      "updatedAt": "2026-02-18T14:08:11.496Z",
+      "origin": "examen_anterior"
+    },
+    {
+      "id": "108a7845-09db-42ff-abdb-859a68b353d5",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "89e3ff63-856e-48a6-98b0-1e00a58e2720",
+      "type": "DESARROLLO",
+      "prompt": "La IA no solo requiere algoritmos precisos, sino también explicabilidad. Desarrolla al menos tres motivos para exigir esta característica y ejemplifica uno de ellos.",
+      "difficulty": 2,
+      "tags": [
+        "etica",
+        "XAI",
+        "regulacion"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Explicabilidad en IA (XAI)\n\nLa **explicabilidad** es la capacidad de un sistema de IA de justificar sus decisiones de forma comprensible para los humanos.\n\n### Motivo 1: Confianza y adopción\nLos usuarios (médicos, jueces, gestores de crédito) no adoptarán un sistema en el que no confían. Sin explicación, es imposible validar si la decisión es correcta y quién asume la responsabilidad. Un modelo de \"caja negra\" genera rechazo en entornos de alto impacto.\n\n### Motivo 2: Cumplimiento legal (RGPD)\nEl RGPD (Art. 22) otorga a los ciudadanos el derecho a no ser objeto de decisiones exclusivamente automatizadas y el derecho a recibir una explicación significativa de la lógica aplicada. Las empresas están legalmente obligadas a poder explicar las decisiones que afectan a personas.\n\n### Motivo 3: Detección y corrección de sesgos\nSin explicabilidad, los sesgos en los datos de entrenamiento se perpetúan de forma invisible. Herramientas como SHAP o LIME permiten auditar los modelos y detectar variables discriminatorias.\n\n### Motivo 4: Mejora del modelo\nLa explicabilidad permite al equipo técnico identificar qué características están usando los modelos para predecir, facilitando la iteración y mejora del sistema.\n\n### Ejemplo ilustrativo (Motivo 3)\nAmazon desarrolló un sistema de selección de CVs que penalizaba a las candidatas. El modelo había aprendido el sesgo histórico de contratar más hombres. Solo gracias al análisis de importancia de variables (explicabilidad) se detectó que el género actuaba como variable influyente, lo que permitió corregir y retirar el sistema.",
+      "keywords": [
+        "explicabilidad",
+        "XAI",
+        "RGPD",
+        "LIME",
+        "SHAP",
+        "sesgo",
+        "confianza",
+        "caja negra"
+      ],
+      "contentHash": "sha256:d833b1452d61bfaaaafd1ae2627ecb3f8d3bcc8054e2b01ffe5deadb8a534f47",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "11530d88-a68c-4941-b75c-06cf82556024",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "Al redactar un artículo académico sobre un experimento, es frecuente separar los apartados de resultados, discusión y conclusiones. Desarrolla un ejemplo con un resultado experimental describiendo en tres párrafos el resultado, su discusión y la conclusión.",
+      "difficulty": 2,
+      "tags": [
+        "redaccion-cientifica"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Ejemplo: Comparativa de clasificadores de spam\n\n### Resultados\n\nSe evaluaron tres clasificadores (Naive Bayes, SVM y Random Forest) sobre un corpus de 10.000 correos balanceado al 50% entre spam y legítimo, con partición 80/20 entrenamiento/prueba. Los resultados fueron: Naive Bayes (accuracy: 88,2%, F1: 0,86), SVM (accuracy: 94,7%, F1: 0,93) y Random Forest (accuracy: 93,1%, F1: 0,92). El tiempo de entrenamiento fue de 2 s, 47 s y 18 s respectivamente.\n\n### Discusión\n\nLa SVM alcanzó la mayor exactitud gracias a su capacidad para encontrar hiperplanos de separación óptimos en espacios de alta dimensión, propios de representaciones TF-IDF. Sin embargo, su coste computacional puede ser limitante en producción con grandes volúmenes. Random Forest ofreció rendimiento comparable con tiempo de entrenamiento notablemente menor. La diferencia entre ambos no fue contrastada con test de significación estadística, lo que constituye una limitación del estudio.\n\n### Conclusiones\n\nLos resultados demuestran que la SVM es el clasificador más preciso en el corpus analizado; sin embargo, Random Forest representa una alternativa equilibrada entre rendimiento y eficiencia. En trabajos futuros se recomienda evaluar ambos sobre datasets de mayor escala y aplicar tests estadísticos (p. ej., Wilcoxon) para determinar si las diferencias observadas son significativas.",
+      "keywords": [
+        "resultados",
+        "discusión",
+        "conclusiones",
+        "IMRaD",
+        "F1-score",
+        "SVM",
+        "Naive Bayes"
+      ],
+      "contentHash": "sha256:316cf32ffd74df78ddb3000aaab794c86eb296bfb30a96b94d738e206a9ae540",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "11f7bd39-d60e-4305-9882-4a1927751e3d",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "PRACTICO",
+      "prompt": "Supongamos que hemos utilizado un clasificador (p. ej. **SVM**) para distinguir entre personas **enfermas** (`Enf`) y **no enfermas** (`No`).\n\nA partir de los siguientes resultados:\n\n| Transacción | Clase real | Clase predicha |\n|---|---|---|\n| Tran1 | Enf | Enf |\n| Tran2 | Enf | Enf |\n| Tran3 | No | No |\n| Tran4 | No | No |\n| Tran5 | Enf | No |\n| Tran6 | No | No |\n| Tran7 | No | No |\n| Tran8 | Enf | Enf |\n| Tran9 | Enf | No |\n| Tran10 | No | Enf |\n\n1. Calcula **precision**, **recall** y **F1** para **ambas clases**.  \n2. En base a los resultados, explica el comportamiento del clasificador y si serviría para detectar enfermedad.\n\n**Nota:** puedes usar las fórmulas estándar (TP/FP/TN/FN).",
+      "explanation": "Se espera que el alumno compute métricas por clase y razone sobre el impacto de **FN** en tareas médicas (sensibilidad/recall suele ser prioritaria).",
+      "difficulty": 3,
+      "tags": [
+        "evaluación",
+        "matriz de confusión",
+        "precision",
+        "recall",
+        "F1"
+      ],
+      "modelAnswer": "Primero construimos la matriz de confusión tomando **Enf** como clase positiva:\n\n- **TP (Enf→Enf)**: 3 (Tran1, Tran2, Tran8)\n- **FN (Enf→No)**: 2 (Tran5, Tran9)\n- **TN (No→No)**: 4 (Tran3, Tran4, Tran6, Tran7)\n- **FP (No→Enf)**: 1 (Tran10)\n\n## Métricas para la clase **Enf** (positiva = Enf)\n- **Precision** = TP / (TP+FP) = 3 / (3+1) = **0.75**\n- **Recall** = TP / (TP+FN) = 3 / (3+2) = **0.60**\n- **F1** = 2·P·R / (P+R) = 2·0.75·0.60 / (0.75+0.60) = **0.667**\n\n## Métricas para la clase **No** (positiva = No)\nSi tratamos **No** como clase positiva:\n- TP(No) = 4, FP(No) = 2, FN(No) = 1\n\n- **Precision(No)** = 4 / (4+2) = **0.667**\n- **Recall(No)** = 4 / (4+1) = **0.80**\n- **F1(No)** = 2·0.667·0.80 / (0.667+0.80) = **0.727**\n\n## Interpretación\n- El modelo es **mejor identificando `No`** (recall 0.80) que `Enf` (recall 0.60).\n- Para **detección de enfermedad**, el problema crítico son los **falsos negativos** (Enf clasificados como No): aquí hay **2/5** enfermos perdidos (40%).\n- En un contexto clínico suele preferirse **subir sensibilidad/recall de `Enf`**, aunque baje algo la precision, ajustando el **umbral**, usando **class weights**, **re-muestreo** (over/under-sampling) o eligiendo un modelo/ajuste que optimice recall/F1/ROC-AUC.",
+      "keywords": [
+        "matriz de confusión",
+        "TP",
+        "FP",
+        "TN",
+        "FN",
+        "precision",
+        "recall",
+        "F1",
+        "sensibilidad",
+        "especificidad"
+      ],
+      "contentHash": "sha256:7e2a8d07d9b607991972f0eb213274edbadef60f7792de3b388368ba36d98f64",
+      "createdBy": "Luis",
+      "sourcePackId": "c28801ab-40f1-46bb-938b-9d886992b1a0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T13:47:29.189Z",
+      "updatedAt": "2026-02-18T14:08:34.395Z",
+      "origin": "examen_anterior"
+    },
+    {
+      "id": "1294560d-98e0-4e05-8b66-80586d064987",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "DESARROLLO",
+      "prompt": "Autotaxis Gómez tiene una flota de **10 vehículos**. El gerente está preocupado por el mantenimiento: su máxima prioridad es **prevenir fallos**. Cuando un taxi falla, hay costes indirectos (cliente descontento, reemplazo, taxi y conductor fuera de servicio, etc.). Con revisiones regulares evita algunos fallos, pero no es óptimo porque a veces repara vehículos **antes de que sea necesario**.\n\n**Preguntas:**\n1. ¿Podría disponer de alguna herramienta que le avisara con tiempo suficiente sobre **cuándo un vehículo va a fallar**?\n2. ¿Es un problema de **aprendizaje automático**?\n3. ¿Qué **tipo de problema** es?\n4. ¿Qué **técnicas** vistas en la asignatura aplicarías para resolverlo?\n\nJustifica la respuesta e **indica las necesidades de datos**.",
+      "explanation": "La respuesta debe identificar el problema como supervisado (normalmente clasificación binaria con ventana temporal), proponer técnicas vistas (árboles/RF/boosting/SVM) y detallar qué datos hacen falta y por qué la métrica clave suele ser el recall de fallos.",
+      "difficulty": 3,
+      "tags": [
+        "mantenimiento predictivo",
+        "clasificación",
+        "coste de errores",
+        "árboles de decisión",
+        "random forest"
+      ],
+      "modelAnswer": "Sí: se puede construir una herramienta de **predicción de fallo** (o de “riesgo de fallo”) a partir de datos históricos de uso y mantenimiento.\n\n### 1) ¿Es aprendizaje automático?\n**Sí**, porque el objetivo es aprender una relación *datos → probabilidad de fallo* a partir de ejemplos pasados, en lugar de programar reglas fijas.\n\n### 2) ¿Qué tipo de problema es?\nDepende de cómo definamos el objetivo (**label**):\n\n- **Clasificación supervisada (recomendado en examen):**  \n  Definir una ventana temporal, por ejemplo:  \n  **`fallará_en_los_próximos_30_días` ∈ {sí, no}`**  \n  Esto convierte el problema en **clasificación binaria**.\n- **Regresión:** predecir un valor continuo, p. ej. **“días restantes hasta fallo”** (*RUL*).\n- (Opcional si faltan etiquetas de fallo) **detección de anomalías**: si no hay suficientes fallos etiquetados, puedes empezar detectando comportamientos “raros”, pero para *predecir fallos* lo ideal es supervisado.\n\n### 3) Datos necesarios (lo importante de verdad)\nNecesitas **histórico** con:\n- **Etiqueta/objetivo:** registro de *fallos* (fecha del fallo, tipo, componente, severidad) o, para clasificación, si falló dentro de la ventana definida.\n- **Uso y carga:** km/día, horas de motor, trayectos urbanos vs carretera, temperatura ambiente, estilo de conducción (aceleraciones/frenadas), cargas…\n- **Telemetría/sensores (si existe):** temperaturas, vibraciones, presión, OBD, códigos de error, batería, etc.\n- **Mantenimiento:** revisiones realizadas, piezas sustituidas, tiempo desde última revisión, historial de averías.\n- **Contexto del vehículo:** modelo/año, tipo de motor, kilometraje total, etc.\n\n**Nota crítica:** con solo 10 taxis tendrás pocos ejemplos de fallos → probablemente **pocos datos**. Para que funcione, necesitas o bien **mucho tiempo histórico** (años) o más vehículos / más señales.\n\n### 4) Técnicas aplicables (de la asignatura)\n- **Árboles de decisión (clasificación):** buenos para empezar, interpretables (explicabilidad al gerente).\n- **Random Forest / Bagging:** suele mejorar rendimiento y robustez frente a ruido (y da importancia de variables).\n- **Boosting (si se busca máximo rendimiento):** puede mejorar aún más, vigilando sobreajuste.\n- **SVM:** viable si haces buen preprocesado/normalización y el problema es separable en un espacio transformado, pero menos interpretable.\n- **Evaluación:** el coste principal es el **falso negativo** (no avisar y que falle), así que priorizaría **Recall/Sensibilidad** de la clase “fallo”, además de **matriz de confusión** y un umbral orientado a coste.\n\n### Resultado práctico esperado\nEl sistema devolvería algo tipo: “**Taxi #7: riesgo alto de fallo en 30 días**” y el motivo (variables que disparan el riesgo), para planificar mantenimiento sin “cambiar piezas por deporte”.\n",
+      "keywords": [
+        "clasificación",
+        "mantenimiento predictivo",
+        "variable objetivo",
+        "supervisado",
+        "falsos negativos",
+        "sensibilidad/recall",
+        "árbol de decisión",
+        "random forest"
+      ],
+      "contentHash": "sha256:806585dee43808f8ed72beeb476d41eac7a709d72e780aa300f47a2634ffa4a6",
+      "createdBy": "Luis",
+      "sourcePackId": "9f68ddcb-ee6e-4448-b804-bce7c3c45725",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:06:33.894Z",
+      "updatedAt": "2026-02-18T14:08:29.223Z",
+      "origin": "examen_anterior"
+    },
+    {
+      "id": "13598cca-8862-4024-a99f-ce517ea52f91",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1fe2c210-d133-46f2-a32a-d4e789878bea",
+      "type": "DESARROLLO",
+      "prompt": "¿Qué aspectos o módulos deben gestionarse en el ciclo de vida de los datos en un proyecto de IA?",
+      "difficulty": 2,
+      "tags": [
+        "datos",
+        "gestion-proyectos"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Gestión del Ciclo de Vida de los Datos en un Proyecto de IA\n\n### 1. Adquisición de datos\nIdentificar fuentes (bases de datos internas, APIs, scraping, sensores, datasets públicos). Evaluar calidad, cobertura y sesgos potenciales desde el origen.\n\n### 2. Almacenamiento\nElegir la infraestructura adecuada: Data Lake (datos crudos sin estructura), Data Warehouse (datos procesados para análisis), bases de datos relacionales o NoSQL según el tipo de dato.\n\n### 3. Exploración y comprensión (EDA)\nAnálisis exploratorio para entender distribuciones, detectar valores nulos, outliers, desbalances de clase y correlaciones relevantes.\n\n### 4. Preparación y limpieza\nImputación de nulos, eliminación de duplicados, normalización/estandarización, codificación de variables categóricas, feature engineering.\n\n### 5. Etiquetado (si aplica)\nPara aprendizaje supervisado: etiquetado manual o semi-automático con herramientas como Label Studio o Prodigy. Control de calidad del etiquetado.\n\n### 6. Partición y control de versiones\nDivisión train/validation/test. Versionado de datasets con herramientas como DVC para reproducibilidad.\n\n### 7. Gobernanza y cumplimiento\nAsegurar RGPD y protección de datos. Documentar linaje de datos (data lineage). Gestionar el acceso y permisos.\n\n### 8. Monitorización en producción\nDetectar *data drift* (cambios en la distribución de los datos de entrada) que pueden degradar el rendimiento del modelo.",
+      "keywords": [
+        "ciclo vida datos",
+        "EDA",
+        "data lake",
+        "etiquetado",
+        "data drift",
+        "RGPD",
+        "DVC",
+        "feature engineering"
+      ],
+      "contentHash": "sha256:053d262d8b00cf72047081ecbd59e1c75b20fca038c79677eccf721816089641",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "146cff1c-baca-478a-a29f-840a8b4ca401",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "DESARROLLO",
+      "prompt": "### Las fábricas textiles (análisis completo)\n\nEn el **Anexo** final encontrarás la descripción del problema (**Las fábricas textiles**) y el conjunto de datos asociado. Debes realizar un **análisis completo**, usando los conocimientos de la asignatura.\n\n**Condiciones:**\n- Responde **sin escribir código**.\n- Cualquier aclaración o suposición que hagas debe quedar **escrita**.\n\n> Origen: **Examen anterior** (UNIR **TAA 2024**, **Modelo F**, código **10210068**).\n",
+      "explanation": "Aunque no veas el anexo, el examen espera el guion completo: **definir y**, EDA, limpieza, modelos adecuados según tipo, métricas alineadas con coste y validación sin trampas.",
+      "difficulty": 4,
+      "tags": [
+        "examen anterior",
+        "UNIR",
+        "2024",
+        "modelo-f",
+        "EDA",
+        "preprocesado",
+        "modelado",
+        "textil"
+      ],
+      "modelAnswer": "*(Sin el anexo, planteo el análisis “completo” de forma general, pero dejando claro qué decidiría al ver la variable objetivo.)*\n\n## 1) Definir el objetivo (lo decide la variable y)\n- Si y es **numérica** (producción, coste, consumo, tiempo, defectos por lote…): **regresión** (Tema 4).\n- Si y es **categórica** (defectuoso/no defectuoso, tipo de tejido, nivel de calidad, riesgo alto/medio/bajo…): **clasificación** (Tema 5).\n\n## 2) EDA (Tema 2)\n- Tamaño del dataset, tipos de variables (numéricas/categóricas), cardinalidades.\n- Distribuciones, outliers, correlaciones/relaciones.\n- Si hay variables temporales (turno, fecha, línea), analizar estacionalidad y drift.\n- Si es clasificación: balanceo de clases y coste de errores (FP vs FN).\n\n## 3) Preparación de datos (Tema 3)\n- **Faltantes**: imputación (mediana/moda), o por grupos (p. ej. por fábrica/línea/turno).\n- Codificación de categóricas (one-hot).\n- Normalización/estandarización si usas modelos sensibles a escala (SVM).\n- Tratamiento de outliers (capado/winsor, o justificación de mantenerlos si son fallos reales).\n- Feature engineering:\n  - Ratios (producción por hora), interacción turno×máquina, agregados por lote.\n  - Si hay tiempo: lags/medias móviles.\n\n## 4) Modelos candidatos (Temas 6–10)\n- **Baseline**:  \n  - Regresión: media/mediana.  \n  - Clasificación: clase mayoritaria.\n- **Árbol de decisión**: interpretable (reglas claras de “por qué sale defectuoso”).\n- **Random Forest**: generaliza bien y es robusto a no linealidad.\n- **SVM**: si el problema es separable con buen escalado y no es enorme.\n- **Naïve Bayes**: baseline si las features tienen sentido probabilístico simple.\n\n## 5) Evaluación\n- Partición train/valid/test o CV (estratificada si clasificación).\n- Métricas:\n  - Regresión: MAE/RMSE + análisis de residuos (qué rango de error es aceptable).\n  - Clasificación: precision/recall/F1 + matriz de confusión; si hay desbalance, preferir F1/PR‑AUC.\n- Elegir métrica alineada con negocio:  \n  - Si “defectuoso” es crítico → priorizar **recall** de defectuoso (evitar FN).  \n  - Si parar línea por falsa alarma es caro → priorizar **precision**.\n\n## 6) Resultado y recomendación\n- Seleccionar el modelo que mejor cumpla la métrica clave en validación y confirme en test.\n- Explicar variables influyentes (importancia en RF / reglas del árbol) para que el gerente pueda actuar (mantenimiento, cambios de proceso).\n- Plan de monitorización y reentrenamiento (cambios en maquinaria, materia prima, turnos…).",
+      "contentHash": "sha256:f622c54c37d6ed0113bca227158705cf08e5042826931af14c2451c56274e999",
+      "createdBy": "Luis",
+      "sourcePackId": "eda08197-7337-49c1-9767-1933b50cca25",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T15:13:01.046Z",
+      "updatedAt": "2026-02-18T15:13:01.046Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -746,7 +1024,8 @@
         "wrong": 0
       },
       "createdAt": "2026-02-18T12:21:52.982Z",
-      "updatedAt": "2026-02-18T12:21:52.982Z"
+      "updatedAt": "2026-02-18T14:08:23.580Z",
+      "origin": "examen_anterior"
     },
     {
       "id": "15233561-849e-4593-b60e-57fbc4e183d6",
@@ -786,7 +1065,8 @@
         "wrong": 0
       },
       "createdAt": "2026-02-18T12:21:52.982Z",
-      "updatedAt": "2026-02-18T12:21:52.982Z"
+      "updatedAt": "2026-02-18T14:08:17.437Z",
+      "origin": "examen_anterior"
     },
     {
       "id": "1a57b0df-325b-4158-b8a7-6a59baf2abad",
@@ -826,7 +1106,55 @@
         "wrong": 0
       },
       "createdAt": "2026-02-18T12:07:10.886Z",
-      "updatedAt": "2026-02-18T12:07:10.886Z"
+      "updatedAt": "2026-02-18T14:07:57.829Z",
+      "origin": "examen_anterior"
+    },
+    {
+      "id": "1b5e26d3-46d7-4a06-9928-3b239b580e72",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "3. Cuál de las siguientes afirmaciones describe el aprendizaje automático.",
+      "explanation": "El aprendizaje automático estudia algoritmos que **aprenden patrones a partir de datos** para hacer **predicciones/inferencia** sin ser programados con reglas explícitas para cada caso. Las otras opciones son más vagas o describen programación por reglas.",
+      "difficulty": 1,
+      "tags": [
+        "definición",
+        "aprendizaje automático",
+        "inferencia",
+        "programación por reglas"
+      ],
+      "options": [
+        {
+          "id": "a",
+          "text": "El estudio científico de algoritmos y modelos estadísticos para realizar tareas mediante el uso de inferencia en lugar de instrucciones."
+        },
+        {
+          "id": "b",
+          "text": "La creación de máquinas que pueden realizar tareas de manera autónoma mediante el aprendizaje."
+        },
+        {
+          "id": "c",
+          "text": "La compilación de un gran número de reglas estadísticas que cubre todas las posibles soluciones."
+        },
+        {
+          "id": "d",
+          "text": "Un conjunto de instrucciones que describen cómo lograr un resultado deseado."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:dbca19efaaa9071763d1ff750ccd186b75c21edc28bee286d4e8c0f488afebd8",
+      "createdBy": "Luis",
+      "sourcePackId": "c28801ab-40f1-46bb-938b-9d886992b1a0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T13:47:29.189Z",
+      "updatedAt": "2026-02-18T14:07:50.050Z",
+      "origin": "examen_anterior"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -949,6 +1277,71 @@
       "updatedAt": "2026-02-18T10:02:59.694Z"
     },
     {
+      "id": "21b5fc1b-797f-492a-be60-e54cfbd7e16b",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "Si diseñamos un agente inteligente capaz de jugar al póker, describe las características de su entorno de trabajo (observable; determinista/estocástico; secuencial/episódico; estático/dinámico; discreto/continuo).",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "entorno"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Entorno de Trabajo del Agente Póker\n\n### 1. Observable → Parcialmente observable\nEl agente no tiene acceso a las cartas de los oponentes ni a las cartas pendientes del mazo. Solo percibe las cartas comunitarias, las apuestas y su propia mano.\n\n### 2. Determinista/Estocástico → Estocástico\nEl resultado depende de factores aleatorios incontrolables: el reparto de cartas y las decisiones de los oponentes (inciertas). El mismo estado puede conducir a resultados distintos.\n\n### 3. Secuencial/Episódico → Secuencial\nCada decisión (apostar, igualar, subir, retirarse) afecta al estado futuro. El agente debe planificar a largo plazo; sus acciones presentes condicionan las opciones futuras.\n\n### 4. Estático/Dinámico → Dinámico\nEl entorno cambia mientras el agente delibera: otros jugadores hacen apuestas y se revelan nuevas cartas comunitarias. Evoluciona independientemente de si el agente actúa.\n\n### 5. Discreto/Continuo → Discreto\nLas acciones posibles son un conjunto finito y bien definido: apostar, igualar, subir o retirarse. Los estados del juego son enumerables.\n\n### Conclusión\nEl póker es **parcialmente observable, estocástico, secuencial, dinámico y discreto**: uno de los entornos más complejos para un agente, pues combina incertidumbre, planificación a largo plazo y adaptación a un entorno cambiante.",
+      "keywords": [
+        "agente inteligente",
+        "PEAS",
+        "observable",
+        "estocástico",
+        "secuencial",
+        "dinámico",
+        "discreto",
+        "póker"
+      ],
+      "contentHash": "sha256:940419420201e3ad110c8461b6bd6aefea48a0d03f495033ed6d1e515fa477b8",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "26f11142-3025-41d9-9400-8d9320bc38d8",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "Explica por qué en los documentos científicos se deben incluir referencias bibliográficas y cómo deben utilizarse. Demuéstralo con un ejemplo de citación en el texto y su correspondiente referencia en la bibliografía.",
+      "difficulty": 2,
+      "tags": [
+        "redaccion-cientifica"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Referencias Bibliográficas\n\n### Por qué son necesarias\n1. **Atribución**: Reconocer la autoría de ideas y datos ajenos; evitar el plagio.\n2. **Verificabilidad**: El lector puede contrastar, ampliar o refutar la información citada.\n3. **Impacto científico**: Las citas son la principal métrica del impacto (índice h, factor de impacto).\n4. **Credibilidad**: Fundamentar afirmaciones en fuentes revisadas por pares.\n\n### Cómo utilizarlas\n- Citar inmediatamente tras usar una afirmación, dato o idea ajena.\n- Seguir el estilo de la publicación (APA, IEEE, Vancouver, Chicago).\n- Citar solo fuentes leídas en el original.\n\n### Ejemplo (estilo APA)\n\n**En el texto**:\n> \"Las redes neuronales convolucionales han demostrado resultados superiores en reconocimiento de imágenes médicas (LeCun et al., 2015).\"\n\n**En Bibliografía**:\n> LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. *Nature*, 521(7553), 436–444. https://doi.org/10.1038/nature14539",
+      "keywords": [
+        "referencias bibliográficas",
+        "citación",
+        "APA",
+        "IEEE",
+        "plagio",
+        "impacto científico"
+      ],
+      "contentHash": "sha256:124dae14adbeb9c21314004140c25ad78ab27572fcfef14a7861d67f4cfe24a3",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "id": "2f754f62-640a-422b-9a30-b1a18ee44424",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
@@ -987,6 +1380,67 @@
       },
       "createdAt": "2026-02-18T11:59:55.148Z",
       "updatedAt": "2026-02-18T11:59:55.148Z"
+    },
+    {
+      "id": "2faa4f91-7f58-4755-82c2-f351c0969c5f",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "DESARROLLO",
+      "prompt": "### Calidad del agua en Gorgoroth (razonamiento teórico)\n\nEl acceso al **agua potable** es esencial para la salud y un componente clave de la protección sanitaria.  \nEn la zona de **Gorgoroth** quieren invertir recursos para **mejorar la calidad del agua**, pero no saben cuál es la calidad actual ni si **varía a lo largo del año**.\n\n**Pregunta:**\n1. ¿Sería posible ayudar a los responsables de Gorgoroth a **predecir la calidad del agua** para controlar su contaminación?\n2. ¿Es un problema de **aprendizaje automático**? ¿Qué **tipo de problema** es?\n3. ¿Cómo se podría resolver con las **técnicas vistas en la asignatura**? Justifica.\n\n> Origen: **Examen anterior** (UNIR **TAA 2024**, **Modelo E**, código **10210067**).\n",
+      "explanation": "La clave es **tener datos históricos** y definir bien la variable objetivo. El tipo de problema (regresión vs clasificación) lo marca cómo se mide la calidad. La estacionalidad obliga a validar con particiones temporales (no aleatorias).",
+      "difficulty": 3,
+      "tags": [
+        "examen anterior",
+        "UNIR",
+        "2024",
+        "modelo-e",
+        "agua",
+        "predicción",
+        "regresión",
+        "clasificación"
+      ],
+      "modelAnswer": "Sí, es posible **si** existe (o se puede construir) un histórico de datos que relacione **mediciones** con la **calidad** del agua.\n\n**1) ¿Es un problema de aprendizaje automático?**  \nSí, porque queremos aprender una relación *a partir de datos* para **predecir** un valor/estado futuro sin programar reglas a mano.\n\n**2) ¿Qué tipo de problema es? (depende de cómo definamos “calidad”)**\n- **Regresión supervisada** si “calidad” es un valor continuo (p. ej. índice de calidad, turbidez, nitratos, E. coli, etc.).  \n- **Clasificación supervisada** si “calidad” se discretiza (p. ej. *buena / aceptable / mala*).\n- (Complementario) **detección de anomalías** si el objetivo es detectar **picos de contaminación** raros.\n\n**3) Cómo lo resolvería con lo visto en la asignatura**\n1. **Definir la variable objetivo (y)**: índice numérico o categorías. Aclarar unidades, umbrales y frecuencia (diaria, semanal…).  \n2. **Recoger variables (X)** relevantes:  \n   - Medidas físico‑químicas (pH, conductividad, turbidez, nitratos, etc.).  \n   - Contexto: temperatura, lluvias, caudal, estacionalidad (mes, semana), eventos (vertidos, obras), localización.  \n3. **EDA (Tema 2)**: distribuciones, estacionalidad, outliers, correlaciones; ver si hay patrones por estación.  \n4. **Tratamiento de datos (Tema 3)**: faltantes (imputación razonable), escalado/normalización si procede, codificación de categóricas, y *features* temporales (lags, medias móviles).  \n5. **Entrenamiento y validación**:\n   - Split **temporal** (no mezclar futuro en entrenamiento): train con meses/años anteriores y test con periodos posteriores.  \n   - Modelos base: **regresión lineal** (baseline) y modelos no lineales como **árboles / Random Forest** si hay relaciones complejas.  \n6. **Evaluación**:\n   - Regresión: MAE/RMSE y análisis de residuos.  \n   - Clasificación: matriz de confusión, precision/recall/F1 (y especial foco en “mala calidad” si es lo crítico).  \n7. **Uso operativo**: predicción diaria/semanal + alarmas por umbrales + monitorización de deriva (si cambia el patrón, reentrenar).\n\n**Resumen:** es un problema **supervisado** (regresión o clasificación) apoyado por EDA + limpieza + validación temporal; y se puede complementar con **anomalías** para detectar contaminación inesperada.",
+      "contentHash": "sha256:ab9a467f53ee3990bc6d8959fa8389c28cca7dc723e33f49ff57f95908179a6a",
+      "createdBy": "Luis",
+      "sourcePackId": "7b705f3e-b96f-429a-8cf2-7fba79c8a0fa",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T15:12:57.701Z",
+      "updatedAt": "2026-02-18T15:12:57.701Z"
+    },
+    {
+      "id": "329f5205-5651-44d1-9abd-397a474faeb2",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "Explica brevemente en qué consiste el peer review en las publicaciones científicas, por qué es importante y cuál es al menos un inconveniente.",
+      "difficulty": 2,
+      "tags": [
+        "publicacion",
+        "metodologia"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Peer Review (Revisión por Pares)\n\nEl **peer review** es el proceso por el que un artículo es evaluado por expertos independientes del mismo campo antes de su publicación. Modalidades principales:\n- **Simple ciego**: El autor desconoce quiénes son los revisores.\n- **Doble ciego**: Ni autor ni revisores se conocen (mayor imparcialidad).\n- **Abierto**: Ambas partes son conocidas y las revisiones pueden publicarse.\n\n### Por qué es importante\n- Garantiza el **rigor científico** antes de que el trabajo llegue a la comunidad.\n- Filtra errores, afirmaciones infundadas y resultados no reproducibles.\n- Mejora la calidad mediante feedback experto.\n- Principal **mecanismo de control de calidad** de la ciencia.\n\n### Inconvenientes\n- **Sesgo del revisor**: Puede favorecer trabajos afines o penalizar enfoques novedosos.\n- **Lentitud**: El proceso puede durar meses o años.\n- **Carga no remunerada**: Revisores sin compensación pueden restar profundidad a las revisiones.\n- **Reproducibilidad no verificada**: El peer review no garantiza reproducibilidad de resultados.",
+      "keywords": [
+        "peer review",
+        "revisión por pares",
+        "doble ciego",
+        "rigor científico",
+        "sesgo"
+      ],
+      "contentHash": "sha256:a26e566ad9a3da9d0396c9afb32ddb978fc40ba1a786f916d3b394e47fd812c6",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -1189,6 +1643,210 @@
       "updatedAt": "2026-02-18T10:16:52.488Z"
     },
     {
+      "id": "5053290c-62ee-4565-9ecb-2ada742c4e08",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1fe2c210-d133-46f2-a32a-d4e789878bea",
+      "type": "DESARROLLO",
+      "prompt": "Describe en qué consiste el movimiento de datos abiertos (open data), cuáles son los principales tipos de entidades que publican datos de forma abierta y quiénes son sus principales beneficiarios. ¿Qué motivaciones tendría una empresa privada para publicar sus datos? Propón un ejemplo práctico.",
+      "difficulty": 2,
+      "tags": [
+        "datos",
+        "gestion-proyectos"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Open Data (Datos Abiertos)\n\n### Qué es\nEl movimiento **open data** promueve que los datos sean accesibles, reutilizables y redistribuibles libremente por cualquier persona, sin restricciones de copyright ni de otro tipo. Los datos se publican en formatos abiertos y estándar (CSV, JSON, RDF).\n\n### Entidades que publican datos abiertos\n- **Entidades gubernamentales**: Administraciones nacionales, regionales y locales (datos.gob.es, data.europa.eu).\n- **Organismos internacionales**: ONU, OMS, Banco Mundial.\n- **Instituciones académicas**: Datasets de experimentos, corpus lingüísticos (UCI ML Repository, Zenodo).\n- **Empresas tecnológicas**: Google, Meta, Microsoft publican datasets para investigación en IA.\n\n### Principales beneficiarios\n- **Ciudadanos**: Información para participación cívica y toma de decisiones informadas.\n- **Investigadores**: Análisis y generación de conocimiento sin coste de adquisición.\n- **Empresas**: Desarrollo de productos y servicios sobre datos publicados.\n- **Administraciones públicas**: Mejora de la eficiencia y transparencia.\n\n### Motivaciones de una empresa privada\n1. **Responsabilidad social corporativa (RSC)**: Mejorar imagen pública.\n2. **Generación de ecosistema**: Terceros desarrollan productos compatibles (efecto red).\n3. **Posicionamiento como líder**: Referente del sector.\n4. **Atraer talento e investigación**: Los investigadores desarrollan mejoras aprovechables.\n\n### Ejemplo práctico\nUna empresa de transporte público publica datos de rutas, horarios y posiciones en tiempo real. Los desarrolladores crean apps de navegación, los investigadores analizan movilidad, y la empresa obtiene feedback para optimizar sus servicios.",
+      "keywords": [
+        "open data",
+        "datos abiertos",
+        "RSC",
+        "transparencia",
+        "ecosistema",
+        "FAIR"
+      ],
+      "contentHash": "sha256:fe75b3fd2ef237fadb0fdb8e3a4cc7f05dfd1dd84ae40314161b1f02eb2f76d7",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "54a46a0b-4660-402d-a936-6f91274202af",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "5c173022-2f44-4b8c-a0c6-4248992b7ddf",
+      "type": "DESARROLLO",
+      "prompt": "En el contexto de la ciencia de datos, explica qué diferencias esenciales existen cuando hablamos de modelos de Inteligencia Artificial frente a un proyecto tradicional de software.",
+      "difficulty": 2,
+      "tags": [
+        "gestion-proyectos",
+        "ciencia-datos"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Proyectos de IA vs Software Tradicional\n\n### 1. Rol de los datos\n- **Software**: Los datos son una entrada más; el comportamiento se define con reglas explícitas programadas.\n- **IA**: Los datos son el **activo principal**. El sistema aprende reglas implícitas a partir de ellos.\n\n### 2. Naturaleza del comportamiento\n- **Software**: Hace exactamente lo que el programador codifica. Resultado determinista.\n- **IA**: El comportamiento **emerge del entrenamiento**. Las predicciones son probabilísticas.\n\n### 3. Ciclo de vida\n- **Software**: Análisis → Diseño → Desarrollo → Testing → Despliegue → Mantenimiento.\n- **IA**: Incluye fases adicionales: adquisición de datos, EDA, feature engineering, entrenamiento, evaluación, monitorización de data drift y reentrenamiento continuo.\n\n### 4. Gestión de la incertidumbre\n- **Software**: Comportamiento predecible y verificable mediante tests.\n- **IA**: Siempre existe margen de error cuantificado con métricas (accuracy, F1, AUC).\n\n### 5. Degradación en producción\n- **Software**: No se degrada si el código no cambia.\n- **IA**: Puede degradarse por *data drift* o *concept drift*, requiriendo reentrenamiento.\n\n### 6. Perfiles del equipo\n- **Software**: Desarrolladores, QA, arquitectos de software.\n- **IA**: Añade data scientists, ML engineers, MLOps, expertos de dominio para etiquetado.",
+      "keywords": [
+        "IA vs software",
+        "ciclo de vida",
+        "data drift",
+        "incertidumbre",
+        "MLOps",
+        "iterativo"
+      ],
+      "contentHash": "sha256:0ce91fc191bdb2857d6f007025f2c213c3f8ecd27cb6ddae0b2f014a7c9138ee",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "5857f19a-7c3a-48ee-b3b7-ba35ab8be53b",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1fe2c210-d133-46f2-a32a-d4e789878bea",
+      "type": "DESARROLLO",
+      "prompt": "Explica los pasos necesarios para integrar un modelo de inteligencia artificial en un sistema empresarial existente.",
+      "difficulty": 2,
+      "tags": [
+        "despliegue",
+        "gestion-proyectos"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Integración de un Modelo de IA en un Sistema Empresarial\n\n### 1. Definición de la interfaz de integración\nDeterminar cómo comunicará el sistema con el modelo: **API REST/gRPC**, batch o librería. Definir el formato de datos (JSON, CSV, Avro).\n\n### 2. Empaquetado y serialización del modelo\nGuardar el modelo en formato portable: `.pkl` (scikit-learn), `SavedModel` (TensorFlow), `ONNX` (interoperabilidad entre frameworks).\n\n### 3. Contenerización del entorno\nUsar **Docker** para encapsular el modelo con sus dependencias. Opcionalmente **Kubernetes** para orquestación y escalado.\n\n### 4. Despliegue en infraestructura\n- **Cloud**: AWS SageMaker, Azure ML, Google Vertex AI.\n- **On-premise**: Servidores propios.\n- **Edge**: Inferencia local en tiempo real.\n\n### 5. Exposición como servicio (endpoint)\nPunto de acceso que recibe datos de entrada, invoca la inferencia y devuelve la predicción. Incluir autenticación y control de acceso.\n\n### 6. Pruebas de integración\nPruebas funcionales, de carga y de latencia (SLA de tiempo de respuesta).\n\n### 7. Monitorización continua\nDetectar *data drift*, degradación del rendimiento y errores de inferencia. Alertas y plan de reentrenamiento periódico.\n\n### 8. Documentación y gobernanza\nDocumentar la API, formato de datos, versiones del modelo y responsables del mantenimiento (MLOps).",
+      "keywords": [
+        "integración",
+        "API REST",
+        "Docker",
+        "Kubernetes",
+        "endpoint",
+        "monitorización",
+        "data drift",
+        "ONNX",
+        "MLOps"
+      ],
+      "contentHash": "sha256:ccc5b00da5bbc3a260893f9dab5c44f3b6f78d7954cf11439b15ed9d78e194f5",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "593266c8-83e3-46cb-b298-54eda9d5bbd1",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1fe2c210-d133-46f2-a32a-d4e789878bea",
+      "type": "DESARROLLO",
+      "prompt": "Dado un conjunto de datos personales, demográficos y fiscales de varios usuarios, explica cómo procederías para anonimizarlos de forma fiable que no permita la identificación inversa.",
+      "difficulty": 2,
+      "tags": [
+        "datos",
+        "privacidad"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Anonimización de Datos Personales\n\nEl proceso debe cumplir el **RGPD** y garantizar que sea inviable reidentificar a los individuos.\n\n### Paso 1: Clasificar los datos\n- **Identificadores directos** (nombre, DNI, email): → eliminar o sustituir.\n- **Cuasi-identificadores** (fecha de nacimiento exacta, código postal, profesión): combinables para reidentificar → transformar.\n- **Datos sensibles** (salario exacto, historial fiscal, patrimonio): → enmascarar o generalizar.\n\n### Paso 2: Aplicar técnicas\n- **Supresión**: Eliminar campos identificadores directos.\n- **Pseudonimización**: Sustituir identificadores por tokens en un vault seguro (reversible solo con acceso autorizado).\n- **Generalización**: Reemplazar valores precisos por rangos (edad exacta → \"30-40 años\"; salario → \"30.000-40.000 €\").\n- **Perturbación / Ruido**: Añadir ruido aleatorio a valores numéricos (salario ± 5%).\n- **k-anonimato**: Garantizar que cada registro sea indistinguible de al menos k-1 registros similares (k ≥ 5).\n\n### Paso 3: Validar\n- Ejecutar ataques de *linkage* con datasets externos para verificar que no hay reidentificación posible.\n- Comprobar que los datos mantienen utilidad estadística.\n\n### Paso 4: Documentar\n- Registrar el proceso según RGPD Art. 25 (privacidad por diseño y por defecto).",
+      "keywords": [
+        "anonimización",
+        "RGPD",
+        "pseudonimización",
+        "k-anonimato",
+        "generalización",
+        "supresión",
+        "linkage"
+      ],
+      "contentHash": "sha256:c968cc3bf02850f9701db04eed9ff45bbc442b366c5593dc2dd07d717ce595af",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "5a136c19-a4d6-4e2c-9962-426e24d504b0",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
+      "type": "DESARROLLO",
+      "prompt": "Describe en qué consisten los algoritmos evolutivos (o genéticos) y propón un problema que pueda ser tratado con ellos.",
+      "difficulty": 2,
+      "tags": [
+        "computacion-bioinspirada",
+        "optimizacion"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Algoritmos Evolutivos (Genéticos)\n\n### Qué son\nMétodos de optimización inspirados en la evolución biológica darwiniana. Operan sobre una **población de soluciones candidatas** que evolucionan iterativamente mediante operadores inspirados en la genética.\n\n### Componentes principales\n1. **Codificación**: Cada solución se representa como un cromosoma (cadena de bits, valores reales o permutaciones).\n2. **Función de fitness**: Evalúa la calidad de cada solución.\n3. **Selección**: Los individuos con mayor fitness tienen mayor probabilidad de ser padres (ruleta, torneo).\n4. **Cruce (crossover)**: Combina dos padres generando hijos que heredan características de ambos.\n5. **Mutación**: Introduce cambios aleatorios para mantener diversidad y evitar convergencia prematura.\n6. **Reemplazo**: Los hijos sustituyen a los individuos menos aptos.\n\n### Ciclo\n`Población inicial → Evaluación → Selección → Cruce + Mutación → Nueva generación → [repetir hasta convergencia]`\n\n### Problema propuesto: Optimización de rutas logísticas (TSP)\nUna empresa de distribución tiene 20 clientes. Objetivo: minimizar la distancia total recorrida.\n\n- **Codificación**: Permutación de los 20 clientes.\n- **Fitness**: Distancia total de la ruta (minimizar).\n- **Cruce**: Order Crossover (OX).\n- **Mutación**: Intercambio aleatorio de dos clientes en la permutación.\n\nCon 20 clientes existen 20! ≈ 2,4×10¹⁸ rutas posibles. El algoritmo converge a soluciones de alta calidad sin búsqueda exhaustiva.",
+      "keywords": [
+        "algoritmo genético",
+        "evolutivo",
+        "fitness",
+        "cruce",
+        "mutación",
+        "selección",
+        "TSP",
+        "optimización"
+      ],
+      "contentHash": "sha256:7850a9c7262d3587a45b8c6e9b7dada7058070ae78cef73e388d300ae6663e13",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "5a9a56c8-c26b-489f-bd59-8f96f252b829",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "DESARROLLO",
+      "prompt": "El **Hospital del Valle Inglés** ha detectado que los pacientes con **EPOC** suelen volver a ser ingresados pasados **30 días** de su alta. Creen que estos reingresos se pueden evitar si identifican a los pacientes con **alto riesgo** y se toman medidas.\n\nTe preguntan:\n\n1. ¿Se puede resolver con **aprendizaje automático**?\n2. ¿Qué **tipo de problema** es?\n3. ¿Qué **técnicas** vistas en la asignatura aplicarías?\n\nJustifica tu respuesta.",
+      "explanation": "La respuesta debe identificar que hay **etiqueta histórica** (reingreso sí/no) y por tanto es **supervisado**, y justificar elección de **métricas** y **modelos** adecuados al contexto clínico.",
+      "difficulty": 3,
+      "tags": [
+        "introducción",
+        "aprendizaje supervisado",
+        "clasificación",
+        "salud"
+      ],
+      "modelAnswer": "Sí, es un problema **típico** resoluble con *aprendizaje automático*, porque se quiere **predecir** si un paciente va a **reingresar** (o la **probabilidad** de reingreso) a partir de información disponible en el alta.\n\n## 1) Tipo de problema\n- Si definimos la variable objetivo como `reingresa_en_30_dias ∈ {sí, no}`, es un problema de **aprendizaje supervisado** de **clasificación binaria**.\n- Si en lugar de etiqueta queremos una **probabilidad** o un **riesgo continuo**, se puede ver como **regresión** (pero en práctica clínica se usa mucho clasificación/probabilidad).\n\n## 2) Qué datos haría falta (inputs y etiqueta)\n- **Etiqueta (y):** reingreso en ≤ 30 días (sí/no) a partir de registros hospitalarios.\n- **Características (X):** edad, sexo, historial de reingresos, comorbilidades (Charlson u otras), severidad EPOC, medicación, pruebas (SpO2, gasometría, etc.), duración de estancia, servicios, adherencia, visitas previas, factores socioeconómicos si existen, etc.\n\n## 3) Proceso (lo mínimo serio)\n1. **Definir** el objetivo y el punto de corte (30 días) y evitar *data leakage* (usar solo variables disponibles **antes** del alta).\n2. **Preprocesado:** tratar **valores ausentes** (imputación razonable), codificar categóricas (one-hot), normalizar si el modelo lo necesita.\n3. **Partición** train/test (o validación cruzada) manteniendo la proporción de reingresos.\n4. **Entrenar** varios modelos y comparar.\n5. **Evaluar** con métricas adecuadas (no solo accuracy):\n   - Si la clase de reingreso es minoritaria, interesan **recall/sensibilidad** para reingresos, **precision** y **AUC/ROC**.\n   - Mirar matriz de confusión y elegir umbral según coste clínico (un **FN** = paciente de riesgo no detectado).\n\n## 4) Técnicas/algoritmos aplicables (de la asignatura)\n- **Baseline interpretable:** *regresión logística*.\n- **Árboles de decisión** (interpretables pero propensos a overfitting).\n- **Random Forest** (bagging + selección aleatoria de variables): suele ir muy bien en datos tabulares y da **importancia de variables**.\n- **Boosting** (p. ej. AdaBoost/Gradient Boosting) para mejorar rendimiento, ajustando pesos a ejemplos difíciles.\n- **SVM** (especialmente con kernels si hay fronteras no lineales), aunque escala peor con datasets muy grandes.\n- **Naïve Bayes** como baseline rápido si hay muchas variables categóricas/texto.\n\n## 5) Conclusión\nEs un problema de **predicción de riesgo de reingreso**, por tanto **supervisado** y principalmente de **clasificación binaria**. La estrategia razonable es comparar modelos (logística/árboles/Random Forest/boosting/SVM), y elegir el que mejor balancee **sensibilidad** (detectar pacientes de riesgo) y **precision** (no saturar recursos) según el coste clínico.",
+      "keywords": [
+        "aprendizaje supervisado",
+        "clasificación binaria",
+        "reingreso",
+        "data leakage",
+        "desbalanceo",
+        "precision",
+        "recall",
+        "ROC",
+        "random forest",
+        "boosting"
+      ],
+      "contentHash": "sha256:a6242bfb808c9b367b57bd91b87e37add48225e0f56dd36a802a2aafa1c7f4bd",
+      "createdBy": "Luis",
+      "sourcePackId": "c28801ab-40f1-46bb-938b-9d886992b1a0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T13:47:29.189Z",
+      "updatedAt": "2026-02-18T13:47:29.189Z"
+    },
+    {
       "id": "5b5bf6ac-bf66-47f2-a646-b339c75e030f",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
@@ -1269,6 +1927,68 @@
       "updatedAt": "2026-02-18T10:14:52.302Z"
     },
     {
+      "id": "5dd3a97b-cef3-431b-8086-9fb24d61c392",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
+      "type": "DESARROLLO",
+      "prompt": "¿Cuándo utilizarías aprendizaje no supervisado? Pon dos ejemplos.",
+      "difficulty": 2,
+      "tags": [
+        "aprendizaje-automatico",
+        "clustering"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Aprendizaje No Supervisado\n\n### Cuándo se utiliza\n- Cuando **no disponemos de datos etiquetados** y etiquetar manualmente sería imposible o prohibitivamente costoso.\n- Para **explorar y descubrir la estructura** inherente de los datos sin hipótesis previas.\n- Como paso previo al aprendizaje supervisado: segmentar datos para entrenar modelos específicos por segmento.\n- Para **reducir la dimensionalidad** antes de otra tarea (visualización, compresión).\n- Para **detectar anomalías** sin ejemplos previos de anomalías.\n\n### Ejemplo 1: Segmentación de clientes (Clustering — K-Means)\nUna empresa de retail tiene millones de transacciones sin etiquetas de comportamiento. Se aplica K-Means para agrupar clientes en segmentos según hábitos de compra (frecuencia, ticket medio, categorías preferidas). Sin definir a priori qué es un \"buen cliente\", el algoritmo descubre grupos naturales que marketing usa para personalizar campañas.\n\n### Ejemplo 2: Reducción de dimensionalidad para visualización (PCA)\nEn un proyecto de genómica, cada muestra tiene 20.000 variables (genes). Se aplica PCA para reducir a 2-3 dimensiones, permitiendo visualizar si las muestras forman grupos naturales (distintos subtipos de tumor). El análisis puede revelar patrones desconocidos que expertos validan posteriormente.",
+      "keywords": [
+        "aprendizaje no supervisado",
+        "clustering",
+        "K-Means",
+        "PCA",
+        "sin etiquetas",
+        "anomalías",
+        "reducción dimensionalidad"
+      ],
+      "contentHash": "sha256:24c8477d1eb6f3cf68f0167311aa6c94ad0df486926405f7fa85f4f3ce12d975",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "610b7564-1824-4963-b124-3ab6a6365079",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "DESARROLLO",
+      "prompt": "### Reconocimiento y clasificación de pistachos (razonamiento teórico)\n\nEn la empresa de Alfredo quieren mejorar su eficiencia clasificando **pistachos**: saben que distintas **especies/tipos** se destinan a distintos mercados y quieren **separarlos automáticamente**.\n\n**Preguntas:**\n1. ¿Sería posible hacer un **reconocimiento de pistachos** para clasificar cada tipo?\n2. ¿Es un problema de **aprendizaje automático**? ¿Qué **tipo de problema** es?\n3. ¿Cómo se podría resolver con las **técnicas vistas en la asignatura**? Justifica.\n\n> Origen: **Examen anterior** (UNIR **TAA 2024**, **Modelo F**, código **10210068**).\n",
+      "explanation": "El núcleo es: datos etiquetados + features (color/forma/textura) + un modelo de clasificación (SVM/RF) + evaluación con matriz de confusión. Es exactamente el patrón “supervisado” del Tema 1.",
+      "difficulty": 3,
+      "tags": [
+        "examen anterior",
+        "UNIR",
+        "2024",
+        "modelo-f",
+        "visión",
+        "clasificación",
+        "pistachos"
+      ],
+      "modelAnswer": "Sí, es perfectamente viable **si** dispones de datos (normalmente imágenes o mediciones) etiquetados por tipo de pistacho.\n\n**1) ¿Es aprendizaje automático?**  \nSí: queremos aprender un modelo que, dado un pistacho (imagen/medidas), prediga su **clase** sin reglas manuales.\n\n**2) Tipo de problema**\n- Es un problema de **clasificación supervisada**:\n  - **Binaria** si solo hay “apto / no apto” o “tipo A / resto”.\n  - **Multiclase** si hay varios tipos/especies de pistacho.\n\n**3) Cómo resolverlo con técnicas de la asignatura**\n1. **Datos**:\n   - Recopilar ejemplos por clase (idealmente balanceados): fotos en condiciones controladas o con variabilidad realista.\n   - Etiquetas fiables (ground truth) por especie/tipo.\n2. **Extracción de características** (sin necesidad de deep learning):\n   - Color (histogramas), textura (descriptores), forma/tamaño, defectos visibles.\n3. **Modelos** (supervisados):\n   - **SVM** (Tema 7): suele ir muy bien en clasificación con features bien escaladas.\n   - **Árboles / Random Forest** (Temas 6 y 10): capturan no linealidades y son robustos.\n   - **Naïve Bayes** (Tema 8) como baseline rápido si las features encajan.\n4. **Preprocesado** (Tema 3):\n   - Normalización/estandarización si usas SVM.\n   - Tratamiento de faltantes si hay mediciones incompletas.\n5. **Evaluación** (Tema 5):\n   - Matriz de confusión por clase; precision/recall/F1 (macro si multiclase).\n   - Si el coste de errores es distinto (mandar pistacho “caro” al mercado barato vs al revés), ajustar objetivo o umbrales.\n6. **Puesta en producción**:\n   - Pipeline: captura → preprocesado → extracción de features → predicción → decisión.\n   - Monitorizar drift (cambios por cosecha, iluminación, cámara, etc.) y reentrenar.\n\n**Resumen:** Es **clasificación supervisada** con datos etiquetados + features + un clasificador (SVM/RF) y evaluación por métricas de clasificación.",
+      "contentHash": "sha256:a864b85398273565d493937f0b716f5247c722e239f24f0e099d76b86f65cefd",
+      "createdBy": "Luis",
+      "sourcePackId": "eda08197-7337-49c1-9767-1933b50cca25",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T15:13:01.046Z",
+      "updatedAt": "2026-02-18T15:13:01.046Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
       "type": "TEST",
@@ -1307,6 +2027,132 @@
       },
       "createdAt": "2026-02-18T10:21:35.270Z",
       "updatedAt": "2026-02-18T10:21:35.270Z"
+    },
+    {
+      "id": "62bc229a-975b-4f83-bdd4-739005a51d35",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "DESARROLLO",
+      "prompt": "### Gemelo digital y detección de enfermedades en aguacates (imágenes)\n\nEl **gemelo digital** plantea un nuevo paradigma en el empleo de modelos de IA. En el sector agro, puede ser una opción muy válida para la **monitorización** de cultivo y **detección precoz** de enfermedades y plagas.\n\nSe cuenta con:\n\n- Un conjunto de **3600 imágenes** de aguacates con dos tipos de enfermedades: **Antracnosis** y **Roña**.\n- Otro conjunto de imágenes de aguacates **sanos**.\n\n**Preguntas:**\n1. ¿Sería posible reconocer a los aguacates **enfermos**?\n2. ¿Es un problema de **aprendizaje automático**? ¿Qué **tipo de problema** es?\n3. ¿Cómo se podría resolver a partir de las **técnicas vistas en la asignatura**?\n\n> Origen: **Examen anterior** (UNIR, ordinaria **07–12/03/2025**, **Modelo D**).\n",
+      "explanation": "Clasificación supervisada sobre imágenes: binaria o multiclase según el objetivo. El enfoque estándar es **preprocesar + extraer características/embeddings** y entrenar un clasificador del temario, evaluando con métricas por clase y priorizando *recall* en `enfermo`.",
+      "difficulty": 2,
+      "tags": [
+        "examen-anterior",
+        "unir",
+        "taa",
+        "2025-03",
+        "modelo-d",
+        "vision",
+        "clasificacion"
+      ],
+      "modelAnswer": "## 1) ¿Se puede reconocer si están enfermos?\n\nSí. Si las imágenes están **etiquetadas** (sano / Antracnosis / Roña) es viable aprender un modelo que, a partir de la **información visual** (color, textura, patrones de mancha), prediga la clase.\n\nEl límite real lo marcan:\n- **Calidad/variedad** de imágenes (iluminación, fondos, distancia, cámaras).\n- **Balanceo** entre clases (si hay muy pocas de una enfermedad).\n- **Consistencia** del etiquetado (ruido en etiquetas).\n\n## 2) ¿Es aprendizaje automático? ¿Qué tipo?\n\nSí: es **aprendizaje supervisado**.\n\nSegún el objetivo:\n- **Clasificación binaria**: `enfermo` vs `sano` (si solo quieres “alerta”).\n- **Clasificación multiclase**: `sano` / `Antracnosis` / `Roña` (si quieres diagnóstico).\n\n## 3) ¿Cómo lo resolvería con técnicas del temario?\n\n### Pipeline mínimo (sin entrar en “magia”)\n1. **Partición** en *train/valid/test* (idealmente **estratificada** por clase).\n2. **Preprocesado**:\n   - Redimensionado uniforme.\n   - **Normalización** de píxeles.\n   - (Opcional) **aumentación**: rotaciones, flips, cambios leves de brillo/contraste para robustez.\n3. **Extracción de características** (dos vías):\n   - **Clásica** (para usar clasificadores del temario): histogramas de color, **HOG**, **LBP** (textura), etc.\n   - **Aprendizaje profundo** (práctico en imágenes): *transfer learning* con una **CNN** preentrenada para extraer embeddings (y luego clasificar).\n4. **Modelo** (del temario) sobre esas características/embeddings:\n   - **SVM** (con kernel si hace falta no linealidad) suele ir bien con descriptores.\n   - **Random Forest** / **Árboles** como baseline interpretable.\n   - (Si el dataset es muy limpio y los descriptores buenos, incluso **Naïve Bayes** puede servir como baseline rápido).\n5. **Evaluación**:\n   - Matriz de confusión.\n   - **Precision/Recall/F1 por clase**.\n   - En agro suele interesar priorizar **Recall** de `enfermo` (minimizar falsos negativos: no “dejar pasar” un enfermo).\n6. **Integración en gemelo digital**:\n   - El modelo alimenta el gemelo con un estado `salud` + **probabilidad**.\n   - Monitorización de **drift** y reentrenos periódicos (cambios de estación/cámara/variedad).\n\n### Nota práctica\nSi el coste de un falso negativo (no detectar enfermedad) es alto, se puede:\n- Ajustar **umbral** de decisión.\n- Usar **ponderación de clases** o re-muestreo (si hay desbalance).\n",
+      "contentHash": "sha256:0e41005dbec137566ed24a74ce0a551f3c9eed3db659d2aed0a53922ef187f77",
+      "createdBy": "Luis",
+      "sourcePackId": "04a1a1df-5192-4d2f-9e7e-12bf6daf1f16",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:22:11.722Z",
+      "updatedAt": "2026-02-18T14:22:11.722Z"
+    },
+    {
+      "id": "64cf238a-f282-424d-9277-ff6b761ef710",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "Describe en qué consiste el algoritmo MINIMAX y sus campos de aplicación. Aporta un ejemplo.",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "algoritmos"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Algoritmo Minimax\n\n### Qué es\nEl **Minimax** es un algoritmo de búsqueda adversarial en árboles de decisión para **juegos de dos jugadores de suma cero con información perfecta**. Busca la acción óptima asumiendo que el oponente también juega de forma óptima.\n\n- **MAX**: Selecciona la acción que maximiza su puntuación.\n- **MIN**: Selecciona la acción que minimiza la puntuación de MAX.\n- El algoritmo explora recursivamente el árbol hasta estados terminales, propagando valores hacia la raíz alternando MAX/MIN.\n\n### Complejidad y optimización\nExplora todos los nodos: **O(b^d)**. La **poda alfa-beta** elimina ramas que no pueden influir en la decisión, reduciendo la complejidad a **O(b^(d/2))** en el mejor caso sin alterar el resultado.\n\n### Campos de aplicación\n- **Juegos por turnos**: Ajedrez, damas, tres en raya, Othello.\n- **Negociación automática**: Anticipar respuestas del oponente.\n- **Robótica adversarial**: Planificación con agentes de objetivos opuestos.\n\n### Ejemplo: Tres en raya\nEl agente MAX (juega con X) evalúa todas las posibles jugadas. En cada turno de MIN (juega con O) se selecciona la jugada que minimiza la ganancia de MAX. Minimax garantiza que el agente nunca pierde si juega de forma óptima. La poda alfa-beta elimina ramas innecesarias haciendo el cálculo mucho más eficiente.",
+      "keywords": [
+        "minimax",
+        "poda alfa-beta",
+        "suma cero",
+        "árbol decisión",
+        "búsqueda adversarial",
+        "ajedrez"
+      ],
+      "contentHash": "sha256:1f0a1f302f27008d07c7a1a6b0a0e831b4a302d12fc45eb6da6e81315b498a59",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "66216017-0f99-41fc-b7e3-937f524f59d1",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "e37b155a-f5e5-490b-a8fe-99a11ea63110",
+      "type": "DESARROLLO",
+      "prompt": "Razona cómo la Inteligencia Artificial puede contribuir a la personalización de los diagnósticos en el ámbito sanitario.",
+      "difficulty": 2,
+      "tags": [
+        "sistemas-cognitivos",
+        "salud"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## IA en la Personalización de Diagnósticos Sanitarios\n\nLa IA permite avanzar desde la medicina estándar hacia la **medicina de precisión**: diagnósticos y tratamientos adaptados a cada paciente.\n\n### 1. Análisis de imagen médica personalizado\nCNN entrenadas en millones de imágenes (RMN, TAC, radiografías) detectan patologías con precisión equiparable a la humana. Al cruzar con el historial del paciente, el sistema prioriza diagnósticos según su perfil de riesgo individual.\n\n### 2. Análisis genómico y farmacogenómica\nAlgoritmos de ML analizan el perfil genómico del paciente para predecir predisposición a enfermedades y la respuesta a determinados fármacos, seleccionando el tratamiento óptimo para cada individuo.\n\n### 3. Extracción de información con NLP\nModelos de PLN extraen información de notas clínicas no estructuradas e informes de laboratorio, identificando patrones de síntomas que correlacionan con diagnósticos específicos a escala imposible de analizar manualmente.\n\n### 4. Predicción de riesgo y medicina preventiva\nModelos predictivos calculan la probabilidad de desarrollar enfermedades o sufrir complicaciones (sepsis, reingreso), permitiendo intervenciones preventivas antes de que el problema sea clínicamente evidente.\n\n### 5. Sistemas de apoyo a la decisión clínica (CDSS)\nIntegran guías clínicas, literatura científica y el perfil del paciente para recomendar opciones diagnósticas al médico, quien mantiene la decisión final.\n\n### Consideraciones éticas\n- **Explicabilidad**: El médico debe entender por qué la IA hace una recomendación.\n- **Privacidad**: Los datos sanitarios son categoría especial bajo el RGPD.\n- **Responsabilidad**: Claridad sobre quién responde ante un diagnóstico asistido erróneo.",
+      "keywords": [
+        "medicina de precisión",
+        "CNN",
+        "genómica",
+        "farmacogenómica",
+        "NLP",
+        "CDSS",
+        "EHR"
+      ],
+      "contentHash": "sha256:d35bc4e0b79dadf261028e10ccf0f218ed68ee28d2571f44d6bba1959e1b265a",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "6f023ee1-59f4-41cd-921c-dca745e2e156",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "26b84c63-3862-49b2-bf3a-5521aa7461a9",
+      "type": "DESARROLLO",
+      "prompt": "Explica cómo la observación y el razonamiento son cruciales para obtener conocimiento en ciencia, y proporciona un ejemplo de cómo estos métodos se aplican en un estudio de inteligencia artificial.",
+      "difficulty": 2,
+      "tags": [
+        "metodologia",
+        "ciencia"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Observación y Razonamiento en la Ciencia\n\n### La Observación\nLa observación es el punto de partida del método científico. Para ser válida debe ser:\n- **Repetible**: Otros investigadores deben obtener los mismos datos en condiciones similares.\n- **Objetiva**: Libre de interpretaciones subjetivas previas.\n- **Documentada**: Registrada con precisión para su análisis posterior.\n\n### El Razonamiento\nA partir de observaciones, el científico aplica:\n- **Razonamiento inductivo**: De observaciones específicas → generalización (hipótesis).\n- **Razonamiento deductivo**: De teorías generales → predicciones concretas.\n- **Ciclo hipotético-deductivo**: Formular hipótesis → diseñar experimentos → confirmar o refutar.\n\n### Ejemplo en IA: Detección de fraude bancario\n1. **Observación**: Se recopilan 12 meses de transacciones etiquetadas como fraudulentas o legítimas.\n2. **Razonamiento inductivo**: Las transacciones fraudulentas ocurren frecuentemente en horarios inusuales e importes atípicos → Hipótesis: estas variables son predictoras clave.\n3. **Verificación experimental**: Se entrena un clasificador y se evalúa si las variables identificadas predicen el fraude mejor que el azar (AUC-ROC).\n4. **Conclusión**: Si el modelo valida la hipótesis, se incorpora al sistema de detección en producción.",
+      "keywords": [
+        "observación",
+        "razonamiento inductivo",
+        "deductivo",
+        "método científico",
+        "hipótesis",
+        "AUC-ROC"
+      ],
+      "contentHash": "sha256:204db91ab9c7c77ed1af6338d91c604a25863b35b2efb51e8fe28fe07d5e7b1b",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "id": "72d5e1c3-1ecd-43b6-b4d4-95b175654637",
@@ -1389,6 +2235,104 @@
       "updatedAt": "2026-02-18T11:52:26.355Z"
     },
     {
+      "id": "73eb7223-ff35-4aaa-a51c-dc1214af99ac",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "Describe qué es el ESTADO DEL ARTE en un documento científico y por qué es relevante dentro de cualquier avance de investigación.",
+      "difficulty": 2,
+      "tags": [
+        "redaccion-cientifica"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Estado del Arte\n\nEl **estado del arte** es una revisión crítica y estructurada del conocimiento existente sobre el tema de investigación. Analiza, sintetiza y evalúa los trabajos más relevantes publicados, identificando qué se ha hecho, qué metodologías se han empleado, qué resultados se han obtenido y qué lagunas quedan por explorar.\n\n### Por qué es relevante\n\n- **Contextualización**: Sitúa la investigación dentro del campo, evitando replicar trabajo ya realizado.\n- **Justificación de la necesidad**: Demuestra que el problema no ha sido resuelto satisfactoriamente.\n- **Marco de comparación**: Permite comparar los propios resultados con trabajos previos.\n- **Detección de brechas (gaps)**: Identifica áreas no exploradas que la nueva investigación puede abordar.\n- **Rigor científico**: Garantiza que la investigación parte de una base sólida.\n- **Credibilidad**: Demuestra conocimiento profundo del campo.\n\nEl estado del arte es la garantía de que una investigación es **original, relevante y rigurosa**.",
+      "keywords": [
+        "estado del arte",
+        "revisión bibliográfica",
+        "gap",
+        "brechas",
+        "originalidad"
+      ],
+      "contentHash": "sha256:184cca9269b8514c04ad7e4348e144d607d0f4beae306588f3ddd1b828718b84",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "73f591b0-ff24-43e0-96f1-79fa1a067577",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "¿Qué son los enjambres (swarms) de agentes inteligentes? Describe sus aplicaciones, ventajas y desventajas frente a sistemas individuales.",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "swarm",
+        "optimizacion"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Enjambres de Agentes (Swarms)\n\n### Qué son\nUn enjambre es un conjunto de **agentes simples descentralizados** que interactúan entre sí y con el entorno, emergiendo comportamientos colectivos complejos sin un controlador central. Se inspiran en la naturaleza: colonias de hormigas, bandadas de pájaros, colonias de abejas.\n\n### Aplicaciones\n- **Robótica**: Enjambres de robots para exploración en catástrofes, vigilancia de perímetros, drones para agricultura de precisión.\n- **Optimización**: ACO (Ant Colony Optimization) y PSO (Particle Swarm Optimization) para el Problema del Viajante o diseño de redes.\n- **Logística**: Coordinación de flotas de vehículos autónomos.\n- **Redes de sensores**: Monitorización ambiental distribuida y tolerante a fallos.\n\n### Ventajas frente a sistemas individuales\n- **Robustez**: Si un agente falla, el sistema global sigue funcionando (sin punto único de fallo).\n- **Escalabilidad**: Se añaden o retiran agentes sin rediseñar el sistema.\n- **Paralelismo**: Múltiples agentes exploran simultáneamente distintas zonas o soluciones.\n- **Adaptabilidad**: El comportamiento emerge localmente sin reprogramación centralizada.\n\n### Desventajas\n- **Difícil predicción**: El comportamiento emergente es difícil de controlar con precisión.\n- **Coordinación compleja**: La comunicación entre agentes puede ser costosa.\n- **Sin optimalidad global garantizada**: Sin visión centralizada, la solución puede ser subóptima.\n- **Seguridad**: Un agente comprometido puede propagar comportamientos maliciosos.",
+      "keywords": [
+        "swarm",
+        "enjambre",
+        "ACO",
+        "PSO",
+        "emergencia",
+        "descentralizado",
+        "tolerancia a fallos"
+      ],
+      "contentHash": "sha256:aba3d9232ea67514c39e1b45fe56c3317b40e8596dfe6a0afa9bc5b30f05b701",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "73fca49a-c4de-4456-8193-f307d7429045",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "89e3ff63-856e-48a6-98b0-1e00a58e2720",
+      "type": "DESARROLLO",
+      "prompt": "¿Cuáles son algunos de los desafíos éticos más comunes en el desarrollo y uso de inteligencia artificial?",
+      "difficulty": 2,
+      "tags": [
+        "etica",
+        "regulacion"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Desafíos Éticos en IA\n\n### 1. Sesgo y discriminación algorítmica\nLos modelos aprenden de datos históricos que contienen sesgos sociales. Pueden perpetuar discriminaciones en contratación, créditos, diagnóstico médico o justicia penal si no se detectan y corrigen.\n\n### 2. Privacidad y vigilancia masiva\nEl reconocimiento facial, análisis de comportamiento y Big Data pueden vulnerar la privacidad sin consentimiento, especialmente cuando los usa el Estado o grandes corporaciones.\n\n### 3. Opacidad y falta de explicabilidad (caja negra)\nLas decisiones de redes neuronales profundas son difíciles de interpretar, lo que genera problemas cuando afectan derechos fundamentales y no pueden justificarse ante los afectados.\n\n### 4. Responsabilidad y atribución de daños\nCuando un sistema de IA causa daño (accidente de coche autónomo, diagnóstico erróneo), no está claro quién responde: ¿fabricante, operador, usuario?\n\n### 5. Impacto en el empleo\nLa automatización puede desplazar trabajos en manufactura, transporte y servicios financieros, generando desigualdad económica si la transición no se gestiona adecuadamente.\n\n### 6. Uso malicioso\nDeepfakes, generación masiva de desinformación, ataques adversariales y armamento autónomo son riesgos graves del uso malicioso de la IA.\n\n### 7. Concentración de poder\nEl desarrollo avanzado de IA está concentrado en pocas empresas tecnológicas y países, generando asimetrías de poder y dependencia tecnológica.\n\n### Marco regulatorio\nLa UE afronta estos desafíos con el **AI Act** (Ley de IA): clasifica los sistemas por nivel de riesgo e impone requisitos proporcionales de transparencia y supervisión humana.",
+      "keywords": [
+        "sesgo",
+        "privacidad",
+        "explicabilidad",
+        "responsabilidad",
+        "deepfakes",
+        "empleo",
+        "AI Act",
+        "ética IA"
+      ],
+      "contentHash": "sha256:877e80886af60690c5d0b4a668c8e6acc99b669f1abe9a5a2a9d74733d5dee30",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
       "type": "TEST",
@@ -1427,6 +2371,101 @@
       },
       "createdAt": "2026-02-18T10:46:25.545Z",
       "updatedAt": "2026-02-18T10:46:25.545Z"
+    },
+    {
+      "id": "7e25d26a-a153-4648-92f3-772c59e29d48",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "PRACTICO",
+      "prompt": "### Evaluación de un clasificador de fraude (métricas)\n\nSupongamos que hemos utilizado un clasificador (p. ej. **SVM**) para distinguir entre transacciones bancarias **fraudulentas** (`Fr`) y **no fraudulentas** (`No`).\n\nA partir de los siguientes resultados:\n\n| Transacción | Clase real | Clase predicha |\n|---|---|---|\n| Tran1 | Fr | Fr  TP |\n| Tran2 | Fr | Fr TP |\n| Tran3 | No | No TN |\n| Tran4 | No | No TN |\n| Tran5 | Fr | No  FN |\n| Tran6 | No | No TN |\n| Tran7 | No | No TN |\n| Tran8 | Fr | Fr TP |\n| Tran9 | Fr | No FN |\n| Tran10 | No | Fr FP |\n\n\nSe pide:\n\n1. Calcular **precision**, **recall**, **accuracy** y **F1** para estos resultados de clasificación **para las dos clases**.  \n2. En base a los resultados obtenidos, explica el comportamiento del clasificador en cuanto a la **detección de transacciones fraudulentas**.\n\n> Origen: **Examen anterior** (UNIR **TAA 2024**, **Modelo E**, código **10210067**).\n",
+      "explanation": "Lo relevante es la **clase Fr**: con recall 0.60 estás dejando pasar un 40% de fraude. Si el coste del FN es alto, hay que mover el objetivo hacia mayor recall aunque suban FP.",
+      "difficulty": 4,
+      "tags": [
+        "examen anterior",
+        "UNIR",
+        "2024",
+        "modelo-e",
+        "métricas",
+        "matriz de confusión",
+        "fraude"
+      ],
+      "modelAnswer": "Primero sacamos la matriz de confusión tomando **Fr** como clase positiva:\n\n- **TP (Fr→Fr)**: Tran1, Tran2, Tran8 = **3**  \n- **FN (Fr→No)**: Tran5, Tran9 = **2**  \n- **TN (No→No)**: Tran3, Tran4, Tran6, Tran7 = **4**  \n- **FP (No→Fr)**: Tran10 = **1**  \n\nTotal = 10.\n\n## Métricas (clase positiva = Fr)\n- **Precision(Fr)** = TP / (TP+FP) = 3 / (3+1) = **0.75**\n- **Recall(Fr)** = TP / (TP+FN) = 3 / (3+2) = **0.60**\n- **Accuracy** = (TP+TN) / Total = (3+4) / 10 = **0.70**\n- **F1(Fr)** = 2·P·R / (P+R) = 2·0.75·0.60 / (0.75+0.60) = **0.67**\n\n## Métricas para la otra clase (No)\nSi calculas por clase (one-vs-rest) para **No** como “positiva”:\n\n- TP(No)=4, FP(No)=2, FN(No)=1, TN(No)=3\n\n- **Precision(No)** = 4/(4+2) = **0.67**\n- **Recall(No)** = 4/(4+1) = **0.80**\n- **F1(No)** ≈ 2·0.67·0.80/(0.67+0.80) = **0.73**\n- **Accuracy** = **0.70** (igual para ambas clases)\n\n## Interpretación (detección de fraude)\n- El modelo **se equivoca poco** comparado con el total (70%), pero eso no es lo importante si el fraude es crítico.\n- Para **fraude**, el **recall es 0.60**: se come **2 de 5** fraudes (40%).  \n  Si el objetivo empresarial es “no dejar pasar fraude”, esto es flojo.\n- La **precision de fraude 0.75** indica que cuando marca fraude suele acertar, pero aún genera algún falso positivo (1 caso).\n\n**Qué haría para mejorar detección de fraude (si es lo prioritario):**\n- Ajustar el umbral / costes (si el modelo lo permite), o **class_weight** / re-muestreo para priorizar recall de fraude.\n- Evaluar con métricas enfocadas en fraude: recall/F1 de la clase Fr, curva PR, etc.",
+      "contentHash": "sha256:1e3cac7279c88b1518a40fb80893644a8e587b3f5dccfd2460abb1a7c6b63c2d",
+      "createdBy": "Luis",
+      "sourcePackId": "7b705f3e-b96f-429a-8cf2-7fba79c8a0fa",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T15:12:57.701Z",
+      "updatedAt": "2026-02-18T15:12:57.701Z"
+    },
+    {
+      "id": "8157d78e-5a3b-4335-8f3d-f3dd81fefaa4",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1fe2c210-d133-46f2-a32a-d4e789878bea",
+      "type": "DESARROLLO",
+      "prompt": "En el contexto de la anonimización de datos personales, explica brevemente la diferencia entre tokenizar y aplicar una función hash.",
+      "difficulty": 2,
+      "tags": [
+        "datos",
+        "privacidad",
+        "seguridad"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Tokenización vs Función Hash\n\n### Tokenización\n- Sustituye el dato original por un **token** (valor aleatorio sin relación matemática con el original).\n- La correspondencia token ↔ dato original se guarda en un **vault** (almacén seguro).\n- Es **reversible**: con acceso autorizado al vault se puede recuperar el original.\n- **Ejemplo**: DNI \"12345678A\" → Token \"TKN-9834-XQZL\".\n- **Uso**: Pagos con tarjeta (PCI-DSS), historial clínico donde se necesita recuperar el dato original.\n\n### Función Hash\n- Aplica una **función matemática unidireccional** (SHA-256, bcrypt, Argon2) que transforma el dato en un valor de longitud fija.\n- Es **irreversible por diseño**: no existe función inversa.\n- El mismo input siempre produce el mismo hash (*determinista*).\n- **Vulnerabilidad**: Susceptible a ataques de *rainbow tables* sin **salt** (sal).\n- **Ejemplo**: SHA256(\"12345678A\" + salt) = \"a3f9d8c2...\"\n- **Uso**: Almacenamiento de contraseñas, verificación de integridad.\n\n### Resumen\n\n| | Tokenización | Hash |\n|---|---|---|\n| Reversible | ✅ (con vault) | ❌ |\n| Relación matemática | No (aleatoria) | Sí (one-way) |\n| Caso de uso | Datos recuperables | Contraseñas, verificación |",
+      "keywords": [
+        "tokenización",
+        "hash",
+        "SHA-256",
+        "vault",
+        "salt",
+        "one-way",
+        "rainbow tables",
+        "anonimización"
+      ],
+      "contentHash": "sha256:f7c128464df218f01fade610e34960e33d91e0b94249d9fcf34e9d536ad143a8",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "84a18c2b-1ccc-4f14-b9ca-90a45b674c3f",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "Describe brevemente las diferencias entre agentes reactivos, agentes basados en objetivos y agentes basados en función de utilidad.",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "tipos-agentes"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Tipos de Agentes Inteligentes\n\n### Agentes Reactivos\nActúan directamente según la **percepción actual**, sin memoria ni planificación. Implementan reglas condición-acción: *SI [percepción] → ENTONCES [acción]*.\n\n- **Ventajas**: Simples, rápidos, predecibles.\n- **Limitación**: Inflexibles ante situaciones no previstas.\n- **Ejemplo**: Termostato (si temperatura < 20°C → encender calefacción).\n\n### Agentes Basados en Objetivos\nTienen representación del **estado actual y del estado meta**. Seleccionan acciones que los acerquen al objetivo mediante búsqueda y planificación.\n\n- **Ventajas**: Flexibles; pueden replantear el plan si el entorno cambia.\n- **Limitación**: No distinguen entre diferentes formas de alcanzar el mismo objetivo.\n- **Ejemplo**: GPS que planifica ruta al destino; recalcula si hay tráfico.\n\n### Agentes Basados en Función de Utilidad\nNo solo buscan el objetivo, sino hacerlo de la **mejor manera posible**. La función de utilidad cuantifica la preferencia entre estados y gestiona objetivos en conflicto.\n\n- **Ventajas**: Optimizan bajo incertidumbre; toman decisiones racionales.\n- **Limitación**: Mayor complejidad computacional; requieren diseñar bien la función de utilidad.\n- **Ejemplo**: Agente de trading que maximiza beneficio esperado ponderando riesgo y rendimiento.\n\n| | Reactivo | Por objetivos | Por utilidad |\n|---|---|---|---|\n| Memoria | No | Sí | Sí |\n| Planificación | No | Sí | Sí |\n| Optimización | No | No | Sí |",
+      "keywords": [
+        "agente reactivo",
+        "por objetivos",
+        "función de utilidad",
+        "condición-acción",
+        "planificación"
+      ],
+      "contentHash": "sha256:1efd19f163c14723a1e24a816d9628b4b08c7477722c30c61bdcbc548a1d3855",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -1547,6 +2586,68 @@
       "updatedAt": "2026-02-18T12:21:52.982Z"
     },
     {
+      "id": "8b2a53ea-0ba4-4bb2-83f3-6f0aa58ee238",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "Describe qué aspectos de estilo en la redacción científica son mejorables en el texto: \"El método 1 distribuye mejor, sin duda alguna, los resultados que el método 2\".",
+      "difficulty": 1,
+      "tags": [
+        "redaccion-cientifica"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Análisis del Texto\n\nLa frase presenta múltiples deficiencias de estilo científico:\n\n1. **Falta de precisión**: \"Distribuye mejor\" es ambiguo; no se especifica qué métrica define una distribución \"mejor\" (varianza, uniformidad, media…). Toda afirmación debe cuantificarse.\n\n2. **Subjetividad inaceptable**: \"Sin duda alguna\" introduce un sesgo personal. El lenguaje científico debe ser neutro; las afirmaciones se sustentan en datos, no en la certeza del autor.\n\n3. **Ausencia de evidencia**: No se aportan datos estadísticos (medias, desviaciones, p-values). Sin ellos la afirmación es inverificable.\n\n4. **Falta de rigor metodológico**: No se menciona el método de comparación ni las condiciones del experimento, impidiendo la reproducibilidad.\n\n5. **Tono informal**: La estructura es propia del lenguaje cotidiano, no del registro académico formal.\n\n### Versión corregida\n\n> \"El método 1 presentó una distribución de resultados significativamente más uniforme que el método 2, con desviación estándar de 0,23 frente a 0,47 (p < 0,05, test de Levene), sobre 500 experimentos en condiciones controladas equivalentes.\" ",
+      "keywords": [
+        "estilo científico",
+        "objetividad",
+        "precisión",
+        "evidencia",
+        "redacción",
+        "subjetividad"
+      ],
+      "contentHash": "sha256:f6bebf661a9485c83a51a7c598662ac52e31168ca1de038ffd4a980a51623b9a",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "91e405c9-5cca-4d76-b077-b15d89158343",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "¿Por qué es importante el contexto en el funcionamiento de los agentes inteligentes y cómo influye en su desempeño? Proporciona un ejemplo práctico.",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "contexto"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Importancia del Contexto en los Agentes Inteligentes\n\n### Qué es el contexto\nEl **contexto** es el conjunto de información sobre el entorno, el estado actual y las circunstancias relevantes que rodean al agente: localización, tiempo, historial de interacciones, condiciones ambientales, estado de otros agentes.\n\n### Por qué es fundamental\n\n1. **Determina la acción apropiada**: La misma percepción puede requerir respuestas distintas según el contexto.\n2. **Permite la adaptación**: El agente adapta su comportamiento sin necesidad de reprogramación.\n3. **Mejora la eficiencia**: Permite priorizar acciones relevantes y descartar las irrelevantes.\n4. **Habilita la personalización**: En agentes conversacionales y recomendadores, el contexto del usuario es esencial.\n\n### Ejemplo práctico: Asistente virtual (Siri / Alexa)\n\nCuando el usuario pregunta \"¿Qué tiempo hace?\", la respuesta depende totalmente del contexto:\n\n- **Sin contexto**: El agente pide aclaración sobre la ciudad.\n- **Con contexto de localización GPS**: Responde con el tiempo en la ciudad actual del usuario.\n- **Con contexto temporal + calendario**: Si el usuario tiene un evento mañana en Madrid, el agente informa proactivamente del tiempo en Madrid mañana sin que el usuario lo solicite.\n\nEl desempeño mejora radicalmente al incorporar contexto: respuestas más precisas, relevantes y personalizadas.",
+      "keywords": [
+        "contexto",
+        "agente inteligente",
+        "adaptación",
+        "personalización",
+        "asistente virtual"
+      ],
+      "contentHash": "sha256:5c4a761741c193747028e122481a9bf48550ba936eac34029e42f8f0dc1853d1",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "df40a8ec-40bc-4d84-8e87-984c338add40",
       "type": "TEST",
@@ -1587,6 +2688,70 @@
       "updatedAt": "2026-02-18T10:28:30.621Z"
     },
     {
+      "id": "98766896-cc96-40a8-9ec7-90c22d14e1d6",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "DESARROLLO",
+      "prompt": "### El Tiempo en Australia (análisis completo)\n\nEn el **Anexo** final encontrarás la descripción del problema (**El Tiempo en Australia**) y el conjunto de datos asociado. Debes realizar un **análisis completo**, usando los conocimientos de la asignatura.\n\n**Condiciones:**\n- Responde **sin escribir código**.\n- Cualquier aclaración o suposición que hagas sobre el conjunto de datos debe quedar **escrita**.\n- La respuesta debe ser una **explicación y/o justificación** a las cuestiones planteadas (no basta con listar pasos).\n\n> Origen: **Examen anterior** (UNIR **TAA 2024**, **Modelo E**, código **10210067**).\n",
+      "explanation": "Un “análisis completo” aquí es: **definir objetivo**, **EDA**, **preprocesado**, **modelos candidatos**, **métrica alineada con negocio** y **validación sin fuga**. Árboles/RF suelen ser la apuesta segura en este tipo de dataset.",
+      "difficulty": 4,
+      "tags": [
+        "examen anterior",
+        "UNIR",
+        "2024",
+        "modelo-e",
+        "EDA",
+        "preprocesado",
+        "evaluación",
+        "tiempo"
+      ],
+      "modelAnswer": "*(Sin el anexo delante, asumo el caso típico “Weather in Australia”: objetivo de **clasificación** como `RainTomorrow` = Sí/No, con variables meteorológicas y fechas.)*\n\n## 1) Entender el problema y definir objetivo\n- **Objetivo**: predecir si lloverá mañana (binario) o predecir cantidad (regresión).  \n- Definir horizonte (mañana), unidad temporal (diario) y qué es “llover” (umbral de mm).\n\n## 2) Exploración (Tema 2)\n- Distribución de la **variable objetivo** (¿está desbalanceada? suele estarlo).\n- Distribuciones de variables numéricas (Temp, Humidity, WindSpeed, Pressure…).\n- Relaciones clave: humedad vs lluvia, presión vs lluvia, nubosidad vs lluvia.\n- Efectos por **Location** y por **estación** (mes/estación del año).\n\n## 3) Limpieza y preparación (Tema 3)\n- **Faltantes**:  \n  - Identificar porcentaje por variable.  \n  - Imputación: mediana para numéricas, moda para categóricas, o imputación por grupo (p. ej. por Location/mes).  \n  - Si una variable tiene demasiados NA, valorar eliminarla.\n- **Variables categóricas** (Location, WindDir…): one-hot o codificación adecuada.\n- **Fecha**: extraer mes/estación; opcionalmente features como “día del año”.\n- **Escalado**: necesario si usas SVM; no imprescindible para árboles/RF.\n\n## 4) Baselines y modelos candidatos (Temas 6–10)\n- **Baseline**: predecir la clase mayoritaria + métricas (para saber si el modelo “aprende”).\n- Modelos razonables:\n  - **Árboles de decisión**: interpretables, capturan no linealidad.\n  - **Random Forest**: mejora generalización, robusto a ruido y relaciones complejas.\n  - **SVM**: si está bien escalado y el dataset no es gigantesco; kernels si no es lineal.\n  - **Naïve Bayes**: rápido, baseline probabilístico (aunque independencia es fuerte).\n- Si hay desbalance: ponderación de clases o técnicas de balanceo.\n\n## 5) Evaluación (Tema 5)\n- Split recomendado: **train/valid/test** o validación cruzada estratificada (si no hay fuga temporal).  \n  Si hay componente temporal fuerte, usar split por tiempo.\n- Métricas:\n  - **Recall** de “lluvia” si lo crítico es no perder días de lluvia (FN caros).  \n  - **Precision** si los falsos avisos son muy costosos.  \n  - **F1** si quieres equilibrio.  \n  - **ROC-AUC / PR-AUC** si hay desbalance.\n- Matriz de confusión para entender FP/FN y ajustar el umbral si el modelo da probabilidades.\n\n## 6) Interpretación y entrega\n- Importancia de variables (en RF) o reglas del árbol para explicar “por qué” predice lluvia.\n- Recomendación final: elegir el modelo que cumpla el criterio de negocio (coste FN vs FP) y que generalice en test.\n- Plan de despliegue: reentrenamiento periódico, control de deriva por estación y por localización.",
+      "contentHash": "sha256:105e358616d0b165f86a46f368d99bd2b868ba6dafdbbb29bfaac0ed1fa0387b",
+      "createdBy": "Luis",
+      "sourcePackId": "7b705f3e-b96f-429a-8cf2-7fba79c8a0fa",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T15:12:57.701Z",
+      "updatedAt": "2026-02-18T15:12:57.701Z"
+    },
+    {
+      "id": "98dda0fe-cb39-4c9d-9a18-6565be18da4c",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "5c173022-2f44-4b8c-a0c6-4248992b7ddf",
+      "type": "DESARROLLO",
+      "prompt": "Explica las etapas del ciclo de vida de un proyecto de inteligencia artificial. ¿Qué métricas utilizarías para evaluar el éxito del proyecto?",
+      "difficulty": 2,
+      "tags": [
+        "gestion-proyectos",
+        "ciclo-vida"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Ciclo de Vida de un Proyecto de IA\n\n### Etapas\n\n1. **Definición del problema y objetivos**: Identificar el problema de negocio, traducirlo en problema de IA y fijar el criterio de éxito.\n2. **Adquisición y exploración de datos (EDA)**: Recopilar datos, explorar distribuciones, detectar nulos, outliers y desbalances de clase.\n3. **Preparación de datos**: Limpieza, normalización, codificación, ingeniería de características, partición train/validation/test.\n4. **Selección y diseño del modelo**: Elegir el tipo de modelo adecuado y experimentar con algoritmos.\n5. **Entrenamiento y ajuste de hiperparámetros**: Entrenamiento y optimización (Grid Search, Bayesian Optimization).\n6. **Evaluación y validación**: Evaluar sobre el conjunto de prueba. Aplicar validación cruzada.\n7. **Despliegue**: Integrar el modelo en producción (API REST, Docker, plataforma cloud).\n8. **Monitorización y mantenimiento**: Detectar data drift y reentrenar periódicamente.\n\n### Métricas de evaluación del éxito\n\n- **Técnicas de ML**: Accuracy, Precisión, Recall, F1-score, AUC-ROC (clasificación); RMSE, MAE (regresión).\n- **De negocio**: ROI del proyecto, reducción de costes, aumento de ingresos, tiempo ahorrado.\n- **Operativas**: Latencia de inferencia, uptime del servicio, coste por predicción.",
+      "keywords": [
+        "ciclo vida IA",
+        "EDA",
+        "feature engineering",
+        "despliegue",
+        "data drift",
+        "F1-score",
+        "ROI",
+        "validación cruzada"
+      ],
+      "contentHash": "sha256:fcd0bacab530744e07081e14af92a410426ea8724a5488544d373fbc22cc6d99",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "id": "98f2eeac-cd3e-4885-8a95-a34f68f4005f",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
@@ -1625,6 +2790,40 @@
       },
       "createdAt": "2026-02-18T12:07:10.886Z",
       "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "id": "99c3f472-b127-418f-a6cd-9e3c7bc34f05",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "e37b155a-f5e5-490b-a8fe-99a11ea63110",
+      "type": "DESARROLLO",
+      "prompt": "Los sistemas cognitivos requieren de grandes volúmenes de datos para generar aplicaciones eficaces. Desarrolla un caso de uso de aplicación del Big Data a sistemas cognitivos con fuentes diversas, alta velocidad y gran volumen.",
+      "difficulty": 2,
+      "tags": [
+        "sistemas-cognitivos",
+        "big-data"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Big Data y Sistemas Cognitivos: Sistema de Salud Predictivo\n\n### Las 3V del Big Data en este caso\n- **Volumen**: Petabytes de datos clínicos históricos.\n- **Velocidad**: Datos generados en tiempo real por dispositivos wearables y sensores.\n- **Variedad**: Datos estructurados, texto clínico, imágenes médicas, señales biométricas.\n\n### Fuentes de datos diversas\n- **Registros médicos electrónicos (EHR)**: Historial clínico, medicación, laboratorio.\n- **Dispositivos wearables**: Frecuencia cardíaca, SpO2, tensión arterial, sueño en tiempo real.\n- **Imágenes médicas**: Radiografías, RMN, tomografías (datos no estructurados de gran tamaño).\n- **Redes sociales**: Menciones sobre síntomas, sentimiento de la población.\n- **Datos meteorológicos y ambientales**: Correlación entre contaminación/temperatura y enfermedades respiratorias.\n\n### Aplicación cognitiva\n1. **Predecir brotes de enfermedades** semanas antes de que sean evidentes.\n2. **Identificar pacientes de alto riesgo** de reingreso o complicaciones graves.\n3. **Optimizar la asignación de recursos**: Camas, personal, medicamentos.\n4. **Personalizar tratamientos** según perfil genético y respuesta histórica del paciente.\n\n### Infraestructura requerida\nPlataforma Big Data con procesamiento en streaming (Apache Kafka, Spark Streaming) para datos en tiempo real, y Data Lake en cloud para el histórico.",
+      "keywords": [
+        "Big Data",
+        "3V",
+        "sistemas cognitivos",
+        "salud predictiva",
+        "wearables",
+        "EHR",
+        "streaming",
+        "Kafka"
+      ],
+      "contentHash": "sha256:06e23cea90bb141c327b3fadfbb1d971ef96b4ed9066378e27eab8a25191d4e3",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "id": "9b2a1405-da8c-4a0a-81e2-f4ddca0ed59c",
@@ -1707,6 +2906,217 @@
       "updatedAt": "2026-02-18T11:52:26.355Z"
     },
     {
+      "id": "a0f023cb-3ee3-4de8-982e-b5013eda0c05",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "5c173022-2f44-4b8c-a0c6-4248992b7ddf",
+      "type": "DESARROLLO",
+      "prompt": "Explica las principales diferencias de las metodologías ágiles frente a las tradicionales en lo referente a las variables de alcance, tiempo y coste de un proyecto.",
+      "difficulty": 2,
+      "tags": [
+        "gestion-proyectos",
+        "metodologias"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Metodologías Ágiles vs Tradicionales\n\n### El triángulo de restricciones\nTodo proyecto se define por: **alcance** (qué se hace), **tiempo** (cuánto tarda) y **coste** (cuánto cuesta). La diferencia fundamental: cuál es fija y cuál es flexible.\n\n### Metodologías Tradicionales (Waterfall, PMBOK)\n- **Alcance**: Definido **completamente al inicio** mediante requisitos congelados. Los cambios son costosos.\n- **Tiempo y Coste**: Se estiman a partir del alcance fijo; el equipo intenta cumplirlos.\n- **Entrega**: Un único entregable final al término del proyecto.\n- **Adecuado para**: Proyectos con requisitos estables y bien definidos (ingeniería civil, hardware).\n\n### Metodologías Ágiles (Scrum, Kanban, SAFe)\n- **Alcance**: Es la variable **flexible**. Las funcionalidades se priorizan en un *backlog* y pueden modificarse entre sprints.\n- **Tiempo y Coste**: Son **fijos** (duración del sprint y tamaño del equipo constantes).\n- **Entrega**: Entregables **incrementales y funcionales** al final de cada sprint.\n- **Adecuado para**: Proyectos con requisitos cambiantes (software, IA, startups).\n\n### Por qué las ágiles son preferidas en IA\nEn proyectos de IA, los resultados experimentales pueden cambiar la dirección del proyecto. La posibilidad de ajustar el alcance sprint a sprint permite reorientar la investigación sin los altos costes de cambio del modelo en cascada.",
+      "keywords": [
+        "metodologías ágiles",
+        "waterfall",
+        "alcance",
+        "tiempo",
+        "coste",
+        "Scrum",
+        "sprint",
+        "backlog"
+      ],
+      "contentHash": "sha256:9469d035a3d1f428bbcb34f87129fe84c0eca0b29123011016aad48c34c679e6",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "a13ea212-fbb8-4688-a791-a828d7857707",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
+      "type": "TEST",
+      "prompt": "2. Se tiene un conjunto de datos médicos de registro de signos vitales de pacientes de un servicio de UCI adulto: presión arterial, frecuencia cardiaca, temperatura y frecuencia respiratoria. En este conjunto de datos existe un 5% de datos faltantes en la presión arterial y en la frecuencia respiratoria. ¿Cuál sería la mejor estrategia para trabajar con los datos faltantes?",
+      "explanation": "Con un **5%** de datos faltantes no suele compensar eliminar filas (pierdes información) y, en *signos vitales* por paciente, una imputación **intra-paciente** suele ser más realista que media/moda global.\n\nUsar una **medición previa del mismo paciente** es equivalente a una imputación temporal tipo *last observation carried forward* y respeta la variabilidad entre pacientes.",
+      "difficulty": 2,
+      "tags": [
+        "datos faltantes",
+        "imputación",
+        "MAR/MCAR",
+        "series temporales clínicas"
+      ],
+      "options": [
+        {
+          "id": "a",
+          "text": "Eliminarlos."
+        },
+        {
+          "id": "b",
+          "text": "Reemplazarlos por el promedio de todos los los valores de presión arterial y frecuencia respiratoria.."
+        },
+        {
+          "id": "c",
+          "text": "Reemplazarlos por la moda de todos los valores de presión arterial y frecuencia respiratoria."
+        },
+        {
+          "id": "d",
+          "text": "Reemplazar el valor faltante de presión arterial y frecuencia respiratoria por una medición anterior del mismo paciente."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:5bb330b2a5ab631a54c2fe674b378a0ac1b82c5d17c82efdfe999c6a5c71a357",
+      "createdBy": "Luis",
+      "sourcePackId": "c28801ab-40f1-46bb-938b-9d886992b1a0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T13:47:29.189Z",
+      "updatedAt": "2026-02-18T13:47:29.189Z"
+    },
+    {
+      "id": "a15f54a5-5b1d-41ed-b563-6e8e97eefab4",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "DESARROLLO",
+      "prompt": "### Calidad del agua en Gorgoroth (razonamiento teórico)\n\nEl acceso al **agua potable** es esencial para la salud y un componente clave de la protección sanitaria.  \nEn la zona de **Gorgoroth** quieren invertir recursos para **mejorar la calidad del agua**, pero no saben cuál es la calidad actual ni si **varía a lo largo del año**.\n\n**Pregunta:**  \n¿Sería posible ayudar a los responsables de Gorgoroth a **predecir la calidad del agua** para controlar su contaminación?  \n¿Es un problema de **aprendizaje automático**? ¿Qué **tipo de problema** es y cómo se podría resolver con las **técnicas vistas en la asignatura**?\n\n> Origen: **Examen anterior** (UNIR, ordinaria **07–12/03/2025**, **Modelo E**).",
+      "explanation": "La clave es definir una **variable objetivo medible** (índice o clase) y disponer de histórico para entrenar un modelo **supervisado**. El componente temporal obliga a evaluar con splits temporales.",
+      "difficulty": 3,
+      "tags": [
+        "examen anterior",
+        "definición del problema",
+        "pipeline ML",
+        "datos",
+        "evaluación"
+      ],
+      "modelAnswer": "## Sí, se puede (si hay datos medibles)\n\nPara **predecir** la calidad del agua necesitas dos cosas:\n\n1. Una **variable objetivo** (`y`) que represente “calidad” de forma cuantificable. Ejemplos:\n   - Un **índice** continuo (p. ej. `WQI`, niveles de nitratos, E. coli, turbidez, pH, etc.).\n   - Una **etiqueta** por categorías (p. ej. `apta / no apta`, o `buena / media / mala`).\n\n2. Un histórico de **observaciones** (características `X`) que expliquen esa calidad.\n\nSin eso no hay magia: solo opiniones.\n\n## ¿Es aprendizaje automático? Sí (supervisado)\n\nSi tienes ejemplos de la forma:\n\n- `X =` mediciones y contexto (fecha, lugar, condiciones…)\n- `y =` calidad medida\n\nEntonces es un problema de **aprendizaje supervisado**.\n\n### Tipo de problema\nDepende de cómo definas `y`:\n\n- **Regresión** si `y` es **numérica continua** (p. ej. nivel de contaminante, índice de calidad).\n- **Clasificación** si `y` es una **clase** (p. ej. `apta/no apta`).\n\nAdemás, como preguntas por variación “a lo largo del año”, hay componente **temporal/estacional**:\n- O bien lo tratas como **series temporales**.\n- O lo tratas como regresión/clasificación estándar, pero añadiendo variables de **tiempo** (mes, estación, día del año) y/o retardos.\n\n## ¿Cómo lo resolvería con lo visto en la asignatura?\n\n### 1) Datos necesarios (lo que realmente importa)\n- **Mediciones del agua**: pH, turbidez, conductividad, nitratos, fosfatos, coliformes, metales pesados…\n- **Contexto**:\n  - Fecha/hora (para estacionalidad).\n  - Punto de muestreo (localización).\n  - Meteo e hidrología (lluvia, temperatura, caudal).\n  - Actividad humana (vertidos, agricultura, industria, población).\n\n### 2) Preparación (sin esto todo es basura)\n- **EDA** (Tema 2): distribuciones, outliers, correlaciones, estacionalidad.\n- **Datos ausentes** (Tema 3): imputación (media/mediana, KNN, modelos), o eliminación si es razonable.\n- **Normalización/estandarización** (Tema 3): necesaria si usas modelos sensibles a escala (p. ej. **SVM**).\n\n### 3) Modelos candidatos (según el tipo de `y`)\n**Si es regresión (Tema 4):**\n- Línea base: **regresión lineal** (rápida, interpretable).\n- Si hay no linealidad: **árboles** / **Random Forest** (Temas 6 y 10).\n- Para mejorar: **bagging/boosting** (Tema 9), y **optimización de hiperparámetros** (Tema 11).\n\n**Si es clasificación (Tema 5):**\n- Baselines: umbral sobre un índice, o modelos simples.\n- **SVM** (Tema 7) con escalado.\n- **Árboles / Random Forest** (Temas 6 y 10).\n- **Naïve Bayes** (Tema 8) si el enfoque es probabilístico y con variables bien tratadas.\n\n### 4) Evaluación correcta (clave para no autoengañarte)\n- **Regresión**: `MAE`, `MSE`, `RMSE`, `R²` (Tema 4).\n- **Clasificación**: matriz de confusión + `precision`, `recall`, `F1`, `accuracy` (Tema 5).\n\n**Muy importante:** si hay tiempo (estaciones), el split debe respetar el orden temporal:\n- Entrenar con meses/años anteriores y validar con posteriores (evitar “mirar el futuro”).\n\n## Uso práctico para “controlar la contaminación”\nUna vez entrenado:\n- Predices calidad futura y montas un **sistema de alertas** (p. ej. si `WQI` baja o si `P(no apta)` sube).\n- Priorizas inspecciones y **acciones preventivas** (saneamiento, cierre temporal, investigación de vertidos).\n- Monitorizas **deriva** (cambios de patrones) y reentrenas periódicamente.\n\n## Conclusión\nSí: es un problema de **aprendizaje supervisado** (regresión o clasificación según la definición de calidad), con fuerte componente **temporal/estacional**. Se resuelve con un pipeline clásico: **EDA → limpieza/imputación → modelo → evaluación → despliegue/alertas**.",
+      "keywords": [
+        "aprendizaje supervisado",
+        "regresión",
+        "clasificación",
+        "series temporales",
+        "calidad del agua",
+        "estacionalidad",
+        "EDA",
+        "imputación"
+      ],
+      "contentHash": "sha256:b7fdefecfffc2cbc64dc1a95e5d2a4f2c386c7cbcbaedd3cdfaba50b62631e06",
+      "createdBy": "Luis",
+      "sourcePackId": "83ef5676-1384-45f7-804a-20c7d1f4690b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:36:34.166Z",
+      "updatedAt": "2026-02-18T14:36:34.166Z"
+    },
+    {
+      "id": "a2c6ccfa-c396-4e4b-b08d-d610a21ebbf2",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "6. ¿Cuál de las siguientes métricas MAE, MSE o RMSE de los modelos de regresión es más robusta a los valores anómalos?",
+      "explanation": "**MAE** usa error **absoluto** y crece linealmente con el tamaño del error, por lo que es **menos sensible** a valores extremos que **MSE/RMSE**, que elevan el error al cuadrado y amplifican outliers.",
+      "difficulty": 2,
+      "tags": [
+        "regresión",
+        "MAE",
+        "MSE",
+        "RMSE",
+        "outliers"
+      ],
+      "options": [
+        {
+          "id": "a",
+          "text": "La métrica más robusta es el MAE ya que El MAE penaliza de manera significativa los errores grandes en las predicciones, asignando un peso proporcional al cuadrado de la diferencia entre la predicción y el valor real."
+        },
+        {
+          "id": "b",
+          "text": "Las métricas más robustas son MSE o RMSE dado que no se ven afectadas por los valores extremos debido al término del cuadrado."
+        },
+        {
+          "id": "c",
+          "text": "La métrica más robusta es el MAE dado que se calcula tomando el promedio de las diferencias absolutas de las predicciones y los valores reales."
+        },
+        {
+          "id": "d",
+          "text": "El RMSE siempre produce un valor más pequeño que MAE, lo que demuestra que es una métrica más precisa y robusta en todos los casos de evaluación de modelos de regresión."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:93d64bfc4563ccd2081b80b207ad42a73c27e10a7c5d63f08dc2c5b30269e30f",
+      "createdBy": "Luis",
+      "sourcePackId": "c28801ab-40f1-46bb-938b-9d886992b1a0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T13:47:29.189Z",
+      "updatedAt": "2026-02-18T13:47:29.189Z"
+    },
+    {
+      "id": "a2dbe7d5-ac4a-4bbb-8e52-bb05c90dcad1",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
+      "type": "TEST",
+      "prompt": "5. El kernel lineal es la única opción eficaz en SVM para manejar conjuntos de datos no linealmente separables.",
+      "explanation": "Si los datos **no son separables linealmente**, SVM suele manejarlo con **kernels no lineales** (p. ej. **polinómico** o **RBF**), que inducen una separación lineal en un *feature space* transformado.",
+      "difficulty": 2,
+      "tags": [
+        "SVM",
+        "kernel trick",
+        "RBF",
+        "polinómico",
+        "no lineal"
+      ],
+      "options": [
+        {
+          "id": "a",
+          "text": "Falso. SVM con kernels no lineales, como el polinómico o el radial, son opciones efectivas para manejar conjuntos de datos no linealmente separables."
+        },
+        {
+          "id": "b",
+          "text": "Verdadero. Las funciones de kernel lineal en SVM, a pesar de su aparente simplicidad, demuestran ser eficaces en escenarios donde la relación entre las características no es lineal."
+        },
+        {
+          "id": "c",
+          "text": "Falso. El kernel lineal realiza una transformación en los datos de entrada para trabajar con datos complejos y con relaciones no lineales."
+        },
+        {
+          "id": "d",
+          "text": "Verdadero. Las funciones de kernel lineal en Máquinas de Soporte Vectorial (SVM) ofrecen simplicidad y eficiencia computacional al proporcionar una solución elegante para conjuntos de datos no linealmente separables."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:3968059c23f7f424cbbdac5ab0c7aa843d4b11bfda4520f91858a3107c7b1774",
+      "createdBy": "Luis",
+      "sourcePackId": "c28801ab-40f1-46bb-938b-9d886992b1a0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T13:47:29.189Z",
+      "updatedAt": "2026-02-18T13:47:29.189Z"
+    },
+    {
       "id": "a302b2cd-fd55-4823-8c52-b700c45db9d6",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
@@ -1787,6 +3197,73 @@
       "updatedAt": "2026-02-18T11:36:09.828Z"
     },
     {
+      "id": "aa2c5c97-1378-4464-ac39-3d293089a56d",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
+      "type": "DESARROLLO",
+      "prompt": "En el contexto del aprendizaje automático, explica en qué consiste la validación cruzada (cross validation) y pon un ejemplo de cómo aplicarlo.",
+      "difficulty": 2,
+      "tags": [
+        "aprendizaje-automatico",
+        "evaluacion"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Validación Cruzada (Cross Validation)\n\n### Qué es\nTécnica de evaluación de modelos que estima el rendimiento generalizable usando todos los datos disponibles, reduciendo sesgo y varianza frente a una única partición train/test.\n\n### Funcionamiento: k-fold cross validation\n1. El dataset se divide en **k partes iguales (folds)**.\n2. Se realizan **k iteraciones**: en cada una, k-1 folds para entrenamiento y 1 para validación.\n3. La métrica se calcula en cada iteración.\n4. El resultado es la **media ± desviación estándar** de las k métricas.\n\n**Ventaja clave**: Todos los datos se usan tanto para entrenamiento como para validación.\n\n### Variantes\n- **Stratified k-fold**: Mantiene la proporción de clases en cada fold (datasets desbalanceados).\n- **Leave-One-Out (LOO)**: k = n. Costoso; útil con datasets muy pequeños.\n- **Time Series Split**: Respeta el orden temporal para no usar datos futuros.\n\n### Ejemplo (k = 5, clasificación de churn)\nDataset: 1.000 clientes.\n1. Dividir en 5 folds de 200 clientes.\n2. Iteración 1: Train = folds 2,3,4,5 → Test = fold 1 → F1: 0,82\n3. Iteración 2: Train = folds 1,3,4,5 → Test = fold 2 → F1: 0,79\n4. ... hasta la iteración 5.\n5. **Resultado**: F1 promedio = 0,81 ± 0,03\n\nEsta estimación es mucho más fiable que evaluar el modelo una única vez.",
+      "keywords": [
+        "validación cruzada",
+        "k-fold",
+        "stratified",
+        "leave-one-out",
+        "generalización",
+        "sobreajuste"
+      ],
+      "contentHash": "sha256:a3588da5704d1fd88efbca49c7624ae511091d8eec84eed844065485eb7af30f",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "ab7555eb-e6bd-4356-b565-277b38a5126c",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "469e3a6e-f175-4929-9c01-73813fba8f32",
+      "type": "DESARROLLO",
+      "prompt": "En el contexto de la financiación de proyectos de IA, explica qué elementos principales debe contener el análisis de viabilidad del proyecto.",
+      "difficulty": 3,
+      "tags": [
+        "financiacion",
+        "gestion-proyectos"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Análisis de Viabilidad de un Proyecto de IA\n\n### Elementos principales de la memoria\n\n**1. Descripción del problema y justificación**\nQué problema se aborda, por qué es relevante y qué impacto tendrá. Estado del arte que justifique la necesidad.\n\n**2. Objetivos e hipótesis de investigación**\nObjetivos SMART (Específicos, Medibles, Alcanzables, Relevantes, Temporales) e hipótesis claras.\n\n**3. Diseño experimental y metodología**\nTipo de estudio, datos a recoger, variables a medir, técnicas de IA y métricas de evaluación.\n\n**4. Plan de trabajo y cronograma**\nTareas organizadas en fases con diagrama de Gantt: duración, dependencias y responsables.\n\n**5. Recursos y presupuesto**\n- Humanos: investigadores, ingenieros ML, técnicos de apoyo.\n- Materiales: infraestructura hardware/cloud, licencias de software.\n- Consumibles: almacenamiento, acceso a bases de datos.\n\n**6. Análisis económico-financiero**\n- Coste total del proyecto.\n- Fuentes de financiación: convocatorias públicas (H2020, CDTI, Plan Nacional I+D), inversión privada.\n- ROI esperado: VAN (Valor Actual Neto) y TIR (Tasa Interna de Retorno).\n\n**7. Plan de difusión y explotación de resultados**\nPublicaciones, congresos, patentes, licencias, posibles spin-off.",
+      "keywords": [
+        "viabilidad",
+        "memoria proyecto",
+        "financiación",
+        "VAN",
+        "TIR",
+        "SMART",
+        "Gantt",
+        "H2020",
+        "CDTI"
+      ],
+      "contentHash": "sha256:d344967a6d528e34024583da7a166eaee092a7adf5c2f4a88fc17195fd18387c",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "id": "b073a639-9e31-4127-8632-7b10429df253",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "54c32f8a-a162-493b-9dc3-89e6ab77b28b",
@@ -1825,6 +3302,36 @@
       },
       "createdAt": "2026-02-18T11:52:26.355Z",
       "updatedAt": "2026-02-18T11:52:26.355Z"
+    },
+    {
+      "id": "b0c6c268-36bb-4d2a-aed6-d0249dce9c59",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "PRACTICO",
+      "prompt": "### Evaluación de un clasificador de manzanas enfermas (métricas)\n\nSe ha utilizado un clasificador (p. ej. **Random Forest**) para clasificar imágenes de manzanas y detectar enfermedad:\n\n- Clase **0**: sana (negativa)  \n- Clase **1**: enferma (positiva)\n\nResultados:\n\n| Imagen | Clase Real | Clase predicha |\n|---|---|---|\n| Img1 | 0 | 0 |\n| Img2 | 0 | 0 |\n| Img3 | 1 | 1 |\n| Img4 | 1 | 1 |\n| Img5 | 0 | 1 |\n| Img6 | 1 | 1 |\n| Img7 | 1 | 1 |\n| Img8 | 0 | 0 |\n| Img9 | 0 | 1 |\n| Img10 | 0 | 0 |\n\n\nSe pide:\n\n1. Calcular **precision**, **recall**, **accuracy** y **F1** para estos resultados de clasificación **para las dos clases**.  \n2. Explica el comportamiento del clasificador y si cumpliría la tarea de detectar manzanas enfermas correctamente.  \n3. Analiza el valor de **sensibilidad**: ¿qué indica este valor? Explica.\n\n> Origen: **Examen anterior** (UNIR **TAA 2024**, **Modelo F**, código **10210068**).\n",
+      "explanation": "Aquí la métrica crítica es la **sensibilidad/recall** de la clase 1: vale 1.0 → no se escapa ninguna enferma. A cambio tienes FP (falsas alarmas), que se traducen en coste de revisión.",
+      "difficulty": 4,
+      "tags": [
+        "examen anterior",
+        "UNIR",
+        "2024",
+        "modelo-f",
+        "métricas",
+        "sensibilidad",
+        "manzanas",
+        "enfermedad"
+      ],
+      "modelAnswer": "Tomamos **1 (enferma)** como clase positiva.\n\n## Conteos (positiva = 1)\n- **TP (1→1)**: Img3, Img4, Img6, Img7 = **4**\n- **FN (1→0)**: **0**\n- **TN (0→0)**: Img1, Img2, Img8, Img10 = **4**\n- **FP (0→1)**: Img5, Img9 = **2**\nTotal = 10.\n\n## Métricas (positiva = 1, “enferma”)\n- **Precision(1)** = TP/(TP+FP) = 4/(4+2) = **0.67**\n- **Recall(1)** = TP/(TP+FN) = 4/(4+0) = **1.00**\n- **Accuracy** = (TP+TN)/Total = (4+4)/10 = **0.80**\n- **F1(1)** = 2·P·R/(P+R) = 2·0.67·1/(0.67+1) = **0.80**\n\n## Métricas para la otra clase (0, “sana”)\nPara **0** como positiva (one-vs-rest):\n- TP(0)=4, FP(0)=0, FN(0)=2, TN(0)=4\n- **Precision(0)** = 4/(4+0) = **1.00**\n- **Recall(0)** = 4/(4+2) = **0.67**\n- **F1(0)** = **0.80**\n- **Accuracy** = **0.80**\n\n## Interpretación\n- Para detectar manzanas **enfermas**, el punto fuerte es el **recall = 1.0**: **no se escapa ninguna enferma** (FN=0).  \n- El problema es que mete **falsos positivos** (2 sanas marcadas como enfermas), lo que reduce precision (0.67).\n\nSi el objetivo es “mejor que sobre y no que falte” (seguridad/prevención), este comportamiento suele ser **aceptable**: revisas manualmente las marcadas como enfermas y no dejas pasar enfermas.\n\n## Sensibilidad\nEn clasificación binaria, **sensibilidad = recall de la clase positiva** = TP/(TP+FN).  \nAquí es **1.0**, lo que significa: *de todas las manzanas realmente enfermas, el modelo identifica el 100%*.",
+      "contentHash": "sha256:77e47bc9355f061a8c3bac6a013e1c8e54d09c97f0c3d6b53402699e5b90a7ee",
+      "createdBy": "Luis",
+      "sourcePackId": "eda08197-7337-49c1-9767-1933b50cca25",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T15:13:01.046Z",
+      "updatedAt": "2026-02-18T15:13:01.046Z"
     },
     {
       "id": "b77c730d-5078-4e6a-a1bd-7cc981caeb91",
@@ -1907,6 +3414,38 @@
       "updatedAt": "2026-02-18T12:21:52.982Z"
     },
     {
+      "id": "ba4e7d99-9743-4ed2-bba8-cdf4c29061ec",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "type": "DESARROLLO",
+      "prompt": "Describe cómo los agentes inteligentes se utilizan en la automatización del hogar (smart home) y da un ejemplo específico de su aplicación.",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "IoT"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Agentes Inteligentes en el Hogar Inteligente\n\nLos hogares inteligentes integran dispositivos IoT controlados por agentes inteligentes que perciben el entorno mediante sensores y actúan sobre él mediante actuadores.\n\n### Tipos de agentes en el hogar\n- **Reactivos**: Responden a condiciones del entorno con reglas simples (encender luz si sensor detecta movimiento).\n- **Deliberativos (por objetivos)**: Planifican para alcanzar un objetivo (termostato que planifica temperatura considerando la localización GPS del usuario).\n- **Por utilidad**: Optimizan múltiples objetivos (minimizar factura eléctrica usando electrodomésticos en horas valle mientras mantienen confort).\n- **Sistemas multi-agente**: Coordinan termostato, persiana, riego y seguridad.\n\n### Ejemplo específico: Robot aspirador (Roomba)\n\n**Sensores**: Infrarrojos y ultrasonidos para obstáculos, sensor de suciedad, sensor de batería, mapa SLAM del hogar.\n\n**Objetivo**: Limpiar toda la superficie del hogar.\n\n**Función de utilidad**: Maximizar superficie limpiada minimizando tiempo y energía.\n\n**Comportamiento**: Calcula rutas de cobertura óptimas, evita obstáculos y regresa automáticamente a la base de carga. Los modelos modernos aprenden el mapa y los hábitos del usuario para optimizar los horarios de limpieza.",
+      "keywords": [
+        "smart home",
+        "IoT",
+        "agente reactivo",
+        "automatización",
+        "robot aspirador",
+        "SLAM"
+      ],
+      "contentHash": "sha256:2b662fbc6b7bbe423e17dd9d000aae206acf9838d90fb44dbfd006615be65d89",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
       "type": "TEST",
@@ -1947,6 +3486,100 @@
       "updatedAt": "2026-02-18T10:53:46.526Z"
     },
     {
+      "id": "bb929c26-a61a-4758-bc83-4086d69f1e52",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "26b84c63-3862-49b2-bf3a-5521aa7461a9",
+      "type": "DESARROLLO",
+      "prompt": "Explica cómo el razonamiento inductivo se aplica en la investigación de inteligencia artificial para formular generalizaciones a partir de observaciones específicas.",
+      "difficulty": 2,
+      "tags": [
+        "metodologia",
+        "ciencia"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Razonamiento Inductivo en IA\n\n### Qué es\nEl **razonamiento inductivo** consiste en derivar conclusiones generales a partir de observaciones particulares. Va de lo concreto a lo general. ⚠️ Las conclusiones son probabilísticas, no absolutas.\n\n### Relación directa con el ML\nEl **machine learning es razonamiento inductivo computacional**: el algoritmo observa muchos ejemplos (datos de entrenamiento) y genera un modelo (generalización) aplicable a nuevos casos.\n\n### Ejemplos en IA\n\n**Ejemplo 1 – Clasificación de imágenes médicas**:\nUn radiólogo etiqueta 10.000 RMN: los tumores benignos tienen bordes regulares, los malignos irregulares. Una CNN aprende esta generalización inductivamente y la aplica a imágenes nuevas.\n\n**Ejemplo 2 – Detección de spam**:\nEn miles de correos etiquetados como spam aparecen con alta frecuencia \"oferta\", \"gratis\", \"urgente\". El modelo induce que estos términos son indicativos de spam.\n\n**Ejemplo 3 – Formulación de hipótesis**:\nSe observa que los transformers superan consistentemente a las RNN en PLN. Se induce la hipótesis: *\"Los transformers generalizan mejor que las RNN en tareas de PLN\"*, que luego se verifica experimentalmente.",
+      "keywords": [
+        "razonamiento inductivo",
+        "generalización",
+        "machine learning",
+        "hipótesis",
+        "método científico"
+      ],
+      "contentHash": "sha256:eb12353dffc03c03a4166e869666c7ed1934e096b9467527562930724ae855a3",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "bbdf1482-f5fb-4a6c-8327-47e402998dfa",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "PRACTICO",
+      "prompt": "### Evaluación de un clasificador de fraude (métricas)\n\nSupongamos que hemos utilizado un **clasificador** (p. ej. una **SVM**) para distinguir entre transacciones bancarias **fraudulentas** (`Fr`) y **no fraudulentas** (`No`).\n\nA partir de los siguientes resultados:\n\n| Transacción | Clase real | Clase predicha |\n|---|---|---|\n| Tran1 | Fr | Fr |\n| Tran2 | Fr | Fr |\n| Tran3 | No | No |\n| Tran4 | No | No |\n| Tran5 | Fr | No |\n| Tran6 | No | No |\n| Tran7 | No | No |\n| Tran8 | Fr | Fr |\n| Tran9 | Fr | No |\n| Tran10 | No | Fr |\n\nSe pide:\n\n1. Calcular **precision**, **recall**, **accuracy** y **F1** para estos resultados de clasificación **para las dos clases**.  \n2. En base a los resultados obtenidos, explica el comportamiento del clasificador en cuanto a la **detección de transacciones fraudulentas**.\n\n> Origen: **Examen anterior** (UNIR, ordinaria **07–12/03/2025**, **Modelo E**).",
+      "explanation": "Se calculan TP/TN/FP/FN a partir de la tabla, y después las métricas para cada clase. La interpretación se centra en la detección de fraude (prioridad típica: recall).",
+      "difficulty": 2,
+      "tags": [
+        "examen anterior",
+        "métricas",
+        "clasificación binaria"
+      ],
+      "modelAnswer": "## 1) Matriz de confusión (tomando **Fr** como clase positiva)\n\n- **TP (Fr→Fr)** = 3  \n- **FN (Fr→No)** = 2  \n- **TN (No→No)** = 4  \n- **FP (No→Fr)** = 1  \n\n| | Pred: Fr | Pred: No |\n|---|---:|---:|\n| **Real: Fr** | TP = 3 | FN = 2 |\n| **Real: No** | FP = 1 | TN = 4 |\n\nTotal = 10\n\n---\n\n## 2) Métricas para la clase **Fr** (fraude)\n\n- **Precision(Fr)** = TP / (TP + FP) = 3/(3+1) = **0.75**\n- **Recall(Fr)** = TP / (TP + FN) = 3/(3+2) = **0.60**\n- **F1(Fr)** = 2·P·R / (P+R) = **0.67**\n- **Accuracy (global)** = (TP + TN) / total = (3+4)/10 = **0.70**\n\n---\n\n## 3) Métricas para la clase **No** (no fraude)\n\nPara evaluar “No” como clase de interés, tratamos **No** como positiva:\n\n- TP(No) = 4 (No→No)  \n- FP(No) = 2 (Fr→No)  \n- FN(No) = 1 (No→Fr)\n\n- **Precision(No)** = TP(No) / (TP(No) + FP(No)) = 4/(4+2) = **0.67**\n- **Recall(No)** = TP(No) / (TP(No) + FN(No)) = 4/(4+1) = **0.80**\n- **F1(No)** = **0.73**\n- **Accuracy (global)** = **0.70** (la misma, porque es global)\n\n---\n\n## 4) Interpretación: ¿qué tal detecta fraude?\n\n- **Recall(Fr) = 0.60** → se le escapan **2 de 5** fraudes (**40%**).  \n  Para fraude, esto suele ser **peligroso**: el coste de un FN suele ser alto.\n- **Precision(Fr) = 0.75** → cuando marca “fraude”, acierta **3 de 4** veces (25% falsas alarmas).  \n  No es terrible, pero genera **ruido** operativo.\n\n**Conclusión práctica:** el clasificador es “aceptable” en acierto global (**accuracy 0.70**), pero para el objetivo real (cazar fraude) su **recall es bajo**. Si el negocio prioriza no perder fraudes, habría que **subir recall** (aunque baje algo la precision).\n\n### Cómo mejorar (desde lo visto en la asignatura)\n- Ajustar el **umbral** de decisión (trade-off precision/recall).\n- Entrenamiento **coste-sensible** / `class_weight` para penalizar más los FN de fraude.\n- Técnicas de **re-muestreo** si hay desbalance (y validación correcta).\n- Probar modelos con mejor generalización: **árboles / Random Forest / ensembles** y **tuning** (Temas 6, 9, 10, 11).\n",
+      "keywords": [
+        "matriz de confusión",
+        "precision",
+        "recall",
+        "F1",
+        "accuracy",
+        "fraude",
+        "SVM"
+      ],
+      "contentHash": "sha256:03ca2b66df648d07d231fcb98969707aa8cf1f630a83d9df6e75d844fc4f0cee",
+      "createdBy": "Luis",
+      "sourcePackId": "83ef5676-1384-45f7-804a-20c7d1f4690b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:36:34.166Z",
+      "updatedAt": "2026-02-18T14:36:34.166Z"
+    },
+    {
+      "id": "c78a184a-3f35-4ddb-9795-abc03bf895ca",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "DESARROLLO",
+      "prompt": "### Bank Marketing (análisis completo)\n\nEn el **Anexo** final encontrarás la descripción del problema (**Bank Marketing**). Debes realizar un **análisis completo**, usando los conocimientos de la asignatura.\n\n**Condiciones:**\n- Responde **sin escribir código**.\n- Cualquier aclaración o suposición que hagas debe quedar **escrita**.\n\n> Origen: **Examen anterior** (UNIR, ordinaria **07–12/03/2025**, **Modelo D**).\n",
+      "explanation": "Análisis end-to-end de un problema tabular típico: EDA, tratamiento de faltantes/variables categóricas/desbalanceo, elección de algoritmos (baseline + modelos del temario) y evaluación con métricas adecuadas (PR-AUC, F1, etc.) y validación estratificada.",
+      "difficulty": 3,
+      "tags": [
+        "examen-anterior",
+        "unir",
+        "taa",
+        "2025-03",
+        "modelo-d",
+        "analisis",
+        "bank-marketing"
+      ],
+      "modelAnswer": "## Suposición mínima (lo típico en *Bank Marketing*)\nNormalmente es un problema de **clasificación** donde la variable objetivo `y` indica si el cliente **contrata** (sí/no) un producto (p.ej. depósito a plazo) tras una campaña.\n\nSi el anexo difiere, la estructura del análisis es la misma: **definir objetivo → preparar datos → elegir modelo → evaluar bien**.\n\n## 1) Análisis previo y tratamiento de datos\n\n### 1.1 Entender el objetivo y el “momento” de la predicción\n- ¿Queremos predecir **antes** de llamar al cliente (para seleccionar a quién llamar)?\n- ¿O durante/después de la llamada?\n\nEsto importa porque hay variables como `duration` (duración de la llamada) que pueden ser **fuga de información** (*data leakage*) si solo se conocen después.\n\n### 1.2 Inspección del dataset (EDA)\n- **Balanceo** de clases (`y=Sí` suele ser minoritaria).\n- Tipos de variables:\n  - Numéricas (edad, euribor, campaña, etc.)\n  - Categóricas (job, marital, education, contact, month, poutcome…)\n- Estadísticos descriptivos: media/mediana, dispersión, percentiles.\n- Detección de:\n  - **Valores faltantes** (incluyendo “unknown” como *missing* en categóricas).\n  - **Outliers** (p.ej. `campaign` muy alto).\n  - Dependencias/correlaciones fuertes (colinealidad en numéricas).\n\n### 1.3 Preparación\n- **Split** estratificado (train/valid/test) o *k-fold* estratificado.\n- Tratamiento de faltantes:\n  - Numéricas: imputación (media/mediana) o modelo simple; documentar.\n  - Categóricas: categoría `unknown` explícita o imputación por moda.\n- Codificación:\n  - **One-hot** para categóricas (si usamos modelos lineales/SVM).\n  - Para árboles/RF se puede usar one-hot igualmente; o codificación ordinal si procede (con cuidado).\n- Escalado:\n  - Recomendable para **SVM** / regresión logística (estandarización).\n  - No imprescindible para árboles/RF.\n- Desbalanceo:\n  - **class_weight** / costes.\n  - Re-muestreo (sub/over-sampling, **SMOTE** si se permite).\n  - Importante: hacerlo **solo** en entrenamiento (no contaminar test).\n\n## 2) Algoritmos recomendados y por qué\n\n### Baseline rápido (interpretables)\n- **Regresión logística**:\n  - Buena línea base, rápida, probabilística, umbral ajustable.\n  - Permite explicar *drivers* (coeficientes) si las variables están bien codificadas.\n\n### Modelos potentes del temario\n- **Árboles de decisión**:\n  - Interpretables, capturan no linealidades, sensibles a overfitting → podar / limitar profundidad.\n- **Random Forest**:\n  - Reduce varianza con bagging + selección aleatoria de variables.\n  - Suele funcionar muy bien en tabulares con mezcla de variables.\n- **Boosting** (si entra en tu temario con detalle):\n  - Puede mejorar rendimiento enfocándose en errores previos (trade-off: más tuning).\n\n### Alternativa si la frontera es compleja\n- **SVM** (con kernel):\n  - Útil si tras codificar/escala hay separación no lineal.\n  - Ojo con coste computacional en datasets grandes.\n\n> Si el dataset es “tabular clásico”, mi apuesta práctica sería:\n> **Logística (baseline)** → **Random Forest** (mejor rendimiento) → ajustar umbral según objetivo.\n\n## 3) Métricas y evaluación\n\nComo suele haber **clase minoritaria**, *accuracy* puede engañar.\n\n### Métricas clave\n- **Matriz de confusión** (para ver FP/FN).\n- **Precision / Recall / F1** para la clase `Sí`.\n- **ROC-AUC** (útil, pero cuidado con mucho desbalance).\n- **PR-AUC** (muy informativa cuando `Sí` es rara).\n- Si hay coste asimétrico:\n  - Minimizar **FN** (no perder clientes) o minimizar **FP** (no malgastar llamadas), según negocio.\n\n### Protocolo de evaluación recomendado\n- Validación **estratificada** (hold-out o k-fold).\n- Ajuste de hiperparámetros con validación (idealmente **grid/random search**).\n- Selección de **umbral**:\n  - No quedarse con 0,5 “por costumbre”.\n  - Elegir umbral que optimice la métrica objetivo (p.ej. maximizar F1 o cumplir un recall mínimo).\n- Test final **una vez** (para no “entrenar” contra el test).\n\n## 4) Qué justificaría explícitamente en el examen\n- Por qué **es clasificación** y qué etiqueta predigo.\n- Qué variables son potencialmente **leakage** y qué haría con ellas.\n- Qué haría con **categóricas**, **faltantes** y **desbalanceo**.\n- Qué métrica optimizo y por qué (en negocio casi nunca es accuracy).\n",
+      "contentHash": "sha256:a2ca826433c60805170ddb3a9bbacb86b4dcc832f876f6f62a1718872468c823",
+      "createdBy": "Luis",
+      "sourcePackId": "04a1a1df-5192-4d2f-9e7e-12bf6daf1f16",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:22:11.722Z",
+      "updatedAt": "2026-02-18T14:22:11.722Z"
+    },
+    {
       "id": "c8ef11f2-d02f-4990-a460-7ace8054ebc4",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
@@ -1985,6 +3618,77 @@
       },
       "createdAt": "2026-02-18T11:52:26.355Z",
       "updatedAt": "2026-02-18T11:52:26.355Z"
+    },
+    {
+      "id": "cbfc3413-12b3-400f-990b-11896bdc3bba",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
+      "type": "DESARROLLO",
+      "prompt": "En el contexto del aprendizaje automático, ¿qué se entiende por sesgo técnico? ¿Cuál es su relación con el sobreajuste?",
+      "difficulty": 2,
+      "tags": [
+        "aprendizaje-automatico",
+        "conceptos-clave"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Sesgo y Sobreajuste en Aprendizaje Automático\n\n### Sesgo técnico (Bias)\nError sistemático por suposiciones incorrectas o excesivamente simplistas del modelo. Un modelo con **alto sesgo** es demasiado simple para capturar la complejidad real del problema.\n\n- Error alto tanto en entrenamiento como en validación.\n- Síntoma: **subajuste (underfitting)**.\n- Ejemplo: Usar regresión lineal para modelar una relación no lineal.\n\n### Sobreajuste (Overfitting)\nOcurre cuando el modelo aprende excesivamente los datos de entrenamiento, incluyendo el ruido, y pierde capacidad de generalización.\n\n- Error muy bajo en entrenamiento, alto en validación/test.\n- El modelo tiene **alta varianza**: pequeños cambios en los datos de entrenamiento causan grandes cambios en el modelo.\n- Síntoma: el rendimiento en producción es mucho peor que en entrenamiento.\n\n### El Trade-off Bias-Variance\nExiste un compromiso fundamental:\n- **Modelo simple** → Alto sesgo, baja varianza → Subajuste.\n- **Modelo complejo** → Bajo sesgo, alta varianza → Sobreajuste.\n\n> Error total = Sesgo² + Varianza + Ruido irreducible\n\n**Técnicas para reducir sobreajuste**: regularización L1/L2, dropout, early stopping, validación cruzada, aumentar el dataset, reducir la complejidad del modelo.",
+      "keywords": [
+        "sesgo",
+        "bias",
+        "sobreajuste",
+        "overfitting",
+        "underfitting",
+        "varianza",
+        "bias-variance tradeoff",
+        "regularización"
+      ],
+      "contentHash": "sha256:84fd71d01e5edaf7a73df441d2d3da86681e55884b3309c3e5cbd63302cfc248",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "cea62a7e-d69f-454e-b1db-cd1c98b9452a",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "DESARROLLO",
+      "prompt": "### Riesgo de obesidad (Análisis)\n\nEn el material adicional (Anexo) se proporciona un conjunto de datos sobre **riesgo/nivel de obesidad** (variable objetivo *NObeyesdad* en un problema típico de clasificación multiclase).\n\nResponde **sin escribir código**:\n\n1) ¿Qué análisis previos y tratamiento de datos harías para decidir si se puede construir un modelo fiable?  \n2) ¿Qué algoritmo(s) usarías y por qué? Explica su funcionamiento a alto nivel.  \n3) ¿Qué métricas de evaluación usarías para valorar la bondad del modelo y cómo lo evaluarías?\n\n(Justifica supuestos: tipos de variables, codificación, balanceo, outliers, etc.).",
+      "explanation": "Se espera una respuesta estructurada: EDA + limpieza (tipos, nulos, outliers), elección razonada de algoritmos de clasificación (árboles/RF/SVM) y métricas apropiadas para multiclase (confusión, F1 macro/weighted, recall por clase).",
+      "difficulty": 4,
+      "tags": [
+        "análisis exploratorio",
+        "clasificación multiclase",
+        "random forest",
+        "métricas"
+      ],
+      "modelAnswer": "### 1) Análisis previos y tratamiento de datos (sin código)\n\n**Objetivo:** comprobar si los datos permiten un modelo *útil* y *fiable* y preparar el dataset.\n\n1. **Entender la variable objetivo**\n   - *NObeyesdad* suele ser **multiclase** (p. ej. *Insufficient_Weight*, *Normal_Weight*, *Overweight_Level_I/II*, *Obesity_Type_I/II/III*).  \n   - Comprobar si queremos tratarla como **ordinal** (tiene orden natural) o como **nominal** (solo categorías). En muchos modelos se trabaja como multiclase nominal.\n\n2. **Exploración descriptiva**\n   - Distribución de clases (¿balanceado? ¿clases raras?).\n   - Descriptivos de variables numéricas (media, varianza, rangos).\n   - Relaciones claras (p. ej. *Weight* vs clase; si hay *Height* y *Weight* se puede derivar **BMI** y ver si aporta).\n\n3. **Calidad del dato**\n   - **Nulos/ausentes:** si los hay, imputación (media/mediana/moda o técnicas más robustas).\n   - **Outliers:** detectar (boxplots/IQR) y decidir:  \n     - corregir si son errores,  \n     - capar/winsorizar si son extremos irreales,  \n     - o mantenerlos si son casos reales (importante en medicina).\n\n4. **Tipos de variables y codificación**\n   - **Numéricas:** *Age, Height, Weight, FCVC, CH2O, FAF, TUE…*\n   - **Categóricas binarias:** *SMOKE, SCC, family_history_with_overweight…*\n   - **Categóricas nominales:** *MTRANS…*\n   - **Ordinales:** *CAEC, CALC, NCP…* (si representan niveles/orden).\n   - Preparar codificación:\n     - One-hot para nominales (si el algoritmo lo necesita).\n     - Ordinal encoding para ordinales (si procede).\n\n5. **Normalización / escalado**\n   - **Necesario** si usamos modelos basados en distancia/hiperplano (p. ej. **SVM**).\n   - **No imprescindible** para árboles / Random Forest.\n\n6. **Partición y validación**\n   - Separar train/test y usar **validación cruzada** (estratificada por clase).  \n   - Evitar *data leakage* (cualquier transformación se ajusta solo con train).\n\n---\n\n### 2) Algoritmos y por qué\n\nComo es **clasificación multiclase** con mezcla de numéricas + categóricas:\n\n- **Árbol de decisión (baseline interpretable):**\n  - Ventaja: explicable (reglas “si… entonces…”).\n  - Riesgo: sobreajuste si no se limita profundidad/poda.\n\n- **Random Forest (recomendación principal):**\n  - Es **bagging** de muchos árboles con subconjuntos de datos y variables.\n  - Reduce varianza y suele generalizar mejor que un árbol único.\n  - Permite **importancia de variables** (explicabilidad parcial).\n\n- **SVM (alternativa):**\n  - Puede ir muy bien si el problema es separable tras un **kernel** y hay buen escalado,\n  - pero en multiclase suele requerir estrategias *one-vs-rest* y es menos interpretable.\n\nEn un contexto “médico”, el equilibrio típico es:\n- usar **Random Forest** (buen rendimiento),\n- y acompañarlo de interpretación (importancias, reglas aproximadas) para justificar.\n\n---\n\n### 3) Métricas y evaluación\n\nAl ser multiclase, **Accuracy sola es insuficiente**.\n\nUsaría:\n- **Matriz de confusión** (para ver qué clases se confunden).\n- **Precision / Recall / F1 por clase**.\n- **F1 macro** (todas las clases pesan igual) y **F1 weighted** (ponderado por soporte).\n- Si hay clases “críticas” (p. ej. obesidad severa), priorizar **Recall** de esas clases.\n- (Opcional) **Balanced accuracy** si hay desbalanceo.\n\n**Evaluación recomendada:**\n- Validación cruzada estratificada para estimar estabilidad.\n- Ajuste de hiperparámetros (p. ej. profundidad, nº árboles, max_features) con **grid search**.\n- Reportar métricas medias y desviación (robustez), no solo un número.\n\n> Importante: **R² no aplica** aquí (es de regresión). En clasificación reportamos métricas de clasificación.\n",
+      "keywords": [
+        "EDA",
+        "multiclase",
+        "codificación",
+        "one-hot",
+        "variables ordinales",
+        "validación cruzada",
+        "matriz de confusión",
+        "F1 macro",
+        "random forest"
+      ],
+      "contentHash": "sha256:90d052f89ce9c25ae57a799fea1b3a49fab2ef22f657b1518cc9d5807c18b49a",
+      "createdBy": "Luis",
+      "sourcePackId": "9f68ddcb-ee6e-4448-b804-bce7c3c45725",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:06:33.894Z",
+      "updatedAt": "2026-02-18T14:06:33.894Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -2067,6 +3771,41 @@
       "updatedAt": "2026-02-18T12:07:10.886Z"
     },
     {
+      "id": "dd7eb89c-772f-4156-bee0-fd521cb3acaf",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "DESARROLLO",
+      "prompt": "### El Tiempo en Australia (análisis completo)\n\nEn el **Anexo** final encontrarás la descripción del problema (**El Tiempo en Australia**) y el conjunto de datos asociado. Debes realizar un **análisis completo**, usando los conocimientos de la asignatura.\n\n**Condiciones:**\n- Responde **sin escribir código**.\n- Cualquier aclaración o suposición que hagas sobre el conjunto de datos debe quedar **escrita**.\n- La respuesta debe ser una **explicación y/o justificación** a las cuestiones planteadas (no basta con listar pasos).\n\n> Origen: **Examen anterior** (UNIR, ordinaria **07–12/03/2025**, **Modelo E**).",
+      "explanation": "Respuesta tipo 'plantilla de examen': definir objetivo, hacer EDA, justificar preprocesado, proponer modelos del temario y explicar evaluación y tuning. Adaptable al detalle del Anexo.",
+      "difficulty": 4,
+      "tags": [
+        "examen anterior",
+        "análisis completo",
+        "pipeline ML"
+      ],
+      "modelAnswer": "## Supuesto razonable (adaptable al Anexo)\nUn dataset típico de “tiempo en Australia” suele contener:\n- Variables meteorológicas (temperaturas, humedad, viento, presión, lluvia, etc.).\n- Variables temporales (fecha) y espaciales (localización/ciudad).\n- Un objetivo (`y`) que suele ser:\n  - **Clasificación**: “¿lloverá mañana?” (`Sí/No`) o similar.\n  - **Regresión**: “¿cuánta lluvia habrá?” (`mm`) o un índice.\n\nA partir de ahí, el **tipo de problema** se decide por el objetivo del Anexo.\n\n---\n\n## 1) Entender el objetivo y el “coste del error”\n- Si el objetivo es **predecir lluvia** (evento raro en muchos lugares), suele interesar **recall** (no perder lluvias) o un equilibrio con **precision** (evitar falsas alarmas), dependiendo del uso (agricultura, logística, etc.).\n- Si el objetivo es **cantidad de lluvia**, interesa `MAE/RMSE` y robustez ante outliers.\n\nEsto define métricas, split y qué significa “mejor”.\n\n---\n\n## 2) EDA (Tema 2): lo mínimo que hay que mirar sí o sí\n- **Distribuciones** de variables numéricas (histogramas/boxplots) para detectar:\n  - Outliers (p. ej. rachas de lluvia extrema, vientos).\n  - Variables con rango extraño (errores de sensor).\n- **Correlaciones** y relaciones útiles:\n  - Humedad ↔ probabilidad de lluvia.\n  - Presión ↔ cambios meteorológicos.\n- **Análisis temporal**:\n  - Estacionalidad (mes/estación).\n  - Tendencias o cambios por año.\n- **Balance de clases** (si es clasificación):\n  - % de días con lluvia vs sin lluvia.\n\n---\n\n## 3) Limpieza y preparación (Tema 3)\n### a) Datos ausentes\n- Medir **% de missing** por variable y por localización/fecha.\n- Estrategias:\n  - Si la variable es poco relevante y muy incompleta → **eliminar**.\n  - Si es relevante → **imputar**:\n    - Numéricas: mediana por estación/localización, KNN, o imputación por modelo.\n    - Categóricas (dirección del viento): modo o “desconocido”.\n\n**Justificación clave:** imputar sin pensar puede introducir sesgo (p. ej. imputar con media global rompe estacionalidad).\n\n### b) Variables categóricas\n- `Location`, direcciones de viento, etc. → **one-hot** (o codificación ordinal si procede).\n- Cuidado con **alta cardinalidad** (muchas ciudades): puede inflar dimensionalidad.\n\n### c) Escalado\n- Necesario para **SVM** y modelos basados en distancia (estandarización).\n- No estrictamente necesario para árboles/Random Forest.\n\n### d) Split correcto\nSi hay fecha, **evitar leakage temporal**:\n- Entrenar con periodo anterior, test con periodo posterior (validación tipo “forward chaining”).\n- No mezclar aleatoriamente si el Anexo implica predicción futura real.\n\n---\n\n## 4) Modelos candidatos (según el temario)\n### Baselines (siempre)\n- Clasificación: baseline “siempre No” (o la clase mayoritaria).\n- Regresión: predecir la media/mediana histórica (o por estación).\n\n### Modelos del temario\n- **Árbol de decisión** (Tema 6): interpretable, capta no linealidad, sensible a overfitting → regularizar (profundidad, mínimo de muestras).\n- **Random Forest** (Tema 10): suele funcionar muy bien como “caballo de batalla”.\n- **SVM** (Tema 7): buena frontera con escalado, tuning de `C` y kernel.\n- **Naïve Bayes** (Tema 8): rápido, baseline probabilístico (mejor si variables discretizadas o independencia aproximada).\n- **Ensembles** (Tema 9): bagging/boosting para mejorar estabilidad y rendimiento.\n\n---\n\n## 5) Evaluación (Temas 4 y 5)\n### Si es clasificación\n- Matriz de confusión.\n- `precision`, `recall`, `F1` (y elegir el foco según coste del error).\n- Si hay desbalance: `accuracy` puede engañar → mejor `F1` o `recall` de la clase positiva.\n\n### Si es regresión\n- `MAE` (más interpretable), `RMSE` (penaliza errores grandes), `R²` como complemento.\n\n### Validación\n- Evitar una sola partición: **validación cruzada** o validación temporal si procede.\n\n---\n\n## 6) Ajuste y selección final (Tema 11)\n- Definir qué hiperparámetros se tunearían y por qué:\n  - Árboles/RF: `max_depth`, `min_samples_leaf`, `n_estimators`, `max_features`.\n  - SVM: `C`, `gamma`, kernel.\n- Elegir el modelo final por:\n  - Métrica objetivo (p. ej. maximizar recall de lluvia).\n  - Estabilidad (varianza) y robustez (Tema 1 + Tema 9/10).\n  - Interpretabilidad mínima (importancia de variables en RF, análisis de errores).\n\n---\n\n## 7) Resultado que esperaría entregar (sin código)\n1. **Definición del objetivo** y del tipo de problema (clasificación/regresión).\n2. **Resumen EDA**: variables clave, estacionalidad, missing, outliers, balance.\n3. **Decisiones de preprocesado** justificadas.\n4. **Comparativa razonada** de 2–3 modelos del temario.\n5. **Métricas** elegidas y por qué.\n6. **Recomendación final** + riesgos (leakage temporal, deriva, desbalance).\n\nCon eso, cubres el “análisis completo” sin vender humo y alineado con el temario.",
+      "keywords": [
+        "EDA",
+        "datos ausentes",
+        "clasificación",
+        "regresión",
+        "validación temporal",
+        "Random Forest",
+        "SVM",
+        "métricas"
+      ],
+      "contentHash": "sha256:a22909816b8c119ec90a2c38e9d9133ae6fcc85373a2e7c7d35a5f468274509f",
+      "createdBy": "Luis",
+      "sourcePackId": "83ef5676-1384-45f7-804a-20c7d1f4690b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:36:34.166Z",
+      "updatedAt": "2026-02-18T14:36:34.166Z"
+    },
+    {
       "id": "e05dc48f-6414-46b0-bb0e-d0e566022c15",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
@@ -2105,6 +3844,41 @@
       },
       "createdAt": "2026-02-18T12:07:10.886Z",
       "updatedAt": "2026-02-18T12:07:10.886Z"
+    },
+    {
+      "id": "e15f1ebd-c491-4952-aa77-d7b76fe28bc7",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "e1093df5-00c7-4082-ae58-ddd12bb61b95",
+      "type": "DESARROLLO",
+      "prompt": "Explica los modelos de servicio accesibles en la computación en la nube para proyectos de IA (IaaS, PaaS, SaaS), indicando qué gestiona el usuario y qué el proveedor en cada caso. Pon un ejemplo de cada.",
+      "difficulty": 2,
+      "tags": [
+        "recursos",
+        "cloud",
+        "infraestructura"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Modelos de Servicio Cloud para Proyectos de IA\n\n### IaaS — Infrastructure as a Service\n- **Proveedor proporciona**: Hardware virtualizado (servidores, almacenamiento, red).\n- **Usuario gestiona**: Sistema operativo, middleware, runtime, aplicaciones y datos.\n- **Control máximo, responsabilidad máxima**.\n- **Ejemplo en IA**: Amazon EC2 con instancias GPU (p3/p4). El científico de datos instala TensorFlow/PyTorch en la instancia y entrena su modelo.\n\n### PaaS — Platform as a Service\n- **Proveedor proporciona**: Infraestructura + SO + runtime + herramientas de desarrollo.\n- **Usuario gestiona**: Aplicaciones y datos únicamente.\n- **Ejemplo en IA**: Google Vertex AI o AWS SageMaker. El equipo solo gestiona el código del modelo y los datos; la plataforma gestiona el entorno de entrenamiento y despliegue.\n\n### SaaS — Software as a Service\n- **Proveedor proporciona**: La aplicación completa lista para usar.\n- **Usuario**: Solo configura el software y aporta los datos.\n- **Ejemplo en IA**: Google AutoML, IBM Watson Studio, Salesforce Einstein. El usuario define el problema y los datos; la plataforma entrena y despliega el modelo automáticamente.\n\n### Resumen\n\n| Modelo | Proveedor gestiona | Usuario gestiona | Ejemplo IA |\n|---|---|---|---|\n| IaaS | Hardware, red | SO, runtime, apps | EC2 + GPU |\n| PaaS | Infra + SO + runtime | Apps, datos | SageMaker |\n| SaaS | Todo | Configuración, datos | Google AutoML |",
+      "keywords": [
+        "IaaS",
+        "PaaS",
+        "SaaS",
+        "cloud",
+        "AWS",
+        "SageMaker",
+        "GPU",
+        "AutoML"
+      ],
+      "contentHash": "sha256:f1efafcbbfa565185ac4a521cf4b2c42ae218059e48f3bf493006a8703b52a56",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "id": "e1d5f90e-2abe-4703-b449-bc2078e9022c",
@@ -2187,6 +3961,35 @@
       "updatedAt": "2026-02-18T10:35:11.048Z"
     },
     {
+      "id": "e4073711-2700-440a-9461-1ed45f32c369",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "PRACTICO",
+      "prompt": "### Métricas de evaluación (árboles de decisión)\n\nDespués de entrenar un modelo se obtienen los siguientes datos de validación:\n\n- De las **110** instancias de la **clase positiva**, el modelo clasificó bien **100**.  \n- De las **60** instancias de la **clase negativa**, el modelo clasificó bien **55**.\n\nSe pide:\n\n1. Calcular **Accuracy**, **Precisión**, **Recall** y **F1-score** para **ambas clases**.  \n2. Indicar si el algoritmo responde de manera adecuada a la **detección de la clase negativa**. Justifica.  \n3. Analizar el valor de la **sensibilidad**: ¿qué significado tiene?\n\n> Origen: **Examen anterior** (UNIR, ordinaria **07–12/03/2025**, **Modelo D**).\n",
+      "explanation": "A partir de **TP/TN/FP/FN** se calculan métricas globales (accuracy) y por clase. La **sensibilidad** es el *recall* de la clase positiva (TPR).",
+      "difficulty": 2,
+      "tags": [
+        "examen-anterior",
+        "unir",
+        "taa",
+        "2025-03",
+        "modelo-d",
+        "metricas",
+        "confusion-matrix"
+      ],
+      "modelAnswer": "## 0) Matriz de confusión (tomando **positiva** como clase positiva)\n\n- **TP** = 100 (positivas bien clasificadas)  \n- **FN** = 110 − 100 = 10 (positivas mal, predichas como negativas)  \n- **TN** = 55 (negativas bien clasificadas)  \n- **FP** = 60 − 55 = 5 (negativas mal, predichas como positivas)\n\nTotal = 110 + 60 = **170**\n\n|               | Pred + | Pred − |\n|---|---:|---:|\n| Real + | TP = 100 | FN = 10 |\n| Real − | FP = 5 | TN = 55 |\n\n## 1) Métricas\n\n### Accuracy (global)\n`Accuracy = (TP + TN) / (TP + TN + FP + FN)`\n\n- Accuracy = (100 + 55) / 170 = 155/170 = **0,9118** (≈ **91,18%**)\n\n### Clase **positiva** (tratándola como “la positiva”)\n- **Precisión₊** = TP / (TP + FP) = 100 / (100 + 5) = 100/105 = **0,9524**\n- **Recall₊** (*sensibilidad*) = TP / (TP + FN) = 100 / (100 + 10) = 100/110 = **0,9091**\n- **F1₊** = 2·P·R / (P + R)  \n  = 2·0,9524·0,9091 / (0,9524 + 0,9091) = **0,9302**\n\n### Clase **negativa** (mismas métricas pero considerando “negativa” como la clase objetivo)\nEquivalencias:\n- TP₋ = TN = 55\n- FP₋ = FN = 10\n- FN₋ = FP = 5\n\n- **Precisión₋** = TP₋ / (TP₋ + FP₋) = 55 / (55 + 10) = 55/65 = **0,8462**\n- **Recall₋** = TP₋ / (TP₋ + FN₋) = 55 / (55 + 5) = 55/60 = **0,9167**\n- **F1₋** = 2·0,8462·0,9167 / (0,8462 + 0,9167) = **0,8809**\n\n> Resumen rápido:\n>\n> | Clase | Precisión | Recall | F1 |\n> |---|---:|---:|---:|\n> | Positiva | 0,9524 | 0,9091 | 0,9302 |\n> | Negativa | 0,8462 | 0,9167 | 0,8809 |\n\n## 2) ¿Detecta bien la **clase negativa**?\n\nBastante bien en **recall de la negativa**: 55/60 = **91,67%** de las negativas se detectan como negativas.\n\nEl punto “feo” es la **precisión de la negativa** (0,8462): de todo lo que el modelo marca como negativo, ~**15%** en realidad son **positivos** (FN=10). Si “fallar un positivo” es caro, esto importa.\n\nSi el objetivo explícito es “detectar negativos”, el modelo **sí responde bien** (pocos FP=5; alta especificidad/recall negativa).\n\n## 3) Sensibilidad: significado y valor aquí\n\nLa **sensibilidad** es lo mismo que **Recall de la clase positiva**:\n\n`sensibilidad = TP / (TP + FN)`\n\nAquí: 100/110 = **0,9091**.\n\nInterpretación directa:  \n> “De todos los casos **realmente positivos**, el modelo detecta correctamente ~**91%**.”\n\nEs decir, se “escapan” ~**9%** de positivos (los **FN = 10**).\n",
+      "contentHash": "sha256:f42fb1003f4ea6d27bfe96af513ab7edbff2673b6c0f9c447d5958d8598059b9",
+      "createdBy": "Luis",
+      "sourcePackId": "04a1a1df-5192-4d2f-9e7e-12bf6daf1f16",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:22:11.722Z",
+      "updatedAt": "2026-02-18T14:22:11.722Z"
+    },
+    {
       "id": "e9a131f0-8ae3-46db-bc62-958b2a1b98a6",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "68f33661-e359-4655-b124-93d9c2981d18",
@@ -2225,6 +4028,38 @@
       },
       "createdAt": "2026-02-18T12:21:52.982Z",
       "updatedAt": "2026-02-18T12:21:52.982Z"
+    },
+    {
+      "id": "ea5ad95b-0c01-4c24-b8ed-46a17070e918",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "Explica cómo medir la calidad de un trabajo científico desde el punto de vista de la redacción y la validez de sus fuentes.",
+      "difficulty": 2,
+      "tags": [
+        "redaccion-cientifica"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Calidad de un Trabajo Científico\n\n### Criterios de calidad en redacción\n- **Precisión**: Afirmaciones concretas, cuantificadas, sin ambigüedad.\n- **Concisión**: Sin redundancias ni palabras innecesarias.\n- **Objetividad**: Sin valoraciones subjetivas; lenguaje impersonal.\n- **Coherencia interna**: Conclusiones derivadas lógicamente de los datos.\n- **Estructura**: Sigue el formato IMRaD (Introducción, Métodos, Resultados, Discusión).\n\n### Criterios de calidad en fuentes\n- **Peer review**: Las fuentes han superado revisión por pares.\n- **Actualidad**: Recientes (últimos 5 años) salvo trabajos fundacionales.\n- **Relevancia**: Directamente pertinentes al problema investigado.\n- **Variedad**: No basado en un único autor o fuente.\n\n### Indicadores externos de calidad\n- **Factor de impacto (JIF)** de la revista.\n- **Cuartil (Q1–Q4)**: Posición relativa en el campo (Q1 = top 25%).\n- **Índice h del autor**: h publicaciones citadas al menos h veces.\n- **Reproducibilidad**: ¿Otros pueden replicar el experimento con la descripción facilitada?",
+      "keywords": [
+        "calidad científica",
+        "factor de impacto",
+        "índice h",
+        "peer review",
+        "IMRaD",
+        "cuartil",
+        "reproducibilidad"
+      ],
+      "contentHash": "sha256:89de1b7c9cffe253eded41625b923a27896bf9096f35281037a8661faa97d5f6",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -2267,6 +4102,108 @@
       "updatedAt": "2026-02-18T10:25:41.602Z"
     },
     {
+      "id": "f2f823e4-bc33-427c-924f-651e8c7bd66f",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "PRACTICO",
+      "prompt": "Después de entrenar un modelo con base en **Random Forest** se obtienen los siguientes datos de validación:\n\n- De las **80** instancias de la **clase positiva**, el modelo clasificó bien **50**.  \n- De las **410** instancias de la **clase negativa**, el modelo clasificó bien **350**.\n\nSe pide:\n\n1) Calcular **Accuracy**, **Precisión**, **Recall** y **F1-score** para **ambas clases**.  \n2) Indicar si el algoritmo responde de manera adecuada para clasificar correctamente la **clase positiva**. Justifica.  \n3) Analizar el valor de la **sensibilidad**: ¿qué significado tiene?\n\n(Usa las definiciones habituales: TP, TN, FP, FN).",
+      "explanation": "Debe calcular correctamente TP, TN, FP, FN y derivar métricas. En la interpretación, si la clase positiva es crítica, se debe enfatizar recall/sensibilidad y el coste de FN.",
+      "difficulty": 3,
+      "tags": [
+        "métricas",
+        "matriz de confusión",
+        "random forest",
+        "sensibilidad"
+      ],
+      "modelAnswer": "Primero construimos la **matriz de confusión** (tomando “positiva” como la clase +):\n\n|               | Pred + | Pred - |\n|---|---:|---:|\n| **Real +**    | TP = 50 | FN = 30 |\n| **Real -**    | FP = 60 | TN = 350 |\n\nTotal = 490.\n\n---\n\n## 1) Métricas\n\n### Global\n- **Accuracy** = (TP + TN) / Total = (50+350)/490 = **0.816** (≈ 81.6%)\n\n### Para la clase positiva (+)\n- **Precisión (+)** = TP / (TP+FP) = 50/(50+60) = **0.455**\n- **Recall (+)** = TP / (TP+FN) = 50/(50+30) = **0.625**\n- **F1 (+)** = 2·P·R/(P+R) = **0.526**\n\n### Para la clase negativa (-) (tratándola como “clase de interés”)\nEquivalente a calcular métricas sobre el “-”:\n\n- **Precisión (-)** = TN / (TN+FN) = 350/(350+30) = **0.921**\n- **Recall (-)** = TN / (TN+FP) = 350/(350+60) = **0.854**\n- **F1 (-)** = **0.886**\n\n---\n\n## 2) ¿Clasifica bien la clase positiva?\nSi la **clase positiva es la importante**, la respuesta es: **no especialmente**.\n\n- El **Recall (+) = 0.625** implica que se “escapan” **FN/(TP+FN) = 30/80 = 37.5%** de positivos reales (falsos negativos).  \n- La **Precisión (+) = 0.455** indica además bastantes falsos positivos.\n\nEn contextos donde fallar un positivo cuesta caro (fraude, avería, enfermedad), este rendimiento suele ser insuficiente: habría que **priorizar recall** (p. ej. ajustando umbral, pesos de clase, más datos/variables, etc.).\n\n## 3) Sensibilidad: significado\nLa **sensibilidad** es lo mismo que el **Recall** de la clase positiva:\n\n- **Sensibilidad = TP / (TP+FN) = 0.625**\n\nSe interpreta como: “de todos los positivos reales, ¿qué proporción detecto?”.  \nAquí detecta ~62.5% y deja sin detectar ~37.5%.\n",
+      "keywords": [
+        "matriz de confusión",
+        "accuracy",
+        "precisión",
+        "recall",
+        "sensibilidad",
+        "F1",
+        "TP",
+        "TN",
+        "FP",
+        "FN"
+      ],
+      "contentHash": "sha256:56a77a9dd5dcacaac83808e0296a5acd91815dfaf65717ac3cbb3384c0c397a0",
+      "createdBy": "Luis",
+      "sourcePackId": "9f68ddcb-ee6e-4448-b804-bce7c3c45725",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T14:06:33.894Z",
+      "updatedAt": "2026-02-18T14:06:33.894Z"
+    },
+    {
+      "id": "f5c99089-7ebe-4b5f-8588-705597cb6a1b",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "type": "DESARROLLO",
+      "prompt": "En un trabajo científico, explica cuál es la diferencia entre el estado del arte y el marco teórico, y explica qué tipo de referencias bibliográficas usarías en cada uno de los casos.",
+      "difficulty": 2,
+      "tags": [
+        "redaccion-cientifica",
+        "metodologia"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Estado del Arte vs Marco Teórico\n\n### Estado del Arte\nRevisión exhaustiva de trabajos de investigación previos relacionados con el problema. Identifica qué se ha investigado, tendencias, resultados y brechas (gaps) de conocimiento.\n\n**Referencias**: Artículos originales en revistas indexadas (Scopus, IEEE, ACM), actas de congresos, revisiones sistemáticas. Se priorizan publicaciones recientes (últimos 5 años) y de alto impacto.\n\n### Marco Teórico\nBase conceptual que sustenta la investigación. Define conceptos clave, teorías, modelos y enfoques teóricos para analizar el problema y formular hipótesis.\n\n**Referencias**: Libros de texto, artículos teóricos fundacionales, estándares y surveys. Fuentes consolidadas; no necesariamente recientes.\n\n### Diferencias clave\n\n| | Estado del Arte | Marco Teórico |\n|---|---|---|\n| Objetivo | Qué se ha investigado | Conceptos y teorías base |\n| Temporalidad | Reciente | Puede incluir clásicos |\n| Tipo de fuente | Artículos, congresos | Libros, surveys |",
+      "keywords": [
+        "estado del arte",
+        "marco teórico",
+        "referencias bibliográficas",
+        "survey",
+        "gap"
+      ],
+      "contentHash": "sha256:830e9b3b2d76b22b120976fbbeb2c8270236af560e6cd8c104298fd025ab1b6d",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "f5fe45bc-6b29-453b-a2c6-b2d93ec37889",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
+      "type": "DESARROLLO",
+      "prompt": "¿Qué son los autoencoders en el aprendizaje automático? Explica su arquitectura y propón un caso de uso.",
+      "difficulty": 2,
+      "tags": [
+        "aprendizaje-automatico",
+        "redes-neuronales"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Autoencoders\n\n### Qué son\nRedes neuronales no supervisadas entrenadas para aprender una representación comprimida de los datos de entrada y reconstruirlos. El objetivo: la salida sea lo más parecida posible a la entrada, forzando al modelo a aprender las características más relevantes.\n\n### Arquitectura\n\n**Encoder (Codificador)**\n- Recibe el dato de entrada x de alta dimensión.\n- Aplica capas que reducen progresivamente la dimensionalidad.\n- Produce un vector comprimido: el **espacio latente** o *bottleneck* (z).\n\n**Decoder (Decodificador)**\n- Toma el vector latente z.\n- Reconstruye progresivamente la dimensión original.\n- Produce la reconstrucción x̂ ≈ x.\n\n`Entrada x → [Encoder] → Espacio latente z → [Decoder] → Reconstrucción x̂`\n\n**Función de pérdida**: Error de reconstrucción (MSE para datos continuos, Binary Cross-Entropy para binarios).\n\n### Variantes\n- **VAE (Variational Autoencoder)**: Aprende una distribución probabilística en el espacio latente, permitiendo generar nuevos datos.\n- **Autoencoder convolucional**: Para imágenes (capas Conv2D).\n- **Autoencoder disperso (sparse)**: Fuerza activación de pocas neuronas en el espacio latente.\n\n### Caso de uso: Detección de anomalías industriales\nUn autoencoder se entrena **solo con datos normales** de vibraciones de motores correctos. En producción, calcula el error de reconstrucción para cada nueva medición: si supera un umbral, la muestra es anómala (posible fallo del motor). No se necesitan ejemplos de fallos etiquetados.",
+      "keywords": [
+        "autoencoder",
+        "encoder",
+        "decoder",
+        "espacio latente",
+        "VAE",
+        "detección anomalías",
+        "reconstrucción"
+      ],
+      "contentHash": "sha256:323ff92542357d7ffcf5d6a7774d5cf8448badf30e1faf8ac8660f4f7041d52c",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
       "type": "TEST",
@@ -2305,6 +4242,39 @@
       },
       "createdAt": "2026-02-18T10:02:16.825Z",
       "updatedAt": "2026-02-18T10:02:16.825Z"
+    },
+    {
+      "id": "fd18205f-6efe-4154-9de3-4ce6cec73b57",
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "topicId": "26b84c63-3862-49b2-bf3a-5521aa7461a9",
+      "type": "DESARROLLO",
+      "prompt": "En el caso de realizar un experimento para ver si el lanzamiento de una nueva web mejora la experiencia de usuario online y facilita el proceso de compra digital, explica qué variables serían las dependientes, cuáles las independientes y qué variables podrían considerarse como intervinientes (contaminadoras).",
+      "difficulty": 2,
+      "tags": [
+        "metodologia",
+        "experimento"
+      ],
+      "origin": "examen_anterior",
+      "modelAnswer": "## Variables del Experimento de la Nueva Web\n\n### Variables Dependientes (VD) — lo que se mide\n- **Tasa de conversión**: porcentaje de visitantes que completan una compra.\n- **Tiempo hasta completar la compra**: desde entrada hasta checkout finalizado.\n- **Satisfacción del usuario**: cuestionarios post-compra (escala Likert, NPS).\n- **Tasa de abandono del carrito**: usuarios que añaden pero no finalizan.\n\n### Variables Independientes (VI) — lo que se manipula\n- Diseño visual de la web (distribución, colores, tipografía).\n- Número de pasos hasta el carrito (simplificación del flujo).\n- Cantidad y calidad de las imágenes de producto.\n- Métodos de pago disponibles (Bizum, PayPal, criptomonedas).\n- Velocidad de carga de la página.\n\n### Variables Intervinientes / Contaminadoras — no controladas\n- **Dispositivo utilizado** (móvil, tablet, PC): la experiencia varía independientemente del diseño.\n- **Nivel de experiencia digital del usuario**: comportamiento atípico de usuarios menos habituados.\n- **Momento del día o día de la semana**: el tráfico y la intención de compra varían temporalmente.\n- **Ventanas emergentes de terceros**: interrumpen el proceso de compra.\n- **Velocidad de conexión del usuario**: afecta la percepción de rendimiento al margen del diseño.",
+      "keywords": [
+        "variable dependiente",
+        "variable independiente",
+        "interviniente",
+        "contaminadora",
+        "experimento",
+        "UX",
+        "tasa conversión"
+      ],
+      "contentHash": "sha256:f7781ff6e479e1fcbc9bef94a3b5863bbd5fdb06e5976f85a63f843367cfed74",
+      "createdBy": "Claude - Recopilatorio IGPIA 2020-2025",
+      "sourcePackId": "35a01deb-e402-4a70-9b30-0381f94dd5cb",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T17:50:55.405Z",
+      "updatedAt": "2026-02-18T17:50:55.405Z"
     }
   ],
   "pdfAnchors": []
