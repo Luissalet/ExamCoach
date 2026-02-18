@@ -14,15 +14,18 @@ const ContributionQuestionSchema = z.object({
   topicKey: z.string(),
   type: z.enum(['TEST', 'DESARROLLO', 'COMPLETAR', 'PRACTICO']),
   prompt: z.string(),
+  origin: z.enum(['test', 'examen_anterior', 'clase', 'alumno']).optional(),
   options: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
   correctOptionIds: z.array(z.string()).optional(),
   modelAnswer: z.string().optional(),
   keywords: z.array(z.string()).optional(),
+  numericAnswer: z.string().optional(),
   clozeText: z.string().optional(),
   blanks: z.array(z.object({ id: z.string(), accepted: z.array(z.string()) })).optional(),
   explanation: z.string().optional(),
   difficulty: z.number().min(1).max(5).optional(),
   tags: z.array(z.string()).optional(),
+  topicKeys: z.array(z.string()).optional(),
   pdfAnchor: z.object({ page: z.number(), label: z.string().optional() }).optional(),
   createdBy: z.string().optional(),
   contentHash: z.string().optional(),
@@ -44,7 +47,7 @@ const ContributionPackSchema = z.object({
   questions: z.array(ContributionQuestionSchema),
 });
 
-// ─── Import result ─────────────────────────────────────────────────────────────
+// ─── Import result ──────────────────────────────────────────────────────────────
 
 export interface ContributionImportResult {
   packId: string;
@@ -174,20 +177,41 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
       continue;
     }
 
+    // Prepare topicKeys for multi-topic questions
+    let finalTopicIds: string[] | undefined;
+    if (cq.topicKeys && cq.topicKeys.length > 1) {
+      // Resolve topicKeys slugs to actual topic IDs
+      finalTopicIds = [];
+      for (const topicSlug of cq.topicKeys) {
+        const key = `${subjectKey}::${topicSlug}`;
+        const resolvedTopic = topicByKey.get(key);
+        if (resolvedTopic) {
+          finalTopicIds.push(resolvedTopic.id);
+        }
+      }
+      // Only set topicIds if we have more than one topic
+      if (finalTopicIds.length <= 1) {
+        finalTopicIds = undefined;
+      }
+    }
+
     // Insert new question
     const newQuestion: Question = {
       id: uuidv4(),
       subjectId: subject.id,
       topicId: topic.id,
+      topicIds: finalTopicIds,
       type: cq.type,
       prompt: cq.prompt,
       explanation: cq.explanation,
       difficulty: cq.difficulty as Question['difficulty'],
       tags: cq.tags,
+      origin: cq.origin,
       options: cq.options,
       correctOptionIds: cq.correctOptionIds,
       modelAnswer: cq.modelAnswer,
       keywords: cq.keywords,
+      numericAnswer: cq.numericAnswer,
       clozeText: cq.clozeText,
       blanks: cq.blanks,
       contentHash: hashToCheck,
@@ -260,16 +284,29 @@ export async function exportContributionPack(
 
   const contributionQuestions = questions.map((q) => {
     const topic = topics.find((t) => t.id === q.topicId);
+    
+    // Prepare topicKeys if question has multiple topics
+    let topicKeysSlugs: string[] | undefined;
+    if (q.topicIds && q.topicIds.length > 1) {
+      topicKeysSlugs = q.topicIds.map((tid) => {
+        const t = topics.find((topic) => topic.id === tid);
+        return t ? slugify(t.title) : tid;
+      });
+    }
+
     return {
       id: q.id,
       subjectKey: slugify(subject.name),
       topicKey: topic ? slugify(topic.title) : q.topicId,
+      topicKeys: topicKeysSlugs,
       type: q.type,
       prompt: q.prompt,
+      origin: q.origin,
       options: q.options,
       correctOptionIds: q.correctOptionIds,
       modelAnswer: q.modelAnswer,
       keywords: q.keywords,
+      numericAnswer: q.numericAnswer,
       clozeText: q.clozeText,
       blanks: q.blanks,
       explanation: q.explanation,
