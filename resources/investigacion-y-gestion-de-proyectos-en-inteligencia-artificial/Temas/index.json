@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "topicTitle": "Tema 1- Origen y evolución de la inteligencia artificial",
+    "pdf": "Tema_1._Origen_y_evolución_de_la_inteligencia_artificial.pdf"
+  },
+  {
+    "topicTitle": "Tema 2- Ciencia y método científico",
+    "pdf": "Tema_2._Ciencia_y_método_científico.pdf"
+  },
+  {
+    "topicTitle": "Tema 3- Financiación de proyectos",
+    "pdf": "Tema_3._Financiación_de_proyectos.pdf"
+  },
+  {
+    "topicTitle": "Tema 4- Publicación de resultados y redacción científica",
+    "pdf": "Tema_4._Publicación_de_resultados_y_redacción_científica.pdf"
+  },
+  {
+    "topicTitle": "Tema 5- Gestión de proyectos de inteligencia artificial. Enfoque metodológico",
+    "pdf": "Tema_5._Gestión_de_proyectos_de_inteligencia_artificial._Enfoque_metodológico.pdf"
+  },
+  {
+    "topicTitle": "Tema 6- Gestión de proyectos IA estructura de un proyecto IA y su despliegue",
+    "pdf": "Tema_6._Gestión_de_proyectos_IA_estructura_de_un_proyecto_IA_y_su_despliegue.pdf"
+  },
+  {
+    "topicTitle": "Tema 7-Gestión de proyectos IA. Recursos materiales y recursos humanos",
+    "pdf": "Tema_7._Gestión_de_proyectos_IA._Recursos_materiales_y_recursos_humanos.pdf"
+  },
+  {
+    "topicTitle": "Tema 8- Investigación en agentes inteligentes y sistemas expertos",
+    "pdf": "Tema_8._Investigación_en_agentes_inteligentes_y_sistemas_expertos.pdf"
+  },
+  {
+    "topicTitle": "Tema 9- Investigación en aprendizaje automático",
+    "pdf": "Tema_9._Investigación_en_aprendizaje_automático.pdf"
+  },
+  {
+    "topicTitle": "Tema 10- Investigación en sistemas cognitivos",
+    "pdf": "Tema_10._Investigación_en_sistemas_cognitivos.pdf"
+  },
+  {
+    "topicTitle": "Tema 11- Investigación en computación bioinspirada",
+    "pdf": "Tema_11._Investigación_en_computación_bioinspirada.pdf"
+  },
+  {
+    "topicTitle": "Tema 12- Implicaciones filosóficas éticas y legales en la aplicación de la inteligencia artificial",
+    "pdf": "Tema_12._Implicaciones_filosóficas_éticas_y_legales_en_la_aplicación_de_la_inteligencia_artificial.pdf"
+  }
+]

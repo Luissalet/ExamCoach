@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "topicTitle": "Tema 1- Introducción al procesamiento del lenguaje natural",
+    "pdf": "Tema 1- Introducción al procesamiento del lenguaje natural.pdf"
+  },
+  {
+    "topicTitle": "Tema 2- El texto como dato",
+    "pdf": "Tema 2- El texto como dato.pdf"
+  },
+  {
+    "topicTitle": "Tema 3- Etiquetado morfosintáctico (POS tagging)",
+    "pdf": "Tema 3- Etiquetado morfosintáctico (POS tagging).pdf"
+  },
+  {
+    "topicTitle": "Tema 4-  Análisis sintáctico",
+    "pdf": "Tema 4-  Análisis sintáctico.pdf"
+  },
+  {
+    "topicTitle": "Tema 5- Análisis semántico",
+    "pdf": "Tema 5- Análisis semántico.pdf"
+  },
+  {
+    "topicTitle": "Tema 6- Semántica léxica",
+    "pdf": "Tema 6- Semántica léxica.pdf"
+  },
+  {
+    "topicTitle": "Tema 7- Modelado estadístico del lenguaje",
+    "pdf": "Tema 7- Modelado estadístico del lenguaje.pdf"
+  },
+  {
+    "topicTitle": "Tema 8- Modelado neuronal del lenguaje",
+    "pdf": "Tema 8- Modelado neuronal del lenguaje.pdf"
+  },
+  {
+    "topicTitle": "Tema 9- Aplicaciones del procesamiento del lenguaje natural",
+    "pdf": "Tema 9- Aplicaciones del procesamiento del lenguaje natural.pdf"
+  },
+  {
+    "topicTitle": "Tema 10- Agentes conversacionales",
+    "pdf": "Tema 10- Agentes conversacionales.pdf"
+  }
+]

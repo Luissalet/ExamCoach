@@ -185,7 +185,73 @@ function registerUploadEndpoint(server: import('vite').ViteDevServer, root: stri
   });
 }
 
-// ─── Plugin ───────────────────────────────────────────────────────────────────
+// ─── PDF mapping sync endpoint (dev only) ────────────────────────────────────
+
+function registerSyncMappingEndpoint(server: import('vite').ViteDevServer, root: string): void {
+  server.middlewares.use('/api/sync-pdf-mapping', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
+    if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'Method not allowed' })); return; }
+
+    let body = '';
+    req.setEncoding('utf-8');
+    req.on('data', (chunk: string) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { slug, entries } = JSON.parse(body) as {
+          slug: string;
+          entries: Array<{ topicTitle: string; pdf: string }>;
+        };
+
+        if (!slug || !Array.isArray(entries)) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Faltan campos: slug, entries' }));
+          return;
+        }
+
+        const safeSlug = slugify(slug);
+        const temasDir = path.join(root, 'resources', safeSlug, 'Temas');
+        fs.mkdirSync(temasDir, { recursive: true });
+
+        const indexPath = path.join(temasDir, 'index.json');
+        let index: Array<{ topicTitle: string; pdf: string }> = [];
+        if (fs.existsSync(indexPath)) {
+          try {
+            const raw = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+            index = Array.isArray(raw) && raw.length > 0 && typeof raw[0] === 'string'
+              ? (raw as string[]).map(pdf => ({ topicTitle: '', pdf }))
+              : raw;
+          } catch { index = []; }
+        }
+
+        // Merge: actualizar entradas existentes, añadir nuevas
+        for (const entry of entries) {
+          if (!entry.pdf) continue;
+          const idx = index.findIndex(e => e.pdf === entry.pdf);
+          if (idx >= 0) {
+            index[idx] = entry;
+          } else {
+            index.push(entry);
+          }
+        }
+
+        fs.writeFileSync(indexPath, JSON.stringify(index, null, 2) + '\n', 'utf-8');
+        console.log(`\x1b[36m[init-resources]\x1b[0m 🔄 index.json sincronizado (${safeSlug}): ${entries.length} entradas`);
+
+        res.statusCode = 200;
+        res.end(JSON.stringify({ ok: true, index }));
+      } catch (e) {
+        console.error('\x1b[31m[init-resources]\x1b[0m ❌ Error en sync-mapping:', e);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: String(e) }));
+      }
+    });
+  });
+}
+
+
 
 export function initResourcesPlugin(): Plugin {
   let root: string;
@@ -205,6 +271,7 @@ export function initResourcesPlugin(): Plugin {
     configureServer(server) {
       initResources(server.config.root);
       registerUploadEndpoint(server, server.config.root);
+      registerSyncMappingEndpoint(server, server.config.root);
     },
   };
 }

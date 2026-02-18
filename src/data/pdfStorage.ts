@@ -89,17 +89,19 @@ export async function deleteStoredPdf(subjectId: string, filename: string): Prom
 
 /**
  * Intenta subir el PDF al servidor de desarrollo Vite para guardarlo en
- * resources/[slug]/Temas/ y actualizar el index.json.
+ * resources/[slug]/Temas/ y actualizar el index.json con el mapeo topicTitle → pdf.
  *
  * Solo funciona con `npm run dev`. En producción devuelve false silenciosamente.
- * Invalida la caché de resourceLoader para que loadPdfList refleje el nuevo archivo.
+ * Invalida la caché de resourceLoader para que loadPdfMapping refleje el nuevo archivo.
  *
+ * @param topicTitle  Título del tema al que pertenece el PDF (para el mapeo en index.json)
  * @returns true si el servidor lo aceptó, false si no está disponible.
  */
 export async function savePdfToServer(
   subjectName: string,
   filename: string,
-  file: File
+  file: File,
+  topicTitle?: string,
 ): Promise<boolean> {
   try {
     // Convertir a base64
@@ -119,13 +121,13 @@ export async function savePdfToServer(
     const res = await fetch('/api/upload-pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, filename, data: base64 }),
+      body: JSON.stringify({ slug, filename, data: base64, topicTitle: topicTitle ?? '' }),
     });
 
     if (res.ok) {
-      // Invalidar caché para que el próximo loadPdfList lea el index.json actualizado
+      // Invalidar caché para que el próximo loadPdfMapping lea el index.json actualizado
       invalidateExtraInfoCache(subjectName);
-      console.log(`[pdfStorage] ✅ PDF guardado en resources/${slug}/Temas/${filename}`);
+      console.log(`[pdfStorage] ✅ PDF guardado en resources/${slug}/Temas/${filename} → "${topicTitle}"`);
       return true;
     }
 

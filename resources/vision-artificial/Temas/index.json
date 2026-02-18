@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "topicTitle": "Tema 1- Introducción a los sistemas de percepción",
+    "pdf": "Tema_1._Introducción_a_los_sistemas_de_percepción.pdf"
+  },
+  {
+    "topicTitle": "Tema 2- Elementos de un sistema de percepción",
+    "pdf": "Tema_2._Elementos_de_un_sistema_de_percepción.pdf"
+  },
+  {
+    "topicTitle": "Tema 3- Captura y digitalización de señales",
+    "pdf": "Tema_3._Captura_y_digitalización_de_señales.pdf"
+  },
+  {
+    "topicTitle": "Tema 4- Fuentes y tipos de ruido",
+    "pdf": "Tema_4._Fuentes_y_tipos_de_ruido.pdf"
+  },
+  {
+    "topicTitle": "Tema 5- Detección y cancelación de anomalías",
+    "pdf": "Tema_5._Detección_y_cancelación_de_anomalías.pdf"
+  },
+  {
+    "topicTitle": "Tema 6- Procesamiento de imagen. Operaciones elementales",
+    "pdf": "Tema_6._Procesamiento_de_imagen._Operaciones_elementales.pdf"
+  },
+  {
+    "topicTitle": "Tema 7- Procesamiento de imagen. Operaciones espaciales",
+    "pdf": "Tema_7._Procesamiento_de_imagen._Operaciones_espaciales.pdf"
+  },
+  {
+    "topicTitle": "Tema 8- Procesamiento de señales.Filtrado y análisis en frecuencia",
+    "pdf": "Tema_8._Procesamiento_de_señales._Filtrado_y_análisis_en_frecuencia.pdf"
+  },
+  {
+    "topicTitle": "Tema 9- Procesamiento e imagen. Morfología matemática",
+    "pdf": "Tema_9._Procesamiento_de_imagen._Morfología_matemática.pdf"
+  },
+  {
+    "topicTitle": "Tema 10- Procesamiento de imagen. Crecimiento de regiones",
+    "pdf": "Tema_10._Procesamiento_de_imagen._Crecimiento_de_regiones.pdf"
+  },
+  {
+    "topicTitle": "Tema 11- Extracción de características. Propiedades estadísticas y frecuenciales de la señal",
+    "pdf": "Tema_11._Extracción_de_características._Propiedades_estadísticas_y_frecuenciales_de_la_señal.pdf"
+  },
+  {
+    "topicTitle": "Tema 12- Extracción de características. Caracterización de textura en imágenes",
+    "pdf": "Tema_12._Extracción_de_características._Caracterización_de_textura_en_imágenes.pdf"
+  },
+  {
+    "topicTitle": "Tema 13- Extracción de características. Procesamientos multiescala y métodos avanzados",
+    "pdf": "Tema_13._Extracción_de_características._Procesamientos_multiescala_y_métodos_avanzados.pdf"
+  },
+  {
+    "topicTitle": "Tema 14- Decisión. Principios e implementación de algoritmos de ayuda en la toma de decisiones",
+    "pdf": "Tema_14._Decisión._Principios_e_implementación_de_algoritmos_de_ayuda_en_la_toma_de_decisiones.pdf"
+  },
+  {
+    "topicTitle": "Tema 15- Aplicaciones actuales del tratamiento de la señal",
+    "pdf": "Tema_15._Aplicaciones_actuales_del_tratamiento_de_la_señal.pdf"
+  }
+]

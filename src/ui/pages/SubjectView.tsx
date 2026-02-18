@@ -7,7 +7,7 @@ import {
 } from '@/ui/components';
 import { QuestionForm } from '@/ui/components/QuestionForm';
 import { PdfViewer, type PdfViewerHandle } from '@/ui/components/PdfViewer';
-import { loadPdfList, getPdfUrl } from '@/data/resourceLoader';
+import { loadPdfMapping, getPdfUrl } from '@/data/resourceLoader';
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
 import type { Topic, Question, QuestionOrigin } from '@/domain/models';
 
@@ -75,16 +75,48 @@ export function SubjectView() {
     }
   }, [subjectId]);
 
-  // Carga lista de PDFs: estáticos + IndexedDB
+  // Carga lista de PDFs y sincroniza bidireccional: DB → index.json y index.json → DB
   const refreshPdfList = useCallback(async () => {
     if (!subject || !subjectId) return;
-    const [staticList, dbList] = await Promise.all([
-      loadPdfList(subject.name),
+    const currentTopics = topics.filter(t => t.subjectId === subjectId);
+
+    const [mapping, dbList] = await Promise.all([
+      loadPdfMapping(subject.name),
       listStoredPdfs(subjectId),
     ]);
+
+    // index.json → DB: asignar PDFs a temas que coincidan por topicTitle y aún no tengan PDF
+    for (const entry of mapping) {
+      if (!entry.topicTitle || !entry.pdf) continue;
+      const topic = currentTopics.find(
+        t => !t.pdfFilename && t.title.trim().toLowerCase() === entry.topicTitle.trim().toLowerCase()
+      );
+      if (topic) {
+        await updateTopic(topic.id, { pdfFilename: entry.pdf });
+      }
+    }
+
+    // DB → index.json: sincronizar temas que ya tienen pdfFilename pero no están en el mapeo
+    const topicsWithPdf = currentTopics.filter(t => t.pdfFilename);
+    if (topicsWithPdf.length > 0) {
+      const entriesToSync = topicsWithPdf
+        .filter(t => !mapping.some(e => e.pdf === t.pdfFilename && e.topicTitle))
+        .map(t => ({ topicTitle: t.title, pdf: t.pdfFilename! }));
+
+      if (entriesToSync.length > 0) {
+        const { slugify } = await import('@/domain/normalize');
+        fetch('/api/sync-pdf-mapping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug: slugify(subject.name), entries: entriesToSync }),
+        }).catch(() => { /* solo disponible en dev, ignorar en prod */ });
+      }
+    }
+
+    const staticList = mapping.map(e => e.pdf);
     const merged = Array.from(new Set([...staticList, ...dbList]));
     setPdfList(merged);
-  }, [subject?.name, subjectId]);
+  }, [subject?.name, subjectId, topics]);
 
   useEffect(() => {
     refreshPdfList();
@@ -135,7 +167,7 @@ export function SubjectView() {
       // Guardar en IndexedDB (siempre) y en resources/ vía dev server (si disponible)
       await Promise.all([
         savePdfBlob(subjectId, file.name, file),
-        savePdfToServer(subject.name, file.name, file),
+        savePdfToServer(subject.name, file.name, file, topic.title),
       ]);
       await updateTopic(topic.id, { pdfFilename: file.name });
       await refreshPdfList();

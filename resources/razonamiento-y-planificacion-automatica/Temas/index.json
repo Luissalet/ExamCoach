@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "topicTitle": "Tema 1- Introducción a la toma de decisiones",
+    "pdf": "Tema 1- Introducción a la toma de decisiones.pdf"
+  },
+  {
+    "topicTitle": "Tema 2- Representación del conocimiento y razonamiento",
+    "pdf": "Tema 2- Representación del conocimiento y razonamiento.pdf"
+  },
+  {
+    "topicTitle": "Tema 3- Lógica y pensamiento humano",
+    "pdf": "Tema 3- Lógica y pensamiento humano.pdf"
+  },
+  {
+    "topicTitle": "Tema 4- Búsqueda no informada",
+    "pdf": "Tema 4- Búsqueda no informada.pdf"
+  },
+  {
+    "topicTitle": "Tema 5- Búsqueda informada",
+    "pdf": "Tema 5- Búsqueda informada.pdf"
+  },
+  {
+    "topicTitle": "Tema 6- Búsqueda entre adversarios",
+    "pdf": "Tema 6- Búsqueda entre adversarios.pdf"
+  },
+  {
+    "topicTitle": "Tema 7- Problemas de planificación",
+    "pdf": "Tema 7- Problemas de planificación.pdf"
+  },
+  {
+    "topicTitle": "Tema 8- Sistemas basados en STRIP",
+    "pdf": "Tema 8- Sistemas basados en STRIP.pdf"
+  },
+  {
+    "topicTitle": "Tema 9- Redes de tareas jerárquicas (HTN)",
+    "pdf": "Tema 9- Redes de tareas jerárquicas (HTN).pdf"
+  },
+  {
+    "topicTitle": "Tema 10- Planificación multi agente",
+    "pdf": "Tema 10- Planificación multi agente.pdf"
+  },
+  {
+    "topicTitle": "Tema 11- Planificación por múltiples agentes",
+    "pdf": "Tema 11- Planificación por múltiples agentes.pdf"
+  },
+  {
+    "topicTitle": "Tema 12- Reparación reactiva multi agente",
+    "pdf": "Tema 12- Reparación reactiva multi agente.pdf"
+  }
+]

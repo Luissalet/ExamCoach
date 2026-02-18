@@ -12,9 +12,15 @@
 
 import type { SubjectExtraInfo } from '@/domain/models';
 
+export interface PdfMapping {
+  topicTitle: string;
+  pdf: string;
+}
+
 /** Cache en memoria para evitar fetches repetidos en la misma sesión. */
 const extraInfoCache = new Map<string, SubjectExtraInfo | null>();
 const pdfListCache = new Map<string, string[]>();
+const pdfMappingCache = new Map<string, PdfMapping[]>();
 
 /**
  * Convierte un nombre de asignatura en slug de directorio.
@@ -61,34 +67,52 @@ export function invalidateExtraInfoCache(subjectName: string): void {
   const slug = toSlug(subjectName);
   extraInfoCache.delete(slug);
   pdfListCache.delete(slug);
+  pdfMappingCache.delete(slug);
 }
 
 /**
- * Carga la lista de PDFs disponibles para una asignatura.
- * Lee resources/[slug]/Temas/index.json → string[]
- *
- * Si no existe el index.json, intenta leer la lista desde extra_info.pdfs.
- * Devuelve [] si no hay PDFs o hay error.
+ * Carga el mapeo { topicTitle, pdf } desde resources/[slug]/Temas/index.json.
+ * Soporta el formato nuevo ({ topicTitle, pdf }[]) y el antiguo (string[]).
+ * Devuelve [] si no existe o hay error.
  */
-export async function loadPdfList(subjectName: string): Promise<string[]> {
+export async function loadPdfMapping(subjectName: string): Promise<PdfMapping[]> {
   const slug = toSlug(subjectName);
-  if (pdfListCache.has(slug)) return pdfListCache.get(slug)!;
+  if (pdfMappingCache.has(slug)) return pdfMappingCache.get(slug)!;
 
-  // Primero intenta index.json dedicado
   try {
     const res = await fetch(`./resources/${slug}/Temas/index.json`, { cache: 'no-cache' });
     if (res.ok) {
-      const list: string[] = await res.json();
-      pdfListCache.set(slug, list);
-      return list;
+      const raw = await res.json();
+      let mapping: PdfMapping[];
+      if (Array.isArray(raw) && raw.length > 0 && typeof raw[0] === 'string') {
+        mapping = (raw as string[]).map(pdf => ({ topicTitle: '', pdf }));
+      } else {
+        mapping = raw as PdfMapping[];
+      }
+      pdfMappingCache.set(slug, mapping);
+      return mapping;
     }
   } catch {
     // fall through
   }
 
-  // Fallback: lista en extra_info.pdfs
+  // Fallback: lista en extra_info.pdfs (sin topicTitle)
   const info = await loadSubjectExtraInfo(subjectName);
-  const list = info?.pdfs ?? [];
+  const mapping = (info?.pdfs ?? []).map(pdf => ({ topicTitle: '', pdf }));
+  pdfMappingCache.set(slug, mapping);
+  return mapping;
+}
+
+/**
+ * Lista de nombres de PDFs. Derivada de loadPdfMapping.
+ * @deprecated Usa loadPdfMapping para obtener también el topicTitle.
+ */
+export async function loadPdfList(subjectName: string): Promise<string[]> {
+  const slug = toSlug(subjectName);
+  if (pdfListCache.has(slug)) return pdfListCache.get(slug)!;
+
+  const mapping = await loadPdfMapping(subjectName);
+  const list = mapping.map(e => e.pdf);
   pdfListCache.set(slug, list);
   return list;
 }
