@@ -57,6 +57,8 @@ cd study-app
 # Instala dependencias
 npm install
 
+npm i -D @types/node
+
 # Arranca en desarrollo
 npm run dev
 # → http://localhost:5173
