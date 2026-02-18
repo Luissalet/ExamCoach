@@ -36,6 +36,7 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 - Guardar resumenes como predeterminados/favoritos
 - Importar zip temas/ examenes anteriores / otros recursos por asignatura (externo para evitar problemas legales por distribución de temario online)
 - Otros recursos (aplicaciones de ayuda como filterlab y webs de consulta)
+- Soporte respuesta formato md para preguntas de desarrollo (negrita, viñeta etc)
 
 ### 🔜 Iteración 4 — Repaso inteligente
 

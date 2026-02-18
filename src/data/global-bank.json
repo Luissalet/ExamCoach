@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-18T08:17:57.878Z",
+  "exportedAt": "2026-02-18T11:00:56.691Z",
   "subjects": [
     {
       "name": "Razonamiento y Planificación Automática",
@@ -43,7 +43,7 @@
       "color": "#f59e0b",
       "id": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "createdAt": "2026-02-18T06:49:36.030Z",
-      "updatedAt": "2026-02-18T06:49:36.030Z"
+      "updatedAt": "2026-02-18T08:20:54.851Z"
     }
   ],
   "topics": [
@@ -53,7 +53,8 @@
       "order": 3,
       "id": "008612c6-b931-421e-999a-2bbf34c2b47f",
       "createdAt": "2026-02-18T07:18:47.956Z",
-      "updatedAt": "2026-02-18T07:18:47.956Z"
+      "updatedAt": "2026-02-18T08:59:30.329Z",
+      "pdfFilename": "Tema_4._Publicación_de_resultados_y_redacción_científica.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -61,7 +62,8 @@
       "order": 4,
       "id": "04013943-a2bc-41d5-86fd-c4c76c2e4c37",
       "createdAt": "2026-02-18T07:41:43.524Z",
-      "updatedAt": "2026-02-18T07:41:43.524Z"
+      "updatedAt": "2026-02-18T09:01:22.541Z",
+      "pdfFilename": "Tema_5._Detección_y_cancelación_de_anomalías.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -69,7 +71,8 @@
       "order": 5,
       "id": "05b06edc-0e7e-4b14-ba1d-f229bd3ff0ad",
       "createdAt": "2026-02-18T08:11:35.830Z",
-      "updatedAt": "2026-02-18T08:11:35.830Z"
+      "updatedAt": "2026-02-18T09:03:12.603Z",
+      "pdfFilename": "Tema 6- Búsqueda entre adversarios.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -77,7 +80,8 @@
       "order": 0,
       "id": "078484b6-20f6-42dc-b189-f8bfb2e2625f",
       "createdAt": "2026-02-18T07:39:00.021Z",
-      "updatedAt": "2026-02-18T07:39:00.021Z"
+      "updatedAt": "2026-02-18T09:01:02.037Z",
+      "pdfFilename": "Tema_1._Introducción_a_los_sistemas_de_percepción.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -85,7 +89,8 @@
       "order": 1,
       "id": "086069c3-c16e-48c5-9499-8479ca9d62f6",
       "createdAt": "2026-02-18T08:17:05.731Z",
-      "updatedAt": "2026-02-18T08:17:05.731Z"
+      "updatedAt": "2026-02-18T09:04:06.536Z",
+      "pdfFilename": "Tema 2- El texto como dato.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -93,7 +98,8 @@
       "order": 1,
       "id": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
       "createdAt": "2026-02-18T06:53:53.113Z",
-      "updatedAt": "2026-02-18T06:53:53.113Z"
+      "updatedAt": "2026-02-18T08:58:25.329Z",
+      "pdfFilename": "Tema_2._Análisis_de_datos_descriptivo_y_exploratorio.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -101,7 +107,8 @@
       "order": 2,
       "id": "0e39bf7b-78db-4f99-9704-675387c48470",
       "createdAt": "2026-02-18T08:17:11.437Z",
-      "updatedAt": "2026-02-18T08:17:11.437Z"
+      "updatedAt": "2026-02-18T09:04:09.885Z",
+      "pdfFilename": "Tema 3- Etiquetado morfosintáctico (POS tagging).pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -109,7 +116,8 @@
       "order": 6,
       "id": "1965449b-6e2c-4455-b231-ae297c17da31",
       "createdAt": "2026-02-18T07:43:09.728Z",
-      "updatedAt": "2026-02-18T07:43:09.728Z"
+      "updatedAt": "2026-02-18T09:01:29.801Z",
+      "pdfFilename": "Tema_7._Procesamiento_de_imagen._Operaciones_espaciales.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -117,7 +125,8 @@
       "order": 7,
       "id": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
       "createdAt": "2026-02-18T07:23:50.540Z",
-      "updatedAt": "2026-02-18T07:23:50.540Z"
+      "updatedAt": "2026-02-18T08:59:45.646Z",
+      "pdfFilename": "Tema_8._Investigación_en_agentes_inteligentes_y_sistemas_expertos.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -125,7 +134,8 @@
       "order": 5,
       "id": "1fe2c210-d133-46f2-a32a-d4e789878bea",
       "createdAt": "2026-02-18T07:21:34.216Z",
-      "updatedAt": "2026-02-18T07:21:34.216Z"
+      "updatedAt": "2026-02-18T08:59:38.698Z",
+      "pdfFilename": "Tema_6._Gestión_de_proyectos_IA_estructura_de_un_proyecto_IA_y_su_despliegue.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -133,7 +143,8 @@
       "order": 5,
       "id": "260f3d2f-b3ef-4382-a416-db42e84aeab5",
       "createdAt": "2026-02-18T07:42:17.492Z",
-      "updatedAt": "2026-02-18T07:42:17.492Z"
+      "updatedAt": "2026-02-18T09:01:26.430Z",
+      "pdfFilename": "Tema_6._Procesamiento_de_imagen._Operaciones_elementales.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -141,7 +152,8 @@
       "order": 1,
       "id": "26b84c63-3862-49b2-bf3a-5521aa7461a9",
       "createdAt": "2026-02-18T07:16:38.876Z",
-      "updatedAt": "2026-02-18T07:16:38.876Z"
+      "updatedAt": "2026-02-18T08:59:23.849Z",
+      "pdfFilename": "Tema_2._Ciencia_y_método_científico.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -149,7 +161,8 @@
       "order": 8,
       "id": "28c45a0d-4a77-4d08-af6f-1447609b216c",
       "createdAt": "2026-02-18T08:17:46.236Z",
-      "updatedAt": "2026-02-18T08:17:46.236Z"
+      "updatedAt": "2026-02-18T09:04:26.366Z",
+      "pdfFilename": "Tema 9- Aplicaciones del procesamiento del lenguaje natural.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -157,7 +170,8 @@
       "order": 2,
       "id": "29875481-15b9-4af5-abf4-2b4f0e4c85b2",
       "createdAt": "2026-02-18T07:40:11.771Z",
-      "updatedAt": "2026-02-18T07:40:11.771Z"
+      "updatedAt": "2026-02-18T09:01:07.974Z",
+      "pdfFilename": "Tema_3._Captura_y_digitalización_de_señales.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -165,7 +179,8 @@
       "order": 9,
       "id": "2a248820-62bd-4651-b66a-8e2449a23101",
       "createdAt": "2026-02-18T07:45:18.888Z",
-      "updatedAt": "2026-02-18T07:45:18.888Z"
+      "updatedAt": "2026-02-18T09:01:49.891Z",
+      "pdfFilename": "Tema_10._Procesamiento_de_imagen._Crecimiento_de_regiones.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -173,7 +188,8 @@
       "order": 9,
       "id": "300e6abe-39b2-4b83-8a28-907bd71037ad",
       "createdAt": "2026-02-18T08:12:40.107Z",
-      "updatedAt": "2026-02-18T08:12:40.107Z"
+      "updatedAt": "2026-02-18T09:03:32.984Z",
+      "pdfFilename": "Tema 10- Planificación multi agente.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -181,7 +197,8 @@
       "order": 13,
       "id": "350549f3-1210-4af1-b199-a957943142d5",
       "createdAt": "2026-02-18T07:56:01.337Z",
-      "updatedAt": "2026-02-18T07:56:01.337Z"
+      "updatedAt": "2026-02-18T09:02:15.670Z",
+      "pdfFilename": "Tema_14._Decisión._Principios_e_implementación_de_algoritmos_de_ayuda_en_la_toma_de_decisiones.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -189,7 +206,8 @@
       "order": 7,
       "id": "3cd90110-3164-46fa-93bb-228c1d4490db",
       "createdAt": "2026-02-18T07:05:40.226Z",
-      "updatedAt": "2026-02-18T07:05:40.227Z"
+      "updatedAt": "2026-02-18T08:58:48.154Z",
+      "pdfFilename": "Tema_8._ Aprendizaje_supervisado._Clasificación_con_Naïve_Bayes.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -197,7 +215,8 @@
       "order": 12,
       "id": "3fd0a0d7-1534-4a5c-9b10-f4e46790e4b1",
       "createdAt": "2026-02-18T07:55:00.516Z",
-      "updatedAt": "2026-02-18T07:55:00.516Z"
+      "updatedAt": "2026-02-18T09:02:12.036Z",
+      "pdfFilename": "Tema_13._Extracción_de_características._Procesamientos_multiescala_y_métodos_avanzados.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -205,7 +224,8 @@
       "order": 3,
       "id": "43e643ec-f15f-46e7-909d-26e724bcda54",
       "createdAt": "2026-02-18T08:17:16.469Z",
-      "updatedAt": "2026-02-18T08:17:16.469Z"
+      "updatedAt": "2026-02-18T09:04:13.248Z",
+      "pdfFilename": "Tema 4-  Análisis sintáctico.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -213,7 +233,8 @@
       "order": 2,
       "id": "469e3a6e-f175-4929-9c01-73813fba8f32",
       "createdAt": "2026-02-18T07:18:12.221Z",
-      "updatedAt": "2026-02-18T07:18:12.221Z"
+      "updatedAt": "2026-02-18T08:59:27.208Z",
+      "pdfFilename": "Tema_3._Financiación_de_proyectos.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -221,7 +242,8 @@
       "order": 10,
       "id": "46a9ed18-ef95-4e68-82bb-8c4d23066292",
       "createdAt": "2026-02-18T07:26:23.796Z",
-      "updatedAt": "2026-02-18T07:26:23.796Z"
+      "updatedAt": "2026-02-18T09:00:05.316Z",
+      "pdfFilename": "Tema_11._Investigación_en_computación_bioinspirada.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -229,7 +251,8 @@
       "order": 9,
       "id": "54c32f8a-a162-493b-9dc3-89e6ab77b28b",
       "createdAt": "2026-02-18T07:09:13.797Z",
-      "updatedAt": "2026-02-18T07:09:13.797Z"
+      "updatedAt": "2026-02-18T08:58:56.854Z",
+      "pdfFilename": "Tema_10._Aprendizaje_supervisado._Regresión_y_clasificación_con_Random_Forest.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -237,7 +260,8 @@
       "order": 9,
       "id": "5586d1be-9d39-48f3-af1b-0d55ce229695",
       "createdAt": "2026-02-18T08:17:55.318Z",
-      "updatedAt": "2026-02-18T08:17:55.318Z"
+      "updatedAt": "2026-02-18T09:04:31.972Z",
+      "pdfFilename": "Tema 10- Agentes conversacionales.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -245,7 +269,8 @@
       "order": 8,
       "id": "5bd2dd49-38e3-424a-a3aa-4698356ef849",
       "createdAt": "2026-02-18T07:44:28.855Z",
-      "updatedAt": "2026-02-18T07:44:28.855Z"
+      "updatedAt": "2026-02-18T09:01:46.541Z",
+      "pdfFilename": "Tema_9._Procesamiento_de_imagen._Morfología_matemática.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -253,7 +278,8 @@
       "order": 4,
       "id": "5c173022-2f44-4b8c-a0c6-4248992b7ddf",
       "createdAt": "2026-02-18T07:20:39.475Z",
-      "updatedAt": "2026-02-18T07:20:39.475Z"
+      "updatedAt": "2026-02-18T08:59:35.024Z",
+      "pdfFilename": "Tema_5._Gestión_de_proyectos_de_inteligencia_artificial._Enfoque_metodológico.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -261,7 +287,8 @@
       "order": 7,
       "id": "61eba31c-d125-41d2-a462-1b454b8243bd",
       "createdAt": "2026-02-18T07:43:57.557Z",
-      "updatedAt": "2026-02-18T07:43:57.557Z"
+      "updatedAt": "2026-02-18T09:01:43.175Z",
+      "pdfFilename": "Tema_8._Procesamiento_de_señales._Filtrado_y_análisis_en_frecuencia.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -269,7 +296,8 @@
       "order": 7,
       "id": "623ed762-d1ea-4c7e-a705-c15e4701851e",
       "createdAt": "2026-02-18T08:17:38.711Z",
-      "updatedAt": "2026-02-18T08:17:38.711Z"
+      "updatedAt": "2026-02-18T09:04:23.893Z",
+      "pdfFilename": "Tema 8- Modelado neuronal del lenguaje.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -277,7 +305,8 @@
       "order": 0,
       "id": "62de7e79-c26a-4d13-ab9b-caace7797c13",
       "createdAt": "2026-02-18T06:53:14.309Z",
-      "updatedAt": "2026-02-18T06:53:14.309Z"
+      "updatedAt": "2026-02-18T08:58:15.515Z",
+      "pdfFilename": "Tema_1._Introducción_al_aprendizaje_automático.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -285,7 +314,8 @@
       "order": 2,
       "id": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
       "createdAt": "2026-02-18T06:54:31.648Z",
-      "updatedAt": "2026-02-18T06:54:31.648Z"
+      "updatedAt": "2026-02-18T08:58:29.669Z",
+      "pdfFilename": "Tema_3._Datos_ausentes_y_normalización.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -293,7 +323,8 @@
       "order": 5,
       "id": "68f33661-e359-4655-b124-93d9c2981d18",
       "createdAt": "2026-02-18T06:59:29.866Z",
-      "updatedAt": "2026-02-18T06:59:29.866Z"
+      "updatedAt": "2026-02-18T08:58:41.450Z",
+      "pdfFilename": "Tema_6._Aprendizaje_supervisado._Regresión_y_clasificación_con_árboles_de_decisión.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -301,7 +332,8 @@
       "order": 10,
       "id": "6ed46a2a-66aa-4bc3-b00e-7d5c22409506",
       "createdAt": "2026-02-18T07:54:24.020Z",
-      "updatedAt": "2026-02-18T07:54:24.020Z"
+      "updatedAt": "2026-02-18T09:01:59.348Z",
+      "pdfFilename": "Tema_11._Extracción_de_características._Propiedades_estadísticas_y_frecuenciales_de_la_señal.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -309,7 +341,8 @@
       "order": 0,
       "id": "704b5a67-a35d-4cf4-82ce-fa690d28aa20",
       "createdAt": "2026-02-18T08:17:00.254Z",
-      "updatedAt": "2026-02-18T08:17:00.254Z"
+      "updatedAt": "2026-02-18T09:04:01.857Z",
+      "pdfFilename": "Tema 1- Introducción al procesamiento del lenguaje natural.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -317,7 +350,8 @@
       "order": 0,
       "id": "792ab1e2-a060-4c67-952e-286f0d947158",
       "createdAt": "2026-02-18T08:11:08.207Z",
-      "updatedAt": "2026-02-18T08:11:08.207Z"
+      "updatedAt": "2026-02-18T09:02:49.888Z",
+      "pdfFilename": "Tema 1- Introducción a la toma de decisiones.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -325,7 +359,8 @@
       "order": 8,
       "id": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
       "createdAt": "2026-02-18T07:08:15.049Z",
-      "updatedAt": "2026-02-18T07:08:15.049Z"
+      "updatedAt": "2026-02-18T08:58:51.539Z",
+      "pdfFilename": "Tema_9._Combinacion_de_clasificadores._Bootstrapping_Bagging_y_Boosting.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -333,7 +368,8 @@
       "order": 2,
       "id": "8323daeb-633c-4a5a-9108-0af5194356d1",
       "createdAt": "2026-02-18T08:11:18.280Z",
-      "updatedAt": "2026-02-18T08:11:18.280Z"
+      "updatedAt": "2026-02-18T09:02:59.139Z",
+      "pdfFilename": "Tema 3- Lógica y pensamiento humano.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -341,7 +377,8 @@
       "order": 11,
       "id": "89e3ff63-856e-48a6-98b0-1e00a58e2720",
       "createdAt": "2026-02-18T07:27:13.365Z",
-      "updatedAt": "2026-02-18T07:27:13.365Z"
+      "updatedAt": "2026-02-18T09:00:08.474Z",
+      "pdfFilename": "Tema_12._Implicaciones_filosóficas_éticas_y_legales_en_la_aplicación_de_la_inteligencia_artificial.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -349,7 +386,8 @@
       "order": 11,
       "id": "920892bf-baf1-41ac-825d-db9a843c6a8d",
       "createdAt": "2026-02-18T07:54:42.123Z",
-      "updatedAt": "2026-02-18T07:54:42.123Z"
+      "updatedAt": "2026-02-18T09:02:03.037Z",
+      "pdfFilename": "Tema_12._Extracción_de_características._Caracterización_de_textura_en_imágenes.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -357,7 +395,8 @@
       "order": 3,
       "id": "935c75ae-d79b-4256-b0a3-f0089e64dc4b",
       "createdAt": "2026-02-18T07:40:37.006Z",
-      "updatedAt": "2026-02-18T07:40:37.006Z"
+      "updatedAt": "2026-02-18T09:01:16.808Z",
+      "pdfFilename": "Tema_4._Fuentes_y_tipos_de_ruido.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -365,7 +404,8 @@
       "order": 6,
       "id": "95db69ef-f17e-4bce-af25-37a2cd11b2d1",
       "createdAt": "2026-02-18T08:11:41.379Z",
-      "updatedAt": "2026-02-18T08:11:41.379Z"
+      "updatedAt": "2026-02-18T09:03:15.966Z",
+      "pdfFilename": "Tema 7- Problemas de planificación.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -373,7 +413,8 @@
       "order": 8,
       "id": "9944d5bc-5779-4422-a9e6-be2a12f23cac",
       "createdAt": "2026-02-18T08:11:54.154Z",
-      "updatedAt": "2026-02-18T08:11:54.154Z"
+      "updatedAt": "2026-02-18T09:03:28.453Z",
+      "pdfFilename": "Tema 9- Redes de tareas jerárquicas (HTN).pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -381,7 +422,8 @@
       "order": 11,
       "id": "9af2cae5-b7bc-4469-b1b9-fbb13f0711e2",
       "createdAt": "2026-02-18T08:12:54.266Z",
-      "updatedAt": "2026-02-18T08:12:54.266Z"
+      "updatedAt": "2026-02-18T09:03:39.306Z",
+      "pdfFilename": "Tema 12- Reparación reactiva multi agente.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -389,7 +431,8 @@
       "order": 7,
       "id": "9d4c78aa-cdf0-4d44-8588-2a6d07cf155e",
       "createdAt": "2026-02-18T08:11:47.452Z",
-      "updatedAt": "2026-02-18T08:11:47.452Z"
+      "updatedAt": "2026-02-18T09:03:24.827Z",
+      "pdfFilename": "Tema 8- Sistemas basados en STRIP.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -397,7 +440,8 @@
       "order": 4,
       "id": "a02ead6f-3dff-4f1e-85ca-f45b23b6f383",
       "createdAt": "2026-02-18T08:17:21.568Z",
-      "updatedAt": "2026-02-18T08:17:21.568Z"
+      "updatedAt": "2026-02-18T09:04:16.618Z",
+      "pdfFilename": "Tema 5- Análisis semántico.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -405,7 +449,8 @@
       "order": 6,
       "id": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
       "createdAt": "2026-02-18T07:03:54.537Z",
-      "updatedAt": "2026-02-18T07:03:54.537Z"
+      "updatedAt": "2026-02-18T08:58:44.808Z",
+      "pdfFilename": "Tema_7._Máquinas_de_vectores_de_soporte.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -413,7 +458,8 @@
       "order": 3,
       "id": "ae461c89-7eae-4e1c-9b46-66db27585e18",
       "createdAt": "2026-02-18T06:57:00.223Z",
-      "updatedAt": "2026-02-18T06:57:00.223Z"
+      "updatedAt": "2026-02-18T08:58:32.758Z",
+      "pdfFilename": "Tema_4._Regresión_y_evaluación_de_algoritmos_de_regresión.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -421,7 +467,8 @@
       "order": 14,
       "id": "b5e53c1f-ce1b-4e76-8e8f-c397ca9e0fc1",
       "createdAt": "2026-02-18T07:56:18.251Z",
-      "updatedAt": "2026-02-18T07:56:18.251Z"
+      "updatedAt": "2026-02-18T09:02:18.762Z",
+      "pdfFilename": "Tema_15._Aplicaciones_actuales_del_tratamiento_de_la_señal.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -429,7 +476,8 @@
       "order": 5,
       "id": "b6c4d952-ef53-4a39-9c36-ef436beedbae",
       "createdAt": "2026-02-18T08:17:26.364Z",
-      "updatedAt": "2026-02-18T08:17:26.364Z"
+      "updatedAt": "2026-02-18T09:04:19.716Z",
+      "pdfFilename": "Tema 6- Semántica léxica.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -437,7 +485,8 @@
       "order": 0,
       "id": "b7b070f7-93a6-4f64-aab6-a01f85b31693",
       "createdAt": "2026-02-18T07:11:50.842Z",
-      "updatedAt": "2026-02-18T07:11:50.842Z"
+      "updatedAt": "2026-02-18T08:59:19.987Z",
+      "pdfFilename": "Tema_1._Origen_y_evolución_de_la_inteligencia_artificial.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -445,7 +494,8 @@
       "order": 3,
       "id": "bbb2fa85-3b96-4bb6-bae9-8eadeaa7c799",
       "createdAt": "2026-02-18T08:11:23.511Z",
-      "updatedAt": "2026-02-18T08:11:23.511Z"
+      "updatedAt": "2026-02-18T09:03:02.517Z",
+      "pdfFilename": "Tema 4- Búsqueda no informada.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
@@ -453,7 +503,8 @@
       "order": 4,
       "id": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
       "createdAt": "2026-02-18T06:58:40.454Z",
-      "updatedAt": "2026-02-18T06:58:40.454Z"
+      "updatedAt": "2026-02-18T08:58:38.122Z",
+      "pdfFilename": "Tema_5._Evaluación_de_algoritmos_de_clasificación.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -461,7 +512,8 @@
       "order": 8,
       "id": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
       "createdAt": "2026-02-18T07:24:29.477Z",
-      "updatedAt": "2026-02-18T07:24:29.477Z"
+      "updatedAt": "2026-02-18T08:59:50.305Z",
+      "pdfFilename": "Tema_9._Investigación_en_aprendizaje_automático.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -469,7 +521,8 @@
       "order": 4,
       "id": "d024196b-e89f-4872-b520-d799cc340628",
       "createdAt": "2026-02-18T08:11:30.581Z",
-      "updatedAt": "2026-02-18T08:11:30.581Z"
+      "updatedAt": "2026-02-18T09:03:09.237Z",
+      "pdfFilename": "Tema 5- Búsqueda informada.pdf"
     },
     {
       "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
@@ -477,7 +530,8 @@
       "order": 6,
       "id": "d14b3ac6-16e9-4535-9ca4-97564b69f595",
       "createdAt": "2026-02-18T08:17:32.865Z",
-      "updatedAt": "2026-02-18T08:17:32.865Z"
+      "updatedAt": "2026-02-18T09:04:21.708Z",
+      "pdfFilename": "Tema 7- Modelado estadístico del lenguaje.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -485,15 +539,17 @@
       "order": 1,
       "id": "d75c2647-cb7a-468b-b44f-6eb398e2bd21",
       "createdAt": "2026-02-18T08:11:13.133Z",
-      "updatedAt": "2026-02-18T08:11:13.133Z"
+      "updatedAt": "2026-02-18T09:02:55.361Z",
+      "pdfFilename": "Tema 2- Representación del conocimiento y razonamiento.pdf"
     },
     {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
-      "title": "Tema 11- Parametrización_automática_y_optimización_de_algoritmos",
+      "title": "Tema 11- Parametrización automática y optimización de algoritmos",
       "order": 10,
       "id": "df40a8ec-40bc-4d84-8e87-984c338add40",
       "createdAt": "2026-02-18T07:10:54.299Z",
-      "updatedAt": "2026-02-18T07:10:54.299Z"
+      "updatedAt": "2026-02-18T09:50:22.960Z",
+      "pdfFilename": "Tema_11._Parametrización_automática_y_optimización_de_algoritmos.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -501,7 +557,8 @@
       "order": 6,
       "id": "e1093df5-00c7-4082-ae58-ddd12bb61b95",
       "createdAt": "2026-02-18T07:23:08.331Z",
-      "updatedAt": "2026-02-18T07:23:08.332Z"
+      "updatedAt": "2026-02-18T08:59:42.290Z",
+      "pdfFilename": "Tema_7._Gestión_de_proyectos_IA._Recursos_materiales_y_recursos_humanos.pdf"
     },
     {
       "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
@@ -509,7 +566,8 @@
       "order": 9,
       "id": "e37b155a-f5e5-490b-a8fe-99a11ea63110",
       "createdAt": "2026-02-18T07:25:03.243Z",
-      "updatedAt": "2026-02-18T07:25:03.243Z"
+      "updatedAt": "2026-02-18T08:59:52.086Z",
+      "pdfFilename": "Tema_10._Investigación_en_sistemas_cognitivos.pdf"
     },
     {
       "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
@@ -517,7 +575,8 @@
       "order": 1,
       "id": "f56b7755-ee88-4004-91e1-3e3183390067",
       "createdAt": "2026-02-18T07:39:27.033Z",
-      "updatedAt": "2026-02-18T07:39:27.033Z"
+      "updatedAt": "2026-02-18T09:01:05.065Z",
+      "pdfFilename": "Tema_2._Elementos_de_un_sistema_de_percepción.pdf"
     },
     {
       "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
@@ -525,9 +584,728 @@
       "order": 10,
       "id": "fb68f160-00b6-4d2d-b222-1f029483454c",
       "createdAt": "2026-02-18T08:12:46.731Z",
-      "updatedAt": "2026-02-18T08:12:46.731Z"
+      "updatedAt": "2026-02-18T09:03:34.902Z",
+      "pdfFilename": "Tema 11- Planificación por múltiples agentes.pdf"
     }
   ],
-  "questions": [],
+  "questions": [
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "Un científico de datos está utilizando Máquinas de Vectores de Soporte (SVM) para un problema de clasificación binaria. Después de entrenar el modelo, observa que hay un pequeño margen de separación entre las clases y sospecha que el modelo podría beneficiarse de una transformación no lineal de las características. ¿Qué técnica sería más apropiada para introducir no linealidades en el espacio de características y mejorar la capacidad del SVM para clasificar datos más complejos?",
+      "explanation": "Por qué las otras no:\n\nA: ajustar C cambia el compromiso margen/errores, pero no introduce no linealidad por sí mismo.\n\nC: “incrementar la dimensión” es el efecto típico del kernel (a menudo implícito), pero la técnica apropiada en SVM para no linealidades es usar kernel.\n\nD: reducir ruido puede ayudar, pero no es “la técnica” para meter no linealidad",
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "db2d627b-4137-4fc6-97ae-a10dcad7760f",
+          "text": "Ajustar el parámetro de regularización (C)."
+        },
+        {
+          "id": "77d48980-3161-483e-8f4a-1bafddaf2a3b",
+          "text": "Utilizar la función de kernel"
+        },
+        {
+          "id": "2eefc0ac-64a3-4f55-be3b-06f61eea5a59",
+          "text": "Incrementar la dimensión del espacio de características"
+        },
+        {
+          "id": "05b62e8a-3a62-47bc-9b9a-1ad6ba917197",
+          "text": "Reducir el ruido en los datos de entrenamiento."
+        }
+      ],
+      "correctOptionIds": [
+        "77d48980-3161-483e-8f4a-1bafddaf2a3b"
+      ],
+      "id": "14b3620f-6c7f-4fbd-9e16-c7a140a869f3",
+      "contentHash": "sha256:621ef41d254fba0ce2569f07fadaa8136de7dc50359915a362d6e90896ad2651",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:43:48.312Z",
+      "updatedAt": "2026-02-18T10:43:48.312Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "Si usted está entrenando un modelo con un conjunto de datos médicos para diagnóstico de una enfermedad rara. ¿Qué métricas de validación del modelo debería compartir para que los especialistas puedan concluir que es un buen modelo?",
+      "explanation": "✅ C. Calcular y explicar los resultados de exactitud, sensibilidad y especificidad.\n\nPor qué las otras no:\n\nA: dar solo TP y TN es incompleto: sin FP/FN no puedes valorar bien el modelo.\n\nB: la matriz de confusión ayuda, pero la pregunta pide “qué métricas compartir”; lo esperado es sensibilidad/especificidad (y si meten exactitud, explicarla con cuidado). \n\nD: solo especificidad es insuficiente: en enfermedad rara la sensibilidad (no perder positivos) suele ser crítica.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "b1731825-397b-40be-af3c-a8c0a69653b7",
+          "text": "Presentar los valores de verdaderos positivos y verdaderos negativos"
+        },
+        {
+          "id": "1a2f78d7-353a-4194-8c83-8b3dc049d19a",
+          "text": "Mostrar la matriz de confusión"
+        },
+        {
+          "id": "bb887606-f217-4a4f-a402-a24d5df3cd6d",
+          "text": "Calcular y explicar los resultados de exactitud, sensibilidad y especificidad."
+        },
+        {
+          "id": "de3dedf8-eabb-4048-ab9f-6f054924b35b",
+          "text": "Mostrar el resultado de especificidad ya que mide la tasa de casos negativos clasificados correctamente."
+        }
+      ],
+      "correctOptionIds": [
+        "bb887606-f217-4a4f-a402-a24d5df3cd6d"
+      ],
+      "id": "1b669fcc-e889-4649-ab79-24ce014b11cc",
+      "contentHash": "sha256:e5bd97c4a8b3d793deae272e6d6331efc45f696268a30b452b01ce1bdd2ef641",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:50:26.844Z",
+      "updatedAt": "2026-02-18T10:50:26.844Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "¿Qué indica un coeficiente de regresión negativo en un modelo lineal?",
+      "explanation": "✅ A. La variable predictora tiene un efecto negativo en la variable de respuesta.\n\nPor qué las otras no:\n\nB: “no hay relación” sería coeficiente ~0 (o no significativo), no negativo.\n\nC: negativo ≠ positivo.\n\nD: que sea negativo no implica que el modelo sea inadecuado; solo indica dirección de relación.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "d94dfc7b-3f9a-403d-bd4f-62b318a53e8d",
+          "text": "La variable predictora tiene un efecto negativo en la variable de respuesta."
+        },
+        {
+          "id": "30c6fc4b-51a9-4bb2-9175-b081435da164",
+          "text": "No hay relación entre la variable predictora y la variable de respuesta."
+        },
+        {
+          "id": "5b5fca40-e636-4740-8e36-39a2df79a97d",
+          "text": "La variable predictora tiene un efecto positivo en la variable de respuesta."
+        },
+        {
+          "id": "094bd8e2-d803-4097-a342-48431fe1e0de",
+          "text": "El modelo no es adecuado para hacer predicciones."
+        }
+      ],
+      "correctOptionIds": [
+        "d94dfc7b-3f9a-403d-bd4f-62b318a53e8d"
+      ],
+      "id": "1d95031d-3d1a-49b1-846a-12e65610716d",
+      "contentHash": "sha256:df800e5b145ee0c3aaabd9ee63d202ce45e93fa9213a6f42e5251011c52024dc",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:55:53.609Z",
+      "updatedAt": "2026-02-18T10:55:53.609Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
+      "type": "TEST",
+      "prompt": "Bootstrapping significa:",
+      "explanation": "Por qué las otras no:\n\nA: “remuestreo aleatorio simple” es ambiguo y normalmente se entiende sin enfatizar con reemplazo (que es la clave del bootstrap).\n\nC: eso describe tests de significación, no bootstrap.\n\nD: bootstrap se usa en ensembles como bagging, pero no es “un método de ensamble”; es la técnica de muestreo.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "39c3f458-3bd1-4e3d-b477-339fdae54a69",
+          "text": "Método de remuestreo aleatorio simple."
+        },
+        {
+          "id": "6b3f9fbf-301d-4781-96b7-f17d0983c341",
+          "text": "Método estadístico de muestreo con reemplazamiento."
+        },
+        {
+          "id": "f9be05ee-0f81-4140-9d7c-d70678a878de",
+          "text": "Método estadístico para ver cuánto de significativo es un resultado."
+        },
+        {
+          "id": "7bc9a432-4670-4d3b-9a22-42687e7f8a8a",
+          "text": "Método de ensamble de modelos que utiliza datos aleatorios con reemplazo"
+        }
+      ],
+      "correctOptionIds": [
+        "6b3f9fbf-301d-4781-96b7-f17d0983c341"
+      ],
+      "id": "2003b8b2-f270-452e-b874-9b85a330a460",
+      "contentHash": "sha256:622e085363e657000f58070e8543028c25675a453ed89346262511cf071b68ab",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T09:59:30.460Z",
+      "updatedAt": "2026-02-18T10:02:59.694Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "type": "TEST",
+      "prompt": "¿Por qué el clasificador Naive Bayes es llamado ingenuo?",
+      "explanation": "asume independencia entre variables/características, y por eso se llama “naïve/ingenuo”.\nMatiz: lo “ingenuo” no es “igualdad de importancia”, sino la independencia (condicional) de las variables dado el valor de la clase.\n✅ B. Porque asume (independencia condicional) entre las variables/características.\n\nPor qué las otras no:\n\nA (falsa): que funcione bien con pocos datos puede pasar en algunos casos, pero no es por eso por lo que se llama “ingenuo”. \n\nC (falsa): no tiene sentido: las características no “son iguales a la clase objetivo”.\n\nD (falsa): sí hay una correcta: la independencia (condicional) es literalmente el motivo del nombre.\n",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "d4642165-6d6d-4d41-bfe5-dcb0c47d87fb",
+          "text": "Porque obtiene buenos resultados con pocas instancias de datos."
+        },
+        {
+          "id": "b390f80c-1b3c-409d-80f9-273eec650c84",
+          "text": "Porque asume igualdad de importancia e independencia entre todas las variables."
+        },
+        {
+          "id": "d1e3bd7e-60d3-46e6-8778-6d3cf8ee9234",
+          "text": "Porque considera que las características son todas iguales a la clase objetivo."
+        },
+        {
+          "id": "ef714a4a-62bd-4aa9-a70d-c01992de5bc4",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "b390f80c-1b3c-409d-80f9-273eec650c84"
+      ],
+      "id": "3591e752-3518-4579-ad28-13e54468e7d2",
+      "contentHash": "sha256:00a90cf57ce77acc1440dc3132a5e5ff6dfa843efada9e433c2f699983197434",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:36:58.364Z",
+      "updatedAt": "2026-02-18T10:36:58.364Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "Señale la afirmación falsas sobre el aprendizaje automático:",
+      "explanation": "No existe un algoritmo universal que sea el mejor para todo. El rendimiento depende del tipo de datos y del problema (clasificación, regresión, ruido, dimensionalidad, desbalanceo, etc.). Por eso hay que elegir modelo y validar.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "60f6547c-a774-435e-bf34-27fce487ed54",
+          "text": "Existe un solo algoritmo de aprendizaje automático que se puede adaptar a cualquier circunstancia."
+        },
+        {
+          "id": "8ffe8ee1-c185-4255-b6bc-0d12ded4cb09",
+          "text": "El aprendizaje automático es una de las áreas de la inteligencia artificial."
+        },
+        {
+          "id": "53adef19-6c28-4656-b4f8-24d72deebef4",
+          "text": "El aprendizaje profundo es un área del aprendizaje automático."
+        },
+        {
+          "id": "9ca9f5fd-1461-4e63-8c81-c6274d4eb861",
+          "text": "Aprendizaje automático y machine learning hacen referencia a lo mismo."
+        }
+      ],
+      "correctOptionIds": [
+        "60f6547c-a774-435e-bf34-27fce487ed54"
+      ],
+      "id": "40f01e6b-b592-4ca5-bcdf-57cb74e2ac45",
+      "contentHash": "sha256:b0eb0947c9006c62a893ad5865d4585c66af23351ad506cc507c72224b9a767d",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:11:41.039Z",
+      "updatedAt": "2026-02-18T10:11:41.039Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "Cuál de las siguientes afirmaciones describe el aprendizaje automático.",
+      "explanation": "Por qué las otras no:\n\nB (floja): suena a “IA/robots” en general; no define ML (podrías tener una máquina autónoma con reglas fijas y cero aprendizaje).\nC (falsa): eso es precisamente lo contrario de ML: compilar reglas para cubrir casos (enfoque basado en reglas).\nD (falsa): eso es programación clásica: instrucciones explícitas, no aprendizaje.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "04e06575-c7f0-4469-801b-24197b6b8e5b",
+          "text": "El estudio científico de algoritmos y modelos estadísticos para realizar tareas mediante el uso de inferencia en lugar de instrucciones."
+        },
+        {
+          "id": "6215b973-2896-4f1f-a534-7206a68601d2",
+          "text": "La creación de máquinas que pueden realizar tareas de manera autónoma mediante el aprendizaje."
+        },
+        {
+          "id": "4bc99726-c33b-4ffa-a529-430a2610e1db",
+          "text": "La compilación de un gran número de reglas estadísticas que cubre todas las posibles soluciones."
+        },
+        {
+          "id": "e5840b0c-4a59-4428-9077-b68973ce106b",
+          "text": "Un conjunto de instrucciones que describen cómo lograr un resultado deseado."
+        }
+      ],
+      "correctOptionIds": [
+        "04e06575-c7f0-4469-801b-24197b6b8e5b"
+      ],
+      "id": "4208b864-f4ca-463a-8931-a0e99e308683",
+      "contentHash": "sha256:624f20fa2952460999684456639140830ad17292643ee85dc0de4b20e3c42cb9",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:38:32.097Z",
+      "updatedAt": "2026-02-18T10:38:32.097Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "¿Qué tipo de entrenamiento describe una aplicación de aprendizaje automático que\ninteractúa con su entorno y aprende a tomar decisiones que maximicen recompensas?",
+      "explanation": "Por qué las otras no:\n\nA (falsa): supervisado = aprende con ejemplos etiquetados (entrada → salida conocida), no con recompensas del entorno. \n\nB (falsa): no supervisado = no hay etiquetas/objetivo; suele ser clustering/anomalías, no “recompensas”. \n\n\nD (falsa): aprendizaje profundo es un tipo de modelos (redes profundas), no un paradigma por sí mismo; puede usarse dentro de RL, pero no lo define. \n",
+      "difficulty": 1,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "65fd0e29-5bb8-4eff-81df-530f739ac389",
+          "text": "Aprendizaje supervisado."
+        },
+        {
+          "id": "4bf84bd7-de4f-4eac-8975-ff9586f2a770",
+          "text": "Aprendizaje no supervisado."
+        },
+        {
+          "id": "263dad99-2936-493b-bc08-aa38a3283ee6",
+          "text": "Aprendizaje por refuerzo."
+        },
+        {
+          "id": "4d0057b9-d7fc-4cbe-8a77-012d0c98319c",
+          "text": "Aprendizaje profundo."
+        }
+      ],
+      "correctOptionIds": [
+        "263dad99-2936-493b-bc08-aa38a3283ee6"
+      ],
+      "id": "44b8e93a-6f02-4e23-9175-5d3b2ab674c2",
+      "contentHash": "sha256:ef4eca6ba0afc1b8fd0fc40918931ea8225888b745169bc313955fa1a14ae68e",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:16:52.488Z",
+      "updatedAt": "2026-02-18T10:16:52.488Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
+      "type": "TEST",
+      "prompt": "Una empresa ha recopilado los comentarios de los clientes sobre sus productos,\ncalificándolos como seguros o inseguros, utilizando árboles de decisión. El conjunto de datos\nde entrenamiento tiene las siguientes características: identificación, fecha, revisión completa,\nresumen de revisión completo y una etiqueta binaria segura/no segura. Durante el\nentrenamiento, se eliminó cualquier muestra de datos con características faltantes. En algunos\ncasos, se descubrió que al conjunto de prueba le faltaba el campo de texto de revisión\ncompleto.\nPara este caso de uso, ¿cuál es la manera más efectiva para abordar las instancias de datos\ncon características faltantes?",
+      "explanation": "Sí. En test falta una feature (“review completa”) y el pipeline necesita un valor para poder evaluar/predicir de forma consistente. La opción B es una imputación usando una variable muy correlacionada (el resumen), que es una solución razonable en este contexto.\n\nPor qué las otras no:\n\nA (mala): descartar muestras de test es perder datos y sesgar evaluación/producción; es la salida “perezosa” salvo que no haya alternativa.\n\nC (mala): cambiar a “otro algoritmo” no arregla el hecho de que tu modelo/pipeline ya espera esa feature; además el tema te plantea tratar ausentes con eliminación o imputación, no “cambio de algoritmo”. \n\nD (mala): “generar datos sintéticos” para texto es inventarte reseñas: introduce ruido/sesgo y puede empeorar más que una imputación simple.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "408900c3-26ef-4594-be33-ab3a10dd7d6a",
+          "text": "Descartar las muestras de test a las que les faltan campos de texto de revisión completos."
+        },
+        {
+          "id": "b6f5c0e3-1d19-4d70-8847-eb6b78a3b47c",
+          "text": "Copiar los campos de texto de resumen y utilizarlos para completar los campos de texto de revisión completos que faltan. "
+        },
+        {
+          "id": "ecbc85c3-7802-413a-9d30-14e0a8bd1306",
+          "text": "Usar un algoritmo que maneje los datos faltantes mejor que los árboles de decisión."
+        },
+        {
+          "id": "58fc5d10-3c61-4ac0-afdc-80db55c1c30a",
+          "text": "Generar datos sintéticos para completar los campos a los que les faltan datos."
+        }
+      ],
+      "correctOptionIds": [
+        "b6f5c0e3-1d19-4d70-8847-eb6b78a3b47c"
+      ],
+      "id": "5bd6b81c-7e0c-49c4-b28f-a7c4029da5d5",
+      "contentHash": "sha256:888a1858caba332332f4a7a5a6291cdfcd6b8cfb937215a8cd6763fd608ce138",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:14:52.302Z",
+      "updatedAt": "2026-02-18T10:14:52.302Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "type": "TEST",
+      "prompt": "¿Qué puede aprender examinando las estadísticas de sus datos?",
+      "explanation": "Sí. Mirar estadísticas (mínimos/máximos, cuartiles, dispersión, boxplots, etc.) sirve para identificar anomalías/valores atípicos o cosas raras en los datos.\n\nPor qué las otras no:\n\nB (falsa): que estén “formateados correctamente” es más de tipos/validación de esquema; las estadísticas te ayudan a ver rangos y rarezas, no a certificar formato.\n\nC (falsa): las estadísticas te ayudan a detectar valores atípicos, pero no “eliminarlos” (eso ya es una decisión/acción de limpieza).\n\nD (falsa): completar datos faltantes es imputación, no algo que “aprendas” solo mirando estadísticas (primero los detectas).",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "86c249dd-e806-4dad-ae8b-6a44960c3d1d",
+          "text": "Identificación de anomalías en los datos."
+        },
+        {
+          "id": "92bb1867-3e92-4f67-b2ea-ea0c436ed541",
+          "text": "Verificación de que los datos estén formateados correctamente."
+        },
+        {
+          "id": "2f561093-5291-4b55-a2d2-d10efcef601d",
+          "text": "Eliminación de valores atípicos."
+        },
+        {
+          "id": "3af7176c-5aa7-45da-a168-13486cb10c46",
+          "text": "Compleción de datos faltantes."
+        }
+      ],
+      "correctOptionIds": [
+        "86c249dd-e806-4dad-ae8b-6a44960c3d1d"
+      ],
+      "id": "62555d32-efe9-4e75-b632-cf1d4f64ca67",
+      "contentHash": "sha256:aa9ecaad79d976c60b45c8bd1b321e6123a2742d4b0c96ee328e00c67c6b9f7b",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:21:35.270Z",
+      "updatedAt": "2026-02-18T10:21:35.270Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
+      "type": "TEST",
+      "prompt": "El Out-of-Bag (OOB) error es una métrica utilizada en el método de Bagging que permite:",
+      "explanation": "✅ C. Estimar la precisión de un modelo en el conjunto de prueba, utilizando únicamente las muestras que no se utilizaron en el proceso de entrenamiento.\n\nPor qué las otras no:\n\nA: OOB no es validación cruzada. \n\nB: eso describe más el bootstrap/variabilidad, pero OOB como métrica es la estimación usando “los no seleccionados”. \n\nD: suena a boosting/idea de sesgo, pero OOB no “reduce sesgo” por agregación; es una estimación de error.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "5cd3e678-2cf9-404a-ba09-bc034ca9bb1d",
+          "text": "Evaluar el rendimiento de un modelo en el conjunto de datos de entrenamiento, utilizando la técnica de validación cruzada."
+        },
+        {
+          "id": "1a08f93c-5d14-4e48-b12d-42cc0d63646b",
+          "text": "Medir la varianza del modelo mediante la generación de múltiples conjuntos de entrenamiento a partir de reemplazos aleatorios del conjunto de datos original."
+        },
+        {
+          "id": "ade600e1-4b98-4037-ad9f-19d043e33324",
+          "text": "Estimar la precisión de un modelo en el conjunto de prueba, utilizando únicamente las muestras que no se utilizaron en el proceso de entrenamiento."
+        },
+        {
+          "id": "4b6cc99d-14b6-4206-9006-87d6d5ec7786",
+          "text": "Reducir el sesgo en la estimación de un modelo mediante la agregación de múltiples clasificadores débiles."
+        }
+      ],
+      "correctOptionIds": [
+        "ade600e1-4b98-4037-ad9f-19d043e33324"
+      ],
+      "id": "786099b4-00ba-4191-98c4-96f7384e9d44",
+      "contentHash": "sha256:163b660c1a6b0144433e19f09148c882303b838f86b417f5ecc947f814f379b9",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:46:25.545Z",
+      "updatedAt": "2026-02-18T10:46:25.545Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "Si la probabilidad de pertenencia de una instancia es de 0,55 para la clase 1 y de 0,45 para la clase 2. Se puede afirmar que:",
+      "explanation": "✅ A. Está cerca del límite, pero pertenece a la clase 1.\n\nPor qué las otras no:\n\nB: clase 2 tendría que tener probabilidad mayor que clase 1.\n\nC: en clasificación estándar eliges una clase (salvo multilabel, que no es el caso).\n\nD: aunque esté cerca del umbral, sí se clasifica: por regla MAP/argmax gana 0,55.",
+      "options": [
+        {
+          "id": "e03cc759-3828-4675-8173-d4a160822656",
+          "text": "El límite de pertenencia a la clase 1 y a la clase 2 están muy cercanos, pero pertenece a la clase 1."
+        },
+        {
+          "id": "ee4ab11a-b7ed-4e51-9246-a859feacde4d",
+          "text": "Pertenece a la clase 2"
+        },
+        {
+          "id": "271455a1-701d-46f0-97ae-2083f1d73543",
+          "text": "Pertenece a la clase 1 y a la clase 2"
+        },
+        {
+          "id": "e51a7812-25f2-48d5-9b8c-2dd57994c063",
+          "text": "No debería clasificarse la instancia"
+        }
+      ],
+      "correctOptionIds": [
+        "e03cc759-3828-4675-8173-d4a160822656"
+      ],
+      "id": "8983e29c-7b2e-4a57-9bb2-00d435501a66",
+      "contentHash": "sha256:6f737b984512972c975e97be4cd687f22c482294fb7a58cd367e35571a1ca165",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:58:04.508Z",
+      "updatedAt": "2026-02-18T10:58:04.508Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "df40a8ec-40bc-4d84-8e87-984c338add40",
+      "type": "TEST",
+      "prompt": "¿Cuál es el objetivo de un trabajo de ajuste de hiperparámetros?",
+      "explanation": "El ajuste de hiperparámetros busca encontrar la configuración óptima de hiperparámetros que maximice el rendimiento del modelo en validación o test, guiándose por una métrica.\n\n✅ A. Optimizar las métricas de validación (es decir, ajustar hiperparámetros para maximizar una métrica como accuracy/AUC/F1 en validación o test).\n\nPor qué las otras no:\n\nB (falsa/ambigua): mezcla “parámetros” con “hiperparámetros”. Los hiperparámetros no se aprenden de los datos, se fijan/ajustan a priori y se eligen por rendimiento en validación/test.\n\nC (falsa): no va de hacer la predicción más rápida; eso sería optimización de inferencia/ingeniería, no tuning.\n\nD (falsa): elegir algoritmo es model selection (otra fase). El tuning asume que el algoritmo/modelo ya está elegido y ajusta sus hiperparámetros.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "d828a09d-e644-455c-831f-24703438cb0e",
+          "text": "Optimizar las métricas de validación para el entrenamiento."
+        },
+        {
+          "id": "461bdea5-b0f2-4d02-ab6a-1a130945d914",
+          "text": "Optimizar los parámetros del modelo para producir el mejor modelo."
+        },
+        {
+          "id": "02445340-74a2-467b-a9ab-910ffdd22a99",
+          "text": "Optimizar las entradas de datos para producir la predicción más rápida."
+        },
+        {
+          "id": "d7c6c52c-6013-4c5c-9b77-0c8bec86fcae",
+          "text": "Optimizar la elección del algoritmo para producir el mejor modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "d828a09d-e644-455c-831f-24703438cb0e"
+      ],
+      "id": "95bbee9d-b40f-4494-bac5-ab96fd9fe728",
+      "contentHash": "sha256:25217afe2bcaa22857c50f0e4a334315f6f88cc14d679f13918e494207d99be7",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:28:11.201Z",
+      "updatedAt": "2026-02-18T10:28:30.621Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "type": "TEST",
+      "prompt": "Dispone de un conjunto de datos históricos del precio de venta de 10.000 viviendas y las 10 características más importantes resultantes del análisis de componentes principales. Debe desarrollar un modelo que prediga si una casa se venderá en uno de los siguientes rangos de precios igualmente distribuidos: 200-300k, 300-400k, 400-500k, 500-600k o 600-700k. Desea utilizar el enfoque algorítmico y evaluativo más simple. ¿Qué debe hacer?",
+      "explanation": "✅ D. Clasificación con regresión, asignando el precio promedio del rango y usando RMSE.\n\nPor qué las otras no:\n\nA: one-vs-one + F1 es posible, pero no es “lo más simple” si puedes modelar el precio como variable numérica.\n\nB: multiclase + precisión es simplón, pero pierdes orden entre rangos y precisión puede engañar si hay desbalanceo.\n\nC: predecir precio exacto “entero” no es el objetivo real (te dan rangos) y MAE/RMSE aplican mejor si defines un objetivo numérico consistente; el promedio del rango es la opción más directa.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "4b1c4a4c-012f-4089-9478-57b0f01f63e2",
+          "text": "Definir una tarea de clasificación uno contra uno donde cada rango de precio es una etiqueta categórica. Utilizar la puntuación F1 como métrica de evaluación."
+        },
+        {
+          "id": "ffee5d28-7082-4f9c-9828-2c9b234b7088",
+          "text": "Definir una tarea de clasificación de varias clases en la que cada rango de precios sea una etiqueta categórica. Utilizar la precisión como métrica de evaluación."
+        },
+        {
+          "id": "d4139b3c-a031-4db3-9fd6-8945c1a62bd8",
+          "text": "Definir una tarea de regresión donde la etiqueta sea el precio de venta representado como un número entero. Utilizar el error absoluto medio como métrica."
+        },
+        {
+          "id": "3cb70d04-b993-40ad-9d47-c7cf582e0786",
+          "text": "Definir una tarea de regresión donde la etiqueta sea el promedio del rango de precios que corresponde al precio de venta de la casa representado como un número entero. Utilizar el error cuadrático medio de la raíz como la métrica."
+        }
+      ],
+      "correctOptionIds": [
+        "3cb70d04-b993-40ad-9d47-c7cf582e0786"
+      ],
+      "id": "bb5f4ecf-50c4-4aa7-8f4a-0fc87f75a659",
+      "contentHash": "sha256:58440fd223aec50b073d8333b3ac792cbcb8b03a144c480998069b4670ecc5dd",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:53:46.526Z",
+      "updatedAt": "2026-02-18T10:53:46.526Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "Está creando una solución de aprendizaje automático para un centro de llamadas. El objetivo\ndel sistema es dirigir a los clientes al departamento apropiado, y hay ocho departamentos\nposibles. ¿Qué tipo de problema de aprendizaje automático describe esta solución?",
+      "explanation": "Sí. Hay ocho categorías posibles (departamentos), así que el sistema decide entre más de dos clases → clasificación multiclase.\n\n✅ C. Clasificación multiclase.\n\nPor qué las otras no:\n\nA (falsa): clustering es no supervisado y no asigna a clases predefinidas como “departamentos”.\n\nB (falsa): binaria sería solo 2 opciones, aquí hay 8.\n\nD (falsa): anomalías es detectar casos raros, no enrutar a una de varias categorías.",
+      "difficulty": 1,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "72e92e87-b7f1-408f-9e43-38b1b4df161e",
+          "text": "Agrupación en clusteres."
+        },
+        {
+          "id": "88e38ad9-35ed-4de5-903c-8e216a5dc3e8",
+          "text": "Clasificación binaria."
+        },
+        {
+          "id": "abcea569-1a0f-4090-a99f-2a7ca64671d6",
+          "text": "Clasificación multiclase."
+        },
+        {
+          "id": "994e21e9-8ac0-485a-bab3-7f803213b2c3",
+          "text": "Detección de anomalías."
+        }
+      ],
+      "correctOptionIds": [
+        "abcea569-1a0f-4090-a99f-2a7ca64671d6"
+      ],
+      "id": "da81c3d3-f877-4187-a681-85f4a4ca0096",
+      "contentHash": "sha256:bce1041909f87b1692b0c1f968461ed976eb178e216c36ebb8518d0a342fcfdd",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:23:44.519Z",
+      "updatedAt": "2026-02-18T10:23:44.519Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
+      "type": "TEST",
+      "prompt": "Un ingeniero de aprendizaje automático está preparando un dataframe de datos para un\nproblema de aprendizaje supervisado. El ingeniero de ML se da cuenta de que las clases de\netiquetas de salida están muy desequilibradas y varias columnas de características contienen\nvalores faltantes. La proporción de valores faltantes en todo el dataframe de datos es inferior al\n5 %.\n¿Qué debe hacer el ingeniero de ML para minimizar el sesgo debido a valores faltantes?",
+      "explanation": "liminar filas con faltantes puede ser viable solo si el número es pequeño y no introduce sesgo, pero aquí ya te avisan de que las clases están muy desequilibradas: borrar observaciones puede empeorar ese desequilibrio (y por tanto sesgar aún más). El tema deja claro que la eliminación solo es práctica cuando no conduce a sesgos graves.\n\n✅ C. Reemplazar cada valor que falta por la media o la mediana de los valores que no faltan en la misma columna.\n\nPor qué las otras no:\n\nA (falsa): imputar con media/mediana de la misma fila es un sinsentido en la mayoría de datasets: mezcla variables distintas (escalas/unidades distintas) y no preserva la distribución por atributo.\n\nB (mala): aunque sea <5%, con clases desbalanceadas puedes estar quitando proporcionalmente más de la minoritaria → más sesgo. Además, la eliminación solo es recomendable si no afecta el sesgo ni las métricas.\n\nD (no es “la más efectiva” aquí): imputación basada en modelos existe y puede usarse, pero para <5% normalmente se espera la solución estándar y robusta del temario: media/mediana por columna (simple, trazable y suficiente).\n",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "c1f6bf1d-be3b-4897-bef7-4f97a7efedb5",
+          "text": "Reemplazar cada valor que falta por la media o la mediana de los valores que no faltan en la misma fila."
+        },
+        {
+          "id": "3842bdf0-6292-46d2-a879-ec37b7f7b5e7",
+          "text": "Eliminar las observaciones con valores faltantes ya que representan el 5% de los datos."
+        },
+        {
+          "id": "0a1f7eaa-582f-4cbe-91bd-db0c03a72720",
+          "text": "Reemplazar cada valor que falta por la media o la mediana de los valores que no faltan en la misma columna."
+        },
+        {
+          "id": "4f2aff5f-8e74-4c4b-a7c5-655d5cbf7c21",
+          "text": "Para cada característica, calcular los valores que faltan mediante aprendizaje supervisado basado en las otras características."
+        }
+      ],
+      "correctOptionIds": [
+        "0a1f7eaa-582f-4cbe-91bd-db0c03a72720"
+      ],
+      "id": "e3ea4aa4-c4ac-4f36-b3e3-59420329faf5",
+      "contentHash": "sha256:d9318f97ae0b596c6e3abf1525277a34ce824911e8de37080bc6353c379cdd88",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:35:11.048Z",
+      "updatedAt": "2026-02-18T10:35:11.048Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "type": "TEST",
+      "prompt": "¿Cuál es el propósito de una matriz de confusión?",
+      "explanation": "La matriz de confusión resume aciertos/errores del clasificador mostrando verdaderos positivos (TP), falsos positivos (FP), verdaderos negativos (TN) y falsos negativos (FN).\n\n✅ B. Mostrar los verdaderos o falsos positivos, junto con los verdaderos o falsos negativos.\n\nPor qué las otras no:\n\nA (falsa): no es “trazar etiquetas previstas”; es una tabla cruzando real vs predicho. \n\nC (falsa): correlación entre columnas es otra cosa (EDA / correlación), no evaluación de clasificación.\n\nD (falsa): estratificar train/test es una técnica de particionado; no es el propósito de la matriz de confusión.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "83fb7751-47ef-40da-9b1b-bb5afe04d827",
+          "text": "Trazar las etiquetas del conjunto de datos previsto."
+        },
+        {
+          "id": "292f5cd8-d023-48d2-a34d-f679ca1fe4da",
+          "text": "Mostrar los verdaderos o falsos positivos, junto con los verdaderos o falsos negativos."
+        },
+        {
+          "id": "5640268c-59b9-4aaf-8852-fa7901cd378e",
+          "text": "Mostrar la correlación entre dos columnas en el conjunto de datos."
+        },
+        {
+          "id": "14cd7ca7-be54-4c82-9968-6d4364defda7",
+          "text": "Estratificar las clases a través de conjuntos de datos de entrenamiento y pruebas."
+        }
+      ],
+      "correctOptionIds": [
+        "292f5cd8-d023-48d2-a34d-f679ca1fe4da"
+      ],
+      "id": "ef8fb86e-537f-4b3f-99cf-a23a93c59717",
+      "contentHash": "sha256:ef84a031708bf562a243cbe0fa8ab4541f2fd2833e9a127be141917d9e5f9b81",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:25:41.602Z",
+      "updatedAt": "2026-02-18T10:25:41.602Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
+      "type": "TEST",
+      "prompt": "En las máquinas de vectores de soporte es cierto que:",
+      "explanation": "Por qué las otras no:\n\nB (falsa): SVM no está basado en un modelo probabilístico; es geométrico/optimización. \n\n7933511_full_6678_Tema_7._Máqui…\n\nC (falsa): precisamente se busca separar en un feature space (implícitamente “enriquecido” con kernels).\n\nD (falsa): no va de reducir dimensión; lo típico es lo contrario.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "6f4a83d7-287a-4494-af72-322b6ec87ade",
+          "text": "Se crea un espacio de características con una dimensionalidad superior al espacio de características de entrada."
+        },
+        {
+          "id": "4430261f-18f5-4f58-8b43-fcc1ff93b49c",
+          "text": "Se basan en modelos probabilísticos."
+        },
+        {
+          "id": "34c75cfc-525b-4355-96bd-bcd1a3403fc8",
+          "text": "No se enriquece el feature space antes de separar las clases."
+        },
+        {
+          "id": "54b6f35a-6771-4693-9305-2f60bd69cc23",
+          "text": "Se crea un espacio de características con una dimensionalidad menor al espacio de características de entrada."
+        }
+      ],
+      "correctOptionIds": [
+        "6f4a83d7-287a-4494-af72-322b6ec87ade"
+      ],
+      "id": "f80f1507-745c-4cda-b038-1365e7db7fa4",
+      "contentHash": "sha256:d0502f819244b3f0c3d8e9068b6c3b3e9fcbc7402d600e9be560f0f31b784be5",
+      "createdBy": "",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-18T10:02:16.825Z",
+      "updatedAt": "2026-02-18T10:02:16.825Z"
+    }
+  ],
   "pdfAnchors": []
 }
