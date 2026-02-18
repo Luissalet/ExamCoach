@@ -3,6 +3,15 @@
 export type QuestionType = 'TEST' | 'DESARROLLO' | 'COMPLETAR';
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
 
+/**
+ * ITER2 — Origen de la pregunta: de dónde fue extraída.
+ * - test: de un test/examen de práctica
+ * - examen_anterior: de un examen oficial de años anteriores
+ * - clase: pregunta planteada durante clase
+ * - alumno: aportada directamente por un alumno
+ */
+export type QuestionOrigin = 'test' | 'examen_anterior' | 'clase' | 'alumno';
+
 // ─── Entities ─────────────────────────────────────────────────────────────────
 
 export interface Subject {
@@ -56,6 +65,9 @@ export interface Question {
   explanation?: string;
   difficulty?: DifficultyLevel;
   tags?: string[];
+
+  /** ITER2 — Origen de la pregunta (dónde fue extraída). */
+  origin?: QuestionOrigin;
 
   // TEST
   options?: QuestionOption[];
@@ -132,6 +144,28 @@ export interface PdfAnchor {
   label?: string;
 }
 
+// ─── ITER2: Recursos estáticos del repo ───────────────────────────────────────
+//
+// Los PDFs de temas se guardan en resources/[slug-asignatura]/Temas/*.pdf
+// El JSON de info extra vive en resources/[slug-asignatura]/extra_info.json
+// Esto permite commitearlos a GitHub y servirlos como assets estáticos.
+
+export interface SubjectExtraInfo {
+  /** Si la asignatura permite llevar apuntes/chuleta al examen. */
+  allowsNotes?: boolean;
+  /** Nombre del profesor/a. */
+  professor?: string;
+  /** Créditos ECTS de la asignatura. */
+  credits?: number;
+  /** Descripción libre. */
+  description?: string;
+  /**
+   * Lista de nombres de archivo PDF disponibles en resources/[slug]/Temas/.
+   * Ej: ["Tema1.pdf", "Tema2.pdf"]
+   */
+  pdfs?: string[];
+}
+
 // ─── Export formats ───────────────────────────────────────────────────────────
 
 export interface BankExport {
@@ -159,6 +193,7 @@ export interface ContributionQuestion {
   explanation?: string;
   difficulty?: DifficultyLevel;
   tags?: string[];
+  origin?: QuestionOrigin; // ← ITER2
   pdfAnchor?: { page: number; label?: string };
   createdBy?: string;
   contentHash?: string;

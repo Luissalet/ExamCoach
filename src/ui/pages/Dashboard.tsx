@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { Button, Card, Modal, Input, Countdown, Progress, EmptyState } from '@/ui/components';
 import { exportBank, exportGlobalBank, importBank, parseImportFile, downloadJSON } from '@/data/exportImport';
-import type { Subject } from '@/domain/models';
+import { loadSubjectExtraInfo } from '@/data/resourceLoader'; // ← ITER2
+import type { Subject, SubjectExtraInfo } from '@/domain/models'; // ← ITER2 añade SubjectExtraInfo
 import { db } from '@/data/db';
 
 const SUBJECT_COLORS = [
@@ -28,6 +29,8 @@ export function Dashboard() {
   const [examDateDraft, setExamDateDraft] = useState('');
 
   const [stats, setStats] = useState<Record<string, { total: number; correct: number; seen: number }>>({});
+  // ── ITER2: info extra por asignatura (allowsNotes, professor…) ─────────────
+  const [extraInfo, setExtraInfo] = useState<Record<string, SubjectExtraInfo | null>>({});
   const [importLoading, setImportLoading] = useState(false);
   const [importMsg, setImportMsg] = useState('');
   const [syncMsg, setSyncMsg] = useState('');
@@ -63,6 +66,19 @@ export function Dashboard() {
       setStats(result);
     }
     if (subjects.length) loadStats();
+  }, [subjects]);
+
+  // ── ITER2: cargar extra_info.json de cada asignatura ──────────────────────
+  useEffect(() => {
+    if (!subjects.length) return;
+    async function loadExtra() {
+      const result: Record<string, SubjectExtraInfo | null> = {};
+      await Promise.all(subjects.map(async (s) => {
+        result[s.id] = await loadSubjectExtraInfo(s.name);
+      }));
+      setExtraInfo(result);
+    }
+    loadExtra();
   }, [subjects]);
 
   // ── Crear asignatura ───────────────────────────────────────────────────────
@@ -245,6 +261,7 @@ export function Dashboard() {
             {subjects.map((s) => {
               const st = stats[s.id] ?? { total: 0, correct: 0, seen: 0 };
               const pct = pctCorrect(s);
+              const extra = extraInfo[s.id]; // ← ITER2
               return (
                 <Card
                   key={s.id}
@@ -261,18 +278,38 @@ export function Dashboard() {
                       <h2 className="font-display text-lg text-ink-100 leading-tight group-hover:text-amber-300 transition-colors">
                         {s.name}
                       </h2>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm(`¿Eliminar "${s.name}" y todas sus preguntas?`)) {
-                            deleteSubject(s.id);
-                          }
-                        }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-ink-600 hover:text-rose-400 p-1 -mr-1 -mt-1"
-                      >
-                        ✕
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {/* ── ITER2: indicador de apuntes ─────────────────── */}
+                        {extra?.allowsNotes !== undefined && (
+                          <span
+                            title={extra.allowsNotes ? 'Permite apuntes en el examen' : 'Sin apuntes en el examen'}
+                            className={`text-xs px-1.5 py-0.5 rounded ${
+                              extra.allowsNotes
+                                ? 'bg-sage-600/20 text-sage-400'
+                                : 'bg-rose-500/20 text-rose-400'
+                            }`}
+                          >
+                            {extra.allowsNotes ? '📝' : '🚫'}
+                          </span>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`¿Eliminar "${s.name}" y todas sus preguntas?`)) {
+                              deleteSubject(s.id);
+                            }
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-ink-600 hover:text-rose-400 p-1 -mr-1 -mt-1"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
+
+                    {/* ── ITER2: profesor si existe ──────────────────────── */}
+                    {extra?.professor && (
+                      <p className="text-xs text-ink-500 -mt-1 mb-1">Prof. {extra.professor}</p>
+                    )}
 
                     {/* Fecha de examen — editable por el usuario, personal */}
                     {editingExamDate === s.id ? (

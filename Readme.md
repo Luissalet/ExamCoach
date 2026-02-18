@@ -34,6 +34,7 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 
 - Subir PDF resumen por asignatura y/o tema y organización en carpetas por usuario que lo aporta
 - Guardar resumenes como predeterminados/favoritos
+- Importar zip temas/ examenes anteriores / otros recursos por asignatura (externo para evitar problemas legales por distribución de temario online)
 
 ### 🔜 Iteración 4 — Repaso inteligente
 
@@ -169,6 +170,94 @@ study-app/
 | **DESARROLLO** | Texto libre | Manual (tú marcas ✓/✗) |
 
 ---
+# Recursos estáticos — PDFs y datos extra por asignatura
+
+Los PDFs de los temas y la información extra de cada asignatura se guardan como **archivos estáticos en el repositorio**, dentro de la carpeta `resources/`. Esto permite:
+
+- Versionar los PDFs y el `extra_info.json` en Git
+- Subirlos a GitHub y distribuirlos a todos los compañeros
+- Servirlos directamente como assets estáticos (Vite, GitHub Pages, Netlify…)
+
+---
+
+## Estructura de carpetas
+
+```
+resources/
+└── [slug-asignatura]/          ← slug generado automáticamente del nombre
+    ├── extra_info.json         ← metadatos de la asignatura
+    └── Temas/
+        ├── index.json          ← lista de PDFs disponibles
+        ├── Tema1.pdf
+        ├── Tema2.pdf
+        └── ...
+```
+
+El **slug** se genera igual que en el código:
+- Normalizar UTF-8 (quitar acentos)
+- Minúsculas
+- Reemplazar espacios y caracteres especiales por `-`
+
+Ejemplos:
+| Nombre asignatura                     | Slug                                  |
+|---------------------------------------|---------------------------------------|
+| IA Razonamiento y Planificación       | `ia-razonamiento-y-planificacion`     |
+| Bases de Datos II                     | `bases-de-datos-ii`                   |
+| Computación Cuántica                  | `computacion-cuantica`                |
+
+---
+
+## extra_info.json
+
+```json
+{
+  "allowsNotes": false,
+  "professor": "Juan García",
+  "credits": 6,
+  "description": "Descripción opcional de la asignatura.",
+  "pdfs": ["Tema1.pdf", "Tema2.pdf"]
+}
+```
+
+| Campo         | Tipo      | Descripción                                              |
+|---------------|-----------|----------------------------------------------------------|
+| `allowsNotes` | `boolean` | Si permite llevar apuntes/chuleta al examen. Se muestra como indicador en el Dashboard. |
+| `professor`   | `string`  | Nombre del profesor (opcional).                          |
+| `credits`     | `number`  | Créditos ECTS (opcional).                                |
+| `description` | `string`  | Descripción libre (opcional).                            |
+| `pdfs`        | `string[]`| Fallback: lista de PDFs si no existe `Temas/index.json`. |
+
+---
+
+## Temas/index.json
+
+Simple array con los nombres de los archivos PDF disponibles:
+
+```json
+["Tema1.pdf", "Tema2.pdf", "Tema3.pdf"]
+```
+
+El orden en el array determina el orden en el selector del visor.
+
+---
+
+## Flujo para añadir PDFs
+
+1. Determina el slug de tu asignatura (convierte el nombre a lowercase sin acentos, espacios → `-`)
+2. Crea la carpeta `resources/[slug]/Temas/`
+3. Copia los PDFs de los temas ahí
+4. Crea/actualiza `resources/[slug]/Temas/index.json` con los nombres
+5. Crea/actualiza `resources/[slug]/extra_info.json` con los metadatos
+6. Haz commit y push al repo → todos los compañeros tendrán los PDFs al hacer pull
+
+---
+
+## Visor PDF en la app
+
+- La pestaña **PDFs** dentro de cada asignatura carga automáticamente los PDFs listados en `index.json`
+- Soporta zoom, navegación por páginas y selector de PDF
+- Las preguntas con ancla PDF muestran un botón **"📄 Abrir PDF en página X"** que lleva directamente a esa página
+- El indicador **📝 Apuntes** / **🚫 Sin apuntes** aparece en las tarjetas del Dashboard según `allowsNotes`
 
 ## Licencia
 

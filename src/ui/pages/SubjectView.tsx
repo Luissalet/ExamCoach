@@ -1,15 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
-import { db } from '@/data/db';
 import {
-  Button, Card, Modal, Input, Textarea, Tabs, Badge, TypeBadge, Difficulty,
+  Button, Card, Modal, Input, Tabs, Badge, TypeBadge, Difficulty,
   EmptyState, StatsSummary, Select,
 } from '@/ui/components';
 import { QuestionForm } from '@/ui/components/QuestionForm';
-import type { Topic, Question } from '@/domain/models';
+import { PdfViewer, type PdfViewerHandle } from '@/ui/components/PdfViewer';
+import { loadPdfList, getPdfUrl } from '@/data/resourceLoader';
+import type { Topic, Question, QuestionOrigin } from '@/domain/models';
 
-type TabId = 'topics' | 'questions' | 'practice';
+type TabId = 'topics' | 'questions' | 'practice' | 'pdfs';
+
+const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
+  test: 'Test',
+  examen_anterior: 'Examen ant.',
+  clase: 'Clase',
+  alumno: 'Alumno',
+};
+
+const ORIGIN_COLORS: Record<QuestionOrigin, 'amber' | 'rose' | 'blue' | 'sage'> = {
+  test: 'amber',
+  examen_anterior: 'rose',
+  clase: 'blue',
+  alumno: 'sage',
+};
 
 export function SubjectView() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -27,6 +42,7 @@ export function SubjectView() {
   // Filters for questions tab
   const [filterTopic, setFilterTopic] = useState('');
   const [filterType, setFilterType] = useState('');
+  const [filterOrigin, setFilterOrigin] = useState('');
   const [filterText, setFilterText] = useState('');
 
   // Modals
@@ -35,6 +51,13 @@ export function SubjectView() {
   const [topicTitle, setTopicTitle] = useState('');
   const [questionModal, setQuestionModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+
+  // PDF tab
+  const [pdfList, setPdfList] = useState<string[]>([]);
+  const [pdfLoaded, setPdfLoaded] = useState(false);
+  const pdfViewerRef = useRef<PdfViewerHandle>(null);
+  // Pending page navigation (set when user clicks "open at page X")
+  const [pendingPdfPage, setPendingPdfPage] = useState<number | null>(null);
 
   useEffect(() => {
     if (!subjects.length) loadSubjects();
@@ -46,6 +69,27 @@ export function SubjectView() {
       loadQuestions(subjectId);
     }
   }, [subjectId]);
+
+  // Load PDF list when subject becomes available
+  useEffect(() => {
+    if (!subject) return;
+    setPdfLoaded(false);
+    loadPdfList(subject.name).then((list) => {
+      setPdfList(list);
+      setPdfLoaded(true);
+    });
+  }, [subject?.name]);
+
+  // When switching to PDF tab with a pending page, navigate
+  useEffect(() => {
+    if (tab === 'pdfs' && pendingPdfPage !== null) {
+      // Wait one tick for PdfViewer to mount / load
+      setTimeout(() => {
+        pdfViewerRef.current?.goToPage(pendingPdfPage);
+        setPendingPdfPage(null);
+      }, 300);
+    }
+  }, [tab, pendingPdfPage]);
 
   if (!subject) {
     return (
@@ -65,6 +109,7 @@ export function SubjectView() {
   const filteredQuestions = subjectQuestions.filter((q) => {
     if (filterTopic && q.topicId !== filterTopic) return false;
     if (filterType && q.type !== filterType) return false;
+    if (filterOrigin && q.origin !== filterOrigin) return false;
     if (filterText) {
       const text = filterText.toLowerCase();
       if (!q.prompt.toLowerCase().includes(text) && !(q.tags ?? []).join(' ').toLowerCase().includes(text))
@@ -102,20 +147,19 @@ export function SubjectView() {
     setTopicModal(true);
   };
 
-  const openNewTopic = () => {
-    setEditingTopic(null);
-    setTopicTitle('');
-    setTopicModal(true);
-  };
-
   const openEditQuestion = (q: Question) => {
     setEditingQuestion(q);
     setQuestionModal(true);
   };
 
-  const openNewQuestion = () => {
-    setEditingQuestion(null);
-    setQuestionModal(true);
+  /** Navega al visor PDF en la página indicada. */
+  const openPdfAtPage = (page: number) => {
+    if (tab === 'pdfs') {
+      pdfViewerRef.current?.goToPage(page);
+    } else {
+      setPendingPdfPage(page);
+      setTab('pdfs');
+    }
   };
 
   const totalStats = subjectQuestions.reduce(
@@ -127,8 +171,15 @@ export function SubjectView() {
     { seen: 0, correct: 0, wrong: 0 }
   );
 
+  const tabs = [
+    { id: 'topics', label: 'Temas' },
+    { id: 'questions', label: `Preguntas (${subjectQuestions.length})` },
+    { id: 'practice', label: 'Practicar' },
+    { id: 'pdfs', label: `PDFs${pdfList.length ? ` (${pdfList.length})` : ''}` },
+  ];
+
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100">
+    <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       {/* Header */}
       <header className="border-b border-ink-800 bg-ink-900/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4">
@@ -143,88 +194,54 @@ export function SubjectView() {
               className="w-3 h-3 rounded-full flex-shrink-0"
               style={{ backgroundColor: subject.color ?? '#f59e0b' }}
             />
-            <h1 className="font-display text-xl text-ink-100 flex-1 truncate">{subject.name}</h1>
-            {subject.examDate && (
-              <div className="text-sm text-ink-400">
-                Examen: <span className="text-ink-200">{subject.examDate}</span>
-              </div>
-            )}
+            <h1 className="font-display text-xl text-ink-100">{subject.name}</h1>
           </div>
-          {/* Stats bar */}
-          <div className="mt-3 flex items-center gap-4">
-            <StatsSummary {...totalStats} />
-            <span className="text-ink-600 text-xs">·</span>
-            <span className="text-xs text-ink-500">{subjectQuestions.length} preguntas · {subjectTopics.length} temas</span>
+          <div className="mt-3">
+            <Tabs
+              tabs={tabs}
+              active={tab}
+              onChange={(id) => setTab(id as TabId)}
+            />
           </div>
         </div>
       </header>
 
-      {/* Tabs */}
-      <div className="border-b border-ink-800 bg-ink-900/30">
-        <div className="max-w-5xl mx-auto px-6 py-3">
-          <Tabs
-            tabs={[
-              { id: 'topics', label: 'Temas', icon: '📁' },
-              { id: 'questions', label: 'Preguntas', icon: '❓' },
-              { id: 'practice', label: 'Practicar', icon: '⚡' },
-            ]}
-            active={tab}
-            onChange={(id) => setTab(id as TabId)}
-          />
-        </div>
-      </div>
+      {/* Main content */}
+      <main className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-6 py-6 gap-4">
 
-      <main className="max-w-5xl mx-auto px-6 py-8">
         {/* TOPICS TAB */}
         {tab === 'topics' && (
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg text-ink-200">Temas</h2>
-              <Button size="sm" onClick={openNewTopic}>+ Nuevo tema</Button>
+            <div className="flex justify-end">
+              <Button size="sm" onClick={() => { setEditingTopic(null); setTopicTitle(''); setTopicModal(true); }}>
+                + Nuevo tema
+              </Button>
             </div>
             {subjectTopics.length === 0 ? (
-              <EmptyState
-                icon={<span>📁</span>}
-                title="Sin temas"
-                description="Crea temas para organizar tus preguntas"
-                action={<Button size="sm" onClick={openNewTopic}>+ Nuevo tema</Button>}
-              />
+              <EmptyState icon={<span>📚</span>} title="Sin temas" description="Crea un tema para organizar tus preguntas" />
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 {subjectTopics.map((t) => {
-                  const topicQs = subjectQuestions.filter((q) => q.topicId === t.id);
-                  const seen = topicQs.reduce((a, q) => a + q.stats.seen, 0);
-                  const correct = topicQs.reduce((a, q) => a + q.stats.correct, 0);
+                  const qs = subjectQuestions.filter((q) => q.topicId === t.id);
                   return (
-                    <Card key={t.id} className="group flex items-center gap-4">
-                      <div className="flex-1">
-                        <p className="font-medium text-ink-100">{t.title}</p>
-                        <p className="text-xs text-ink-500 mt-0.5">
-                          {topicQs.length} preguntas
-                          {seen > 0 && ` · ${Math.round((correct / seen) * 100)}% acierto`}
-                        </p>
-                      </div>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
+                    <Card key={t.id} className="group">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-ink-100">{t.title}</p>
+                          <p className="text-xs text-ink-500 mt-0.5">{qs.length} pregunta{qs.length !== 1 ? 's' : ''}</p>
+                        </div>
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button size="sm" variant="ghost" onClick={() => {
                             setFilterTopic(t.id);
-                            setTab('practice');
-                          }}
-                        >
-                          ⚡ Practicar
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => openEditTopic(t)}>✎</Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            if (confirm(`¿Eliminar "${t.title}"?`)) deleteTopic(t.id);
-                          }}
-                        >
-                          <span className="text-rose-400">✕</span>
-                        </Button>
+                            setTab('questions');
+                          }}>Ver</Button>
+                          <Button size="sm" variant="ghost" onClick={() => openEditTopic(t)}>✎</Button>
+                          <Button size="sm" variant="ghost" onClick={() => {
+                            if (confirm(`¿Eliminar el tema "${t.title}" y sus preguntas?`)) deleteTopic(t.id);
+                          }}>
+                            <span className="text-rose-400">✕</span>
+                          </Button>
+                        </div>
                       </div>
                     </Card>
                   );
@@ -238,44 +255,31 @@ export function SubjectView() {
         {tab === 'questions' && (
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg text-ink-200">Preguntas</h2>
-              <Button
-                size="sm"
-                onClick={openNewQuestion}
-                disabled={subjectTopics.length === 0}
-              >
+              <StatsSummary seen={totalStats.seen} correct={totalStats.correct} wrong={totalStats.wrong} />
+              <Button size="sm" onClick={() => { setEditingQuestion(null); setQuestionModal(true); }}>
                 + Nueva pregunta
               </Button>
             </div>
 
-            {subjectTopics.length === 0 && (
-              <div className="text-sm text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-3">
-                Primero crea al menos un tema para poder añadir preguntas.
-              </div>
-            )}
-
             {/* Filters */}
             {subjectQuestions.length > 0 && (
               <div className="flex gap-3 flex-wrap">
-                <Select
-                  value={filterTopic}
-                  onChange={(e) => setFilterTopic(e.target.value)}
-                  className="text-xs py-1.5"
-                >
+                <Select value={filterTopic} onChange={(e) => setFilterTopic(e.target.value)} className="text-xs py-1.5">
                   <option value="">Todos los temas</option>
-                  {subjectTopics.map((t) => (
-                    <option key={t.id} value={t.id}>{t.title}</option>
-                  ))}
+                  {subjectTopics.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
                 </Select>
-                <Select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="text-xs py-1.5"
-                >
+                <Select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="text-xs py-1.5">
                   <option value="">Todos los tipos</option>
                   <option value="TEST">Test</option>
                   <option value="DESARROLLO">Desarrollo</option>
                   <option value="COMPLETAR">Completar</option>
+                </Select>
+                <Select value={filterOrigin} onChange={(e) => setFilterOrigin(e.target.value)} className="text-xs py-1.5">
+                  <option value="">Todos los orígenes</option>
+                  <option value="test">Test / Práctica</option>
+                  <option value="examen_anterior">Examen anterior</option>
+                  <option value="clase">Clase</option>
+                  <option value="alumno">Alumno</option>
                 </Select>
                 <input
                   value={filterText}
@@ -283,12 +287,10 @@ export function SubjectView() {
                   placeholder="Buscar..."
                   className="bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-1.5 text-sm font-body placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {(filterTopic || filterType || filterText) && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => { setFilterTopic(''); setFilterType(''); setFilterText(''); }}
-                  >
+                {(filterTopic || filterType || filterOrigin || filterText) && (
+                  <Button size="sm" variant="ghost" onClick={() => {
+                    setFilterTopic(''); setFilterType(''); setFilterOrigin(''); setFilterText('');
+                  }}>
                     × Limpiar
                   </Button>
                 )}
@@ -296,11 +298,7 @@ export function SubjectView() {
             )}
 
             {subjectQuestions.length === 0 ? (
-              <EmptyState
-                icon={<span>❓</span>}
-                title="Sin preguntas"
-                description="Añade preguntas para empezar a practicar"
-              />
+              <EmptyState icon={<span>❓</span>} title="Sin preguntas" description="Añade preguntas para empezar a practicar" />
             ) : filteredQuestions.length === 0 ? (
               <EmptyState icon={<span>🔍</span>} title="Sin resultados" description="Prueba otros filtros" />
             ) : (
@@ -313,6 +311,11 @@ export function SubjectView() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap mb-1.5">
                             <TypeBadge type={q.type} />
+                            {q.origin && (
+                              <Badge color={ORIGIN_COLORS[q.origin]}>
+                                {ORIGIN_LABELS[q.origin]}
+                              </Badge>
+                            )}
                             {topic && <span className="text-xs text-ink-500">{topic.title}</span>}
                             <Difficulty level={q.difficulty} />
                             {(q.tags ?? []).map((tag) => (
@@ -320,6 +323,15 @@ export function SubjectView() {
                             ))}
                           </div>
                           <p className="text-sm text-ink-200 line-clamp-2">{q.prompt}</p>
+
+                          {/* PDF anchor button */}
+                          {q.pdfAnchorId && pdfList.length > 0 && (
+                            <PdfAnchorButton
+                              anchorId={q.pdfAnchorId}
+                              onOpen={(page) => openPdfAtPage(page)}
+                            />
+                          )}
+
                           <div className="mt-2">
                             <StatsSummary seen={q.stats.seen} correct={q.stats.correct} wrong={q.stats.wrong} />
                           </div>
@@ -354,14 +366,48 @@ export function SubjectView() {
             defaultTopicId={filterTopic}
           />
         )}
+
+        {/* PDF TAB */}
+        {tab === 'pdfs' && (
+          <div className="flex flex-col gap-4 flex-1">
+            {!pdfLoaded ? (
+              <div className="text-ink-500 text-sm">Cargando lista de PDFs…</div>
+            ) : pdfList.length === 0 ? (
+              <EmptyState
+                icon={<span>📄</span>}
+                title="Sin PDFs"
+                description={
+                  `Añade los PDFs de los temas en resources/${toSlugPreview(subject.name)}/Temas/ y un index.json con los nombres de archivo.`
+                }
+                action={
+                  <div className="text-xs text-ink-600 font-mono bg-ink-900 px-4 py-3 rounded-lg text-left max-w-lg">
+                    <p className="text-ink-400 mb-1"># Estructura de carpetas:</p>
+                    <p>resources/</p>
+                    <p className="pl-4">└─ {toSlugPreview(subject.name)}/</p>
+                    <p className="pl-8">├─ extra_info.json</p>
+                    <p className="pl-8">└─ Temas/</p>
+                    <p className="pl-12">├─ index.json  <span className="text-ink-500">← ["Tema1.pdf", ...]</span></p>
+                    <p className="pl-12">├─ Tema1.pdf</p>
+                    <p className="pl-12">└─ Tema2.pdf</p>
+                  </div>
+                }
+              />
+            ) : (
+              <div className="flex-1 min-h-[70vh] border border-ink-700 rounded-xl overflow-hidden">
+                <PdfViewer
+                  ref={pdfViewerRef}
+                  pdfList={pdfList}
+                  getPdfUrl={(filename) => getPdfUrl(subject.name, filename)}
+                  initialPage={pendingPdfPage ?? 1}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Topic modal */}
-      <Modal
-        open={topicModal}
-        onClose={() => setTopicModal(false)}
-        title={editingTopic ? 'Editar tema' : 'Nuevo tema'}
-      >
+      <Modal open={topicModal} onClose={() => setTopicModal(false)} title={editingTopic ? 'Editar tema' : 'Nuevo tema'}>
         <div className="flex flex-col gap-4">
           <Input
             label="Título del tema"
@@ -397,6 +443,43 @@ export function SubjectView() {
         )}
       </Modal>
     </div>
+  );
+}
+
+// ─── Helper: slug preview (no dep on normalize.ts from this component) ────────
+function toSlugPreview(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+// ─── PdfAnchorButton ──────────────────────────────────────────────────────────
+
+function PdfAnchorButton({ anchorId, onOpen }: { anchorId: string; onOpen: (page: number) => void }) {
+  const [page, setPage] = useState<number | null>(null);
+
+  useEffect(() => {
+    import('@/data/db').then(({ db }) => {
+      db.pdfAnchors.get(anchorId).then((anchor) => {
+        if (anchor) setPage(anchor.page);
+      });
+    });
+  }, [anchorId]);
+
+  if (!page) return null;
+
+  return (
+    <button
+      onClick={() => onOpen(page)}
+      className="mt-1.5 text-xs text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1"
+    >
+      📄 Abrir PDF en página {page}
+    </button>
   );
 }
 
@@ -441,10 +524,8 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
       pool = shuffled.slice(0, n);
     }
 
-    // Shuffle
     pool = pool.sort(() => Math.random() - 0.5);
 
-    // Create session
     const { sessionRepo } = await import('@/data/repos');
     const session = await sessionRepo.create({
       subjectId,
@@ -457,80 +538,38 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
   };
 
   return (
-    <div className="max-w-md">
-      <h2 className="font-display text-lg text-ink-200 mb-6">Configurar sesión</h2>
-
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-ink-400 uppercase tracking-widest">Modo</p>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { id: 'random', label: '🎲 Aleatorio N' },
-              { id: 'all', label: '📋 Todas' },
-              { id: 'failed', label: '🔴 Falladas', disabled: failedCount === 0 },
-              { id: 'topic', label: '📁 Por tema', disabled: topics.length === 0 },
-            ].map((m) => (
-              <button
-                key={m.id}
-                disabled={m.disabled}
-                onClick={() => setMode(m.id as typeof mode)}
-                className={`px-4 py-3 rounded-lg text-sm font-medium font-body border transition-all ${
-                  mode === m.id
-                    ? 'bg-amber-500 border-amber-500 text-ink-900'
-                    : m.disabled
-                    ? 'border-ink-800 text-ink-700 cursor-not-allowed'
-                    : 'border-ink-700 text-ink-300 hover:border-ink-500 hover:text-ink-100'
-                }`}
-              >
-                {m.label}
-                {m.id === 'failed' && failedCount > 0 && (
-                  <span className="ml-1 text-xs opacity-70">({failedCount})</span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
+    <Card className="max-w-md">
+      <div className="flex flex-col gap-4">
+        <h3 className="font-display text-ink-200">Configurar sesión</h3>
+        <Select label="Modo" value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
+          <option value="random">Aleatorio</option>
+          <option value="all">Todas las preguntas</option>
+          <option value="failed">Sólo falladas ({failedCount})</option>
+          <option value="topic">Por tema</option>
+        </Select>
         {mode === 'random' && (
           <Input
             label="Número de preguntas"
             type="number"
-            value={count}
-            onChange={(e) => setCount(e.target.value)}
             min="1"
             max={questions.length}
-            hint={`Máximo: ${questions.length}`}
+            value={count}
+            onChange={(e) => setCount(e.target.value)}
           />
         )}
-
         {mode === 'topic' && (
-          <Select
-            label="Tema"
-            value={topicId}
-            onChange={(e) => setTopicId(e.target.value)}
-          >
-            <option value="">Selecciona un tema...</option>
+          <Select label="Tema" value={topicId} onChange={(e) => setTopicId(e.target.value)}>
+            <option value="">Selecciona un tema…</option>
             {topics.map((t) => {
               const n = questions.filter((q) => q.topicId === t.id).length;
-              return (
-                <option key={t.id} value={t.id}>{t.title} ({n})</option>
-              );
+              return <option key={t.id} value={t.id}>{t.title} ({n})</option>;
             })}
           </Select>
         )}
-
-        <div className="flex items-center justify-between pt-2 border-t border-ink-800">
-          <p className="text-sm text-ink-400">
-            {available} pregunta{available !== 1 ? 's' : ''} disponible{available !== 1 ? 's' : ''}
-          </p>
-          <Button
-            onClick={handleStart}
-            disabled={available === 0 || (mode === 'topic' && !topicId)}
-          >
-            ⚡ Empezar
-          </Button>
-        </div>
+        <Button onClick={handleStart} disabled={available === 0 || (mode === 'topic' && !topicId)}>
+          Empezar ({available} preguntas)
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

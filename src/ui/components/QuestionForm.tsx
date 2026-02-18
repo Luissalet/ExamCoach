@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { Question, Topic, QuestionType, QuestionOption, ClozeBlank } from '@/domain/models';
+import type { Question, Topic, QuestionType, QuestionOption, ClozeBlank, QuestionOrigin } from '@/domain/models';
 import { Button, Input, Textarea, Select } from './index';
 
 interface QuestionFormProps {
@@ -11,6 +11,13 @@ interface QuestionFormProps {
   subjectId: string;
 }
 
+const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
+  test: 'Test / Práctica',
+  examen_anterior: 'Examen anterior',
+  clase: 'Clase',
+  alumno: 'Alumno',
+};
+
 export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: QuestionFormProps) {
   const [type, setType] = useState<QuestionType>(initial?.type ?? 'TEST');
   const [topicId, setTopicId] = useState(initial?.topicId ?? topics[0]?.id ?? '');
@@ -18,6 +25,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
   const [explanation, setExplanation] = useState(initial?.explanation ?? '');
   const [difficulty, setDifficulty] = useState<string>(String(initial?.difficulty ?? ''));
   const [tags, setTags] = useState(initial?.tags?.join(', ') ?? '');
+  const [origin, setOrigin] = useState<QuestionOrigin | ''>(initial?.origin ?? '');
 
   // TEST
   const [options, setOptions] = useState<QuestionOption[]>(
@@ -34,9 +42,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
 
   // COMPLETAR
   const [clozeText, setClozeText] = useState(initial?.clozeText ?? '');
-  const [blanks, setBlanks] = useState<ClozeBlank[]>(
-    initial?.blanks ?? []
-  );
+  const [blanks, setBlanks] = useState<ClozeBlank[]>(initial?.blanks ?? []);
 
   const addOption = () => setOptions([...options, { id: uuidv4(), text: '' }]);
   const removeOption = (id: string) => {
@@ -77,6 +83,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       explanation: explanation || undefined,
       difficulty: diff,
       tags: parsedTags.length > 0 ? parsedTags : undefined,
+      origin: origin || undefined,
       options: type === 'TEST' ? options.filter((o) => o.text.trim()) : undefined,
       correctOptionIds: type === 'TEST' ? correctOptionIds : undefined,
       modelAnswer: type === 'DESARROLLO' ? modelAnswer : undefined,
@@ -88,6 +95,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      {/* Row 1: type + topic */}
       <div className="grid grid-cols-2 gap-4">
         <Select
           label="Tipo"
@@ -106,6 +114,32 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
           {topics.map((t) => (
             <option key={t.id} value={t.id}>{t.title}</option>
           ))}
+        </Select>
+      </div>
+
+      {/* Row 2: origin + difficulty */}
+      <div className="grid grid-cols-2 gap-4">
+        <Select
+          label="Origen"
+          value={origin}
+          onChange={(e) => setOrigin(e.target.value as QuestionOrigin | '')}
+        >
+          <option value="">Sin especificar</option>
+          {(Object.keys(ORIGIN_LABELS) as QuestionOrigin[]).map((key) => (
+            <option key={key} value={key}>{ORIGIN_LABELS[key]}</option>
+          ))}
+        </Select>
+        <Select
+          label="Dificultad"
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+        >
+          <option value="">Sin especificar</option>
+          <option value="1">★ Muy fácil</option>
+          <option value="2">★★ Fácil</option>
+          <option value="3">★★★ Media</option>
+          <option value="4">★★★★ Difícil</option>
+          <option value="5">★★★★★ Muy difícil</option>
         </Select>
       </div>
 
@@ -129,80 +163,104 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
                 onClick={() => toggleCorrect(opt.id)}
                 className={`w-5 h-5 rounded flex-shrink-0 border-2 transition-colors ${
                   correctOptionIds.includes(opt.id)
-                    ? 'bg-amber-500 border-amber-500'
-                    : 'border-ink-600 hover:border-amber-500'
+                    ? 'bg-sage-500 border-sage-500'
+                    : 'border-ink-600 hover:border-ink-400'
                 }`}
-              />
+                title="Marcar como correcta"
+              >
+                {correctOptionIds.includes(opt.id) && (
+                  <svg className="w-3 h-3 text-ink-900 mx-auto" viewBox="0 0 12 12" fill="currentColor">
+                    <path d="M10 3L5 8.5 2 5.5l-1 1 4 4 6-7z" />
+                  </svg>
+                )}
+              </button>
               <input
+                type="text"
                 value={opt.text}
                 onChange={(e) => updateOption(opt.id, e.target.value)}
                 placeholder={`Opción ${i + 1}`}
-                className="flex-1 bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                className="flex-1 bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
-              {options.length > 2 && (
-                <button
-                  type="button"
-                  onClick={() => removeOption(opt.id)}
-                  className="text-ink-500 hover:text-rose-400 transition-colors p-1"
-                >
-                  ✕
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => removeOption(opt.id)}
+                className="text-ink-600 hover:text-rose-400 transition-colors text-xs px-1"
+                disabled={options.length <= 2}
+              >
+                ✕
+              </button>
             </div>
           ))}
-          <Button type="button" variant="ghost" size="sm" onClick={addOption}>
+          <button
+            type="button"
+            onClick={addOption}
+            className="text-xs text-ink-500 hover:text-ink-300 text-left transition-colors"
+          >
             + Añadir opción
-          </Button>
+          </button>
         </div>
       )}
 
       {/* DESARROLLO */}
       {type === 'DESARROLLO' && (
-        <>
+        <div className="flex flex-col gap-3">
           <Textarea
             label="Respuesta modelo"
             value={modelAnswer}
             onChange={(e) => setModelAnswer(e.target.value)}
             rows={4}
-            placeholder="Respuesta correcta de referencia..."
+            placeholder="Respuesta esperada…"
           />
           <Input
-            label="Keywords (separadas por comas)"
+            label="Palabras clave (separadas por coma)"
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
-            placeholder="concepto1, concepto2, ..."
-            hint="Palabras clave que deben aparecer en la respuesta (indicador, no veredicto)"
+            placeholder="ej: fotosíntesis, cloroplasto, ATP"
           />
-        </>
+        </div>
       )}
 
       {/* COMPLETAR */}
       {type === 'COMPLETAR' && (
         <div className="flex flex-col gap-3">
-          <Textarea
-            label='Texto cloze (usa {{respuesta}} para los huecos)'
-            value={clozeText}
-            onChange={(e) => setClozeText(e.target.value)}
-            rows={4}
-            placeholder="El método de {{Dijkstra}} se usa para encontrar el camino {{más corto}}..."
-          />
-          <Button type="button" variant="ghost" size="sm" onClick={parseCloze}>
-            ↻ Extraer huecos del texto
-          </Button>
+          <div>
+            <Textarea
+              label="Texto cloze (usa {{respuesta}} para los huecos)"
+              value={clozeText}
+              onChange={(e) => setClozeText(e.target.value)}
+              rows={4}
+              placeholder="La mitocondria es la {{central eléctrica}} de la célula."
+            />
+            <button
+              type="button"
+              onClick={parseCloze}
+              className="mt-2 text-xs text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              ↻ Detectar huecos
+            </button>
+          </div>
           {blanks.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-medium text-ink-400 uppercase tracking-widest">Respuestas aceptadas por hueco</p>
-              {blanks.map((blank) => (
-                <div key={blank.id} className="flex flex-col gap-1 bg-ink-850 rounded-lg p-3 border border-ink-700">
-                  <p className="text-sm text-ink-300 font-mono">Hueco: <span className="text-amber-400">{blank.id}</span></p>
+              <p className="text-xs font-medium text-ink-400 uppercase tracking-widest">
+                Respuestas aceptadas por hueco
+              </p>
+              {blanks.map((b) => (
+                <div key={b.id} className="flex items-center gap-3">
+                  <span className="text-xs text-ink-500 font-mono w-28 truncate">{'{{'}{b.id}{'}}'}</span>
                   <input
-                    value={blank.accepted.join(', ')}
-                    onChange={(e) => {
-                      const accepted = e.target.value.split(',').map((s) => s.trim()).filter(Boolean);
-                      setBlanks(blanks.map((b) => (b.id === blank.id ? { ...b, accepted } : b)));
-                    }}
-                    className="bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-1.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    placeholder="respuesta1, respuesta2, ..."
+                    type="text"
+                    value={b.accepted.join(', ')}
+                    onChange={(e) =>
+                      setBlanks(
+                        blanks.map((bl) =>
+                          bl.id === b.id
+                            ? { ...bl, accepted: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) }
+                            : bl
+                        )
+                      )
+                    }
+                    className="flex-1 bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-1.5 text-xs font-body focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="respuesta1, resp alternativa…"
                   />
                 </div>
               ))}
@@ -211,40 +269,26 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         </div>
       )}
 
-      {/* Common fields */}
-      <div className="grid grid-cols-2 gap-4">
-        <Select
-          label="Dificultad"
-          value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-        >
-          <option value="">Sin definir</option>
-          <option value="1">★ Muy fácil</option>
-          <option value="2">★★ Fácil</option>
-          <option value="3">★★★ Media</option>
-          <option value="4">★★★★ Difícil</option>
-          <option value="5">★★★★★ Muy difícil</option>
-        </Select>
-        <Input
-          label="Tags (separados por comas)"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          placeholder="tag1, tag2, ..."
-        />
-      </div>
-
+      {/* Explanation + tags */}
       <Textarea
-        label="Explicación (opcional)"
+        label="Explicación / feedback (opcional)"
         value={explanation}
         onChange={(e) => setExplanation(e.target.value)}
         rows={2}
-        placeholder="Explicación adicional que se mostrará tras responder..."
+        placeholder="Se muestra al revisar resultados…"
+      />
+      <Input
+        label="Tags (separados por coma)"
+        value={tags}
+        onChange={(e) => setTags(e.target.value)}
+        placeholder="ej: busqueda, heuristica, A*"
       />
 
-      <div className="flex justify-end gap-3 pt-2 border-t border-ink-700">
+      {/* Actions */}
+      <div className="flex gap-3 justify-end pt-1">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancelar</Button>
-        <Button type="submit" variant="primary">
-          {initial ? 'Guardar cambios' : 'Crear pregunta'}
+        <Button type="submit" disabled={!prompt.trim() || !topicId}>
+          {initial?.id ? 'Guardar cambios' : 'Crear pregunta'}
         </Button>
       </div>
     </form>
