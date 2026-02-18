@@ -5,6 +5,9 @@
  * y garantiza que resources/[slug]/ existe para cada asignatura.
  *
  * ⚠️  Nunca sobreescribe archivos existentes.
+ *
+ * También expone (solo en dev) el endpoint POST /api/upload-pdf para guardar
+ * PDFs directamente en resources/[slug]/Temas/ y actualizar el index.json.
  */
 
 import fs from 'node:fs';
@@ -30,7 +33,6 @@ function initResources(root: string): void {
   const resourcesDir = path.join(root, 'resources');
   fs.mkdirSync(resourcesDir, { recursive: true });
 
-  // Buscar el banco en las ubicaciones posibles
   const candidatePaths = [
     path.join(root, 'public', 'data', 'global-bank.json'),
     path.join(root, 'src',    'data', 'global-bank.json'),
@@ -108,6 +110,81 @@ function initResources(root: string): void {
   }
 }
 
+// ─── PDF upload endpoint (dev only) ──────────────────────────────────────────
+
+function registerUploadEndpoint(server: import('vite').ViteDevServer, root: string): void {
+  server.middlewares.use('/api/upload-pdf', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method === 'OPTIONS') {
+      res.statusCode = 204;
+      res.end();
+      return;
+    }
+
+    if (req.method !== 'POST') {
+      res.statusCode = 405;
+      res.end(JSON.stringify({ error: 'Method not allowed' }));
+      return;
+    }
+
+    let body = '';
+    req.setEncoding('utf-8');
+    req.on('data', (chunk: string) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { slug, filename, data } = JSON.parse(body) as {
+          slug: string;
+          filename: string;
+          data: string; // base64
+        };
+
+        if (!slug || !filename || !data) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Faltan campos: slug, filename, data' }));
+          return;
+        }
+
+        // Sanity check: no path traversal
+        const safeName = path.basename(filename);
+        const safeSlug = slugify(slug);
+
+        const temasDir = path.join(root, 'resources', safeSlug, 'Temas');
+        fs.mkdirSync(temasDir, { recursive: true });
+
+        // Escribir el PDF
+        const pdfPath = path.join(temasDir, safeName);
+        fs.writeFileSync(pdfPath, Buffer.from(data, 'base64'));
+        console.log(`\x1b[36m[init-resources]\x1b[0m 📥 PDF guardado: resources/${safeSlug}/Temas/${safeName}`);
+
+        // Actualizar index.json
+        const indexPath = path.join(temasDir, 'index.json');
+        let index: string[] = [];
+        if (fs.existsSync(indexPath)) {
+          try {
+            index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+          } catch {
+            index = [];
+          }
+        }
+        if (!index.includes(safeName)) {
+          index.push(safeName);
+          fs.writeFileSync(indexPath, JSON.stringify(index, null, 2) + '\n', 'utf-8');
+          console.log(`\x1b[36m[init-resources]\x1b[0m 📝 index.json actualizado: [${index.join(', ')}]`);
+        }
+
+        res.statusCode = 200;
+        res.end(JSON.stringify({ ok: true, filename: safeName, index }));
+      } catch (e) {
+        console.error('\x1b[31m[init-resources]\x1b[0m ❌ Error en upload:', e);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: String(e) }));
+      }
+    });
+  });
+}
+
 // ─── Plugin ───────────────────────────────────────────────────────────────────
 
 export function initResourcesPlugin(): Plugin {
@@ -127,6 +204,7 @@ export function initResourcesPlugin(): Plugin {
 
     configureServer(server) {
       initResources(server.config.root);
+      registerUploadEndpoint(server, server.config.root);
     },
   };
 }

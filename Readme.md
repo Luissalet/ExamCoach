@@ -35,13 +35,14 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 - Subir PDF resumen por asignatura y/o tema y organización en carpetas por usuario que lo aporta
 - Guardar resumenes como predeterminados/favoritos
 - Importar zip temas/ examenes anteriores / otros recursos por asignatura (externo para evitar problemas legales por distribución de temario online)
+- Otros recursos (aplicaciones de ayuda como filterlab y webs de consulta)
 
 ### 🔜 Iteración 4 — Repaso inteligente
 
 - Scheduler basado en estadísticas (spaced repetition básico)
 - Más filtros y búsqueda avanzada
 - Estadísticas por tema y tipo
-- Otros recursos (aplicaciones de ayuda como filterlab y webs de consulta)
+
 
 ---
 

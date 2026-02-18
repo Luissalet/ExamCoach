@@ -34,6 +34,8 @@ export interface Topic {
   title: string;
   order: number;
   tags?: string[];
+  /** Nombre del archivo PDF asociado a este tema (de resources/[slug]/Temas/) */
+  pdfFilename?: string;
   createdAt: string;
   updatedAt: string;
 }
