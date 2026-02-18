@@ -28,7 +28,12 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 - Visor PDF.js con anclas por página
 - Botón "Abrir PDF en página X" desde pregunta/resultados
 
-### 🔜 Iteración 3 — Repaso inteligente
+### 🔜 Iteración 3 — Resumenes (pendiente)
+
+- Subir PDF resumen por asignatura y/o tema y organización en carpetas por usuario que lo aporta
+- Guardar resumenes como predeterminados/favoritos
+
+### 🔜 Iteración 4 — Repaso inteligente
 
 - Scheduler basado en estadísticas (spaced repetition básico)
 - Más filtros y búsqueda avanzada
