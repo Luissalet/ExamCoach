@@ -42,5 +42,16 @@
   {
     "topicTitle": "Tema 11- Parametrización automática y optimización de algoritmos",
     "pdf": "Tema_11._Parametrización_automática_y_optimización_de_algoritmos.pdf"
-  }
+  },
+  "Tema_1._Introducción_al_aprendizaje_automático.pdf",
+  "Tema_10._Aprendizaje_supervisado._Regresión_y_clasificación_con_Random_Forest.pdf",
+  "Tema_11._Parametrización_automática_y_optimización_de_algoritmos.pdf",
+  "Tema_2._Análisis_de_datos_descriptivo_y_exploratorio.pdf",
+  "Tema_3._Datos_ausentes_y_normalización.pdf",
+  "Tema_4._Regresión_y_evaluación_de_algoritmos_de_regresión.pdf",
+  "Tema_5._Evaluación_de_algoritmos_de_clasificación.pdf",
+  "Tema_6._Aprendizaje_supervisado._Regresión_y_clasificación_con_árboles_de_decisión.pdf",
+  "Tema_7._Máquinas_de_vectores_de_soporte.pdf",
+  "Tema_8._ Aprendizaje_supervisado._Clasificación_con_Naïve_Bayes.pdf",
+  "Tema_9._Combinacion_de_clasificadores._Bootstrapping_Bagging_y_Boosting.pdf"
 ]
