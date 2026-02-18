@@ -172,8 +172,23 @@ export function ResultsPage() {
                 selectedAnswer.result === 'WRONG' ? 'border-rose-500/30 bg-rose-500/5' :
                 'border-amber-500/30 bg-amber-500/5'
               }`}>
-                <p className="text-sm text-ink-200 mb-4">{selectedQuestion.prompt}</p>
+                {/* Prompt de la pregunta seleccionada */}
+              <p className="text-ink-100 text-sm leading-relaxed">{selectedQuestion.prompt}</p>
 
+              {/* Imágenes */}
+              {selectedQuestion.imageDataUrls && selectedQuestion.imageDataUrls.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedQuestion.imageDataUrls.map((url, idx) => (
+                    <img
+                      key={idx}
+                      src={url}
+                      alt={`imagen ${idx + 1}`}
+                      className="max-h-48 rounded-lg border border-ink-700 object-contain cursor-pointer"
+                      onClick={() => window.open(url, '_blank')}
+                    />
+                  ))}
+                </div>
+              )}
                 <div className="flex flex-col gap-3">
                   <div>
                     <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Tu respuesta</p>

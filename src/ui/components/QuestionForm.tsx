@@ -29,12 +29,14 @@ interface ExpandableTextareaProps {
   rows?: number;
   required?: boolean;
   supportsMd?: boolean;
+  initial?: { imageDataUrls?: string[] };
 }
 
-function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, required, supportsMd }: ExpandableTextareaProps) {
+function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, required, supportsMd, initial }: ExpandableTextareaProps) {
   const [expanded, setExpanded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [imageDataUrls, setImageDataUrls] = useState<string[]>(initial?.imageDataUrls ?? []);
 
   // Auto-resize when expanded
   useEffect(() => {
@@ -99,6 +101,81 @@ function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, req
       )}
     </div>
   );
+}
+
+// ─── Image uploader ──────────────────────────────────────────────────────────
+
+interface ImageUploaderProps {
+  images: string[];
+  onChange: (urls: string[]) => void;
+}
+
+function ImageUploader({ images, onChange }: ImageUploaderProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const newUrls: string[] = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue;
+      const dataUrl = await fileToDataUrl(file);
+      newUrls.push(dataUrl);
+    }
+    onChange([...images, ...newUrls]);
+  };
+
+  const remove = (idx: number) =>
+    onChange(images.filter((_, i) => i !== idx));
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">
+          Imágenes del enunciado
+        </label>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="text-xs text-ink-500 hover:text-ink-300 transition-colors px-1.5 py-0.5 rounded hover:bg-ink-700"
+        >
+          + Añadir imagen
+        </button>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => handleFiles(e.target.files)}
+        />
+      </div>
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {images.map((url, idx) => (
+            <div key={idx} className="relative group w-28 h-20 rounded-lg overflow-hidden border border-ink-600">
+              <img src={url} alt={`imagen ${idx + 1}`} className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => remove(idx)}
+                className="absolute top-1 right-1 bg-ink-900/80 text-rose-400 rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
 // ─── Multi-topic selector ────────────────────────────────────────────────────
@@ -228,6 +305,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
     ]
   );
   const [correctOptionIds, setCorrectOptionIds] = useState<string[]>(initial?.correctOptionIds ?? []);
+  const [imageDataUrls, setImageDataUrls] = useState<string[]>([]);
 
   // DESARROLLO / PRACTICO
   const [modelAnswer, setModelAnswer] = useState(initial?.modelAnswer ?? '');
@@ -288,6 +366,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       numericAnswer: type === 'PRACTICO' && numericAnswer ? numericAnswer : undefined,
       clozeText: type === 'COMPLETAR' ? clozeText : undefined,
       blanks: type === 'COMPLETAR' ? blanks : undefined,
+      imageDataUrls: imageDataUrls.length > 0 ? imageDataUrls : undefined,
     });
   };
 
@@ -348,6 +427,8 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         placeholder="Escribe la pregunta aquí..."
         supportsMd
       />
+      {/* Imágenes del enunciado */}
+      <ImageUploader images={imageDataUrls} onChange={setImageDataUrls} />
 
       {/* TEST options */}
       {type === 'TEST' && (

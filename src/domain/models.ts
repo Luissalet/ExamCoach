@@ -93,6 +93,8 @@ export interface Question {
 
   // PDF anchor
   pdfAnchorId?: string;
+  // Imágenes del enunciado (base64 data URIs)
+  imageDataUrls?: string[];
 
   // Contribution metadata
   createdBy?: string;
@@ -219,6 +221,7 @@ export interface ContributionQuestion {
   pdfAnchor?: { page: number; label?: string };
   createdBy?: string;
   contentHash?: string;
+  imageDataUrls?: string[];
 }
 
 export interface ContributionTarget {

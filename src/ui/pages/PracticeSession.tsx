@@ -218,6 +218,21 @@ export function PracticeSessionPage() {
           />
         </div>
 
+        {/* Imágenes del enunciado */} 
+        {currentQuestion.imageDataUrls && currentQuestion.imageDataUrls.length > 0 && (
+          <div className="flex flex-wrap gap-3">
+            {currentQuestion.imageDataUrls.map((url, idx) => (
+              <img
+                key={idx}
+                src={url}
+                alt={`imagen ${idx + 1}`}
+                className="max-h-72 rounded-xl border border-ink-700 object-contain cursor-pointer"
+                onClick={() => window.open(url, '_blank')}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Answer area */}
         {!submitted ? (
           <AnswerInput

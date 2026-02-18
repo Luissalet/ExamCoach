@@ -29,6 +29,7 @@ const ContributionQuestionSchema = z.object({
   pdfAnchor: z.object({ page: z.number(), label: z.string().optional() }).optional(),
   createdBy: z.string().optional(),
   contentHash: z.string().optional(),
+  imageDataUrls: z.array(z.string()).optional(),
 });
 
 const ContributionPackSchema = z.object({
@@ -214,6 +215,7 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
       numericAnswer: cq.numericAnswer,
       clozeText: cq.clozeText,
       blanks: cq.blanks,
+      imageDataUrls: cq.imageDataUrls,
       contentHash: hashToCheck,
       createdBy: cq.createdBy ?? pack.createdBy,
       sourcePackId: pack.packId,
@@ -309,6 +311,7 @@ export async function exportContributionPack(
       numericAnswer: q.numericAnswer,
       clozeText: q.clozeText,
       blanks: q.blanks,
+      imageDataUrls: q.imageDataUrls,
       explanation: q.explanation,
       difficulty: q.difficulty,
       tags: q.tags,
