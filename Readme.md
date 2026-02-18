@@ -41,6 +41,7 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 - Scheduler basado en estadísticas (spaced repetition básico)
 - Más filtros y búsqueda avanzada
 - Estadísticas por tema y tipo
+- Otros recursos (aplicaciones de ayuda como filterlab y webs de consulta)
 
 ---
 

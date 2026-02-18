@@ -1,9 +1,533 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-18T00:00:00.000Z",
-  "subjects": [],
-  "topics": [],
+  "exportedAt": "2026-02-18T08:17:57.878Z",
+  "subjects": [
+    {
+      "name": "Razonamiento y Planificación Automática",
+      "color": "#10b981",
+      "id": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "createdAt": "2026-02-18T06:50:37.490Z",
+      "updatedAt": "2026-02-18T06:50:37.490Z"
+    },
+    {
+      "name": "Procesamiento del Lenguaje Natural",
+      "color": "#8b5cf6",
+      "id": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "createdAt": "2026-02-18T06:51:00.799Z",
+      "updatedAt": "2026-02-18T06:51:00.799Z"
+    },
+    {
+      "name": "Investigación y Gestión de Proyectos en Inteligencia Artificial",
+      "color": "#ef4444",
+      "id": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "createdAt": "2026-02-18T06:49:58.648Z",
+      "updatedAt": "2026-02-18T06:49:58.648Z"
+    },
+    {
+      "name": "Desarrollo, Optimización y Despliegue de Modelos Generativos",
+      "color": "#f97316",
+      "id": "9a008641-41d8-44e7-8dac-42c3b9f81a0a",
+      "createdAt": "2026-02-18T06:51:40.901Z",
+      "updatedAt": "2026-02-18T06:51:40.901Z"
+    },
+    {
+      "name": "Visión Artificial",
+      "color": "#3b82f6",
+      "id": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "createdAt": "2026-02-18T06:50:19.981Z",
+      "updatedAt": "2026-02-18T06:50:19.981Z"
+    },
+    {
+      "name": "Técnicas de Aprendizaje Automático",
+      "color": "#f59e0b",
+      "id": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "createdAt": "2026-02-18T06:49:36.030Z",
+      "updatedAt": "2026-02-18T06:49:36.030Z"
+    }
+  ],
+  "topics": [
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 4- Publicación de resultados y redacción científica",
+      "order": 3,
+      "id": "008612c6-b931-421e-999a-2bbf34c2b47f",
+      "createdAt": "2026-02-18T07:18:47.956Z",
+      "updatedAt": "2026-02-18T07:18:47.956Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 5- Detección y cancelación de anomalías",
+      "order": 4,
+      "id": "04013943-a2bc-41d5-86fd-c4c76c2e4c37",
+      "createdAt": "2026-02-18T07:41:43.524Z",
+      "updatedAt": "2026-02-18T07:41:43.524Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 6- Búsqueda entre adversarios",
+      "order": 5,
+      "id": "05b06edc-0e7e-4b14-ba1d-f229bd3ff0ad",
+      "createdAt": "2026-02-18T08:11:35.830Z",
+      "updatedAt": "2026-02-18T08:11:35.830Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 1- Introducción a los sistemas de percepción",
+      "order": 0,
+      "id": "078484b6-20f6-42dc-b189-f8bfb2e2625f",
+      "createdAt": "2026-02-18T07:39:00.021Z",
+      "updatedAt": "2026-02-18T07:39:00.021Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 2- El texto como dato",
+      "order": 1,
+      "id": "086069c3-c16e-48c5-9499-8479ca9d62f6",
+      "createdAt": "2026-02-18T08:17:05.731Z",
+      "updatedAt": "2026-02-18T08:17:05.731Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 2- Análisis de datos descriptivo y exploratorio",
+      "order": 1,
+      "id": "0ae62653-00da-40ee-9fe5-9afbf58915fd",
+      "createdAt": "2026-02-18T06:53:53.113Z",
+      "updatedAt": "2026-02-18T06:53:53.113Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 3- Etiquetado morfosintáctico (POS tagging)",
+      "order": 2,
+      "id": "0e39bf7b-78db-4f99-9704-675387c48470",
+      "createdAt": "2026-02-18T08:17:11.437Z",
+      "updatedAt": "2026-02-18T08:17:11.437Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 7- Procesamiento de imagen. Operaciones espaciales",
+      "order": 6,
+      "id": "1965449b-6e2c-4455-b231-ae297c17da31",
+      "createdAt": "2026-02-18T07:43:09.728Z",
+      "updatedAt": "2026-02-18T07:43:09.728Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 8- Investigación en agentes inteligentes y sistemas expertos",
+      "order": 7,
+      "id": "1a79db81-e9fa-4c3f-913a-65e388c249a2",
+      "createdAt": "2026-02-18T07:23:50.540Z",
+      "updatedAt": "2026-02-18T07:23:50.540Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 6- Gestión de proyectos IA estructura de un proyecto IA y su despliegue",
+      "order": 5,
+      "id": "1fe2c210-d133-46f2-a32a-d4e789878bea",
+      "createdAt": "2026-02-18T07:21:34.216Z",
+      "updatedAt": "2026-02-18T07:21:34.216Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 6- Procesamiento de imagen. Operaciones elementales",
+      "order": 5,
+      "id": "260f3d2f-b3ef-4382-a416-db42e84aeab5",
+      "createdAt": "2026-02-18T07:42:17.492Z",
+      "updatedAt": "2026-02-18T07:42:17.492Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 2- Ciencia y método científico",
+      "order": 1,
+      "id": "26b84c63-3862-49b2-bf3a-5521aa7461a9",
+      "createdAt": "2026-02-18T07:16:38.876Z",
+      "updatedAt": "2026-02-18T07:16:38.876Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 9- Aplicaciones del procesamiento del lenguaje natural",
+      "order": 8,
+      "id": "28c45a0d-4a77-4d08-af6f-1447609b216c",
+      "createdAt": "2026-02-18T08:17:46.236Z",
+      "updatedAt": "2026-02-18T08:17:46.236Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 3- Captura y digitalización de señales",
+      "order": 2,
+      "id": "29875481-15b9-4af5-abf4-2b4f0e4c85b2",
+      "createdAt": "2026-02-18T07:40:11.771Z",
+      "updatedAt": "2026-02-18T07:40:11.771Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 10- Procesamiento de imagen. Crecimiento de regiones",
+      "order": 9,
+      "id": "2a248820-62bd-4651-b66a-8e2449a23101",
+      "createdAt": "2026-02-18T07:45:18.888Z",
+      "updatedAt": "2026-02-18T07:45:18.888Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 10- Planificación multi agente",
+      "order": 9,
+      "id": "300e6abe-39b2-4b83-8a28-907bd71037ad",
+      "createdAt": "2026-02-18T08:12:40.107Z",
+      "updatedAt": "2026-02-18T08:12:40.107Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 14- Decisión. Principios e implementación de algoritmos de ayuda en la toma de decisiones",
+      "order": 13,
+      "id": "350549f3-1210-4af1-b199-a957943142d5",
+      "createdAt": "2026-02-18T07:56:01.337Z",
+      "updatedAt": "2026-02-18T07:56:01.337Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 8- Aprendizaje supervisado. Clasificación con Naïve Bayes",
+      "order": 7,
+      "id": "3cd90110-3164-46fa-93bb-228c1d4490db",
+      "createdAt": "2026-02-18T07:05:40.226Z",
+      "updatedAt": "2026-02-18T07:05:40.227Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 13- Extracción de características. Procesamientos multiescala y métodos avanzados",
+      "order": 12,
+      "id": "3fd0a0d7-1534-4a5c-9b10-f4e46790e4b1",
+      "createdAt": "2026-02-18T07:55:00.516Z",
+      "updatedAt": "2026-02-18T07:55:00.516Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 4-  Análisis sintáctico",
+      "order": 3,
+      "id": "43e643ec-f15f-46e7-909d-26e724bcda54",
+      "createdAt": "2026-02-18T08:17:16.469Z",
+      "updatedAt": "2026-02-18T08:17:16.469Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 3- Financiación de proyectos",
+      "order": 2,
+      "id": "469e3a6e-f175-4929-9c01-73813fba8f32",
+      "createdAt": "2026-02-18T07:18:12.221Z",
+      "updatedAt": "2026-02-18T07:18:12.221Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 11- Investigación en computación bioinspirada",
+      "order": 10,
+      "id": "46a9ed18-ef95-4e68-82bb-8c4d23066292",
+      "createdAt": "2026-02-18T07:26:23.796Z",
+      "updatedAt": "2026-02-18T07:26:23.796Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 10- Aprendizaje supervisado. Regresión y clasificación con Random Forest",
+      "order": 9,
+      "id": "54c32f8a-a162-493b-9dc3-89e6ab77b28b",
+      "createdAt": "2026-02-18T07:09:13.797Z",
+      "updatedAt": "2026-02-18T07:09:13.797Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 10- Agentes conversacionales",
+      "order": 9,
+      "id": "5586d1be-9d39-48f3-af1b-0d55ce229695",
+      "createdAt": "2026-02-18T08:17:55.318Z",
+      "updatedAt": "2026-02-18T08:17:55.318Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 9- Procesamiento e imagen. Morfología matemática",
+      "order": 8,
+      "id": "5bd2dd49-38e3-424a-a3aa-4698356ef849",
+      "createdAt": "2026-02-18T07:44:28.855Z",
+      "updatedAt": "2026-02-18T07:44:28.855Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 5- Gestión de proyectos de inteligencia artificial. Enfoque metodológico",
+      "order": 4,
+      "id": "5c173022-2f44-4b8c-a0c6-4248992b7ddf",
+      "createdAt": "2026-02-18T07:20:39.475Z",
+      "updatedAt": "2026-02-18T07:20:39.475Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 8- Procesamiento de señales.Filtrado y análisis en frecuencia",
+      "order": 7,
+      "id": "61eba31c-d125-41d2-a462-1b454b8243bd",
+      "createdAt": "2026-02-18T07:43:57.557Z",
+      "updatedAt": "2026-02-18T07:43:57.557Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 8- Modelado neuronal del lenguaje",
+      "order": 7,
+      "id": "623ed762-d1ea-4c7e-a705-c15e4701851e",
+      "createdAt": "2026-02-18T08:17:38.711Z",
+      "updatedAt": "2026-02-18T08:17:38.711Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 1- Introducción al aprendizaje automático",
+      "order": 0,
+      "id": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "createdAt": "2026-02-18T06:53:14.309Z",
+      "updatedAt": "2026-02-18T06:53:14.309Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 3- Datos ausentes y normalización",
+      "order": 2,
+      "id": "67df2a8d-4ad6-4413-9327-c083bc1d1158",
+      "createdAt": "2026-02-18T06:54:31.648Z",
+      "updatedAt": "2026-02-18T06:54:31.648Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 6- Aprendizaje supervisado. Regresión y clasificación con árboles de decisión",
+      "order": 5,
+      "id": "68f33661-e359-4655-b124-93d9c2981d18",
+      "createdAt": "2026-02-18T06:59:29.866Z",
+      "updatedAt": "2026-02-18T06:59:29.866Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 11- Extracción de características. Propiedades estadísticas y frecuenciales de la señal",
+      "order": 10,
+      "id": "6ed46a2a-66aa-4bc3-b00e-7d5c22409506",
+      "createdAt": "2026-02-18T07:54:24.020Z",
+      "updatedAt": "2026-02-18T07:54:24.020Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 1- Introducción al procesamiento del lenguaje natural",
+      "order": 0,
+      "id": "704b5a67-a35d-4cf4-82ce-fa690d28aa20",
+      "createdAt": "2026-02-18T08:17:00.254Z",
+      "updatedAt": "2026-02-18T08:17:00.254Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 1- Introducción a la toma de decisiones",
+      "order": 0,
+      "id": "792ab1e2-a060-4c67-952e-286f0d947158",
+      "createdAt": "2026-02-18T08:11:08.207Z",
+      "updatedAt": "2026-02-18T08:11:08.207Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 9- Combinacion de clasificadores.Bootstrapping Bagging y Boosting",
+      "order": 8,
+      "id": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
+      "createdAt": "2026-02-18T07:08:15.049Z",
+      "updatedAt": "2026-02-18T07:08:15.049Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 3- Lógica y pensamiento humano",
+      "order": 2,
+      "id": "8323daeb-633c-4a5a-9108-0af5194356d1",
+      "createdAt": "2026-02-18T08:11:18.280Z",
+      "updatedAt": "2026-02-18T08:11:18.280Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 12- Implicaciones filosóficas éticas y legales en la aplicación de la inteligencia artificial",
+      "order": 11,
+      "id": "89e3ff63-856e-48a6-98b0-1e00a58e2720",
+      "createdAt": "2026-02-18T07:27:13.365Z",
+      "updatedAt": "2026-02-18T07:27:13.365Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 12- Extracción de características. Caracterización de textura en imágenes",
+      "order": 11,
+      "id": "920892bf-baf1-41ac-825d-db9a843c6a8d",
+      "createdAt": "2026-02-18T07:54:42.123Z",
+      "updatedAt": "2026-02-18T07:54:42.123Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 4- Fuentes y tipos de ruido",
+      "order": 3,
+      "id": "935c75ae-d79b-4256-b0a3-f0089e64dc4b",
+      "createdAt": "2026-02-18T07:40:37.006Z",
+      "updatedAt": "2026-02-18T07:40:37.006Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 7- Problemas de planificación",
+      "order": 6,
+      "id": "95db69ef-f17e-4bce-af25-37a2cd11b2d1",
+      "createdAt": "2026-02-18T08:11:41.379Z",
+      "updatedAt": "2026-02-18T08:11:41.379Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 9- Redes de tareas jerárquicas (HTN)",
+      "order": 8,
+      "id": "9944d5bc-5779-4422-a9e6-be2a12f23cac",
+      "createdAt": "2026-02-18T08:11:54.154Z",
+      "updatedAt": "2026-02-18T08:11:54.154Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 12- Reparación reactiva multi agente",
+      "order": 11,
+      "id": "9af2cae5-b7bc-4469-b1b9-fbb13f0711e2",
+      "createdAt": "2026-02-18T08:12:54.266Z",
+      "updatedAt": "2026-02-18T08:12:54.266Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 8- Sistemas basados en STRIP",
+      "order": 7,
+      "id": "9d4c78aa-cdf0-4d44-8588-2a6d07cf155e",
+      "createdAt": "2026-02-18T08:11:47.452Z",
+      "updatedAt": "2026-02-18T08:11:47.452Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 5- Análisis semántico",
+      "order": 4,
+      "id": "a02ead6f-3dff-4f1e-85ca-f45b23b6f383",
+      "createdAt": "2026-02-18T08:17:21.568Z",
+      "updatedAt": "2026-02-18T08:17:21.568Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 7- Máquinas de vectores de soporte",
+      "order": 6,
+      "id": "a8ebb15b-9b4c-4e28-a6a8-b2459086f772",
+      "createdAt": "2026-02-18T07:03:54.537Z",
+      "updatedAt": "2026-02-18T07:03:54.537Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 4- Regresión y evaluación de algoritmos de regresión",
+      "order": 3,
+      "id": "ae461c89-7eae-4e1c-9b46-66db27585e18",
+      "createdAt": "2026-02-18T06:57:00.223Z",
+      "updatedAt": "2026-02-18T06:57:00.223Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 15- Aplicaciones actuales del tratamiento de la señal",
+      "order": 14,
+      "id": "b5e53c1f-ce1b-4e76-8e8f-c397ca9e0fc1",
+      "createdAt": "2026-02-18T07:56:18.251Z",
+      "updatedAt": "2026-02-18T07:56:18.251Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 6- Semántica léxica",
+      "order": 5,
+      "id": "b6c4d952-ef53-4a39-9c36-ef436beedbae",
+      "createdAt": "2026-02-18T08:17:26.364Z",
+      "updatedAt": "2026-02-18T08:17:26.364Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 1- Origen y evolución de la inteligencia artificial",
+      "order": 0,
+      "id": "b7b070f7-93a6-4f64-aab6-a01f85b31693",
+      "createdAt": "2026-02-18T07:11:50.842Z",
+      "updatedAt": "2026-02-18T07:11:50.842Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 4- Búsqueda no informada",
+      "order": 3,
+      "id": "bbb2fa85-3b96-4bb6-bae9-8eadeaa7c799",
+      "createdAt": "2026-02-18T08:11:23.511Z",
+      "updatedAt": "2026-02-18T08:11:23.511Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 5- Evaluación de algoritmos de clasificación",
+      "order": 4,
+      "id": "c4060bb5-05fa-4aa4-ba2c-07c094a172e5",
+      "createdAt": "2026-02-18T06:58:40.454Z",
+      "updatedAt": "2026-02-18T06:58:40.454Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 9- Investigación en aprendizaje automático",
+      "order": 8,
+      "id": "cd4bf44c-e667-474e-8b49-dd9f905aa6e7",
+      "createdAt": "2026-02-18T07:24:29.477Z",
+      "updatedAt": "2026-02-18T07:24:29.477Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 5- Búsqueda informada",
+      "order": 4,
+      "id": "d024196b-e89f-4872-b520-d799cc340628",
+      "createdAt": "2026-02-18T08:11:30.581Z",
+      "updatedAt": "2026-02-18T08:11:30.581Z"
+    },
+    {
+      "subjectId": "6be26a05-3aa2-4a0f-9c45-03aba229ad37",
+      "title": "Tema 7- Modelado estadístico del lenguaje",
+      "order": 6,
+      "id": "d14b3ac6-16e9-4535-9ca4-97564b69f595",
+      "createdAt": "2026-02-18T08:17:32.865Z",
+      "updatedAt": "2026-02-18T08:17:32.865Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 2- Representación del conocimiento y razonamiento",
+      "order": 1,
+      "id": "d75c2647-cb7a-468b-b44f-6eb398e2bd21",
+      "createdAt": "2026-02-18T08:11:13.133Z",
+      "updatedAt": "2026-02-18T08:11:13.133Z"
+    },
+    {
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "title": "Tema 11- Parametrización_automática_y_optimización_de_algoritmos",
+      "order": 10,
+      "id": "df40a8ec-40bc-4d84-8e87-984c338add40",
+      "createdAt": "2026-02-18T07:10:54.299Z",
+      "updatedAt": "2026-02-18T07:10:54.299Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 7-Gestión de proyectos IA. Recursos materiales y recursos humanos",
+      "order": 6,
+      "id": "e1093df5-00c7-4082-ae58-ddd12bb61b95",
+      "createdAt": "2026-02-18T07:23:08.331Z",
+      "updatedAt": "2026-02-18T07:23:08.332Z"
+    },
+    {
+      "subjectId": "6eae4b52-b5f6-49bd-8bf0-08a629937e27",
+      "title": "Tema 10- Investigación en sistemas cognitivos",
+      "order": 9,
+      "id": "e37b155a-f5e5-490b-a8fe-99a11ea63110",
+      "createdAt": "2026-02-18T07:25:03.243Z",
+      "updatedAt": "2026-02-18T07:25:03.243Z"
+    },
+    {
+      "subjectId": "d832e227-6d36-4e2e-8dbc-e0c2cd69d5b9",
+      "title": "Tema 2- Elementos de un sistema de percepción",
+      "order": 1,
+      "id": "f56b7755-ee88-4004-91e1-3e3183390067",
+      "createdAt": "2026-02-18T07:39:27.033Z",
+      "updatedAt": "2026-02-18T07:39:27.033Z"
+    },
+    {
+      "subjectId": "4978ac2f-77b4-4189-92fc-2acc0828ff23",
+      "title": "Tema 11- Planificación por múltiples agentes",
+      "order": 10,
+      "id": "fb68f160-00b6-4d2d-b222-1f029483454c",
+      "createdAt": "2026-02-18T08:12:46.731Z",
+      "updatedAt": "2026-02-18T08:12:46.731Z"
+    }
+  ],
   "questions": [],
   "pdfAnchors": []
 }
