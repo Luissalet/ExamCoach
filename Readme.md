@@ -27,6 +27,8 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 - Subir PDF por asignatura (Blob en IndexedDB)
 - Visor PDF.js con anclas por página
 - Botón "Abrir PDF en página X" desde pregunta/resultados
+- Añadir origen de pregunta (test, examen anterior)
+- Info extra por asignatura e indicador de si permite apuntes o no en el dashboard
 
 ### 🔜 Iteración 3 — Resumenes (pendiente)
 
