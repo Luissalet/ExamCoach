@@ -3,8 +3,11 @@
 # Ignorar TODOS los "Temas" dentro de resources/<asignatura>/Temas
 /resources/**/Temas/**
 /resources/**/Examenes/**
+/resources/**/Resumenes/**
+
 # ...pero NO ignores el index.json de cada Temas
 !/resources/**/Temas/index.json
 !/resources/**/Examenes/index.json
+!/resources/**/Resumenes/index.json
 
 vite.config.ts.timestamp*
