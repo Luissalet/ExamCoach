@@ -9,6 +9,7 @@ App web **local-first** para crear bancos de preguntas y practicar exámenes. Si
 - **Dexie (IndexedDB)** — persistencia offline, funciona sin conexión
 - **Zod** — validación de esquemas en export/import
 - **Tailwind CSS** — estilos utilitarios
+- **marked + marked-katex-extension + KaTeX** — renderizado de Markdown con soporte completo de LaTeX matemático
 
 ## Características
 
@@ -143,6 +144,89 @@ El diseño permite que varios compañeros aporten preguntas sin compartir la mis
 
 ---
 
+## Soporte de Markdown y LaTeX (KaTeX)
+
+Todos los campos de texto de las preguntas (`prompt`, `modelAnswer`, `explanation`, textos de opciones, etc.) soportan **Markdown** completo con renderizado de **fórmulas matemáticas LaTeX** mediante KaTeX.
+
+### Markdown soportado
+
+```markdown
+**negrita**, *cursiva*, `código inline`
+
+- listas con viñetas
+- y sublistas
+
+| col A | col B |
+|-------|-------|
+| val 1 | val 2 |
+```
+
+### Fórmulas matemáticas (LaTeX / KaTeX)
+
+Se soportan **cuatro notaciones de delimitadores**, todas equivalentes:
+
+| Estilo | Inline (dentro del texto) | Display (bloque centrado) |
+|--------|--------------------------|--------------------------|
+| Pandoc/KaTeX | `$...$` | `$$...$$` |
+| LaTeX estándar | `\(...\)` | `\[...\]` |
+
+Todos los delimitadores se normalizan automáticamente antes del renderizado, por lo que puedes usar el que prefieras o el que genere tu herramienta (ChatGPT suele usar `\(...\)` y `\[...\]`).
+
+**Ejemplos:**
+
+```
+El kernel es $h = \begin{bmatrix} -1 & -1 & -1 \\ -1 & 8 & -1 \\ -1 & -1 & -1 \end{bmatrix}$
+
+La función de coste es:
+$$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})^2$$
+
+Usando notación LaTeX estándar: \( f(n) = g(n) + h(n) \)
+```
+
+> ⚠️ **Para ChatGPT**: al generar preguntas con fórmulas, indica explícitamente que use LaTeX con delimitadores `$...$` y `$$...$$` o `\(...\)` y `\[...\]`. Ambos funcionan correctamente en la app.
+
+---
+
+## Imágenes en preguntas
+
+Las preguntas soportan **imágenes inline** directamente en el Markdown del `prompt`, `modelAnswer` o `explanation`.
+
+### Desde la interfaz de usuario
+
+- **Arrastra y suelta** una imagen sobre cualquier campo de texto con soporte Markdown
+- **Pega** una imagen desde el portapapeles (`Ctrl+V` / `Cmd+V`)
+
+La imagen se guarda automáticamente en IndexedDB y se inserta como referencia en el Markdown:
+
+```markdown
+![descripción](question-images/550e8400-e29b-41d4-a716-446655440000.png)
+```
+
+### En contribution packs
+
+Las imágenes se exportan como **base64** en el campo `questionImages` del pack:
+
+```json
+{
+  "version": 1,
+  "kind": "contribution",
+  "packId": "...",
+  "questions": [
+    {
+      "prompt": "Analiza la siguiente imagen:\n\n![figura](question-images/uuid.png)",
+      ...
+    }
+  ],
+  "questionImages": {
+    "uuid.png": "base64encodeddata..."
+  }
+}
+```
+
+Al importar el pack, las imágenes se restauran automáticamente en IndexedDB del receptor.
+
+---
+
 ## Estructura del proyecto
 
 ```
@@ -158,9 +242,11 @@ study-app/
 │   │   ├── repos.ts           # CRUD por entidad
 │   │   ├── exportImport.ts    # Export/import banco JSON
 │   │   └── contributionImport.ts  # Merge de contribution packs
+│   ├── utils/
+│   │   └── renderMd.ts        # Renderizado Markdown + KaTeX centralizado
 │   └── ui/
 │       ├── store/index.ts     # Zustand store
-│       ├── components/        # Componentes reutilizables
+│       ├── components/        # Componentes reutilizables (MdContent, ...)
 │       └── pages/             # Dashboard, SubjectView, Practice, Results, Settings
 ```
 
@@ -173,11 +259,15 @@ study-app/
 | **TEST** | Seleccionar opciones (1 o varias) | Automática |
 | **COMPLETAR** | Rellenar huecos `{{respuesta}}` | Automática (normalizada) |
 | **DESARROLLO** | Texto libre | Manual (tú marcas ✓/✗) |
+| **PRACTICO** | Texto libre + resultado numérico | Manual + comparación numérica |
 
 ---
+
 # Recursos estáticos — PDFs y datos extra por asignatura
 
-Los PDFs de los temas y la información extra de cada asignatura se guardan como **archivos estáticos en el repositorio**, dentro de la carpeta `resources/`. Esto permite:
+Los PDFs de los temas y la información extra de cada asignatura se guardan como **archivos estáticos en el repositorio**, dentro de la carpeta `resources/`.
+
+Esto permite:
 
 - Versionar los PDFs y el `extra_info.json` en Git
 - Subirlos a GitHub y distribuirlos a todos los compañeros
@@ -253,63 +343,7 @@ El orden en el array determina el orden en el selector del visor.
 3. Copia los PDFs de los temas ahí
 4. Crea/actualiza `resources/[slug]/Temas/index.json` con los nombres
 5. Crea/actualiza `resources/[slug]/extra_info.json` con los metadatos
-6. Haz commit y push al repo → todos los compañeros tendrán los PDFs al hacer pull
-
----
-
-## Visor PDF en la app
-
-- La pestaña **PDFs** dentro de cada asignatura carga automáticamente los PDFs listados en `index.json`
-- Soporta zoom, navegación por páginas y selector de PDF
-- Las preguntas con ancla PDF muestran un botón **"📄 Abrir PDF en página X"** que lleva directamente a esa página
-- El indicador **📝 Apuntes** / **🚫 Sin apuntes** aparece en las tarjetas del Dashboard según `allowsNotes`
-
-# Exportación Compacta de Preguntas por Asignatura
-
-## 📋 Problema
-
-El archivo `global-bank.json` es demasiado largo y tiene toda la información completa de las preguntas (opciones, explicaciones, stats, etc.), lo que hace difícil pasárselo a ChatGPT para que evite repetir preguntas al crear contribution packs.
-
-## ✨ Solución
-
-Una exportación **ultra-compacta** que solo incluye:
-- **Tipo** (1 char: T, D, C, P)
-- **Prompt** (para que ChatGPT identifique la pregunta)
-- **Hash** (para deduplicación)
-- **Tema** (slug del tema)
-
-Esto reduce el tamaño del JSON en aproximadamente **90%** comparado con el global-bank.json.
-
----
-
-## 🚀 Implementación
-
-### 1. Copiar archivo principal
-
-Copia el archivo `exportCompact.ts` a:
-```
-src/data/exportCompact.ts
-```
-
-### 2. Modificar Settings.tsx
-
-#### 2.1 Añadir import al inicio:
-```typescript
-import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
-```
-
-#### 2.2 Añadir estado (dentro del componente SettingsPage):
-```typescript
-const [compactExportSubjectId, setCompactExportSubjectId] = useState('');
-```
-
-#### 2.3 Añadir handlers (dentro del componente SettingsPage):
-Copia los handlers de `settings-integration.tsx`:
-- `handleExportCompactSubject`
-- `handleExportAllCompact`
-
-#### 2.4 Añadir Card en el JSX:
-Copia el `<Card>` completo de `settings-integration.tsx` y pégalo en el JSX de Settings, justo después del card de "Exportar mis preguntas".
+6. Haz commit y push — los PDFs estarán disponibles para todos los compañeros
 
 ---
 
@@ -422,45 +456,3 @@ El formato compacto permite incluir **cientos de preguntas** sin alcanzar los l�
 - El tema ayuda a ChatGPT a entender el contexto
 - El tipo ayuda a ChatGPT a generar preguntas del mismo formato
 - Solo se incluye información esencial, nada de stats, opciones completas, etc.
-
----
-
-## 🎯 Casos de uso
-
-1. **Crear contribution packs sin duplicados**
-   - Exporta la asignatura
-   - Pásale el JSON a ChatGPT
-   - Pide que cree N preguntas nuevas
-
-2. **Revisar cobertura de temas**
-   - Exporta todas las asignaturas
-   - Analiza qué temas tienen pocas preguntas
-   - Pide a ChatGPT que cree preguntas para esos temas
-
-3. **Generar variaciones**
-   - Exporta las preguntas existentes
-   - Pide a ChatGPT que cree variaciones (misma pregunta, diferente formulación)
-
----
-
-## 🐛 Solución de problemas
-
-### "Cannot read property 'getBySubject' of undefined"
-Asegúrate de que `questionRepo` y `topicRepo` estén importados correctamente en `exportCompact.ts`:
-```typescript
-import { questionRepo, topicRepo } from './repos';
-```
-
-### "Función no encontrada"
-Verifica que hayas importado las funciones en Settings.tsx:
-```typescript
-import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
-```
-
-### El archivo se descarga vacío
-Revisa que la asignatura tenga preguntas creadas.
-
-## Licencia
-
-MIT — úsalo libremente para estudiar.
-

@@ -91,6 +91,7 @@ Un **contribution pack** es un archivo JSON que contiene preguntas creadas por u
 | `exportedAt` | string | ✅ | Fecha ISO de exportación |
 | `targets` | array | ✅ | Asignaturas y temas incluidos |
 | `questions` | array | ✅ | Preguntas del pack |
+| `questionImages` | object | ⭕ | Mapa de imágenes inline `{ "uuid.ext": "base64..." }` |
 
 ### Campos de cada pregunta
 
@@ -100,10 +101,10 @@ Un **contribution pack** es un archivo JSON que contiene preguntas creadas por u
 | `subjectKey` | string | ✅ | Slug de la asignatura — **del Anexo** | ver Anexo |
 | `topicKey` | string | ✅ | Slug del tema — **del Anexo** | ver Anexo |
 | `type` | string | ✅ | Tipo de pregunta | `"TEST"`, `"DESARROLLO"`, `"COMPLETAR"`, `"PRACTICO"` |
-| `prompt` | string | ✅ | Enunciado de la pregunta | Texto libre |
+| `prompt` | string | ✅ | Enunciado de la pregunta | Markdown + LaTeX |
 | `origin` | string | ⭕ | **Origen de la pregunta** | `"test"`, `"examen_anterior"`, `"clase"`, `"alumno"` |
 | `difficulty` | number | ⭕ | Dificultad (1-5) | `1`, `2`, `3`, `4`, `5` |
-| `explanation` | string | ⭕ | Explicación de la respuesta | Texto libre |
+| `explanation` | string | ⭕ | Explicación de la respuesta | Markdown + LaTeX |
 | `tags` | array | ⭕ | Etiquetas | `["etiqueta1", "etiqueta2"]` |
 | `createdBy` | string | ⭕ | Autor de la pregunta | Nombre/alias |
 | `contentHash` | string | ⭕ | Hash para deduplicación | `"sha256:..."` |
@@ -113,7 +114,9 @@ Un **contribution pack** es un archivo JSON que contiene preguntas creadas por u
 
 ### ⚠️ PREGUNTAS MULTI-TEMA
 
-Una pregunta puede abarcar **varios temas a la vez**. Esto es común en:
+Una pregunta puede abarcar **varios temas a la vez**.
+
+Esto es común en:
 - Preguntas tipo **DESARROLLO** que integran conocimientos de múltiples temas
 - Preguntas **PRACTICO** que aplican conceptos de diferentes unidades
 - Preguntas que relacionan temas (ej: "Compara el algoritmo A del tema 2 con el B del tema 5")
@@ -150,7 +153,7 @@ Una pregunta puede abarcar **varios temas a la vez**. Esto es común en:
 #### Para preguntas tipo DESARROLLO o PRACTICO:
 | Campo | Tipo | Obligatorio | Descripción |
 |-------|------|-------------|-------------|
-| `modelAnswer` | string | ⭕ | Respuesta modelo |
+| `modelAnswer` | string | ⭕ | Respuesta modelo (Markdown + LaTeX) |
 | `keywords` | array | ⭕ | Palabras clave esperadas |
 | `numericAnswer` | string | ⭕ | Respuesta numérica (solo PRACTICO) |
 
@@ -172,6 +175,104 @@ El campo `origin` especifica de dónde fue extraída la pregunta. Es opcional pe
 | `"examen_anterior"` | Pregunta de un examen oficial previo |
 | `"clase"` | Pregunta planteada en clase |
 | `"alumno"` | Pregunta creada por un alumno |
+
+---
+
+## ✍️ Markdown y LaTeX en los textos
+
+Todos los campos de texto (`prompt`, `modelAnswer`, `explanation`, `options[].text`, `clozeText`) soportan **Markdown** completo y **fórmulas matemáticas LaTeX** renderizadas con KaTeX.
+
+### Markdown
+
+```markdown
+**negrita**, *cursiva*, `código`
+
+- listas
+- con viñetas
+
+| col A | col B |
+|-------|-------|
+| val 1 | val 2 |
+```
+
+### Fórmulas matemáticas (LaTeX / KaTeX)
+
+Se aceptan **cuatro estilos de delimitadores**, todos equivalentes:
+
+| Tipo | Inline | Bloque (display) |
+|------|--------|-----------------|
+| Estilo pandoc/KaTeX | `$...$` | `$$...$$` |
+| Estilo LaTeX estándar | `\(...\)` | `\[...\]` |
+
+La app normaliza automáticamente todos los delimitadores antes de renderizar, así que puedes usar el estilo que prefieras o el que genere ChatGPT.
+
+**Ejemplos de uso en preguntas:**
+
+```markdown
+En el contexto del filtrado espacial, se analiza el siguiente *kernel* $h$:
+
+$$
+h = \begin{bmatrix}
+-1 & -1 & -1 \\
+-1 & (\alpha+8) & -1 \\
+-1 & -1 & -1
+\end{bmatrix}, \qquad \alpha \ge 0
+$$
+
+(a) ¿Qué tipo de filtro es $h$?
+```
+
+```markdown
+La función de coste en regresión logística es:
+
+$$J(\theta) = -\frac{1}{m}\sum_{i=1}^{m}\left[y^{(i)}\log(h_\theta(x^{(i)})) + (1-y^{(i)})\log(1-h_\theta(x^{(i)}))\right]$$
+
+Siendo $h_\theta(x) = \sigma(\theta^T x)$ la función sigmoide.
+```
+
+> 💡 **Para ChatGPT**: cuando le pidas preguntas con fórmulas, incluye en tu prompt:
+> *"Usa LaTeX con delimitadores `$...$` para inline y `$$...$$` para bloques. Las matrices con `\begin{bmatrix}...\end{bmatrix}`."*
+
+---
+
+## 🖼️ Imágenes en preguntas
+
+Las preguntas pueden incluir **imágenes inline** directamente en el Markdown de cualquier campo de texto.
+
+### Referencia de imagen en Markdown
+
+```markdown
+En la figura se muestra el resultado de aplicar el filtro con distintos valores de $\alpha$:
+
+![Figura 1](question-images/550e8400-e29b-41d4-a716-446655440000.png)
+
+Relaciona cada imagen con su valor de $\alpha$.
+```
+
+### Campo `questionImages` en el pack
+
+Cuando un pack contiene preguntas con imágenes, el campo `questionImages` del pack exporta todas las imágenes en base64:
+
+```json
+{
+  "version": 1,
+  "kind": "contribution",
+  "packId": "...",
+  "questions": [
+    {
+      "prompt": "Analiza el siguiente diagrama:\n\n![Diagrama](question-images/uuid.png)",
+      ...
+    }
+  ],
+  "questionImages": {
+    "uuid.png": "iVBORw0KGgoAAAANSUhEUgAA..."
+  }
+}
+```
+
+Al importar el pack, las imágenes se restauran automáticamente en el IndexedDB del receptor. No es necesario hacer nada especial.
+
+> ⚠️ **Nota para ChatGPT**: ChatGPT no puede generar imágenes en base64 para el campo `questionImages`. Las imágenes deben añadirse manualmente desde la interfaz de la app (arrastrando o pegando). Si una pregunta de examen tiene imágenes, créala primero sin imagen y añade la imagen después desde el editor de preguntas.
 
 ---
 
@@ -204,6 +305,30 @@ El campo `origin` especifica de dónde fue extraída la pregunta. Es opcional pe
 }
 ```
 
+### Pregunta TEST con LaTeX
+
+```json
+{
+  "id": "623e4567-e89b-12d3-a456-426614174005",
+  "subjectKey": "vision-artificial",
+  "topicKey": "tema-7-procesamiento-de-imagen-operaciones-espaciales",
+  "type": "TEST",
+  "prompt": "Dado el siguiente kernel $h$:\n\n$$h = \\begin{bmatrix} -1 & -1 & -1 \\\\ -1 & 8 & -1 \\\\ -1 & -1 & -1 \\end{bmatrix}$$\n\n¿Qué tipo de filtro es?",
+  "origin": "examen_anterior",
+  "difficulty": 3,
+  "options": [
+    { "id": "a", "text": "Filtro paso bajo (suavizado)" },
+    { "id": "b", "text": "Filtro paso alto (realce de bordes)" },
+    { "id": "c", "text": "Filtro de mediana" },
+    { "id": "d", "text": "Filtro Gaussiano" }
+  ],
+  "correctOptionIds": ["b"],
+  "explanation": "La suma de coeficientes es $-8 + 8 = 0$, lo que indica un filtro paso alto. El coeficiente central positivo y los negativos alrededor amplifican las diferencias locales (bordes).",
+  "tags": ["filtros", "kernel", "paso-alto"],
+  "createdBy": "Carlos"
+}
+```
+
 ### Pregunta DESARROLLO
 
 ```json
@@ -215,7 +340,7 @@ El campo `origin` especifica de dónde fue extraída la pregunta. Es opcional pe
   "prompt": "Explica el funcionamiento del algoritmo A* y sus ventajas frente a la búsqueda no informada.",
   "origin": "alumno",
   "difficulty": 4,
-  "modelAnswer": "A* combina búsqueda de costo uniforme con búsqueda heurística. Usa f(n) = g(n) + h(n), donde g(n) es el costo desde el origen y h(n) es una heurística admisible. Garantiza optimalidad si h es admisible...",
+  "modelAnswer": "A* combina búsqueda de costo uniforme con búsqueda heurística. Usa $f(n) = g(n) + h(n)$, donde $g(n)$ es el costo desde el origen y $h(n)$ es una heurística admisible. Garantiza optimalidad si $h$ es admisible...",
   "keywords": ["heurística", "admisible", "costo", "óptimo", "f(n)"],
   "tags": ["busqueda", "algoritmos", "heuristica"],
   "createdBy": "María"
@@ -257,10 +382,10 @@ El campo `origin` especifica de dónde fue extraída la pregunta. Es opcional pe
   "subjectKey": "tecnicas-de-aprendizaje-automatico",
   "topicKey": "tema-5-evaluacion-de-algoritmos-de-clasificacion",
   "type": "PRACTICO",
-  "prompt": "Dado VP=80, VN=70, FP=10, FN=20, calcula la precisión (Precision) del clasificador.",
+  "prompt": "Dado $VP=80$, $VN=70$, $FP=10$, $FN=20$, calcula la precisión (*Precision*) del clasificador.",
   "origin": "examen_anterior",
   "difficulty": 3,
-  "modelAnswer": "Precisión = VP / (VP + FP) = 80 / (80 + 10) = 80 / 90 ≈ 0.889",
+  "modelAnswer": "$$\\text{Precisión} = \\frac{VP}{VP + FP} = \\frac{80}{80 + 10} = \\frac{80}{90} \\approx 0.889$$",
   "numericAnswer": "0.889",
   "keywords": ["precision", "VP", "FP", "matriz de confusion"],
   "tags": ["metricas", "clasificacion", "calculo"],
@@ -283,7 +408,7 @@ El campo `origin` especifica de dónde fue extraída la pregunta. Es opcional pe
   "prompt": "Compara las ventajas y desventajas de la búsqueda en anchura (BFS) frente al algoritmo A*. ¿En qué situaciones preferirías usar cada uno?",
   "origin": "clase",
   "difficulty": 4,
-  "modelAnswer": "BFS garantiza la solución óptima en grafos no ponderados pero tiene alto consumo de memoria O(b^d). A* es más eficiente si existe una buena heurística admisible, pero requiere conocimiento del dominio para definirla...",
+  "modelAnswer": "BFS garantiza la solución óptima en grafos no ponderados pero tiene alto consumo de memoria $O(b^d)$. A* es más eficiente si existe una buena heurística admisible, pero requiere conocimiento del dominio para definirla...",
   "keywords": ["BFS", "A*", "heurística", "optimalidad", "complejidad espacial"],
   "tags": ["busqueda", "comparacion", "algoritmos"],
   "createdBy": "Laura"
@@ -333,7 +458,9 @@ REQUISITOS de cada pregunta:
    (si creas preguntas desde cero usa "alumno")
 2. difficulty entre 1 y 5
 3. explanation siempre que sea posible
-4. Texto en Markdown (negritas, listas, etc. donde ayude a la claridad)
+4. Texto en Markdown. Usa LaTeX con delimitadores $...$ (inline) y $$...$$ (bloque)
+   para fórmulas matemáticas. Matrices con \begin{bmatrix}...\end{bmatrix}.
+5. NO incluyas el campo "questionImages" — las imágenes se añaden manualmente
 
 Banco actual (para evitar duplicados):
 [PEGA AQUÍ EL JSON DEL BANCO COMPACTO EXPORTADO]
@@ -346,6 +473,7 @@ VERIFICACIÓN FINAL antes de responder:
 ✓ JSON válido (sin comentarios //)
 ✓ difficulty en todas las preguntas
 ✓ explanation incluida cuando sea posible
+✓ Fórmulas con LaTeX donde corresponda
 ```
 
 4. **Revisa el JSON generado**: verifica que `subjectKey` y `topicKey` coincidan exactamente con el Anexo
@@ -387,6 +515,24 @@ VERIFICACIÓN FINAL antes de responder:
 }
 ```
 
+### ❌ Error: LaTeX con delimitadores mal escapados en JSON
+```json
+{
+  "prompt": "La función es \(f(x) = x^2\)"   // ❌ Las \ hay que escaparlas en JSON
+}
+```
+### ✅ Correcto:
+```json
+{
+  "prompt": "La función es $f(x) = x^2$"     // ✅ Más simple, sin problemas de escape
+}
+```
+```json
+{
+  "prompt": "La función es \\(f(x) = x^2\\)" // ✅ Escapado correcto si usas \(...\)
+}
+```
+
 ### Otros errores comunes:
 1. **Slugs incorrectos**: `subjectKey` y `topicKey` deben coincidir exactamente con el Anexo
 2. **UUIDs duplicados**: cada pregunta debe tener un UUID único
@@ -402,6 +548,7 @@ VERIFICACIÓN FINAL antes de responder:
 1. **Contribuidor crea preguntas**
    - Define su alias en Ajustes
    - Crea preguntas en la app o con ChatGPT usando esta guía
+   - Si la pregunta tiene imágenes, las añade manualmente arrastrando/pegando en el editor
    - Exporta contribution pack desde Ajustes > Exportar mis preguntas
 
 2. **Mantenedor importa el pack**
@@ -411,6 +558,7 @@ VERIFICACIÓN FINAL antes de responder:
      - Deduplica por hash de contenido
      - Crea asignaturas/temas si no existen
      - Mantiene trazabilidad (`createdBy`, `sourcePackId`)
+     - Restaura las imágenes del campo `questionImages` en IndexedDB
 
 3. **Mantenedor exporta banco global actualizado**
    - Exporta el banco completo
@@ -466,36 +614,33 @@ VERIFICACIÓN FINAL antes de responder:
 | 5 | Tema 5- Detección y cancelación de anomalías | `tema-5-deteccion-y-cancelacion-de-anomalias` |
 | 6 | Tema 6- Procesamiento de imagen. Operaciones elementales | `tema-6-procesamiento-de-imagen-operaciones-elementales` |
 | 7 | Tema 7- Procesamiento de imagen. Operaciones espaciales | `tema-7-procesamiento-de-imagen-operaciones-espaciales` |
-| 8 | Tema 8- Procesamiento de señales. Filtrado y análisis en frecuencia | `tema-8-procesamiento-de-senales-filtrado-y-analisis-en-frecuencia` |
-| 9 | Tema 9- Procesamiento e imagen. Morfología matemática | `tema-9-procesamiento-e-imagen-morfologia-matematica` |
-| 10 | Tema 10- Procesamiento de imagen. Crecimiento de regiones | `tema-10-procesamiento-de-imagen-crecimiento-de-regiones` |
-| 11 | Tema 11- Extracción de características. Propiedades estadísticas y frecuenciales de la señal | `tema-11-extraccion-de-caracteristicas-propiedades-estadisticas-y-frecuenciales-de-la-senal` |
-| 12 | Tema 12- Extracción de características. Caracterización de textura en imágenes | `tema-12-extraccion-de-caracteristicas-caracterizacion-de-textura-en-imagenes` |
-| 13 | Tema 13- Extracción de características. Procesamientos multiescala y métodos avanzados | `tema-13-extraccion-de-caracteristicas-procesamientos-multiescala-y-metodos-avanzados` |
-| 14 | Tema 14- Decisión. Principios e implementación de algoritmos de ayuda en la toma de decisiones | `tema-14-decision-principios-e-implementacion-de-algoritmos-de-ayuda-en-la-toma-de-decisiones` |
-| 15 | Tema 15- Aplicaciones actuales del tratamiento de la señal | `tema-15-aplicaciones-actuales-del-tratamiento-de-la-senal` |
+| 8 | Tema 8- Procesamiento de imagen. Transformadas | `tema-8-procesamiento-de-imagen-transformadas` |
+| 9 | Tema 9- Segmentación | `tema-9-segmentacion` |
+| 10 | Tema 10- Extracción de características | `tema-10-extraccion-de-caracteristicas` |
+| 11 | Tema 11- Clasificación | `tema-11-clasificacion` |
+| 12 | Tema 12- Extracción de características. Deep Learning | `tema-12-extraccion-de-caracteristicas-deep-learning` |
+| 13 | Tema 13- Detección de objetos | `tema-13-deteccion-de-objetos` |
 
 ---
 
-### 3. Investigación y Gestión de Proyectos en Inteligencia Artificial
+### 3. Investigación y Gestión de Proyectos en IA
 
 **`subjectKey`**: `investigacion-y-gestion-de-proyectos-en-inteligencia-artificial`  
 **`subjectName`**: `"Investigación y Gestión de Proyectos en Inteligencia Artificial"`
 
 | # | Título del Tema | `topicKey` |
 |---|-----------------|------------|
-| 1 | Tema 1- Origen y evolución de la inteligencia artificial | `tema-1-origen-y-evolucion-de-la-inteligencia-artificial` |
-| 2 | Tema 2- Ciencia y método científico | `tema-2-ciencia-y-metodo-cientifico` |
-| 3 | Tema 3- Financiación de proyectos | `tema-3-financiacion-de-proyectos` |
-| 4 | Tema 4- Publicación de resultados y redacción científica | `tema-4-publicacion-de-resultados-y-redaccion-cientifica` |
-| 5 | Tema 5- Gestión de proyectos de inteligencia artificial. Enfoque metodológico | `tema-5-gestion-de-proyectos-de-inteligencia-artificial-enfoque-metodologico` |
-| 6 | Tema 6- Gestión de proyectos IA estructura de un proyecto IA y su despliegue | `tema-6-gestion-de-proyectos-ia-estructura-de-un-proyecto-ia-y-su-despliegue` |
+| 1 | Tema 1- Introducción a la Investigación en IA | `tema-1-introduccion-a-la-investigacion-en-ia` |
+| 2 | Tema 2- Metodología de la Investigación | `tema-2-metodologia-de-la-investigacion` |
+| 3 | Tema 3- Gestión de Proyectos. Introducción y Enfoque metodológico | `tema-3-gestion-de-proyectos-introduccion-y-enfoque-metodologico` |
+| 4 | Tema 4- Gestión de Proyectos IA. Planificación | `tema-4-gestion-de-proyectos-ia-planificacion` |
+| 5 | Tema 5- Investigación en Aprendizaje Automático | `tema-5-investigacion-en-aprendizaje-automatico` |
+| 6 | Tema 6- Investigación en Procesamiento del Lenguaje Natural | `tema-6-investigacion-en-procesamiento-del-lenguaje-natural` |
 | 7 | Tema 7- Gestión de proyectos IA. Recursos materiales y recursos humanos | `tema-7-gestion-de-proyectos-ia-recursos-materiales-y-recursos-humanos` |
-| 8 | Tema 8- Investigación en agentes inteligentes y sistemas expertos | `tema-8-investigacion-en-agentes-inteligentes-y-sistemas-expertos` |
-| 9 | Tema 9- Investigación en aprendizaje automático | `tema-9-investigacion-en-aprendizaje-automatico` |
-| 10 | Tema 10- Investigación en sistemas cognitivos | `tema-10-investigacion-en-sistemas-cognitivos` |
+| 8 | Tema 8- Gestión de proyectos IA. Análisis de riesgos y calidad | `tema-8-gestion-de-proyectos-ia-analisis-de-riesgos-y-calidad` |
+| 9 | Tema 9- Investigación en Visión Artificial | `tema-9-investigacion-en-vision-artificial` |
+| 10 | Tema 10- Investigación en Robótica | `tema-10-investigacion-en-robotica` |
 | 11 | Tema 11- Investigación en computación bioinspirada | `tema-11-investigacion-en-computacion-bioinspirada` |
-| 12 | Tema 12- Implicaciones filosóficas éticas y legales en la aplicación de la inteligencia artificial | `tema-12-implicaciones-filosoficas-eticas-y-legales-en-la-aplicacion-de-la-inteligencia-artificial` |
 
 ---
 
@@ -506,18 +651,14 @@ VERIFICACIÓN FINAL antes de responder:
 
 | # | Título del Tema | `topicKey` |
 |---|-----------------|------------|
-| 1 | Tema 1- Introducción a la toma de decisiones | `tema-1-introduccion-a-la-toma-de-decisiones` |
-| 2 | Tema 2- Representación del conocimiento y razonamiento | `tema-2-representacion-del-conocimiento-y-razonamiento` |
-| 3 | Tema 3- Lógica y pensamiento humano | `tema-3-logica-y-pensamiento-humano` |
+| 1 | Tema 1- Introducción al razonamiento y la planificación automática | `tema-1-introduccion-al-razonamiento-y-la-planificacion-automatica` |
+| 2 | Tema 2- Representación del conocimiento | `tema-2-representacion-del-conocimiento` |
+| 3 | Tema 3- Lógica proposicional | `tema-3-logica-proposicional` |
 | 4 | Tema 4- Búsqueda no informada | `tema-4-busqueda-no-informada` |
 | 5 | Tema 5- Búsqueda informada | `tema-5-busqueda-informada` |
-| 6 | Tema 6- Búsqueda entre adversarios | `tema-6-busqueda-entre-adversarios` |
-| 7 | Tema 7- Problemas de planificación | `tema-7-problemas-de-planificacion` |
-| 8 | Tema 8- Sistemas basados en STRIP | `tema-8-sistemas-basados-en-strip` |
-| 9 | Tema 9- Redes de tareas jerárquicas (HTN) | `tema-9-redes-de-tareas-jerarquicas-htn` |
-| 10 | Tema 10- Planificación multi agente | `tema-10-planificacion-multi-agente` |
-| 11 | Tema 11- Planificación por múltiples agentes | `tema-11-planificacion-por-multiples-agentes` |
-| 12 | Tema 12- Reparación reactiva multi agente | `tema-12-reparacion-reactiva-multi-agente` |
+| 6 | Tema 6- Satisfacción de restricciones | `tema-6-satisfaccion-de-restricciones` |
+| 7 | Tema 7- Planificación clásica | `tema-7-planificacion-clasica` |
+| 8 | Tema 8- Planificación bajo incertidumbre | `tema-8-planificacion-bajo-incertidumbre` |
 
 ---
 
