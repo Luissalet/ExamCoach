@@ -38,6 +38,29 @@ function toSlug(name: string): string {
 }
 
 /**
+ * Resuelve un path dentro de resources/ como URL absoluta correcta para la SPA.
+ *
+ * Problema: fetch('./resources/...') desde la página /subject/:id resuelve la URL
+ * como /subject/resources/... → 404, porque ./ es relativo al pathname actual.
+ *
+ * Solución: anclar siempre a la raíz del sitio usando import.meta.env.BASE_URL.
+ *   - Dev (Vite siempre usa BASE_URL='/'): /resources/...
+ *   - Build con base:'/':                  /resources/...
+ *   - Build con base:'/study-app/':        /study-app/resources/...
+ *   - Build con base:'./':                 /resources/... (asume despliegue en raíz)
+ *
+ * Usa (import.meta as any).env para evitar necesitar los tipos de Vite en tsconfig.
+ */
+export function resourcesUrl(relativePath: string): string {
+  // (import.meta as any).env.BASE_URL es inyectado por Vite en tiempo de build/dev.
+  // En test u otros entornos donde no existe, cae al fallback '/'.
+  const base: string = ((import.meta as Record<string, any>).env?.BASE_URL) ?? '/';
+  // Si base es relativa ('./'), anclar al origen (equivale a '/')
+  if (!base || base === './') return `/${relativePath}`;
+  return `${base}${relativePath}`;
+}
+
+/**
  * Carga el extra_info.json de una asignatura.
  * Devuelve null si no existe o hay error.
  */
@@ -46,7 +69,7 @@ export async function loadSubjectExtraInfo(subjectName: string): Promise<Subject
   if (extraInfoCache.has(slug)) return extraInfoCache.get(slug)!;
 
   try {
-    const res = await fetch(`./resources/${slug}/extra_info.json`, { cache: 'no-cache' });
+    const res = await fetch(resourcesUrl(`resources/${slug}/extra_info.json`), { cache: 'no-cache' });
     if (!res.ok) {
       extraInfoCache.set(slug, null);
       return null;
@@ -80,7 +103,7 @@ export async function loadPdfMapping(subjectName: string): Promise<PdfMapping[]>
   if (pdfMappingCache.has(slug)) return pdfMappingCache.get(slug)!;
 
   try {
-    const res = await fetch(`./resources/${slug}/Temas/index.json`, { cache: 'no-cache' });
+    const res = await fetch(resourcesUrl(`resources/${slug}/Temas/index.json`), { cache: 'no-cache' });
     if (res.ok) {
       const raw = await res.json();
       let mapping: PdfMapping[];
@@ -122,5 +145,5 @@ export async function loadPdfList(subjectName: string): Promise<string[]> {
  */
 export function getPdfUrl(subjectName: string, filename: string): string {
   const slug = toSlug(subjectName);
-  return `./resources/${slug}/Temas/${encodeURIComponent(filename)}`;
+  return resourcesUrl(`resources/${slug}/Temas/${encodeURIComponent(filename)}`);
 }

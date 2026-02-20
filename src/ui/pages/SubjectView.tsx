@@ -7,11 +7,11 @@ import {
 } from '@/ui/components';
 import { QuestionForm } from '@/ui/components/QuestionForm';
 import { PdfViewer, type PdfViewerHandle } from '@/ui/components/PdfViewer';
-import { loadPdfMapping, getPdfUrl } from '@/data/resourceLoader';
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
 import type { Topic, Question, QuestionOrigin, QuestionType } from '@/domain/models';
 import { slugify } from '@/domain/normalize';
 import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
+import { loadPdfMapping, getPdfUrl, resourcesUrl } from '@/data/resourceLoader';
 type TabId = 'topics' | 'questions' | 'practice' | 'resources';
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
@@ -167,7 +167,7 @@ export function SubjectView() {
   ]) {
     try {
       // First, try to load from static files
-      const res = await fetch(`./resources/${slug}/${cat.slug}/index.json`, { cache: 'no-cache' });
+      const res = await fetch(resourcesUrl(`resources/${slug}/${cat.slug}/index.json`), { cache: 'no-cache' });
       if (res.ok) {
         const data = await res.json();
         const hasFiles = (data.files && data.files.length > 0) || 
@@ -236,7 +236,9 @@ export function SubjectView() {
     );
   }
 
-  const subjectTopics = topics.filter((t) => t.subjectId === subjectId);
+  const subjectTopics = topics
+  .filter((t) => t.subjectId === subjectId)
+  .sort((a, b) => a.title.localeCompare(b.title, 'es', { numeric: true }));
   const subjectQuestions = questions.filter((q) => q.subjectId === subjectId);
 
   const filteredQuestions = subjectQuestions.filter((q) => {
@@ -627,7 +629,7 @@ function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
     const staticPath = subcategoryName 
       ? `${categorySlug}/${subcategoryName}/${file.name}`
       : `${categorySlug}/${file.name}`;
-    const staticUrl = `./resources/${slug}/${staticPath}`;
+    const staticUrl = resourcesUrl(`resources/${slug}/${staticPath}`);
     
     // Intentar abrir desde archivos estáticos
     try {
