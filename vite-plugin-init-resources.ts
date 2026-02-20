@@ -415,3 +415,48 @@ export function initResourcesPlugin(): Plugin {
     },
   };
 }
+
+function registerQuestionImageUploadEndpoint(server: import('vite').ViteDevServer, root: string): void {
+  server.middlewares.use('/api/upload-question-image', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
+    if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'Method not allowed' })); return; }
+
+    let body = '';
+    req.setEncoding('utf-8');
+    req.on('data', (chunk: string) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { filename, data, mime } = JSON.parse(body) as {
+          filename: string;
+          data: string;  // base64
+          mime: string;
+        };
+
+        if (!filename || !data) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Faltan campos: filename, data' }));
+          return;
+        }
+
+        // Security: no path traversal
+        const safeName = path.basename(filename);
+        const imagesDir = path.join(root, 'public', 'question-images');
+        fs.mkdirSync(imagesDir, { recursive: true });
+
+        const filePath = path.join(imagesDir, safeName);
+        fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
+        console.log(`\x1b[36m[init-resources]\x1b[0m 🖼  Imagen guardada: public/question-images/${safeName}`);
+
+        res.statusCode = 200;
+        res.end(JSON.stringify({ ok: true, filename: safeName }));
+      } catch (e) {
+        console.error('\x1b[31m[init-resources]\x1b[0m ❌ Error en upload-question-image:', e);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: String(e) }));
+      }
+    });
+  });
+}

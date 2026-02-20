@@ -7,6 +7,7 @@ import { Button, Progress, TypeBadge } from '@/ui/components';
 import type { Question, PracticeSession, UserAnswer } from '@/domain/models';
 import { v4 as uuidv4 } from 'uuid';
 import { marked } from 'marked';
+import { MdContent } from '@/ui/components/MdContent';
 
 function renderMd(text: string): string {
   try {
@@ -212,9 +213,9 @@ export function PracticeSessionPage() {
 
         {/* Prompt (supports MD) */}
         <div className="bg-ink-800/60 border border-ink-700 rounded-xl p-6">
-          <div
+          <MdContent
+            content={currentQuestion.prompt}
             className="text-ink-100 text-base leading-relaxed prose prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMd(currentQuestion.prompt) }}
           />
         </div>
 
@@ -487,9 +488,9 @@ function AnswerResult({ question, answer, result, onManualResult }: AnswerResult
       {question.explanation && (
         <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
           <p className="text-xs text-amber-600 uppercase tracking-widest mb-2">Explicación</p>
-          <div
+          <MdContent
+            content={question.explanation}
             className="text-sm text-ink-300 leading-relaxed prose prose-invert prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMd(question.explanation) }}
           />
         </div>
       )}

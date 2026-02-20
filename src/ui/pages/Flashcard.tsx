@@ -19,6 +19,7 @@ import { questionRepo } from '@/data/repos';
 import { TypeBadge, Button } from '@/ui/components';
 import { marked } from 'marked';
 import type { Question, QuestionType } from '@/domain/models';
+import { MdContent } from '../components/MdContent';
 
 // ─── Markdown helper ──────────────────────────────────────────────────────────
 
@@ -184,9 +185,9 @@ function Flashcard({ question, topicTitle, flipped, onFlip }: FlashcardProps) {
           </div>
 
           {/* Prompt */}
-          <div
+          <MdContent
+            content={question.prompt}
             className="text-ink-100 text-base leading-relaxed prose prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMd(question.prompt) }}
           />
 
           {/* Images */}

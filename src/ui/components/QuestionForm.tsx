@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { Question, Topic, QuestionType, QuestionOption, ClozeBlank, QuestionOrigin } from '@/domain/models';
 import { Button, Input, Textarea, Select } from './index';
-import { marked } from 'marked';
+import { MdContent } from '@/ui/components/MdContent';
+import { saveQuestionImage } from '@/data/questionImageStorage';
 
 interface QuestionFormProps {
   topics: Topic[];
@@ -19,7 +20,7 @@ const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   alumno: 'Alumno',
 };
 
-// ─── Expandable Textarea with optional MD preview ────────────────────────────
+// ─── Expandable Textarea with MD preview + drag & drop images ─────────────────
 
 interface ExpandableTextareaProps {
   label: string;
@@ -28,15 +29,25 @@ interface ExpandableTextareaProps {
   placeholder?: string;
   rows?: number;
   required?: boolean;
+  /** When true: enables MD preview, drag-and-drop images, and paste images */
   supportsMd?: boolean;
-  initial?: { imageDataUrls?: string[] };
 }
 
-function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, required, supportsMd, initial }: ExpandableTextareaProps) {
+function ExpandableTextarea({
+  label,
+  value,
+  onChange,
+  placeholder,
+  rows = 3,
+  required,
+  supportsMd,
+}: ExpandableTextareaProps) {
   const [expanded, setExpanded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [imageDataUrls, setImageDataUrls] = useState<string[]>(initial?.imageDataUrls ?? []);
+  const dragCounterRef = useRef(0); // track nested drag enter/leave
 
   // Auto-resize when expanded
   useEffect(() => {
@@ -46,15 +57,109 @@ function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, req
     }
   }, [expanded, value]);
 
-  const renderedMd = useCallback(() => {
-    if (!value) return '';
-    return marked.parse(value, { async: false }) as string;
-  }, [value]);
+  // ── Insert text at cursor ──
+  const insertAtCursor = useCallback(
+    (insertion: string) => {
+      const textarea = textareaRef.current;
+      const pos = textarea?.selectionStart ?? value.length;
+      const newValue = value.slice(0, pos) + insertion + value.slice(pos);
+      onChange(newValue);
+      // Restore cursor after React re-render
+      requestAnimationFrame(() => {
+        if (textarea) {
+          const newPos = pos + insertion.length;
+          textarea.selectionStart = newPos;
+          textarea.selectionEnd = newPos;
+          textarea.focus();
+        }
+      });
+    },
+    [value, onChange]
+  );
+
+  // ── Upload image files and insert markdown ──
+  const handleImageFiles = useCallback(
+    async (files: File[]) => {
+      const imageFiles = files.filter((f) => f.type.startsWith('image/'));
+      if (imageFiles.length === 0) return;
+
+      setUploading(true);
+      try {
+        for (const file of imageFiles) {
+          const filename = await saveQuestionImage(file);
+          insertAtCursor(`\n![](question-images/${filename})\n`);
+        }
+      } finally {
+        setUploading(false);
+      }
+    },
+    [insertAtCursor]
+  );
+
+  // ── Drag & drop ──
+  const handleDragEnter = useCallback(
+    (e: React.DragEvent) => {
+      if (!supportsMd) return;
+      e.preventDefault();
+      dragCounterRef.current++;
+      if (e.dataTransfer.types.includes('Files')) setDragging(true);
+    },
+    [supportsMd]
+  );
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current--;
+    if (dragCounterRef.current === 0) setDragging(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+  }, []);
+
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setDragging(false);
+      if (!supportsMd) return;
+      const files = Array.from(e.dataTransfer.files);
+      await handleImageFiles(files);
+    },
+    [supportsMd, handleImageFiles]
+  );
+
+  // ── Paste (Ctrl+V with image in clipboard) ──
+  const handlePaste = useCallback(
+    async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      if (!supportsMd) return;
+      const imageItems = Array.from(e.clipboardData.items).filter((i) =>
+        i.type.startsWith('image/')
+      );
+      if (imageItems.length === 0) return;
+      e.preventDefault();
+      const files = imageItems.map((i) => i.getAsFile()).filter(Boolean) as File[];
+      await handleImageFiles(files);
+    },
+    [supportsMd, handleImageFiles]
+  );
 
   return (
-    <div className="flex flex-col gap-1">
+    <div
+      className="flex flex-col gap-1"
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">{label}</label>
+        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">
+          {label}
+          {uploading && (
+            <span className="ml-2 text-amber-400 animate-pulse">↑ subiendo imagen…</span>
+          )}
+        </label>
         <div className="flex items-center gap-2">
           {supportsMd && value && (
             <button
@@ -76,106 +181,48 @@ function ExpandableTextarea({ label, value, onChange, placeholder, rows = 3, req
           </button>
         </div>
       </div>
-      {showPreview && supportsMd ? (
-        <div
-          className="bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body prose prose-invert prose-sm max-w-none min-h-[60px] overflow-auto"
-          style={expanded ? { maxHeight: '60vh' } : { maxHeight: '200px' }}
-          dangerouslySetInnerHTML={{ __html: renderedMd() }}
-        />
-      ) : (
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          required={required}
-          rows={expanded ? undefined : rows}
-          className={`bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all ${
-            expanded ? 'min-h-[200px] max-h-[60vh] overflow-auto resize-y' : 'resize-none'
-          }`}
-          style={expanded ? { height: 'auto', minHeight: '200px' } : undefined}
-        />
-      )}
-      {supportsMd && (
-        <p className="text-xs text-ink-600">Soporta Markdown: **negrita**, *cursiva*, tablas, listas…</p>
-      )}
-    </div>
-  );
-}
 
-// ─── Image uploader ──────────────────────────────────────────────────────────
+      {/* Content area */}
+      <div className={`relative rounded-lg ${dragging ? 'ring-2 ring-amber-400' : ''}`}>
+        {showPreview && supportsMd ? (
+          <MdContent
+            content={value}
+            className={`bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body prose prose-invert prose-sm max-w-none min-h-[60px] overflow-auto ${
+              expanded ? 'max-h-[60vh]' : 'max-h-[200px]'
+            }`}
+          />
+        ) : (
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onPaste={handlePaste}
+            placeholder={placeholder}
+            required={required}
+            rows={expanded ? undefined : rows}
+            className={`w-full bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all ${
+              expanded ? 'min-h-[200px] max-h-[60vh] overflow-auto resize-y' : 'resize-none'
+            }`}
+            style={expanded ? { height: 'auto', minHeight: '200px' } : undefined}
+          />
+        )}
 
-interface ImageUploaderProps {
-  images: string[];
-  onChange: (urls: string[]) => void;
-}
-
-function ImageUploader({ images, onChange }: ImageUploaderProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const newUrls: string[] = [];
-    for (const file of Array.from(files)) {
-      if (!file.type.startsWith('image/')) continue;
-      const dataUrl = await fileToDataUrl(file);
-      newUrls.push(dataUrl);
-    }
-    onChange([...images, ...newUrls]);
-  };
-
-  const remove = (idx: number) =>
-    onChange(images.filter((_, i) => i !== idx));
-
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">
-          Imágenes del enunciado
-        </label>
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="text-xs text-ink-500 hover:text-ink-300 transition-colors px-1.5 py-0.5 rounded hover:bg-ink-700"
-        >
-          + Añadir imagen
-        </button>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={(e) => handleFiles(e.target.files)}
-        />
+        {/* Drag overlay */}
+        {dragging && (
+          <div className="absolute inset-0 rounded-lg bg-amber-500/10 border-2 border-dashed border-amber-400 flex items-center justify-center pointer-events-none z-10">
+            <span className="text-amber-300 text-sm font-medium">📎 Suelta la imagen para insertarla</span>
+          </div>
+        )}
       </div>
-      {images.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {images.map((url, idx) => (
-            <div key={idx} className="relative group w-28 h-20 rounded-lg overflow-hidden border border-ink-600">
-              <img src={url} alt={`imagen ${idx + 1}`} className="w-full h-full object-cover" />
-              <button
-                type="button"
-                onClick={() => remove(idx)}
-                className="absolute top-1 right-1 bg-ink-900/80 text-rose-400 rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
+
+      {/* Hints */}
+      {supportsMd && !showPreview && (
+        <p className="text-xs text-ink-600">
+          Soporta Markdown: **negrita**, *cursiva*, tablas, listas… · Arrastra o pega imágenes para insertarlas inline
+        </p>
       )}
     </div>
   );
-}
-
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
 }
 
 // ─── Multi-topic selector ────────────────────────────────────────────────────
@@ -191,7 +238,6 @@ function MultiTopicSelector({ topics, selectedIds, onChange }: MultiTopicSelecto
 
   const toggleTopic = (id: string) => {
     if (selectedIds.includes(id)) {
-      // Don't remove the last one
       if (selectedIds.length > 1) {
         onChange(selectedIds.filter((s) => s !== id));
       }
@@ -215,7 +261,6 @@ function MultiTopicSelector({ topics, selectedIds, onChange }: MultiTopicSelecto
         </button>
       </div>
       {!showAll ? (
-        // Compact: show selected as badges + dropdown to add more
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap gap-1.5">
             {selectedIds.map((id) => {
@@ -252,7 +297,6 @@ function MultiTopicSelector({ topics, selectedIds, onChange }: MultiTopicSelecto
           </select>
         </div>
       ) : (
-        // Full: show all topics with checkboxes
         <div className="flex flex-col gap-1 max-h-52 overflow-y-auto rounded-lg border border-ink-700 p-2 bg-ink-800/50">
           {topics.map((t) => (
             <label
@@ -276,7 +320,7 @@ function MultiTopicSelector({ topics, selectedIds, onChange }: MultiTopicSelecto
   );
 }
 
-// ─── Main form ───────────────────────────────────────────────────────────────
+// ─── Main form ────────────────────────────────────────────────────────────────
 
 export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: QuestionFormProps) {
   const [type, setType] = useState<QuestionType>(initial?.type ?? 'TEST');
@@ -305,7 +349,6 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
     ]
   );
   const [correctOptionIds, setCorrectOptionIds] = useState<string[]>(initial?.correctOptionIds ?? []);
-  const [imageDataUrls, setImageDataUrls] = useState<string[]>([]);
 
   // DESARROLLO / PRACTICO
   const [modelAnswer, setModelAnswer] = useState(initial?.modelAnswer ?? '');
@@ -366,7 +409,9 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       numericAnswer: type === 'PRACTICO' && numericAnswer ? numericAnswer : undefined,
       clozeText: type === 'COMPLETAR' ? clozeText : undefined,
       blanks: type === 'COMPLETAR' ? blanks : undefined,
-      imageDataUrls: imageDataUrls.length > 0 ? imageDataUrls : undefined,
+      // Keep legacy imageDataUrls from initial (backward compat) but don't add new ones —
+      // new images go inline in the prompt markdown
+      imageDataUrls: initial?.imageDataUrls?.length ? initial.imageDataUrls : undefined,
     });
   };
 
@@ -403,7 +448,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         onChange={setSelectedTopicIds}
       />
 
-      {/* Row 2: difficulty */}
+      {/* Difficulty */}
       <Select
         label="Dificultad"
         value={difficulty}
@@ -417,18 +462,16 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         <option value="5">★★★★★ Muy difícil</option>
       </Select>
 
-      {/* Prompt - expandable + MD */}
+      {/* Prompt — drag & drop + paste images enabled */}
       <ExpandableTextarea
         label="Enunciado"
         value={prompt}
         onChange={setPrompt}
         required
         rows={3}
-        placeholder="Escribe la pregunta aquí..."
+        placeholder="Escribe la pregunta aquí… Arrastra o pega imágenes para insertarlas."
         supportsMd
       />
-      {/* Imágenes del enunciado */}
-      <ImageUploader images={imageDataUrls} onChange={setImageDataUrls} />
 
       {/* TEST options */}
       {type === 'TEST' && (
@@ -441,38 +484,33 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
                 onClick={() => toggleCorrect(opt.id)}
                 className={`w-5 h-5 rounded flex-shrink-0 border-2 transition-colors ${
                   correctOptionIds.includes(opt.id)
-                    ? 'bg-sage-500 border-sage-500'
-                    : 'border-ink-600 hover:border-ink-400'
+                    ? 'bg-sage-600 border-sage-600'
+                    : 'bg-transparent border-ink-500 hover:border-sage-600'
                 }`}
                 title="Marcar como correcta"
-              >
-                {correctOptionIds.includes(opt.id) && (
-                  <svg className="w-3 h-3 text-ink-900 mx-auto" viewBox="0 0 12 12" fill="currentColor">
-                    <path d="M10 3L5 8.5 2 5.5l-1 1 4 4 6-7z" />
-                  </svg>
-                )}
-              </button>
+              />
               <input
                 type="text"
                 value={opt.text}
                 onChange={(e) => updateOption(opt.id, e.target.value)}
-                placeholder={`Opción ${i + 1}`}
+                placeholder={`Opción ${String.fromCharCode(65 + i)}`}
                 className="flex-1 bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
-              <button
-                type="button"
-                onClick={() => removeOption(opt.id)}
-                className="text-ink-600 hover:text-rose-400 transition-colors text-xs px-1"
-                disabled={options.length <= 2}
-              >
-                ✕
-              </button>
+              {options.length > 2 && (
+                <button
+                  type="button"
+                  onClick={() => removeOption(opt.id)}
+                  className="text-ink-600 hover:text-rose-400 transition-colors text-sm"
+                >
+                  ✕
+                </button>
+              )}
             </div>
           ))}
           <button
             type="button"
             onClick={addOption}
-            className="text-xs text-ink-500 hover:text-ink-300 text-left transition-colors"
+            className="self-start text-xs text-ink-500 hover:text-ink-300 transition-colors"
           >
             + Añadir opción
           </button>
@@ -483,25 +521,25 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       {(type === 'DESARROLLO' || type === 'PRACTICO') && (
         <div className="flex flex-col gap-3">
           <ExpandableTextarea
-            label="Respuesta modelo"
+            label="Respuesta modelo (opcional)"
             value={modelAnswer}
             onChange={setModelAnswer}
-            rows={4}
-            placeholder="Respuesta esperada…"
+            rows={3}
+            placeholder="Respuesta esperada o criterios de corrección…"
             supportsMd
           />
           <Input
-            label="Palabras clave (separadas por coma)"
+            label="Palabras clave esperadas (separadas por coma)"
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
-            placeholder="ej: fotosíntesis, cloroplasto, ATP"
+            placeholder="ej: gradiente, función de pérdida, backprop"
           />
           {type === 'PRACTICO' && (
             <Input
               label="Resultado numérico esperado (opcional)"
               value={numericAnswer}
               onChange={(e) => setNumericAnswer(e.target.value)}
-              placeholder="ej: 42.5, 3.14159, 0.95"
+              placeholder="ej: 0.857 o 85.7%"
             />
           )}
         </div>
@@ -510,13 +548,13 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       {/* COMPLETAR */}
       {type === 'COMPLETAR' && (
         <div className="flex flex-col gap-3">
-          <div>
+          <div className="flex flex-col gap-1">
             <ExpandableTextarea
-              label="Texto cloze (usa {{respuesta}} para los huecos)"
+              label="Texto con huecos (usa {{respuesta}} para cada hueco)"
               value={clozeText}
               onChange={setClozeText}
-              rows={4}
-              placeholder="La mitocondria es la {{central eléctrica}} de la célula."
+              rows={3}
+              placeholder="El proceso de {{tokenización}} divide el texto en unidades mínimas."
               supportsMd
             />
             <button
@@ -557,7 +595,7 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         </div>
       )}
 
-      {/* Explanation + tags - expandable + MD */}
+      {/* Explanation + tags */}
       <ExpandableTextarea
         label="Explicación / feedback (opcional)"
         value={explanation}

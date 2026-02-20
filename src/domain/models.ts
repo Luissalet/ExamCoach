@@ -93,7 +93,12 @@ export interface Question {
 
   // PDF anchor
   pdfAnchorId?: string;
-  // Imágenes del enunciado (base64 data URIs)
+
+  /**
+   * @deprecated — Imágenes antiguas adjuntas como base64 data URIs.
+   * Las nuevas imágenes van inline en el markdown del prompt como
+   * ![alt](question-images/uuid.ext) y se gestionan via questionImageStorage.
+   */
   imageDataUrls?: string[];
 
   // Contribution metadata
@@ -104,6 +109,22 @@ export interface Question {
   stats: QuestionStats;
   createdAt: string;
   updatedAt: string;
+}
+
+// ─── Question Images ──────────────────────────────────────────────────────────
+
+/**
+ * Registro de imagen de pregunta en IndexedDB.
+ * Las imágenes se referencian en markdown como: ![alt](question-images/filename)
+ */
+export interface QuestionImageRecord {
+  /** UUID (sin extensión) — clave primaria */
+  id: string;
+  /** "uuid.ext" — filename como aparece en la ruta question-images/ */
+  filename: string;
+  blob: Blob;
+  mimeType: string;
+  createdAt: string;
 }
 
 // ─── Sessions ─────────────────────────────────────────────────────────────────
@@ -217,10 +238,11 @@ export interface ContributionQuestion {
   explanation?: string;
   difficulty?: DifficultyLevel;
   tags?: string[];
-  origin?: QuestionOrigin; // ← ITER2
+  origin?: QuestionOrigin;
   pdfAnchor?: { page: number; label?: string };
   createdBy?: string;
   contentHash?: string;
+  /** @deprecated — usar imágenes inline en markdown */
   imageDataUrls?: string[];
 }
 
@@ -238,6 +260,13 @@ export interface ContributionPack {
   exportedAt: string;
   targets: ContributionTarget[];
   questions: ContributionQuestion[];
+  /**
+   * Imágenes inline referenciadas en el markdown de las preguntas.
+   * Mapa de { "uuid.ext" → "base64" }.
+   * Al importar, se guardan en IndexedDB y se intentan escribir en
+   * public/question-images/ via dev server.
+   */
+  questionImages?: Record<string, string>;
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────

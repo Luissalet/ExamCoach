@@ -7,6 +7,7 @@ import type {
   PdfResource,
   PdfAnchor,
   AppSettings,
+  QuestionImageRecord,
 } from '@/domain/models';
 
 export class StudyDB extends Dexie {
@@ -17,6 +18,7 @@ export class StudyDB extends Dexie {
   pdfResources!: Table<PdfResource, string>;
   pdfAnchors!: Table<PdfAnchor, string>;
   settings!: Table<AppSettings & { id: string }, string>;
+  questionImages!: Table<QuestionImageRecord, string>;
 
   constructor() {
     super('StudyAppDB');
@@ -30,6 +32,19 @@ export class StudyDB extends Dexie {
       pdfResources: 'id, subjectId, createdAt',
       pdfAnchors: 'id, subjectId, pdfId',
       settings: 'id',
+    });
+
+    // v2: question images (inline en markdown)
+    this.version(2).stores({
+      subjects: 'id, name, examDate, createdAt',
+      topics: 'id, subjectId, order, createdAt',
+      questions:
+        'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+      sessions: 'id, subjectId, mode, createdAt',
+      pdfResources: 'id, subjectId, createdAt',
+      pdfAnchors: 'id, subjectId, pdfId',
+      settings: 'id',
+      questionImages: 'id, filename, createdAt',
     });
   }
 }

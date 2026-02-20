@@ -4,6 +4,7 @@ import { db } from './db';
 import { getSettings, saveSettings } from './db';
 import { slugify } from '@/domain/normalize';
 import { computeContentHash } from '@/domain/hashing';
+import { buildImageMap, importImages, extractImageFilenames } from './questionImageStorage';
 import type { ContributionPack, Subject, Topic, Question } from '@/domain/models';
 
 // ─── Zod schemas ──────────────────────────────────────────────────────────────
@@ -46,9 +47,11 @@ const ContributionPackSchema = z.object({
     })
   ),
   questions: z.array(ContributionQuestionSchema),
+  // ITER4 — inline images
+  questionImages: z.record(z.string(), z.string()).optional(),
 });
 
-// ─── Import result ──────────────────────────────────────────────────────────────
+// ─── Import result ─────────────────────────────────────────────────────────────
 
 export interface ContributionImportResult {
   packId: string;
@@ -93,6 +96,16 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
     return result;
   }
 
+  // ITER4 — Import images first (before questions so they're available immediately)
+  if (pack.questionImages && Object.keys(pack.questionImages).length > 0) {
+    try {
+      await importImages(pack.questionImages);
+    } catch (err) {
+      result.errors.push(`Aviso: error importando imágenes: ${String(err)}`);
+      // Don't abort — questions can still be imported
+    }
+  }
+
   const now = new Date().toISOString();
 
   // Build lookup maps: subjectKey -> Subject, topicKey -> Topic
@@ -113,132 +126,134 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
     }
   }
 
-  // Resolve / create subjects and topics from targets
-  for (const target of pack.targets) {
-    let subject = subjectByKey.get(target.subjectKey);
-    if (!subject) {
-      const newSubject: Subject = {
-        id: uuidv4(),
-        name: target.subjectName,
-        createdAt: now,
-        updatedAt: now,
-      };
-      await db.subjects.add(newSubject);
-      subject = newSubject;
-      subjectByKey.set(target.subjectKey, subject);
-      result.newSubjectsCreated++;
-    }
+  // Process each question
+  for (const cq of pack.questions) {
+    try {
+      const subjectKey = cq.subjectKey;
 
-    for (const topicTarget of target.topics) {
-      const compositeKey = `${target.subjectKey}::${topicTarget.topicKey}`;
-      if (!topicByKey.has(compositeKey)) {
-        const existingTopics = await db.topics.where('subjectId').equals(subject!.id).toArray();
-        const newTopic: Topic = {
+      // Resolve or create subject
+      let subject = subjectByKey.get(subjectKey);
+      if (!subject) {
+        // Find the target info for this subject
+        const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
+        const subjectName = targetInfo?.subjectName ?? subjectKey;
+
+        subject = {
           id: uuidv4(),
-          subjectId: subject!.id,
-          title: topicTarget.topicTitle,
-          order: existingTopics.length,
+          name: subjectName,
           createdAt: now,
           updatedAt: now,
         };
-        await db.topics.add(newTopic);
-        topicByKey.set(compositeKey, newTopic);
+        await db.subjects.add(subject);
+        subjectByKey.set(subjectKey, subject);
+        result.newSubjectsCreated++;
+      }
+
+      // Resolve or create topic
+      const topicKey = cq.topicKey;
+      const topicMapKey = `${subjectKey}::${topicKey}`;
+      let topic = topicByKey.get(topicMapKey);
+
+      if (!topic) {
+        // Find topic info from targets
+        const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
+        const topicInfo = targetInfo?.topics.find((t) => t.topicKey === topicKey);
+        const topicTitle = topicInfo?.topicTitle ?? topicKey;
+
+        // Get max order for subject
+        const existingTopics = await db.topics.where('subjectId').equals(subject.id).toArray();
+        const maxOrder = existingTopics.reduce((max, t) => Math.max(max, t.order), -1);
+
+        topic = {
+          id: uuidv4(),
+          subjectId: subject.id,
+          title: topicTitle,
+          order: maxOrder + 1,
+          createdAt: now,
+          updatedAt: now,
+        };
+        await db.topics.add(topic);
+        topicByKey.set(topicMapKey, topic);
         result.newTopicsCreated++;
       }
-    }
-  }
 
-  // Process questions
-  for (const cq of pack.questions) {
-    const subjectKey = cq.subjectKey;
-    const topicKey = cq.topicKey;
-    const compositeKey = `${subjectKey}::${topicKey}`;
+      // Compute content hash for deduplication
+      const hashToCheck = cq.contentHash ?? await computeContentHash(cq, cq.topicKey);
 
-    const subject = subjectByKey.get(subjectKey);
-    const topic = topicByKey.get(compositeKey);
+      // Check for duplicate
+      const isDuplicate = await db.questions
+        .where('contentHash')
+        .equals(hashToCheck)
+        .and((q) => q.subjectId === subject!.id)
+        .count() > 0;
 
-    if (!subject || !topic) {
-      result.errors.push(`No se encontró asignatura/tema para: ${subjectKey}/${topicKey}`);
-      continue;
-    }
+      if (isDuplicate) {
+        result.duplicates++;
+        continue;
+      }
 
-    // Compute/verify content hash
-    const computedHash = await computeContentHash(cq, topicKey);
-    const hashToCheck = cq.contentHash ?? computedHash;
-
-    // Check for duplicate
-    const isDuplicate = await db.questions
-      .where('contentHash')
-      .equals(hashToCheck)
-      .and((q) => q.subjectId === subject.id)
-      .count() > 0;
-
-    if (isDuplicate) {
-      result.duplicates++;
-      continue;
-    }
-
-    // Prepare topicKeys for multi-topic questions
-    let finalTopicIds: string[] | undefined;
-    if (cq.topicKeys && cq.topicKeys.length > 1) {
-      // Resolve topicKeys slugs to actual topic IDs
-      finalTopicIds = [];
-      for (const topicSlug of cq.topicKeys) {
-        const key = `${subjectKey}::${topicSlug}`;
-        const resolvedTopic = topicByKey.get(key);
-        if (resolvedTopic) {
-          finalTopicIds.push(resolvedTopic.id);
+      // Prepare topicKeys for multi-topic questions
+      let finalTopicIds: string[] | undefined;
+      if (cq.topicKeys && cq.topicKeys.length > 1) {
+        finalTopicIds = [];
+        for (const topicSlug of cq.topicKeys) {
+          const key = `${subjectKey}::${topicSlug}`;
+          const resolvedTopic = topicByKey.get(key);
+          if (resolvedTopic) {
+            finalTopicIds.push(resolvedTopic.id);
+          }
+        }
+        if (finalTopicIds.length <= 1) {
+          finalTopicIds = undefined;
         }
       }
-      // Only set topicIds if we have more than one topic
-      if (finalTopicIds.length <= 1) {
-        finalTopicIds = undefined;
-      }
-    }
 
-    // Insert new question
-    const newQuestion: Question = {
-      id: uuidv4(),
-      subjectId: subject.id,
-      topicId: topic.id,
-      topicIds: finalTopicIds,
-      type: cq.type,
-      prompt: cq.prompt,
-      explanation: cq.explanation,
-      difficulty: cq.difficulty as Question['difficulty'],
-      tags: cq.tags,
-      origin: cq.origin,
-      options: cq.options,
-      correctOptionIds: cq.correctOptionIds,
-      modelAnswer: cq.modelAnswer,
-      keywords: cq.keywords,
-      numericAnswer: cq.numericAnswer,
-      clozeText: cq.clozeText,
-      blanks: cq.blanks,
-      imageDataUrls: cq.imageDataUrls,
-      contentHash: hashToCheck,
-      createdBy: cq.createdBy ?? pack.createdBy,
-      sourcePackId: pack.packId,
-      stats: { seen: 0, correct: 0, wrong: 0 },
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    // Handle PDF anchor if present
-    if (cq.pdfAnchor) {
-      const anchor = {
+      // Insert new question
+      const newQuestion: Question = {
         id: uuidv4(),
         subjectId: subject.id,
-        pdfId: 'pending', // no PDF yet
-        page: cq.pdfAnchor.page,
-        label: cq.pdfAnchor.label,
+        topicId: topic.id,
+        topicIds: finalTopicIds,
+        type: cq.type,
+        prompt: cq.prompt,
+        explanation: cq.explanation,
+        difficulty: cq.difficulty as Question['difficulty'],
+        tags: cq.tags,
+        origin: cq.origin,
+        options: cq.options,
+        correctOptionIds: cq.correctOptionIds,
+        modelAnswer: cq.modelAnswer,
+        keywords: cq.keywords,
+        numericAnswer: cq.numericAnswer,
+        clozeText: cq.clozeText,
+        blanks: cq.blanks,
+        imageDataUrls: cq.imageDataUrls,
+        contentHash: hashToCheck,
+        createdBy: cq.createdBy ?? pack.createdBy,
+        sourcePackId: pack.packId,
+        stats: { seen: 0, correct: 0, wrong: 0 },
+        createdAt: now,
+        updatedAt: now,
       };
-      await db.pdfAnchors.add(anchor);
-      newQuestion.pdfAnchorId = anchor.id;
-    }
 
-    await db.questions.add(newQuestion);
-    result.newQuestions++;
+      // Handle PDF anchor if present
+      if (cq.pdfAnchor) {
+        const anchor = {
+          id: uuidv4(),
+          subjectId: subject.id,
+          pdfId: 'pending',
+          page: cq.pdfAnchor.page,
+          label: cq.pdfAnchor.label,
+        };
+        await db.pdfAnchors.add(anchor);
+        newQuestion.pdfAnchorId = anchor.id;
+      }
+
+      await db.questions.add(newQuestion);
+      result.newQuestions++;
+    } catch (err) {
+      result.errors.push(`Error procesando pregunta ${cq.id}: ${String(err)}`);
+    }
   }
 
   // Mark pack as imported
@@ -286,8 +301,7 @@ export async function exportContributionPack(
 
   const contributionQuestions = questions.map((q) => {
     const topic = topics.find((t) => t.id === q.topicId);
-    
-    // Prepare topicKeys if question has multiple topics
+
     let topicKeysSlugs: string[] | undefined;
     if (q.topicIds && q.topicIds.length > 1) {
       topicKeysSlugs = q.topicIds.map((tid) => {
@@ -320,6 +334,16 @@ export async function exportContributionPack(
     };
   });
 
+  // ITER4 — collect all inline images from questions
+  const allTexts: string[] = [];
+  for (const q of contributionQuestions) {
+    if (q.prompt) allTexts.push(q.prompt);
+    if (q.explanation) allTexts.push(q.explanation);
+    if (q.modelAnswer) allTexts.push(q.modelAnswer);
+    if (q.clozeText) allTexts.push(q.clozeText);
+  }
+  const questionImages = await buildImageMap(allTexts);
+
   return {
     version: 1,
     kind: 'contribution',
@@ -328,5 +352,6 @@ export async function exportContributionPack(
     exportedAt: new Date().toISOString(),
     targets,
     questions: contributionQuestions,
+    questionImages: Object.keys(questionImages).length > 0 ? questionImages : undefined,
   };
 }
