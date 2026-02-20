@@ -805,6 +805,16 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
     navigate(`/practice/${session.id}`);
   };
 
+  const handleFlashcard = () => {
+    if (available === 0) return;
+    const params = new URLSearchParams();
+    if (mode === 'topic' && topicId) params.set('topic', topicId);
+    params.set('mode', mode === 'all' ? 'all' : mode === 'failed' ? 'failed' : 'random');
+    params.set('types', [...enabledTypes].join(','));
+    if (mode === 'random') params.set('count', count);
+    navigate(`/flashcard/${subjectId}?${params.toString()}`);
+  };
+
   return (
     <Card className="max-w-md">
       <div className="flex flex-col gap-4">
@@ -852,7 +862,20 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
             {topics.map((t) => { const n = typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, t.id)).length; return <option key={t.id} value={t.id}>{t.title} ({n})</option>; })}
           </Select>
         )}
-        <Button onClick={handleStart} disabled={available === 0 || (mode === 'topic' && !topicId)}>Empezar ({available} preguntas)</Button>
+
+        {/* Divider */}
+        <div className="flex flex-col gap-2">
+          <Button onClick={handleStart} disabled={available === 0 || (mode === 'topic' && !topicId)}>
+            Empezar ({available} preguntas)
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleFlashcard}
+            disabled={available === 0 || (mode === 'topic' && !topicId)}
+          >
+            🃏 Flashcards ({available})
+          </Button>
+        </div>
       </div>
     </Card>
   );
