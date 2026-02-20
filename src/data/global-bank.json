@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-18T18:25:08.829Z",
+  "exportedAt": "2026-02-20T11:41:35.375Z",
   "subjects": [
     {
       "name": "Razonamiento y Planificación Automática",
@@ -698,6 +698,52 @@
       "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
+      "id": "0ea96e3b-fa1d-40f1-9a7b-035823bd5801",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe correctamente una diferencia clave entre regresión y clasificación en el contexto del aprendizaje automático?",
+      "explanation": "Regresión predice valores numéricos (normalmente continuos) y clasificación asigna clases/categorías discretas.",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La regresión se utiliza para predecir valores numéricos, mientras que la clasificación se utiliza para asignar instancias a categorías discretas."
+        },
+        {
+          "id": "b",
+          "text": "Tanto la regresión como la clasificación son métodos intercambiables y se pueden utilizar de manera indistinta para cualquier tipo de problema."
+        },
+        {
+          "id": "c",
+          "text": "En la regresión, la variable de salida es siempre categórica, mientras que en la clasificación puede ser numérica."
+        },
+        {
+          "id": "d",
+          "text": "La regresión se aplica únicamente a problemas de clasificación binaria, mientras que la clasificación puede manejar problemas con más de dos clases."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:9a5f1d2fb1c9f2fbb1a5c57d0e7cc2e4d66bf14d0b1d9a3e6a90e2f9d4a7c0b1",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
+    },
+    {
       "id": "0fd0d4c6-b258-4350-a8f3-b682dcc3dc41",
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "68f33661-e359-4655-b124-93d9c2981d18",
@@ -1237,6 +1283,52 @@
       "updatedAt": "2026-02-18T10:55:53.609Z"
     },
     {
+      "id": "1de0cf71-bc7f-4b8a-b72a-8dbaa7329edf",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "¿Cuál es la función principal del conjunto de entrenamiento y del conjunto de test en machine learning?",
+      "explanation": "Train: ajuste del modelo. Test: estimar rendimiento en datos no vistos (generalización).",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El conjunto de entrenamiento se utiliza para evaluar el rendimiento del modelo, mientras que el conjunto de test se utiliza para construir y ajustar el modelo."
+        },
+        {
+          "id": "b",
+          "text": "Ambos conjuntos se utilizan para construir y ajustar el modelo durante la fase de entrenamiento."
+        },
+        {
+          "id": "c",
+          "text": "El conjunto de entrenamiento se utiliza para construir y ajustar el modelo, mientras que el conjunto de test se utiliza para evaluar el rendimiento del modelo en datos no vistos."
+        },
+        {
+          "id": "d",
+          "text": "El conjunto de test se utiliza exclusivamente para construir y ajustar el modelo durante la fase de entrenamiento."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:48dfd4a0a1dbb24da0d31d238b4a36f6e79b137aa24679c2c8b8a1f74a1e4cd0",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
       "type": "TEST",
@@ -1309,6 +1401,52 @@
       },
       "createdAt": "2026-02-18T17:50:55.405Z",
       "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "2456f015-f211-4e11-8def-aed7b5f769d0",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "¿Cuáles de las siguientes afirmaciones son correctas?",
+      "explanation": "En aprendizaje supervisado se entrena con ejemplos de entrada y salida conocidas para aprender la relación entre ambas.",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El aprendizaje automático utiliza siempre ejemplos con clases conocidas previamente."
+        },
+        {
+          "id": "b",
+          "text": "El aprendizaje automático sirve únicamente para resolver problemas de predicción numérica."
+        },
+        {
+          "id": "c",
+          "text": "El aprendizaje supervisado busca automáticamente los mecanismos que relacionan una entrada con una salida."
+        },
+        {
+          "id": "d",
+          "text": "B y C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:94c5f1fb1d8b7d4d2de2317e0e5df15e1b9e4f0d6f3ac7e24942e14660f98965",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
     },
     {
       "id": "26f11142-3025-41d9-9400-8d9320bc38d8",
@@ -1673,6 +1811,52 @@
       },
       "createdAt": "2026-02-18T17:50:55.405Z",
       "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "51c3a2e6-27b9-4a25-be3e-ed71720cb702",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "¿Cuál es la principal característica del método de hold-out en el contexto de validación de modelos en machine learning?",
+      "explanation": "Hold-out es una partición única del dataset en entrenamiento y test para evaluar el modelo.",
+      "difficulty": 2,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Consiste en dividir los datos en k particiones para realizar múltiples iteraciones de entrenamiento y evaluación."
+        },
+        {
+          "id": "b",
+          "text": "Consiste en separar los datos disponibles en dos conjuntos: uno para entrenamiento y otro para test."
+        },
+        {
+          "id": "c",
+          "text": "Se utiliza para realizar ajustes continuos de los hiperparámetros del modelo durante la fase de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Es exclusivamente aplicable a problemas de clasificación y no a problemas de regresión."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:92f47f6eb1a7d62d6ec4f3bd70c079b38b1c3b26d7f5fb6f82b0d6f3f9b5cb6f",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
     },
     {
       "id": "54a46a0b-4660-402d-a936-6f91274202af",
@@ -2333,6 +2517,53 @@
       "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
+      "id": "741aba4e-ea1c-464c-8cbb-ea2a77dc8a8d",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "En el aprendizaje automático:",
+      "explanation": "El train se usa para ajustar el modelo y el test para evaluar generalización; un error bajo en train no garantiza error bajo en test (overfitting).",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El conjunto de entrenamiento se utiliza para construir un modelo."
+        },
+        {
+          "id": "b",
+          "text": "El conjunto de test se utiliza para evaluar un modelo."
+        },
+        {
+          "id": "c",
+          "text": "Si un modelo tiene un error mínimo en el conjunto de entrenamiento también lo tendrá en el conjunto de test."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "a",
+        "b"
+      ],
+      "contentHash": "sha256:ca81c816ac6aef6bff7f2481b1f5a7bcb4a4388a2b08cc1c1a1d2b99a888aa64",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "824df418-cbe1-4ca8-897a-f51aa245b8bf",
       "type": "TEST",
@@ -2400,6 +2631,52 @@
       },
       "createdAt": "2026-02-18T15:12:57.701Z",
       "updatedAt": "2026-02-18T15:12:57.701Z"
+    },
+    {
+      "id": "80a23c19-040f-4799-a6d8-b21a8155b699",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "En el caso de los problemas de regresión:",
+      "explanation": "En regresión la salida suele ser continua y se predice un valor numérico, no una categoría.",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La variable respuesta que se desea predecir es de tipo cualitativa."
+        },
+        {
+          "id": "b",
+          "text": "La variable respuesta que se desea predecir es de tipo cuantitativa."
+        },
+        {
+          "id": "c",
+          "text": "No siempre existe una variable respuesta."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:ab188b7a5df1d9f06f1f1d56a2f8ec92e7cb83c9a88b4c3a10f40fefc5c6c69a",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
     },
     {
       "id": "8157d78e-5a3b-4335-8f3d-f3dd81fefaa4",
@@ -2615,6 +2892,98 @@
       },
       "createdAt": "2026-02-18T17:50:55.405Z",
       "updatedAt": "2026-02-18T17:50:55.405Z"
+    },
+    {
+      "id": "8b2ec53b-e34b-4573-9aa7-c270d89aa467",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "El método k-cross validation:",
+      "explanation": "En k-fold se divide el dataset en k folds lo más iguales posible y se rota el fold de validación k veces.",
+      "difficulty": 2,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Consiste en dividir los datos disponibles k grupos de tamaño variable cada uno de ellos."
+        },
+        {
+          "id": "b",
+          "text": "Consiste en dividir los datos disponibles en k grupos del mismo tamaño."
+        },
+        {
+          "id": "c",
+          "text": "Garantiza la representación equitativa de todas las clases en cada conjunto de validación, lo que puede llevar a una evaluación sesgada en problemas desbalanceados."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:8b2d5f73c76fa42e2d2c1d2b0d62f2f55f8b2b1b1b5973d4c32df4fbf4a7f0d8",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
+    },
+    {
+      "id": "8fc76a79-f63e-41d3-bad7-47d7a2ba06f1",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "En la fase de entrenamiento de los modelos:",
+      "explanation": "El entrenamiento consiste en ajustar/aprender el modelo con los datos para poder usarlo después en predicción.",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Se realiza la extracción de características y se utiliza para generar posteriormente una predicción."
+        },
+        {
+          "id": "b",
+          "text": "Se elige qué modelo es el mejor."
+        },
+        {
+          "id": "c",
+          "text": "Se aprende un modelo que podrá ser utilizado posteriormente."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:f521a9be43ab6d9a9b7aef9f4f4fb5b8b745d18e3fcbf2f83ad02a9c6b13b0b8",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
     },
     {
       "id": "91e405c9-5cca-4d76-b077-b15d89158343",
@@ -3446,6 +3815,52 @@
       "updatedAt": "2026-02-18T17:50:55.405Z"
     },
     {
+      "id": "ba668cfe-d26f-4e96-9917-7c3c996b2f29",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "En los problemas de clasificación:",
+      "explanation": "En clasificación la variable respuesta es categórica: puede ser binaria (2 clases) o multiclase (>2).",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La variable respuesta contiene siempre más de dos categorías."
+        },
+        {
+          "id": "b",
+          "text": "La variable respuesta contiene siempre dos o más categorías."
+        },
+        {
+          "id": "c",
+          "text": "La variable respuesta es de tipo numérico."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:ad79fbf6f548a6f9fd4dfb5d346d5c0f8ac32a0d021fd2df4fe3f41d3a0d3b89",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
+    },
+    {
       "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
       "topicId": "ae461c89-7eae-4e1c-9b46-66db27585e18",
       "type": "TEST",
@@ -3988,6 +4403,52 @@
       },
       "createdAt": "2026-02-18T14:22:11.722Z",
       "updatedAt": "2026-02-18T14:22:11.722Z"
+    },
+    {
+      "id": "e5a086bd-d9b7-4bd7-b109-b08de72208ac",
+      "subjectId": "eb819a5d-7567-4c28-ae3e-394e804fac50",
+      "topicId": "62de7e79-c26a-4d13-ab9b-caace7797c13",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe correctamente el overfitting en el contexto del aprendizaje automático?",
+      "explanation": "Overfitting: rendimiento muy bueno en entrenamiento pero malo en datos nuevos por falta de generalización.",
+      "difficulty": 1,
+      "tags": [
+        "tema1",
+        "practica",
+        "test"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El overfitting ocurre cuando el modelo se ajusta demasiado a los datos de entrenamiento y no generaliza bien a nuevos datos."
+        },
+        {
+          "id": "b",
+          "text": "El overfitting se refiere a la falta de ajuste del modelo a los datos de entrenamiento, lo que resulta en un rendimiento deficiente."
+        },
+        {
+          "id": "c",
+          "text": "El overfitting es beneficioso ya que permite al modelo adaptarse perfectamente a los datos de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "El overfitting solo afecta a modelos lineales y no a modelos no lineales."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:0b2c3b9cf1b6c8165a2e2a0d1f9c0d741f78e3a89a2b8c8e3dbdbf5d2e7f6a19",
+      "createdBy": "Luis",
+      "sourcePackId": "43f6e3ff-acf6-49ad-b9ba-82c7817ef4d9",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T11:39:11.857Z",
+      "updatedAt": "2026-02-20T11:39:11.857Z"
     },
     {
       "id": "e9a131f0-8ae3-46db-bc62-958b2a1b98a6",
