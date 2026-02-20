@@ -6,6 +6,8 @@ import { Button, Input, Card, Select } from '@/ui/components';
 import { exportContributionPack, importContributionPack } from '@/data/contributionImport';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
+import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
+
 
 export function SettingsPage() {
   const navigate = useNavigate();
@@ -15,7 +17,8 @@ export function SettingsPage() {
   const [exportSubjectId, setExportSubjectId] = useState('');
   const [importedPacks, setImportedPacks] = useState<string[]>([]);
   const [compactExportSubjectId, setCompactExportSubjectId] = useState('');
-
+  const [imageSyncResult, setImageSyncResult] = useState<ImageSyncResult | null>(null);
+  const [syncingImages, setSyncingImages] = useState(false);
   useEffect(() => {
     loadSettings();
     loadSubjects();
@@ -25,6 +28,18 @@ export function SettingsPage() {
     setAlias(settings.alias);
     setImportedPacks(settings.importedPackIds);
   }, [settings]);
+
+
+  const handleSyncImages = async () => {
+  setSyncingImages(true);
+  setImageSyncResult(null);
+  try {
+    const result = await syncImagesToDevServer();
+    setImageSyncResult(result);
+  } finally {
+    setSyncingImages(false);
+  }
+};
 
   const handleSaveAlias = async () => {
     await updateSettings({ alias });
@@ -284,6 +299,35 @@ export function SettingsPage() {
           </Button>
         </Card>
 
+          {/* Developer tools */}
+        <Card>
+          <h2 className="font-display text-base text-ink-200 mb-1">🛠 Herramientas de mantenedor</h2>
+          <p className="text-sm text-ink-500 mb-4">
+            Sincroniza las imágenes guardadas en IndexedDB con <code className="text-amber-400 bg-ink-900 px-1 py-0.5 rounded text-xs">public/question-images/</code> para poder commitearlas al repositorio.
+            Solo funciona en modo desarrollo (<code className="text-amber-400 bg-ink-900 px-1 py-0.5 rounded text-xs">npm run dev</code>).
+          </p>
+          <Button
+            size="sm"
+            variant="secondary"
+            loading={syncingImages}
+            onClick={handleSyncImages}
+          >
+            🖼 Sincronizar imágenes a disco
+          </Button>
+          {imageSyncResult && (
+            <div className="mt-3 text-sm text-ink-400">
+              {imageSyncResult.errors.length > 0 ? (
+                <span className="text-rose-400">
+                  ✗ {imageSyncResult.errors.length} error(es): {imageSyncResult.errors[0]}
+                </span>
+              ) : (
+                <span className="text-sage-400">
+                  ✓ {imageSyncResult.total} imágenes — {imageSyncResult.synced} nuevas, {imageSyncResult.skipped} ya existían
+                </span>
+              )}
+            </div>
+          )}
+        </Card>
         {/* About */}
         <div className="text-center text-xs text-ink-700 pb-4">
           <p>StudyApp · local-first · sin backend · tus datos son tuyos</p>

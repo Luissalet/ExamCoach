@@ -411,7 +411,8 @@ export function initResourcesPlugin(): Plugin {
       initResources(server.config.root);
       registerUploadEndpoint(server, server.config.root);
       registerSyncMappingEndpoint(server, server.config.root);
-      registerResourceUploadEndpoint(server, server.config.root); // ← NUEVO
+      registerResourceUploadEndpoint(server, server.config.root);
+      registerQuestionImageUploadEndpoint(server, server.config.root); // ← ADD THIS
     },
   };
 }

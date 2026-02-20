@@ -121,6 +121,46 @@ export async function importImages(images: Record<string, string>, mimeMap?: Rec
   }
 }
 
+// ─── Dev: sync IndexedDB → public/question-images/ ───────────────────────────
+
+export interface ImageSyncResult {
+  total: number;
+  synced: number;
+  skipped: number;
+  errors: string[];
+}
+
+/**
+ * Vuelca todas las imágenes de IndexedDB al dev server (public/question-images/).
+ * Solo útil para el mantenedor del repo en modo desarrollo.
+ */
+export async function syncImagesToDevServer(): Promise<ImageSyncResult> {
+  const result: ImageSyncResult = { total: 0, synced: 0, skipped: 0, errors: [] };
+
+  const all = await db.questionImages.toArray();
+  result.total = all.length;
+
+  for (const record of all) {
+    try {
+      const base64 = await blobToBase64(record.blob);
+      const res = await fetch('/api/upload-question-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: record.filename, data: base64, mime: record.mimeType }),
+      });
+      if (res.ok) {
+        result.synced++;
+      } else {
+        // Si el endpoint no existe (producción), contar como skipped
+        result.skipped++;
+      }
+    } catch (e) {
+      result.errors.push(`${record.filename}: ${String(e)}`);
+    }
+  }
+
+  return result;
+}
 // ─── Internal utils ───────────────────────────────────────────────────────────
 
 function filenameToId(filename: string): string {
