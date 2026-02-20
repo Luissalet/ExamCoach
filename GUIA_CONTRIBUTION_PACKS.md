@@ -540,7 +540,20 @@ VERIFICACIÓN FINAL antes de responder:
 | 10 | Tema 10- Aprendizaje supervisado. Regresión y clasificación con Random Forest | `tema-10-aprendizaje-supervisado-regresion-y-clasificacion-con-random-forest` |
 | 11 | Tema 11- Parametrización automática y optimización de algoritmos | `tema-11-parametrizacion-automatica-y-optimizacion-de-algoritmos` |
 
----
+
+**`subjectKey`**: `desarrollo-optimizacion-y-despliegue-de-modelos-generativos`  
+**`subjectName`**: `"Desarrollo, Optimización y Despliegue de Modelos Generativos"`
+
+| # | Título del Tema | `topicKey` |
+|---|-----------------|------------|
+| 1 | Tema 1. Fundamentos y evaluación de modelos de lenguaje | `tema-1-fundamentos-y-evaluacion-de-modelos-de-lenguaje` |
+| 2 | Tema 2. RAG en Flowise | `tema-2-rag-en-flowise` |
+| 3 | Tema 3. Del chat al agente. Herramientas, memoria y enrutado | `tema-3-del-chat-al-agente-herramientas-memoria-y-enrutado` |
+| 4 | Tema 4. Calidad operativa. Moderación, HITL y trazabilidad | `tema-4-calidad-operativa-moderacion-hitl-y-trazabilidad` |
+| 5 | Tema 5. Automatización por eventos e integración con servicios | `tema-5-automatizacion-por-eventos-e-integracion-con-servicios` |
+| 6 | Tema 6. Interoperabilidad no-code con MCP | `tema-6-interoperabilidad-no-code-con-mcp` |
+| 7 | Tema 7. Sistemas multiagente | `tema-7-sistemas-multiagente` |
+| 8 | Tema 8. Agentes multimodales y publicación como servicio | `tema-8-agentes-multimodales-y-publicacion-como-servicio` |
 
 ## Soporte
 

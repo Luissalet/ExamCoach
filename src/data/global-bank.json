@@ -1,49 +1,49 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-20T16:21:25.117Z",
+  "exportedAt": "2026-02-20T17:34:25.144Z",
   "subjects": [
     {
       "id": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "name": "Procesamiento del Lenguaje Natural",
       "color": "#8b5cf6",
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:24:12.667Z"
     },
     {
       "id": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "name": "Investigación y Gestión de Proyectos en Inteligencia Artificial",
       "color": "#ef4444",
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:17.340Z"
     },
     {
       "id": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
       "name": "Desarrollo, Optimización y Despliegue de Modelos Generativos",
       "color": "#f97316",
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T17:11:13.244Z"
     },
     {
       "id": "7ff5a1a1-0253-42e2-82cd-b6690be0187b",
       "name": "Visión Artificial",
       "color": "#3b82f6",
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:38.628Z"
     },
     {
       "id": "8bfe1052-58e7-4f44-b5d2-483911af507d",
       "name": "Razonamiento y Planificación Automática",
       "color": "#10b981",
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:59.130Z"
     },
     {
       "id": "befc803a-db6a-49f5-a451-941ee8738c59",
       "name": "Técnicas de Aprendizaje Automático",
       "color": "#f59e0b",
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:22:37.625Z"
     }
   ],
   "topics": [
@@ -64,6 +64,15 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 5. Automatización por eventos e integración con servicios",
+      "order": 4,
+      "id": "072afd6b-bd5a-417f-bd3c-30c5b25b56ec",
+      "createdAt": "2026-02-20T17:12:01.168Z",
+      "updatedAt": "2026-02-20T17:12:44.932Z",
+      "pdfFilename": "Tema 5. Automatización por eventos e integración con servicios.pdf"
+    },
+    {
       "id": "07700f14-a587-41c2-9514-2a09bd2b125c",
       "subjectId": "7ff5a1a1-0253-42e2-82cd-b6690be0187b",
       "title": "Tema 13- Extracción de características. Procesamientos multiescala y métodos avanzados",
@@ -78,7 +87,8 @@
       "title": "Tema 3- Lógica y pensamiento humano",
       "order": 3,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.004Z",
+      "pdfFilename": "Tema 3- Lógica y pensamiento humano.pdf"
     },
     {
       "id": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
@@ -86,7 +96,8 @@
       "title": "Tema 12- Reparación reactiva multi agente",
       "order": 6,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:48.630Z",
+      "pdfFilename": "Tema 12- Reparación reactiva multi agente.pdf"
     },
     {
       "id": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
@@ -94,7 +105,8 @@
       "title": "Tema 5- Búsqueda informada",
       "order": 9,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.056Z",
+      "pdfFilename": "Tema 5- Búsqueda informada.pdf"
     },
     {
       "id": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -146,7 +158,8 @@
       "title": "Tema 11- Planificación por múltiples agentes",
       "order": 11,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:46.305Z",
+      "pdfFilename": "Tema 11- Planificación por múltiples agentes.pdf"
     },
     {
       "id": "2fbbaa80-63ad-47d1-bdba-98f80e480839",
@@ -158,6 +171,15 @@
       "pdfFilename": "Tema_7._Procesamiento_de_imagen._Operaciones_espaciales.pdf"
     },
     {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 4. Calidad operativa. Moderación, HITL y trazabilidad",
+      "order": 3,
+      "id": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
+      "createdAt": "2026-02-20T17:11:55.437Z",
+      "updatedAt": "2026-02-20T17:12:41.761Z",
+      "pdfFilename": "Tema 4. Calidad operativa. Moderación, HITL y trazabilidad.pdf"
+    },
+    {
       "id": "387e86b9-583d-4ec5-836f-24246c75b88b",
       "subjectId": "7ff5a1a1-0253-42e2-82cd-b6690be0187b",
       "title": "Tema 8- Procesamiento de señales.Filtrado y análisis en frecuencia",
@@ -165,6 +187,15 @@
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T15:40:44.985Z",
       "pdfFilename": "Tema_8._Procesamiento_de_señales._Filtrado_y_análisis_en_frecuencia.pdf"
+    },
+    {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 2. RAG en Flowise",
+      "order": 1,
+      "id": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "createdAt": "2026-02-20T17:11:41.471Z",
+      "updatedAt": "2026-02-20T17:14:56.833Z",
+      "pdfFilename": "Tema 2. RAG en Flowise.pdf"
     },
     {
       "id": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
@@ -214,7 +245,8 @@
       "title": "Tema 4- Búsqueda no informada",
       "order": 8,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.024Z",
+      "pdfFilename": "Tema 4- Búsqueda no informada.pdf"
     },
     {
       "id": "46b19090-981b-4a21-bc18-ab81be325271",
@@ -238,7 +270,8 @@
       "title": "Tema 1- Introducción a la toma de decisiones",
       "order": 2,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:42.982Z",
+      "pdfFilename": "Tema 1- Introducción a la toma de decisiones.pdf"
     },
     {
       "id": "4961fc2e-0269-4627-b11a-8ef9a95b15d2",
@@ -255,7 +288,8 @@
       "title": "Tema 6- Búsqueda entre adversarios",
       "order": 0,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.118Z",
+      "pdfFilename": "Tema 6- Búsqueda entre adversarios.pdf"
     },
     {
       "id": "502e9489-f902-45a4-8614-1f853b90f62f",
@@ -272,6 +306,15 @@
       "order": 10,
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 6. Interoperabilidad no-code con MCP",
+      "order": 5,
+      "id": "5f1e85f1-9f01-454f-9a3f-4c77425d32a6",
+      "createdAt": "2026-02-20T17:12:08.613Z",
+      "updatedAt": "2026-02-20T17:12:48.889Z",
+      "pdfFilename": "Tema 6. Interoperabilidad no-code con MCP.pdf"
     },
     {
       "id": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
@@ -348,7 +391,8 @@
       "title": "Tema 8- Sistemas basados en STRIP",
       "order": 7,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.476Z",
+      "pdfFilename": "Tema 8- Sistemas basados en STRIP.pdf"
     },
     {
       "id": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
@@ -358,6 +402,15 @@
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T15:05:31.825Z",
       "pdfFilename": "Tema_11._Parametrización_automática_y_optimización_de_algoritmos.pdf"
+    },
+    {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 7. Sistemas multiagente",
+      "order": 6,
+      "id": "96d484d7-3f42-4d37-aa44-f73d4c6df900",
+      "createdAt": "2026-02-20T17:12:15.255Z",
+      "updatedAt": "2026-02-20T17:12:52.145Z",
+      "pdfFilename": "Tema 7. Sistemas multiagente.pdf"
     },
     {
       "id": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -406,7 +459,8 @@
       "title": "Tema 10- Planificación multi agente",
       "order": 1,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:44.712Z",
+      "pdfFilename": "Tema 10- Planificación multi agente.pdf"
     },
     {
       "id": "a6ccfde3-d77b-42db-af38-4df19e2f1b3d",
@@ -415,6 +469,15 @@
       "order": 8,
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 1. Fundamentos y evaluación de modelos de lenguaje",
+      "order": 0,
+      "id": "b225751e-e66f-4b40-9d10-c0b84fe478a3",
+      "createdAt": "2026-02-20T17:11:32.644Z",
+      "updatedAt": "2026-02-20T17:12:31.993Z",
+      "pdfFilename": "Tema 1. Fundamentos y evaluación de modelos de lenguaje.pdf"
     },
     {
       "id": "b39cd408-d606-45ff-9e77-5dff8437aa2e",
@@ -455,7 +518,8 @@
       "title": "Tema 2- Representación del conocimiento y razonamiento",
       "order": 10,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:42.994Z",
+      "pdfFilename": "Tema 2- Representación del conocimiento y razonamiento.pdf"
     },
     {
       "id": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
@@ -463,7 +527,17 @@
       "title": "Tema 7- Problemas de planificación",
       "order": 4,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.264Z",
+      "pdfFilename": "Tema 7- Problemas de planificación.pdf"
+    },
+    {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 3. Del chat al agente. Herramientas, memoria y enrutado",
+      "order": 2,
+      "id": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "createdAt": "2026-02-20T17:11:48.516Z",
+      "updatedAt": "2026-02-20T17:12:38.608Z",
+      "pdfFilename": "Tema 3. Del chat al agente. Herramientas, memoria y enrutado.pdf"
     },
     {
       "id": "d0e67054-0c48-4548-a9af-aa76ae5c9d54",
@@ -482,6 +556,15 @@
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T15:05:28.828Z",
       "pdfFilename": "Tema_7._Máquinas_de_vectores_de_soporte.pdf"
+    },
+    {
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "title": "Tema 8. Agentes multimodales y publicación como servicio",
+      "order": 7,
+      "id": "d8223347-6cc0-4cc9-ac63-7a81ecbe2782",
+      "createdAt": "2026-02-20T17:12:21.801Z",
+      "updatedAt": "2026-02-20T17:12:55.668Z",
+      "pdfFilename": "Tema 8. Agentes multimodales y publicación como servicio.pdf"
     },
     {
       "id": "de36eadf-92af-4287-98c2-dd6751ca987f",
@@ -515,7 +598,8 @@
       "title": "Tema 9- Redes de tareas jerárquicas (HTN)",
       "order": 5,
       "createdAt": "2026-02-20T14:48:47.946Z",
-      "updatedAt": "2026-02-20T14:48:47.946Z"
+      "updatedAt": "2026-02-20T16:23:43.914Z",
+      "pdfFilename": "Tema 9- Redes de tareas jerárquicas (HTN).pdf"
     },
     {
       "id": "ecf82f40-40b3-4430-adaa-5bbe58f1fd5d",
@@ -633,6 +717,54 @@
       },
       "createdAt": "2026-02-20T14:49:08.173Z",
       "updatedAt": "2026-02-20T14:49:08.173Z"
+    },
+    {
+      "id": "06e14409-28f4-4d33-8412-82bdba41ef4b",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "type": "TEST",
+      "prompt": "¿Qué describe mejor el ciclo de trabajo tipo **ReAct** en un agente?",
+      "explanation": "ReAct alterna razonamiento y uso de herramientas, incorporando observaciones para iterar hasta completar la tarea.",
+      "difficulty": 2,
+      "tags": [
+        "react",
+        "agentes",
+        "tools",
+        "bucle",
+        "observacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Generar la respuesta de una vez sin consultar herramientas."
+        },
+        {
+          "id": "b",
+          "text": "Pensamiento → Acción (uso de herramienta) → Observación, repitiendo hasta resolver."
+        },
+        {
+          "id": "c",
+          "text": "Acciones en paralelo sin razonamiento intermedio."
+        },
+        {
+          "id": "d",
+          "text": "Primero observar, luego pensar, nunca actuar."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:5e9f11a7e4f7bb9b7f2b84b5c59507dfbd7eacda1b9d3c45e0a51d3c3e3b2a90",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "09844278-8a39-4589-92bf-6cf187ca6b65",
@@ -1046,6 +1178,54 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "20717dec-f11c-480c-abeb-a15b1cb2dd76",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
+      "type": "TEST",
+      "prompt": "¿Qué configuración en la fase de **generación** ayuda a reducir alucinaciones y a hacer la salida verificable?",
+      "explanation": "Abstención sin evidencia + baja aleatoriedad + salida estructurada con citas obligatorias hacen la respuesta auditable y reducen invención.",
+      "difficulty": 3,
+      "tags": [
+        "generacion",
+        "alucinaciones",
+        "abstencion",
+        "citas",
+        "contrato-salida"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Formato libre y temperatura alta."
+        },
+        {
+          "id": "b",
+          "text": "Pedir creatividad e ignorar el contexto si es insuficiente."
+        },
+        {
+          "id": "c",
+          "text": "Instrucción de abstención, temperatura baja y contrato de salida con citas obligatorias y límite de longitud."
+        },
+        {
+          "id": "d",
+          "text": "Permitir respuestas sin fuentes si «suena» convincente."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "207a546c-3d77-4a15-8e49-188434bcf243",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -1148,6 +1328,55 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "24c1d2f3-5f4e-4ede-9b11-2b8a2499a2e0",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "b225751e-e66f-4b40-9d10-c0b84fe478a3",
+      "type": "TEST",
+      "prompt": "Para **QA factual con fuentes**, ¿qué combinación de evaluación da una señal más completa?",
+      "explanation": "EM mide exactitud estricta, F1 captura coincidencias parciales y la verificación de citas comprueba que la respuesta está anclada en evidencias.",
+      "difficulty": 3,
+      "tags": [
+        "evaluacion",
+        "qa",
+        "em",
+        "f1",
+        "citas",
+        "grounding"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo Exact Match (EM)."
+        },
+        {
+          "id": "b",
+          "text": "Solo BLEU/ROUGE."
+        },
+        {
+          "id": "c",
+          "text": "EM + F1 a nivel de tokens + verificación de citas/soporte."
+        },
+        {
+          "id": "d",
+          "text": "Una encuesta de satisfacción de usuarios."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0c020bafc0a6846f4d1a5a9c6dcb5a4e0f5e3a52d6d83a2aa1512fda9d6e87f3",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "25a2d188-28f0-4c8b-aa6d-053d66c5a777",
@@ -1458,6 +1687,54 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "36240c7b-a94e-4975-b832-064ab48292a8",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
+      "type": "TEST",
+      "prompt": "¿Qué elementos mínimos debe capturar el **tracing** para una auditoría efectiva?",
+      "explanation": "Para auditar necesitas entrada (anonimizada), evidencias recuperadas, lo que se pidió al modelo, la respuesta, decisiones de moderación, versiones y métricas (tokens/latencias) por etapa. Evitar PII innecesaria.",
+      "difficulty": 3,
+      "tags": [
+        "tracing",
+        "auditoria",
+        "observabilidad",
+        "moderacion",
+        "versionado"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo la respuesta final y el tiempo total."
+        },
+        {
+          "id": "b",
+          "text": "Únicamente los errores; lo demás no importa."
+        },
+        {
+          "id": "c",
+          "text": "Consulta (anonimizada), pasajes e ID recuperados, *prompt* final, respuesta, decisiones de moderación, versiones de modelo/índice, tokens y latencias por etapa."
+        },
+        {
+          "id": "d",
+          "text": "PII completa del usuario para identificarle con precisión."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "3814d3bf-19d6-457a-927b-e8fd1b21ab81",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -1581,6 +1858,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "3c93acd3-c9cb-4c59-a916-c2e5034d3fa2",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
+      "type": "TEST",
+      "prompt": "¿Qué práctica reduce el riesgo de **prompt injection** al mezclar instrucciones del usuario con las del sistema?",
+      "explanation": "Separar roles y sanear entrada reduce que el usuario “se haga pasar” por sistema; una *denylist* ayuda contra patrones clásicos (p. ej., “ignora instrucciones anteriores…”).",
+      "difficulty": 3,
+      "tags": [
+        "seguridad",
+        "prompt-injection",
+        "delimitadores",
+        "sanitizacion",
+        "denylist"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aumentar la temperatura y el tamaño de contexto."
+        },
+        {
+          "id": "b",
+          "text": "Separar roles con delimitadores, normalizar/limpiar entrada y aplicar *denylist* de frases típicas."
+        },
+        {
+          "id": "c",
+          "text": "Incrustar las políticas dentro del mensaje del usuario."
+        },
+        {
+          "id": "d",
+          "text": "Permitir que el usuario «edite» el *prompt* de sistema si lo solicita."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "44bbe46b-558f-46ed-88a5-b6dd23a0b494",
@@ -2186,6 +2511,54 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "64c0a5a6-bd49-42a1-85a9-48e7cef30da6",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "¿Cuál de estas políticas de **prompting** reduce alucinaciones en RAG?",
+      "explanation": "El *grounding* estricto + abstención (“No consta”) evita que el modelo rellene huecos inventando cuando el contexto recuperado no soporta la respuesta.",
+      "difficulty": 2,
+      "tags": [
+        "prompting",
+        "alucinaciones",
+        "abstencion",
+        "grounding",
+        "rag"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "«Responde con tu conocimiento general si no hay contexto»."
+        },
+        {
+          "id": "b",
+          "text": "«Responde solo con el contexto. Si no alcanza, di “No consta” y solicita ampliar el corpus»."
+        },
+        {
+          "id": "c",
+          "text": "«Siempre da una respuesta completa; evita decir “no sé”»."
+        },
+        {
+          "id": "d",
+          "text": "«Añade ejemplos creativos aunque no estén citados»."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:0dc5f9249d268c23f7d9956f7f8e8b8c7a2e8a39a9f6f9c1f07f2b67d26c7393",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "673ad883-a0cf-421d-a74b-6f2e640e8db7",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "502e9489-f902-45a4-8614-1f853b90f62f",
@@ -2217,6 +2590,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "68a65395-8b74-4adb-9851-7a46f15e5a84",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "En un **corpus bilingüe**, usas un modelo de *embeddings* monolingüe. ¿Qué efecto esperas?",
+      "explanation": "Un embedder monolingüe no alinea bien significados entre idiomas: baja el *recall/precision* en el idioma no cubierto y aparecen matches erráticos.",
+      "difficulty": 2,
+      "tags": [
+        "embeddings",
+        "multilingue",
+        "retrieval",
+        "calidad",
+        "rag"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mejor *recall* en ambos idiomas."
+        },
+        {
+          "id": "b",
+          "text": "Pérdida de calidad en el idioma no cubierto y emparejamientos inconsistentes."
+        },
+        {
+          "id": "c",
+          "text": "No cambia nada si el LLM es multilingüe."
+        },
+        {
+          "id": "d",
+          "text": "Solo afecta la generación, no la recuperación."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:0d0a49e7b2e9a40a8f4f6a843e4e0a9ccf3e08c2c3a1a5f5f7e33dd0d2d6d62b",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "6b42a671-e8f9-45db-bdf7-be4756d6dede",
@@ -2699,6 +3120,53 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "7974cd09-ee82-44a5-97e0-2562db5bc850",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "type": "TEST",
+      "prompt": "¿Qué convierte un «chat» en un **agente**?",
+      "explanation": "Un agente decide y ejecuta acciones (tools/APIs) con feedback del entorno; no es solo generación de texto.",
+      "difficulty": 1,
+      "tags": [
+        "agentes",
+        "tools",
+        "accion",
+        "orquestacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Responder con párrafos más largos."
+        },
+        {
+          "id": "b",
+          "text": "Tomar decisiones y usar herramientas externas para actuar, no solo conversar."
+        },
+        {
+          "id": "c",
+          "text": "Aumentar la temperatura del modelo."
+        },
+        {
+          "id": "d",
+          "text": "Añadir emojis para generar mayor empatía."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:5b3b7e4d2c1a1a6cc2d63aa1f2e4c19c49db7c91a6db07f67d61a2b4b4e3d6b2",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "7989e71d-7e89-4f13-a1c0-90fe4fdcec7c",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
@@ -2821,6 +3289,101 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "8285ac4e-0468-4d1d-903d-9b346e30abb2",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "type": "TEST",
+      "prompt": "¿Qué es el **enrutado** en arquitecturas de agentes (simple o multiagente)?",
+      "explanation": "Enrutar es decidir a qué ruta/actor va la consulta (tool, agente especialista, supervisor…), no cómo formateas la salida.",
+      "difficulty": 2,
+      "tags": [
+        "routing",
+        "multiagente",
+        "supervisor",
+        "especialista"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ordenar alfabéticamente las respuestas."
+        },
+        {
+          "id": "b",
+          "text": "Elegir siempre responder sin herramientas para ahorrar tiempo."
+        },
+        {
+          "id": "c",
+          "text": "Seleccionar la mejor vía para cada consulta: herramienta adecuada o subagente especializado (p. ej., supervisor → especialista)."
+        },
+        {
+          "id": "d",
+          "text": "Cambiar de modelo en cada turno."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:8c0a3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
+      "id": "8556c3ad-64e4-40b8-9143-66b157522d73",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "En **chunking** para RAG con secciones que incluyen tablas, ¿qué ayuda la recuperabilidad?",
+      "explanation": "Metadatos (título/sección), leyendas y un solape razonable preservan contexto y estructura, mejorando el *match* semántico sin diluir la señal con chunks enormes.",
+      "difficulty": 3,
+      "tags": [
+        "chunking",
+        "tablas",
+        "metadatos",
+        "overlap",
+        "rag"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cortar sin encabezados ni metadatos."
+        },
+        {
+          "id": "b",
+          "text": "Fragmentos muy largos (>2000 palabras)."
+        },
+        {
+          "id": "c",
+          "text": "Fragmentos con título/sección en metadatos, leyendas de tablas y solape moderado."
+        },
+        {
+          "id": "d",
+          "text": "Eliminar por completo las tablas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:bd0a2b48afc320b8344b1a8db3f4f6a2a1c8bcd0f1a9dbf2fe0b62f7c4cfb8d1",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "8561fb80-269d-496a-a8a9-2049249c8fb1",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
@@ -2905,6 +3468,53 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "870db6c3-7923-4297-afa1-08407dc62355",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "type": "TEST",
+      "prompt": "¿Qué práctica facilita que el agente decida cuándo usar una **herramienta** concreta?",
+      "explanation": "Definir el contrato (qué hace, inputs, outputs) reduce ambigüedad y permite selección/uso correcto de herramientas.",
+      "difficulty": 2,
+      "tags": [
+        "tools",
+        "contrato",
+        "prompt",
+        "agentes"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aumentar la ventana de contexto a su máximo."
+        },
+        {
+          "id": "b",
+          "text": "Repetir el nombre de la herramienta en mayúsculas."
+        },
+        {
+          "id": "c",
+          "text": "Describir en el *prompt* la finalidad, entradas y salidas de cada herramienta disponible."
+        },
+        {
+          "id": "d",
+          "text": "Ajustar solo la temperatura a 0."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:24b3c4a187a6c4c7c29d0aab2e3cbe1c5d0dcb74f6a4e7b4a2f4b4f3a1d2c3b4",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "87246841-fc96-47d7-89f4-b50d302f43d2",
@@ -3466,6 +4076,54 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "9bd6b10d-f959-4dda-b706-b5cc1a22c46b",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "Para medir la calidad de la **recuperación**, ¿qué combinación de métricas es más recomendable?",
+      "explanation": "*Recall@k* mide si lo relevante entra en el top-*k* (cobertura) y *NDCG* pondera la posición/ordenación de los pasajes relevantes.",
+      "difficulty": 3,
+      "tags": [
+        "retrieval",
+        "metricas",
+        "recall@k",
+        "ndcg",
+        "ranking"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Perplejidad y BLEU."
+        },
+        {
+          "id": "b",
+          "text": "Exact Match (EM) y WER."
+        },
+        {
+          "id": "c",
+          "text": "*Recall@k* (cobertura) y *NDCG* (ordenación)."
+        },
+        {
+          "id": "d",
+          "text": "*Sentiment score* y CTR."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "9d141d19-0b7a-45c5-a730-2423fb6d11d8",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
@@ -3743,6 +4401,104 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "b5adf1cf-db16-4b4c-9cbe-1484d321afef",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "072afd6b-bd5a-417f-bd3c-30c5b25b56ec",
+      "type": "TEST",
+      "prompt": "Si un servicio externo (*embeddings* o LLM) está lento o caído, ¿qué patrón operativo es más adecuado?",
+      "explanation": "Con *timeouts/retries* controlas bloqueos; con degradación y *fallback* mantienes servicio mínimo; con presupuestos evitas sobrecostes durante incidentes.",
+      "difficulty": 3,
+      "tags": [
+        "operaciones",
+        "timeouts",
+        "reintentos",
+        "degradacion",
+        "fallback",
+        "coste"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aumentar el *top-k* y esperar."
+        },
+        {
+          "id": "b",
+          "text": "Definir *timeouts* y reintentos; activar modos degradados y *fallback* de modelo; limitar presupuesto de tokens."
+        },
+        {
+          "id": "c",
+          "text": "Subir temperatura para «acelerar»."
+        },
+        {
+          "id": "d",
+          "text": "Desactivar los registros para ahorrar tiempo."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:6c5b4a392817161514131211100f0e0d0c0b0a09080706050403020100ffeeddcc",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
+      "id": "b8993902-8e25-4657-ba55-8d79aed9044f",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "b225751e-e66f-4b40-9d10-c0b84fe478a3",
+      "type": "TEST",
+      "prompt": "Quieres mejorar calidad antes de considerar **fine-tuning**. ¿Qué secuencia es más sensata?",
+      "explanation": "Primero reduces ambigüedad (instrucciones), luego mejoras señal (recuperación) y finalmente mides/aseguras (golden set + guardrails). Es más barato y estable que escalar a ciegas.",
+      "difficulty": 3,
+      "tags": [
+        "optimizacion",
+        "prompt",
+        "retrieval",
+        "golden-set",
+        "guardrails",
+        "fine-tuning"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Comprar más GPU y aumentar el tamaño del modelo."
+        },
+        {
+          "id": "b",
+          "text": "Subir *k* al máximo y confiar en que mejore."
+        },
+        {
+          "id": "c",
+          "text": "Afinar instrucciones/formatos → mejorar recuperación (*re-ranking*, filtros) → validar con *golden set* y *guardrails*."
+        },
+        {
+          "id": "d",
+          "text": "Cambiar de modelo en cada fallo."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:9c8b571f1cfa9f1f7f70dbef3c1f405ec5f4bb3d3f5d0f9c1a3e37d7b252a73d",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "b9425891-2a97-427f-b8ec-b4449d9c39cd",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
@@ -3788,6 +4544,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "c1ce0d01-4e81-4283-b61b-97518e9aa205",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
+      "type": "TEST",
+      "prompt": "¿Para qué sirve ejecutar un **golden set** tras actualizar el índice o el flujo?",
+      "explanation": "El *golden set* actúa como test de regresión: detecta desvíos en recuperación y caídas de calidad tras cambios en índice/flujo.",
+      "difficulty": 2,
+      "tags": [
+        "golden-set",
+        "regresion",
+        "calidad",
+        "rag",
+        "validacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Para medir solo la latencia p95."
+        },
+        {
+          "id": "b",
+          "text": "Para entrenar de nuevo el LLM."
+        },
+        {
+          "id": "c",
+          "text": "Para comprobar sanidad: que las consultas esperadas recuperen pasajes correctos y que se mantenga la calidad tras cambios."
+        },
+        {
+          "id": "d",
+          "text": "Para aumentar el tamaño de la ventana de contexto."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "c2ec5437-a8e7-4033-bfd9-0d7f0e2a944c",
@@ -4065,6 +4869,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "ce56ce77-1190-4c12-a24b-27f649f277d2",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "Si **recall@k** es alto pero el **MRR (Mean Reciprocal Rank)** es bajo, ¿qué sugiere?",
+      "explanation": "El relevante aparece dentro del top-*k* (recall alto), pero suele estar muy abajo (MRR bajo). Eso apunta a un problema de ordenación → *re-ranking*.",
+      "difficulty": 3,
+      "tags": [
+        "retrieval",
+        "recall@k",
+        "mrr",
+        "ranking",
+        "reranking"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hay pocos documentos relevantes en el corpus."
+        },
+        {
+          "id": "b",
+          "text": "Recuperas lo relevante, pero mal ordenado; necesitas *re-ranking*."
+        },
+        {
+          "id": "c",
+          "text": "El *k* es demasiado bajo."
+        },
+        {
+          "id": "d",
+          "text": "La ventana de contexto es insuficiente."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:1e0ce7a1d6b4e52b2f3b9f4a1aee6b2401a51b7bfc8b7c0f53e0c7a94d5f8a4e",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "d2c262f2-e26e-4a3f-bf3d-b89e44c06b95",
@@ -4356,6 +5208,54 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "dfd74867-5e5d-4286-a76d-45f6c87c0c86",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "Respecto al **tamaño del contexto**, ¿qué riesgo tiene ampliarlo sin control?",
+      "explanation": "Más contexto suele aumentar tokens (coste/latencia) y meter ruido/contradicciones que distraen al modelo. No elimina la necesidad de recuperar ni bloquea *streaming* por definición.",
+      "difficulty": 2,
+      "tags": [
+        "contexto",
+        "latencia",
+        "coste",
+        "ruido",
+        "rag"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Siempre mejora la precisión y reduce el coste."
+        },
+        {
+          "id": "b",
+          "text": "Eleva coste/latencia y puede introducir distracciones que degradan la respuesta."
+        },
+        {
+          "id": "c",
+          "text": "Impide usar *streaming*."
+        },
+        {
+          "id": "d",
+          "text": "Elimina la necesidad de recuperar."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:1c79a8c4b6b9e890e1a09dc3b2d9b0a7c688df30d3d22f1caa4a0a2b0a68d723",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
       "id": "e400140f-768a-4261-8a0b-edfb8d7106c2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -4456,6 +5356,101 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "e6c4ebdc-83a7-4d34-b3bd-f3cb34cb11ea",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "type": "TEST",
+      "prompt": "¿Qué combinación de estrategias de **memoria** es la más coherente?",
+      "explanation": "Combina corto plazo (coherencia reciente) con largo plazo (persistencia/recuperación semántica) sin reventar el contexto.",
+      "difficulty": 2,
+      "tags": [
+        "memoria",
+        "ventana",
+        "vectorial",
+        "resumen",
+        "agentes"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo historial completo sin límites ni resúmenes."
+        },
+        {
+          "id": "b",
+          "text": "Eliminar cualquier dato antiguo para evitar sesgos."
+        },
+        {
+          "id": "c",
+          "text": "Ventana deslizante para lo reciente + memoria vectorial y/o resúmenes para conservar lo relevante."
+        },
+        {
+          "id": "d",
+          "text": "Usar únicamente metadatos y nunca texto."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:8b6f6c31c2a3b9b0c9f1b6d3c2a1e0f9b8a7c6d5e4f3a2b1c0d9e8f7a6b5c4d3",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
+      "id": "e7f8212f-5db3-480c-abfb-ad355bc495cd",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
+      "type": "TEST",
+      "prompt": "En **Flowise (AgentFlow)**, ¿qué configuración mínima ilustra un agente que **calcula y recuerda**?",
+      "explanation": "Para “calcular” necesitas herramienta, y para “recordar” necesitas memoria conversacional: Agent Node + calculadora + memory cubre ambas.",
+      "difficulty": 2,
+      "tags": [
+        "flowise",
+        "agentflow",
+        "herramientas",
+        "memoria"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo un nodo de LLM sin más."
+        },
+        {
+          "id": "b",
+          "text": "Un *Agent Node* con herramienta «Calculadora» habilitada y memoria conversacional activa."
+        },
+        {
+          "id": "c",
+          "text": "Un *vector store* sin agente."
+        },
+        {
+          "id": "d",
+          "text": "Dos agentes idénticos conectados entre sí."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:cf5d2c1a0b9e8d7c6b5a493827161514131211100f0e0d0c0b0a0908070605040",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "e89cbbc6-d9b7-4137-8bb0-17d262350997",
@@ -4708,6 +5703,53 @@
       },
       "createdAt": "2026-02-20T14:49:08.173Z",
       "updatedAt": "2026-02-20T14:49:08.173Z"
+    },
+    {
+      "id": "f381717e-244c-4727-878f-b5fefa585f07",
+      "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
+      "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
+      "type": "TEST",
+      "prompt": "En un **RAG**, tras actualizar documentos, el sistema sigue respondiendo con datos antiguos. ¿Qué es lo más probable?",
+      "explanation": "Si no re-embebes y reindexas, el retriever sigue trayendo vectores/fragmentos de versiones antiguas. Ajustar *k*, temperatura o *few-shot* no corrige un índice desfasado.",
+      "difficulty": 2,
+      "tags": [
+        "rag",
+        "indexado",
+        "embeddings",
+        "vector-store"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "No se regeneraron los *embeddings* ni se reindexó el *vector store*."
+        },
+        {
+          "id": "b",
+          "text": "El *k* de recuperación es demasiado alto."
+        },
+        {
+          "id": "c",
+          "text": "La temperatura está por encima de 1.0."
+        },
+        {
+          "id": "d",
+          "text": "Falta un ejemplo *few-shot* en el *prompt*."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:c8b6106b309bf4e4b5fb43b5d2dc97cc97bbebc6762c48d97e1bcf7bb8c2791f",
+      "createdBy": "Luis",
+      "sourcePackId": "50a24b83-4094-4ea1-8419-0e17cae92d91",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T17:34:13.897Z",
+      "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
       "id": "f53e6407-1f68-4147-bcd6-2eb213b12b8d",
