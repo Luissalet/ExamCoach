@@ -1,7 +1,10 @@
 /**
  * MdContent.tsx
  *
- * Renderiza markdown con soporte para imágenes inline de preguntas.
+ * Renderiza Markdown + LaTeX (KaTeX) con soporte para imágenes inline.
+ *
+ * Delimitadores matemáticos soportados:
+ *   $...$   $$...$$   \(...\)   \[...\]
  *
  * Para imágenes con src "question-images/uuid.ext":
  *  1. Intentan cargarse desde /public/question-images/ (disponible en dev y
@@ -13,7 +16,7 @@
  */
 
 import React, { useRef, useEffect, useMemo } from 'react';
-import { marked } from 'marked';
+import { renderMd } from '@/utils/renderMd';
 import { getQuestionImageBlobUrl } from '@/data/questionImageStorage';
 
 interface MdContentProps {
@@ -24,14 +27,7 @@ interface MdContentProps {
 export function MdContent({ content, className }: MdContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const html = useMemo(() => {
-    if (!content) return '';
-    try {
-      return marked.parse(content, { async: false }) as string;
-    } catch {
-      return content;
-    }
-  }, [content]);
+  const html = useMemo(() => renderMd(content), [content]);
 
   // After render: install onerror fallback on question-images/ imgs
   useEffect(() => {

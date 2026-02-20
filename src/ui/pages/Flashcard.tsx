@@ -17,16 +17,10 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { questionRepo } from '@/data/repos';
 import { TypeBadge, Button } from '@/ui/components';
-import { marked } from 'marked';
+import { renderMd } from '@/utils/renderMd';
 import type { Question, QuestionType } from '@/domain/models';
 import { MdContent } from '../components/MdContent';
 
-// ─── Markdown helper ──────────────────────────────────────────────────────────
-
-function renderMd(text: string): string {
-  try { return marked.parse(text, { async: false }) as string; }
-  catch { return text; }
-}
 
 // ─── Cloze renderer ──────────────────────────────────────────────────────────
 

@@ -6,16 +6,9 @@ import { scoreAnswer } from '@/domain/scoring';
 import { Button, Progress, TypeBadge } from '@/ui/components';
 import type { Question, PracticeSession, UserAnswer } from '@/domain/models';
 import { v4 as uuidv4 } from 'uuid';
-import { marked } from 'marked';
+import { renderMd } from '@/utils/renderMd';
 import { MdContent } from '@/ui/components/MdContent';
 
-function renderMd(text: string): string {
-  try {
-    return marked.parse(text, { async: false }) as string;
-  } catch {
-    return text;
-  }
-}
 
 export function PracticeSessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
