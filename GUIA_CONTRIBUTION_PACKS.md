@@ -4,6 +4,32 @@
 
 Un **contribution pack** es un archivo JSON que contiene preguntas creadas por un contribuidor para compartir con el banco global de preguntas. Este formato permite que varios compañeros aporten preguntas sin compartir la misma base de datos.
 
+---
+
+## 🚨 REGLA CRÍTICA — SLUGS EXACTOS OBLIGATORIOS
+
+> **Para ChatGPT y cualquier herramienta que genere contribution packs:**
+>
+> Los valores de `subjectKey` y `topicKey` **NO se inventan, NO se generan, NO se parafrasean**.  
+> Deben copiarse **literalmente** del **Anexo de Temarios** al final de esta guía.
+>
+> **Lista completa de `subjectKey` válidos — solo estos 5, sin variaciones:**
+>
+> | Asignatura | `subjectKey` exacto |
+> |---|---|
+> | Procesamiento del Lenguaje Natural | `procesamiento-del-lenguaje-natural` |
+> | Visión Artificial | `vision-artificial` |
+> | Investigación y Gestión de Proyectos en IA | `investigacion-y-gestion-de-proyectos-en-inteligencia-artificial` |
+> | Razonamiento y Planificación Automática | `razonamiento-y-planificacion-automatica` |
+> | Técnicas de Aprendizaje Automático | `tecnicas-de-aprendizaje-automatico` |
+>
+> ❌ **INCORRECTO**: `"ia-razonamiento-y-planificacion"`, `"razonamiento-planificacion"`, `"tecnicas-aprendizaje"`  
+> ✅ **CORRECTO**: Copia textualmente de la tabla de arriba o del Anexo al final de esta guía.
+>
+> Lo mismo aplica para `topicKey`: cada tema tiene un slug único definido en el Anexo. Si el slug que estás usando no aparece exactamente en el Anexo, está mal.
+
+---
+
 ## Estructura completa del Contribution Pack
 
 ```json
@@ -50,6 +76,8 @@ Un **contribution pack** es un archivo JSON que contiene preguntas creadas por u
 }
 ```
 
+---
+
 ## Campos obligatorios y opcionales
 
 ### Campos del pack
@@ -69,104 +97,88 @@ Un **contribution pack** es un archivo JSON que contiene preguntas creadas por u
 | Campo | Tipo | Obligatorio | Descripción | Valores posibles |
 |-------|------|-------------|-------------|------------------|
 | `id` | string | ✅ | UUID único | UUID v4 |
-| `subjectKey` | string | ✅ | Slug de la asignatura | `"tecnicas-de-aprendizaje-automatico"` |
-| `topicKey` | string | ✅ | Slug del tema | `"tema-1-introduccion"` |
+| `subjectKey` | string | ✅ | Slug de la asignatura — **del Anexo** | ver Anexo |
+| `topicKey` | string | ✅ | Slug del tema — **del Anexo** | ver Anexo |
 | `type` | string | ✅ | Tipo de pregunta | `"TEST"`, `"DESARROLLO"`, `"COMPLETAR"`, `"PRACTICO"` |
 | `prompt` | string | ✅ | Enunciado de la pregunta | Texto libre |
 | `origin` | string | ⭕ | **Origen de la pregunta** | `"test"`, `"examen_anterior"`, `"clase"`, `"alumno"` |
 | `difficulty` | number | ⭕ | Dificultad (1-5) | `1`, `2`, `3`, `4`, `5` |
 | `explanation` | string | ⭕ | Explicación de la respuesta | Texto libre |
-| `tags` | array | ⭕ | Etiquetas | `["tema1", "importante"]` |
+| `tags` | array | ⭕ | Etiquetas | `["etiqueta1", "etiqueta2"]` |
 | `createdBy` | string | ⭕ | Autor de la pregunta | Nombre/alias |
 | `contentHash` | string | ⭕ | Hash para deduplicación | `"sha256:..."` |
-| `topicIds` | array | ⭕ | **Temas adicionales** (multi-tema) | `["tema-1-intro", "tema-3-avanzado"]` |
+| `topicIds` | array | ⭕ | **Temas adicionales** (multi-tema) | slugs del Anexo |
 
-### ⚠️ PREGUNTAS MULTI-TEMA - MUY IMPORTANTE
+---
 
-Una pregunta puede abarcar **VARIOS temas a la vez**. Esto es especialmente común en:
-- Preguntas de tipo **DESARROLLO** que integran conocimientos de múltiples temas
-- Preguntas **PRACTICO** que requieren aplicar conceptos de diferentes unidades
-- Preguntas que relacionan temas (ej: "Compara el algoritmo A (tema 2) con el algoritmo B (tema 5)")
+### ⚠️ PREGUNTAS MULTI-TEMA
 
-#### Cómo especificar múltiples temas:
+Una pregunta puede abarcar **varios temas a la vez**. Esto es común en:
+- Preguntas tipo **DESARROLLO** que integran conocimientos de múltiples temas
+- Preguntas **PRACTICO** que aplican conceptos de diferentes unidades
+- Preguntas que relacionan temas (ej: "Compara el algoritmo A del tema 2 con el B del tema 5")
 
-**Campo `topicKey`** (obligatorio): El tema PRINCIPAL de la pregunta
+**Campo `topicKey`** (obligatorio): El tema PRINCIPAL de la pregunta  
 **Campo `topicIds`** (opcional): Array con TODOS los temas (incluido el principal)
 
 ```json
 {
-  "topicKey": "tema-2-busqueda-informada",  // Tema principal
-  "topicIds": [                              // Todos los temas (opcional)
-    "tema-2-busqueda-informada",             // Incluir el principal
-    "tema-4-busqueda-no-informada",          // Tema adicional 1
-    "tema-6-planificacion"                   // Tema adicional 2
+  "topicKey": "tema-5-busqueda-informada",
+  "topicIds": [
+    "tema-4-busqueda-no-informada",
+    "tema-5-busqueda-informada"
   ]
 }
 ```
 
 **Reglas:**
-- Si una pregunta solo tiene 1 tema: usa solo `topicKey`, NO uses `topicIds`
+- Si una pregunta tiene 1 solo tema: usa `topicKey` únicamente, NO uses `topicIds`
 - Si una pregunta tiene 2+ temas: usa `topicKey` para el principal Y `topicIds` con todos
 - El tema de `topicKey` DEBE estar incluido en `topicIds` si este campo existe
+- Los slugs en `topicIds` también deben venir del Anexo
+
+---
 
 ### Campos específicos por tipo de pregunta
 
 #### Para preguntas tipo TEST:
 | Campo | Tipo | Obligatorio | Descripción |
 |-------|------|-------------|-------------|
-| `options` | array | ✅ | Opciones de respuesta | Array de objetos `{id, text}` |
-| `correctOptionIds` | array | ✅ | IDs de opciones correctas | Array de strings |
+| `options` | array | ✅ | Array de objetos `{id, text}` |
+| `correctOptionIds` | array | ✅ | IDs de opciones correctas |
 
 #### Para preguntas tipo DESARROLLO o PRACTICO:
 | Campo | Tipo | Obligatorio | Descripción |
 |-------|------|-------------|-------------|
-| `modelAnswer` | string | ⭕ | Respuesta modelo | Texto libre |
-| `keywords` | array | ⭕ | Palabras clave | Array de strings |
-| `numericAnswer` | string | ⭕ | Respuesta numérica (solo PRACTICO) | `"3.14"` |
+| `modelAnswer` | string | ⭕ | Respuesta modelo |
+| `keywords` | array | ⭕ | Palabras clave esperadas |
+| `numericAnswer` | string | ⭕ | Respuesta numérica (solo PRACTICO) |
 
 #### Para preguntas tipo COMPLETAR:
 | Campo | Tipo | Obligatorio | Descripción |
 |-------|------|-------------|-------------|
-| `clozeText` | string | ✅ | Texto con huecos `{{respuesta}}` | `"El algoritmo {{A*}} es..."` |
-| `blanks` | array | ✅ | Definición de huecos | Array de objetos `{id, accepted}` |
+| `clozeText` | string | ✅ | Texto con huecos `{{respuesta}}` |
+| `blanks` | array | ✅ | Array de objetos `{id, accepted[]}` |
 
-## ⚠️ CAMPO ORIGIN - MUY IMPORTANTE
+---
 
-El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONAL pero muy recomendado para mantener trazabilidad.
+## ⚠️ CAMPO ORIGIN
 
-### Valores válidos para `origin`:
+El campo `origin` especifica de dónde fue extraída la pregunta. Es opcional pero muy recomendado.
 
-| Valor | Descripción | Ejemplo de uso |
-|-------|-------------|----------------|
-| `"test"` | Pregunta de un test de práctica | Preguntas de tests de autoevaluación |
-| `"examen_anterior"` | Pregunta de un examen oficial previo | Preguntas de convocatorias anteriores |
-| `"clase"` | Pregunta planteada en clase | Preguntas del profesor durante las clases |
-| `"alumno"` | Pregunta creada por un alumno | Preguntas inventadas por estudiantes |
+| Valor | Descripción |
+|-------|-------------|
+| `"test"` | Pregunta de un test de práctica |
+| `"examen_anterior"` | Pregunta de un examen oficial previo |
+| `"clase"` | Pregunta planteada en clase |
+| `"alumno"` | Pregunta creada por un alumno |
 
-### Ejemplo con origin:
-
-```json
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "subjectKey": "tecnicas-de-aprendizaje-automatico",
-  "topicKey": "tema-3-regresion-lineal",
-  "type": "TEST",
-  "prompt": "¿Cuál es el objetivo de la regresión lineal?",
-  "origin": "examen_anterior",
-  "difficulty": 2,
-  "options": [
-    { "id": "a", "text": "Clasificar datos en categorías" },
-    { "id": "b", "text": "Predecir valores continuos" },
-    { "id": "c", "text": "Agrupar datos similares" },
-    { "id": "d", "text": "Reducir dimensionalidad" }
-  ],
-  "correctOptionIds": ["b"],
-  "explanation": "La regresión lineal se usa para predecir valores continuos, no para clasificación.",
-  "createdBy": "Ana"
-}
-```
+---
 
 ## Ejemplos completos por tipo de pregunta
+
+> ⚠️ **Todos los slugs de estos ejemplos son REALES y están sacados del Anexo.**  
+> Cuando generes tus propias preguntas, copia los slugs del Anexo según el tema que corresponda.
 
 ### Pregunta TEST
 
@@ -174,9 +186,9 @@ El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONA
 {
   "id": "123e4567-e89b-12d3-a456-426614174000",
   "subjectKey": "vision-artificial",
-  "topicKey": "tema-2-filtros",
+  "topicKey": "tema-7-procesamiento-de-imagen-operaciones-espaciales",
   "type": "TEST",
-  "prompt": "¿Qué filtro se utiliza para detectar bordes?",
+  "prompt": "¿Qué filtro se utiliza principalmente para detectar bordes en una imagen?",
   "origin": "clase",
   "difficulty": 2,
   "options": [
@@ -186,8 +198,8 @@ El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONA
     { "id": "d", "text": "Filtro Bilateral" }
   ],
   "correctOptionIds": ["b"],
-  "explanation": "El filtro de Sobel es específico para detección de bordes",
-  "tags": ["filtros", "bordes"],
+  "explanation": "El filtro de Sobel es un operador diferencial que detecta bordes calculando el gradiente de la intensidad.",
+  "tags": ["filtros", "bordes", "operadores"],
   "createdBy": "Carlos"
 }
 ```
@@ -197,15 +209,15 @@ El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONA
 ```json
 {
   "id": "223e4567-e89b-12d3-a456-426614174001",
-  "subjectKey": "ia-razonamiento-y-planificacion",
-  "topicKey": "tema-4-busqueda-informada",
+  "subjectKey": "razonamiento-y-planificacion-automatica",
+  "topicKey": "tema-5-busqueda-informada",
   "type": "DESARROLLO",
-  "prompt": "Explica el funcionamiento del algoritmo A* y sus ventajas",
+  "prompt": "Explica el funcionamiento del algoritmo A* y sus ventajas frente a la búsqueda no informada.",
   "origin": "alumno",
   "difficulty": 4,
-  "modelAnswer": "A* combina búsqueda de costo uniforme con búsqueda heurística...",
-  "keywords": ["heurística", "admisible", "costo", "óptimo"],
-  "tags": ["busqueda", "algoritmos"],
+  "modelAnswer": "A* combina búsqueda de costo uniforme con búsqueda heurística. Usa f(n) = g(n) + h(n), donde g(n) es el costo desde el origen y h(n) es una heurística admisible. Garantiza optimalidad si h es admisible...",
+  "keywords": ["heurística", "admisible", "costo", "óptimo", "f(n)"],
+  "tags": ["busqueda", "algoritmos", "heuristica"],
   "createdBy": "María"
 }
 ```
@@ -216,23 +228,23 @@ El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONA
 {
   "id": "323e4567-e89b-12d3-a456-426614174002",
   "subjectKey": "procesamiento-del-lenguaje-natural",
-  "topicKey": "tema-1-tokenizacion",
+  "topicKey": "tema-2-el-texto-como-dato",
   "type": "COMPLETAR",
-  "prompt": "Complete la siguiente frase:",
+  "prompt": "Complete la siguiente frase sobre preprocesamiento de texto:",
   "origin": "test",
   "difficulty": 1,
-  "clozeText": "El proceso de dividir texto en palabras se llama {{tokenización}} y es el primer paso del {{preprocesamiento}}",
+  "clozeText": "El proceso de dividir texto en unidades mínimas se llama {{tokenización}} y es el primer paso del {{preprocesamiento}}.",
   "blanks": [
     {
       "id": "b1",
-      "accepted": ["tokenización", "tokenizacion", "segmentación"]
+      "accepted": ["tokenización", "tokenizacion", "segmentación", "segmentacion"]
     },
     {
       "id": "b2",
-      "accepted": ["preprocesamiento", "pre-procesamiento"]
+      "accepted": ["preprocesamiento", "pre-procesamiento", "procesamiento previo"]
     }
   ],
-  "tags": ["tokenizacion", "basico"],
+  "tags": ["tokenizacion", "preprocesamiento", "basico"],
   "createdBy": "Luis"
 }
 ```
@@ -243,15 +255,15 @@ El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONA
 {
   "id": "423e4567-e89b-12d3-a456-426614174003",
   "subjectKey": "tecnicas-de-aprendizaje-automatico",
-  "topicKey": "tema-5-metricas",
+  "topicKey": "tema-5-evaluacion-de-algoritmos-de-clasificacion",
   "type": "PRACTICO",
-  "prompt": "Dado VP=80, VN=70, FP=10, FN=20, calcula la precisión",
+  "prompt": "Dado VP=80, VN=70, FP=10, FN=20, calcula la precisión (Precision) del clasificador.",
   "origin": "examen_anterior",
   "difficulty": 3,
-  "modelAnswer": "Precisión = VP / (VP + FP) = 80 / (80 + 10) = 0.889",
+  "modelAnswer": "Precisión = VP / (VP + FP) = 80 / (80 + 10) = 80 / 90 ≈ 0.889",
   "numericAnswer": "0.889",
-  "keywords": ["precision", "metricas", "confusion"],
-  "tags": ["metricas", "calculo"],
+  "keywords": ["precision", "VP", "FP", "matriz de confusion"],
+  "tags": ["metricas", "clasificacion", "calculo"],
   "createdBy": "Pedro"
 }
 ```
@@ -271,120 +283,126 @@ El campo `origin` especifica **de dónde fue extraída la pregunta**. Es OPCIONA
   "prompt": "Compara las ventajas y desventajas de la búsqueda en anchura (BFS) frente al algoritmo A*. ¿En qué situaciones preferirías usar cada uno?",
   "origin": "clase",
   "difficulty": 4,
-  "modelAnswer": "BFS garantiza la solución óptima en grafos no ponderados pero tiene alto consumo de memoria. A* es más eficiente si existe una buena heurística admisible, pero requiere conocimiento del dominio...",
+  "modelAnswer": "BFS garantiza la solución óptima en grafos no ponderados pero tiene alto consumo de memoria O(b^d). A* es más eficiente si existe una buena heurística admisible, pero requiere conocimiento del dominio para definirla...",
   "keywords": ["BFS", "A*", "heurística", "optimalidad", "complejidad espacial"],
   "tags": ["busqueda", "comparacion", "algoritmos"],
   "createdBy": "Laura"
 }
 ```
 
-**Nota:** Esta pregunta abarca 2 temas (búsqueda no informada y búsqueda informada), por lo que usa `topicIds`.
+---
 
-## Proceso recomendado para crear contribution packs
+## Proceso recomendado para crear contribution packs con ChatGPT
 
-### Con ChatGPT:
-
-1. **Exporta el banco actual** (formato compacto) para evitar duplicados
-2. **Consulta el Anexo de Temarios** al final de esta guía para verificar los slugs correctos
+1. **Exporta el banco actual** en formato compacto (Ajustes > Exportar banco compacto) para evitar duplicados
+2. **Identifica el tema exacto** en el Anexo de Temarios al final de esta guía y copia el slug
 3. **Usa este prompt con ChatGPT**:
 
 ```
 Voy a crear un contribution pack de preguntas para mi banco de estudio.
+Lee esta guía completa: GUIA_CONTRIBUTION_PACKS.md
 
-LEE PRIMERO esta guía completa sobre el formato (disponible en GUIA_CONTRIBUTION_PACKS.md)
+══════════════════════════════════════════
+🚨 SLUGS OBLIGATORIOS — NO INVENTAR
+══════════════════════════════════════════
+Los valores de "subjectKey" y "topicKey" son FIJOS e INMUTABLES.
+NO los generes, NO los parafrasees, NO los simplifiques.
+Cópialos LITERALMENTE de la sección "Anexo: Índices de Temario" de la guía.
 
-REQUISITOS OBLIGATORIOS:
+subjectKey válidos (ÚNICAMENTE estos 5):
+  - procesamiento-del-lenguaje-natural
+  - vision-artificial
+  - investigacion-y-gestion-de-proyectos-en-inteligencia-artificial
+  - razonamiento-y-planificacion-automatica
+  - tecnicas-de-aprendizaje-automatico
 
-1. Campo "origin" (OBLIGATORIO en cada pregunta):
-   - "test": pregunta de un test de práctica
-   - "examen_anterior": pregunta de un examen oficial anterior
-   - "clase": pregunta planteada durante la clase
-   - "alumno": pregunta creada por un alumno
-   
-   Si estás creando preguntas desde cero, usa: origin: "alumno"
+topicKey del tema a trabajar (copiado del Anexo):
+  → [PEGA AQUÍ EL topicKey EXACTO DEL TEMA]
 
-2. Preguntas multi-tema (cuando una pregunta abarca varios temas):
-   - USA "topicKey" para el tema PRINCIPAL
-   - AÑADE "topicIds" con TODOS los temas (incluido el principal)
-   
-   Ejemplo: pregunta que compare A* (tema 5) con BFS (tema 4):
-   {
-     "topicKey": "tema-5-busqueda-informada",
-     "topicIds": [
-       "tema-4-busqueda-no-informada",
-       "tema-5-busqueda-informada"
-     ]
-   }
+══════════════════════════════════════════
 
-3. Verifica los slugs correctos:
-   - Asignatura: "tecnicas-de-aprendizaje-automatico"
-   - Temas: consulta el Anexo en GUIA_CONTRIBUTION_PACKS.md
+TAREA:
+Crea 20 preguntas tipo TEST para:
+  - Asignatura: "Técnicas de Aprendizaje Automático"
+    subjectKey: "tecnicas-de-aprendizaje-automatico"
+  - Tema: "Tema 8- Aprendizaje supervisado. Clasificación con Naïve Bayes"
+    topicKey: "tema-8-aprendizaje-supervisado-clasificacion-con-naive-bayes"
+
+REQUISITOS de cada pregunta:
+1. Campo "origin" obligatorio: "test" | "examen_anterior" | "clase" | "alumno"
+   (si creas preguntas desde cero usa "alumno")
+2. difficulty entre 1 y 5
+3. explanation siempre que sea posible
+4. Texto en Markdown (negritas, listas, etc. donde ayude a la claridad)
 
 Banco actual (para evitar duplicados):
 [PEGA AQUÍ EL JSON DEL BANCO COMPACTO EXPORTADO]
 
-TAREA:
-Por favor, crea 20 preguntas tipo TEST para el tema "Tema 8- Aprendizaje supervisado. Clasificación con Naïve Bayes" 
-de la asignatura "Técnicas de Aprendizaje Automático".
-
-VERIFICACIÓN FINAL (antes de responder):
-✓ Todas las preguntas tienen el campo "origin"
-✓ Los slugs de "topicKey" coinciden con los del Anexo
-✓ Si una pregunta relaciona varios temas, tiene "topicIds"
-✓ No hay duplicados con el banco actual (compara los prompts)
-✓ El JSON es válido
-✓ Cada pregunta tiene difficulty apropiada (1-5)
-✓ Incluye explanation cuando sea útil
-```
-1. Incluir el campo "origin" en cada pregunta
-2. No repetir preguntas del banco actual
-3. Usar difficulty apropiada para cada pregunta
-4. Incluir explanation cuando sea útil
+VERIFICACIÓN FINAL antes de responder:
+✓ subjectKey == "tecnicas-de-aprendizaje-automatico" (exacto)
+✓ topicKey == "tema-8-aprendizaje-supervisado-clasificacion-con-naive-bayes" (exacto)
+✓ Todas las preguntas tienen "origin"
+✓ No hay duplicados con el banco actual
+✓ JSON válido (sin comentarios //)
+✓ difficulty en todas las preguntas
+✓ explanation incluida cuando sea posible
 ```
 
-3. **Revisa el JSON generado** para asegurarte de que:
-   - Todas las preguntas tienen `origin`
-   - Los slugs (`subjectKey`, `topicKey`) son correctos
-   - El formato es válido
+4. **Revisa el JSON generado**: verifica que `subjectKey` y `topicKey` coincidan exactamente con el Anexo
+5. **Importa el pack** en Ajustes > Importar contribuciones para validar que no hay errores
 
-4. **Importa el pack** en la app para validar que no hay errores
+---
 
 ## Validación y errores comunes
+
+### ❌ Error: Slug inventado
+```json
+{
+  "subjectKey": "ia-razonamiento-planificacion",  // ❌ No existe
+  "topicKey": "tema-2-busqueda"                   // ❌ Slug incompleto
+}
+```
+### ✅ Correcto:
+```json
+{
+  "subjectKey": "razonamiento-y-planificacion-automatica",       // ✅ Del Anexo
+  "topicKey": "tema-4-busqueda-no-informada"                     // ✅ Del Anexo
+}
+```
 
 ### ❌ Error: Falta el campo origin
 ```json
 {
   "type": "TEST",
-  "prompt": "¿Qué es un perceptrón?",
+  "prompt": "¿Qué es un perceptrón?"
   // ❌ Falta "origin"
-  "options": [...]
 }
 ```
-
 ### ✅ Correcto:
 ```json
 {
   "type": "TEST",
   "prompt": "¿Qué es un perceptrón?",
-  "origin": "clase",  // ✅ Campo origin incluido
-  "options": [...]
+  "origin": "clase"  // ✅
 }
 ```
 
 ### Otros errores comunes:
+1. **Slugs incorrectos**: `subjectKey` y `topicKey` deben coincidir exactamente con el Anexo
+2. **UUIDs duplicados**: cada pregunta debe tener un UUID único
+3. **Tipo de pregunta incorrecto**: solo `"TEST"`, `"DESARROLLO"`, `"COMPLETAR"` o `"PRACTICO"`
+4. **Opciones sin ID**: en TEST, cada opción necesita un `id` único
+5. **`correctOptionIds` vacío**: en TEST debe haber al menos una opción correcta
+6. **Comentarios `//` en JSON**: JSON no admite comentarios, elimínalos antes de importar
 
-1. **Slugs incorrectos**: Los `subjectKey` y `topicKey` deben coincidir con los del banco
-2. **UUIDs duplicados**: Cada pregunta debe tener un UUID único
-3. **Tipo de pregunta incorrecto**: Solo `"TEST"`, `"DESARROLLO"`, `"COMPLETAR"` o `"PRACTICO"`
-4. **Opciones sin ID**: En TEST, cada opción debe tener un `id` único
-5. **CorrectOptionIds vacío**: En TEST, debe haber al menos una opción correcta
+---
 
 ## Flujo completo de contribución
 
 1. **Contribuidor crea preguntas**
    - Define su alias en Ajustes
-   - Crea preguntas en la app (o con ChatGPT)
-   - Exporta contribution pack
+   - Crea preguntas en la app o con ChatGPT usando esta guía
+   - Exporta contribution pack desde Ajustes > Exportar mis preguntas
 
 2. **Mantenedor importa el pack**
    - Recibe el JSON del contribuidor
@@ -398,35 +416,29 @@ VERIFICACIÓN FINAL (antes de responder):
    - Exporta el banco completo
    - Comparte con todos los compañeros
 
+---
+
 ## Herramientas útiles
 
 - **UUID Generator**: https://www.uuidgenerator.net/
 - **JSON Validator**: https://jsonlint.com/
-- **Slugify Tool**: Convierte "Técnicas de IA" → "tecnicas-de-ia"
-
-## Soporte
-
-Si tienes dudas o encuentras errores:
-1. Revisa esta guía
-2. Valida el JSON en jsonlint.com
-3. Importa el pack en modo test para ver mensajes de error
-4. Consulta el código en `src/data/contributionImport.ts`
 
 ---
 
 ## Anexo: Índices de Temario de las 5 Asignaturas
 
-A continuación se listan los **temarios completos** de las 5 asignaturas del proyecto. Usa estos índices para:
-- Conocer todos los temas disponibles
-- Generar los slugs correctos para `topicKey`
-- Identificar temas relacionados para preguntas multi-tema
+> 🚨 **Esta es la fuente de verdad para `subjectKey` y `topicKey`.**  
+> Copia los slugs literalmente. No los modifiques ni abrevies.
+
+---
 
 ### 1. Procesamiento del Lenguaje Natural
 
-**Slug**: `procesamiento-del-lenguaje-natural`
+**`subjectKey`**: `procesamiento-del-lenguaje-natural`  
+**`subjectName`**: `"Procesamiento del Lenguaje Natural"`
 
-| # | Título del Tema | Slug |
-|---|-----------------|------|
+| # | Título del Tema | `topicKey` |
+|---|-----------------|------------|
 | 1 | Tema 1- Introducción al procesamiento del lenguaje natural | `tema-1-introduccion-al-procesamiento-del-lenguaje-natural` |
 | 2 | Tema 2- El texto como dato | `tema-2-el-texto-como-dato` |
 | 3 | Tema 3- Etiquetado morfosintáctico (POS tagging) | `tema-3-etiquetado-morfosintactico-pos-tagging` |
@@ -442,10 +454,11 @@ A continuación se listan los **temarios completos** de las 5 asignaturas del pr
 
 ### 2. Visión Artificial
 
-**Slug**: `vision-artificial`
+**`subjectKey`**: `vision-artificial`  
+**`subjectName`**: `"Visión Artificial"`
 
-| # | Título del Tema | Slug |
-|---|-----------------|------|
+| # | Título del Tema | `topicKey` |
+|---|-----------------|------------|
 | 1 | Tema 1- Introducción a los sistemas de percepción | `tema-1-introduccion-a-los-sistemas-de-percepcion` |
 | 2 | Tema 2- Elementos de un sistema de percepción | `tema-2-elementos-de-un-sistema-de-percepcion` |
 | 3 | Tema 3- Captura y digitalización de señales | `tema-3-captura-y-digitalizacion-de-senales` |
@@ -466,17 +479,18 @@ A continuación se listan los **temarios completos** de las 5 asignaturas del pr
 
 ### 3. Investigación y Gestión de Proyectos en Inteligencia Artificial
 
-**Slug**: `investigacion-y-gestion-de-proyectos-en-inteligencia-artificial`
+**`subjectKey`**: `investigacion-y-gestion-de-proyectos-en-inteligencia-artificial`  
+**`subjectName`**: `"Investigación y Gestión de Proyectos en Inteligencia Artificial"`
 
-| # | Título del Tema | Slug |
-|---|-----------------|------|
+| # | Título del Tema | `topicKey` |
+|---|-----------------|------------|
 | 1 | Tema 1- Origen y evolución de la inteligencia artificial | `tema-1-origen-y-evolucion-de-la-inteligencia-artificial` |
 | 2 | Tema 2- Ciencia y método científico | `tema-2-ciencia-y-metodo-cientifico` |
 | 3 | Tema 3- Financiación de proyectos | `tema-3-financiacion-de-proyectos` |
 | 4 | Tema 4- Publicación de resultados y redacción científica | `tema-4-publicacion-de-resultados-y-redaccion-cientifica` |
 | 5 | Tema 5- Gestión de proyectos de inteligencia artificial. Enfoque metodológico | `tema-5-gestion-de-proyectos-de-inteligencia-artificial-enfoque-metodologico` |
 | 6 | Tema 6- Gestión de proyectos IA estructura de un proyecto IA y su despliegue | `tema-6-gestion-de-proyectos-ia-estructura-de-un-proyecto-ia-y-su-despliegue` |
-| 7 | Tema 7-Gestión de proyectos IA. Recursos materiales y recursos humanos | `tema-7-gestion-de-proyectos-ia-recursos-materiales-y-recursos-humanos` |
+| 7 | Tema 7- Gestión de proyectos IA. Recursos materiales y recursos humanos | `tema-7-gestion-de-proyectos-ia-recursos-materiales-y-recursos-humanos` |
 | 8 | Tema 8- Investigación en agentes inteligentes y sistemas expertos | `tema-8-investigacion-en-agentes-inteligentes-y-sistemas-expertos` |
 | 9 | Tema 9- Investigación en aprendizaje automático | `tema-9-investigacion-en-aprendizaje-automatico` |
 | 10 | Tema 10- Investigación en sistemas cognitivos | `tema-10-investigacion-en-sistemas-cognitivos` |
@@ -487,10 +501,11 @@ A continuación se listan los **temarios completos** de las 5 asignaturas del pr
 
 ### 4. Razonamiento y Planificación Automática
 
-**Slug**: `razonamiento-y-planificacion-automatica`
+**`subjectKey`**: `razonamiento-y-planificacion-automatica`  
+**`subjectName`**: `"Razonamiento y Planificación Automática"`
 
-| # | Título del Tema | Slug |
-|---|-----------------|------|
+| # | Título del Tema | `topicKey` |
+|---|-----------------|------------|
 | 1 | Tema 1- Introducción a la toma de decisiones | `tema-1-introduccion-a-la-toma-de-decisiones` |
 | 2 | Tema 2- Representación del conocimiento y razonamiento | `tema-2-representacion-del-conocimiento-y-razonamiento` |
 | 3 | Tema 3- Lógica y pensamiento humano | `tema-3-logica-y-pensamiento-humano` |
@@ -508,10 +523,11 @@ A continuación se listan los **temarios completos** de las 5 asignaturas del pr
 
 ### 5. Técnicas de Aprendizaje Automático
 
-**Slug**: `tecnicas-de-aprendizaje-automatico`
+**`subjectKey`**: `tecnicas-de-aprendizaje-automatico`  
+**`subjectName`**: `"Técnicas de Aprendizaje Automático"`
 
-| # | Título del Tema | Slug |
-|---|-----------------|------|
+| # | Título del Tema | `topicKey` |
+|---|-----------------|------------|
 | 1 | Tema 1- Introducción al aprendizaje automático | `tema-1-introduccion-al-aprendizaje-automatico` |
 | 2 | Tema 2- Análisis de datos descriptivo y exploratorio | `tema-2-analisis-de-datos-descriptivo-y-exploratorio` |
 | 3 | Tema 3- Datos ausentes y normalización | `tema-3-datos-ausentes-y-normalizacion` |
@@ -526,17 +542,10 @@ A continuación se listan los **temarios completos** de las 5 asignaturas del pr
 
 ---
 
-## Cómo generar slugs correctos
+## Soporte
 
-Para generar el slug de un tema:
-1. Toma el título completo del tema
-2. Convierte a minúsculas
-3. Elimina acentos (á→a, é→e, í→i, ó→o, ú→u, ñ→n)
-4. Reemplaza espacios y caracteres especiales por `-`
-5. Elimina caracteres que no sean letras, números o guiones
-
-**Ejemplos:**
-- "Tema 3- Etiquetado morfosintáctico (POS tagging)" → `"tema-3-etiquetado-morfosintactico-pos-tagging"`
-- "Tema 7-Gestión de proyectos IA. Recursos materiales" → `"tema-7-gestion-de-proyectos-ia-recursos-materiales-y-recursos-humanos"`
-
-**Importante:** Siempre verifica el slug exacto en la tabla correspondiente de arriba para asegurarte de que coincide.
+Si tienes dudas o encuentras errores:
+1. Verifica el slug en el Anexo de esta guía
+2. Valida el JSON en https://jsonlint.com/
+3. Importa el pack en la app para ver mensajes de error detallados
+4. Consulta el código en `src/data/contributionImport.ts`

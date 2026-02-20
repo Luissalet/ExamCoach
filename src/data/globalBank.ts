@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { db, getSettings, saveSettings } from './db';
 import { slugify } from '@/domain/normalize';
 import type { Subject, Topic, Question, PdfAnchor, BankExport } from '@/domain/models';
-
+import bankJson from './global-bank.json';
 // ─── Zod validation (reutiliza estructura BankExport) ────────────────────────
 
 const SubjectSchema = z.object({
@@ -113,22 +113,7 @@ export interface GlobalBankSyncResult {
  * Es idempotente: se puede llamar en cada arranque sin duplicar datos.
  */
 export async function syncWithGlobalBank(): Promise<GlobalBankSyncResult> {
-  let raw: unknown;
-  try {
-    const res = await fetch('/data/global-bank.json', { cache: 'no-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    raw = await res.json();
-  } catch (err) {
-    return {
-      subjectsAdded: 0,
-      topicsAdded: 0,
-      questionsAdded: 0,
-      skipped: 0,
-      errors: [`No se pudo cargar el banco global: ${String(err)}`],
-    };
-  }
-
-  return mergeGlobalBank(raw);
+  return mergeGlobalBank(bankJson);
 }
 
 /**

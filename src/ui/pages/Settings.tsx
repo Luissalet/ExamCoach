@@ -99,7 +99,7 @@ export function SettingsPage() {
     await db.sessions.clear();
     await db.pdfAnchors.clear();
     await db.pdfResources.clear();
-    await updateSettings({ alias: '', importedPackIds: [] });
+    await updateSettings({ alias: '', importedPackIds: [], globalBankSyncedAt: undefined });
     navigate('/');
   };
 
