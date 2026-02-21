@@ -18,18 +18,14 @@ const SUBJECT_COLORS = [
 export function Dashboard() {
   const navigate = useNavigate();
   const {
-    subjects, loadSubjects, createSubject, deleteSubject, updateSubject,
+    subjects, loadSubjects, createSubject, deleteSubject,
     settings, loadSettings,
     syncGlobalBank, syncing, lastSyncResult,
   } = useStore();
 
   const [showCreate, setShowCreate] = useState(false);
   const [subjectName, setSubjectName] = useState('');
-  const [subjectExamDate, setSubjectExamDate] = useState('');
   const [subjectColor, setSubjectColor] = useState(SUBJECT_COLORS[0]);
-
-  const [editingExamDate, setEditingExamDate] = useState<string | null>(null);
-  const [examDateDraft, setExamDateDraft] = useState('');
 
   const [stats, setStats] = useState<Record<string, { total: number; correct: number; seen: number }>>({});
   const [extraInfo, setExtraInfo] = useState<Record<string, SubjectExtraInfo | null>>({});
@@ -46,6 +42,8 @@ export function Dashboard() {
   const [commitMsg, setCommitMsg] = useState('');
   const [committing, setCommitting] = useState(false);
   const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
+  // nextExamDates: subjectId → next upcoming exam dueDate (from exam deliverables)
+  const [nextExamDates, setNextExamDates] = useState<Record<string, string>>({});
 
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -65,8 +63,20 @@ export function Dashboard() {
       const upcoming = all
         .filter(d => d.dueDate && d.dueDate >= today && !d.status.includes('done'))
         .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
-        .slice(0, 5);
+        .slice(0, 10);
       setUpcomingDeliverables(upcoming);
+
+      // Compute next exam date per subject from exam-type deliverables
+      const examMap: Record<string, string> = {};
+      const upcomingExams = all
+        .filter(d => d.type === 'exam' && d.dueDate && d.dueDate >= today)
+        .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''));
+      for (const ex of upcomingExams) {
+        if (!examMap[ex.subjectId]) {
+          examMap[ex.subjectId] = ex.dueDate!;
+        }
+      }
+      setNextExamDates(examMap);
     });
   }, []);
 
@@ -146,24 +156,12 @@ export function Dashboard() {
     if (!subjectName.trim()) return;
     const s = await createSubject({
       name: subjectName.trim(),
-      examDate: subjectExamDate || undefined,
       color: subjectColor,
     });
     setSubjectName('');
-    setSubjectExamDate('');
     setSubjectColor(SUBJECT_COLORS[0]);
     setShowCreate(false);
     navigate(`/subject/${s.id}`);
-  };
-
-  const openExamDateEditor = (s: Subject) => {
-    setEditingExamDate(s.id);
-    setExamDateDraft(s.examDate ?? '');
-  };
-
-  const saveExamDate = async (subjectId: string) => {
-    await updateSubject(subjectId, { examDate: examDateDraft || undefined });
-    setEditingExamDate(null);
   };
 
   // ── Export ─────────────────────────────────────────────────────────────────
@@ -445,47 +443,24 @@ export function Dashboard() {
                           <p className="text-xs text-ink-500 -mt-1 mb-1">Prof. {extra.professor}</p>
                         )}
 
-                        {/* Fecha de examen — editable por el usuario, personal */}
-                        {editingExamDate === s.id ? (
-                          <div
-                            className="flex items-center gap-2 mb-2"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <input
-                              type="date"
-                              value={examDateDraft}
-                              onChange={(e) => setExamDateDraft(e.target.value)}
-                              className="text-xs bg-ink-800 border border-ink-700 rounded px-2 py-1 text-ink-100"
-                              autoFocus
-                            />
-                            <button
-                              className="text-xs text-sage-400 hover:text-sage-300"
-                              onClick={() => saveExamDate(s.id)}
-                            >
-                              ✓
-                            </button>
-                            <button
-                              className="text-xs text-ink-500 hover:text-ink-300"
-                              onClick={() => setEditingExamDate(null)}
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ) : (
-                          <div
-                            className="mb-2 cursor-pointer"
-                            onClick={(e) => { e.stopPropagation(); openExamDateEditor(s); }}
-                            title="Haz clic para establecer tu fecha de examen"
-                          >
-                            {s.examDate ? (
-                              <Countdown examDate={s.examDate} />
-                            ) : (
-                              <span className="text-xs text-ink-600 hover:text-ink-400 transition-colors">
-                                + Añadir fecha de examen
+                        {/* Próximo examen — leído de deliverables tipo 'exam' */}
+                        <div className="mb-2">
+                          {nextExamDates[s.id] ? (
+                            <div>
+                              <Countdown examDate={nextExamDates[s.id]} />
+                              <span className="text-[10px] text-ink-600 block -mt-0.5">
+                                🎓 próximo examen
                               </span>
-                            )}
-                          </div>
-                        )}
+                            </div>
+                          ) : (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); navigate('/deliverables'); }}
+                              className="text-xs text-ink-600 hover:text-amber-400 transition-colors"
+                            >
+                              + Añadir examen →
+                            </button>
+                          )}
+                        </div>
 
                         <div className="mt-3 flex items-center gap-2 text-xs text-ink-500">
                           <span>{st.total} preguntas</span>
@@ -685,18 +660,6 @@ export function Dashboard() {
             autoFocus
             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
           />
-          <div>
-            <label className="block text-xs text-ink-500 mb-2 font-body">Tu fecha de examen (opcional)</label>
-            <input
-              type="date"
-              value={subjectExamDate}
-              onChange={(e) => setSubjectExamDate(e.target.value)}
-              className="w-full bg-ink-800 border border-ink-700 rounded-lg px-3 py-2 text-sm text-ink-100 font-body"
-            />
-            <p className="text-xs text-ink-600 mt-1">
-              La fecha es personal — cada compañero pone la suya y no se comparte.
-            </p>
-          </div>
           <div>
             <label className="block text-xs text-ink-500 mb-2 font-body">Color</label>
             <div className="flex gap-2 flex-wrap">

@@ -2,9 +2,9 @@
  * CalendarWidget.tsx
  *
  * Mini calendario mensual para el Dashboard.
- * Muestra los deliverables (actividades/tests) de todas las asignaturas
- * con indicación de estado (pending/in_progress/done/submitted).
- * También muestra las fechas de examen de cada asignatura con un marcador especial.
+ * Muestra los deliverables (actividades/tests/exámenes) de todas las asignaturas.
+ * Los exámenes (type='exam') se muestran con un diamante; el resto con un punto.
+ * La fuente única de verdad es el repo de deliverables — no se usa subject.examDate.
  */
 
 import { useEffect, useState, useMemo } from 'react';
@@ -75,22 +75,11 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
     return map;
   }, [subjects]);
 
-  // Exam dates from subjects: date → Subject[]
-  const examByDate = useMemo(() => {
-    const map: Record<string, Subject[]> = {};
-    for (const s of subjects) {
-      if (!s.examDate) continue;
-      if (!map[s.examDate]) map[s.examDate] = [];
-      map[s.examDate].push(s);
-    }
-    return map;
-  }, [subjects]);
-
   useEffect(() => {
     deliverableRepo.getAll().then(setDeliverables);
   }, []);
 
-  // Group by dueDate
+  // Group all deliverables by dueDate
   const byDate = useMemo(() => {
     const map: Record<string, Deliverable[]> = {};
     for (const d of deliverables) {
@@ -118,8 +107,9 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
   };
 
   // Selected day events
-  const selectedDeliverables = selectedDay ? (byDate[selectedDay] ?? []) : [];
-  const selectedExams = selectedDay ? (examByDate[selectedDay] ?? []) : [];
+  const selectedAllDeliverables = selectedDay ? (byDate[selectedDay] ?? []) : [];
+  const selectedExamDeliverables = selectedAllDeliverables.filter(d => d.type === 'exam');
+  const selectedRegularDeliverables = selectedAllDeliverables.filter(d => d.type !== 'exam');
 
   return (
     <div className="bg-ink-900 border border-ink-700 rounded-xl overflow-hidden">
@@ -159,11 +149,12 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
         {/* Days */}
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
           const dateStr = toDateStr(viewYear, viewMonth, day);
-          const events = byDate[dateStr] ?? [];
-          const exams = examByDate[dateStr] ?? [];
+          const allEvents = byDate[dateStr] ?? [];
+          const examEvents = allEvents.filter(d => d.type === 'exam');
+          const regularEvents = allEvents.filter(d => d.type !== 'exam');
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDay;
-          const hasEvents = events.length > 0 || exams.length > 0;
+          const hasEvents = allEvents.length > 0;
 
           return (
             <button
@@ -180,27 +171,27 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
               }`}
             >
               {day}
-              {/* Dot row: deliverable dots + exam star */}
+              {/* Dot row: exam diamonds + regular dots */}
               {hasEvents && (
                 <div className="flex items-center gap-0.5 mt-0.5">
-                  {/* Exam dots (star-ish, gold) */}
-                  {exams.slice(0, 2).map((s) => (
+                  {/* Exam deliverable diamonds */}
+                  {examEvents.slice(0, 2).map((d) => (
                     <span
-                      key={s.id}
+                      key={d.id}
                       className="w-1.5 h-1.5 rounded-sm rotate-45 flex-shrink-0"
-                      style={{ backgroundColor: s.color ?? '#f59e0b' }}
-                      title={`Examen: ${s.name}`}
+                      style={{ backgroundColor: subjectColor[d.subjectId] ?? '#f59e0b' }}
+                      title={`🎓 ${d.name}`}
                     />
                   ))}
-                  {/* Deliverable dots */}
-                  {events.slice(0, 3 - exams.length).map((d) => (
+                  {/* Regular deliverable dots */}
+                  {regularEvents.slice(0, Math.max(0, 3 - examEvents.length)).map((d) => (
                     <span
                       key={d.id}
                       className="w-1 h-1 rounded-full flex-shrink-0"
                       style={{ backgroundColor: subjectColor[d.subjectId] ?? '#f59e0b' }}
                     />
                   ))}
-                  {(events.length + exams.length) > 3 && (
+                  {allEvents.length > 3 && (
                     <span className="text-[8px] text-ink-500 leading-none">+</span>
                   )}
                 </div>
@@ -211,7 +202,7 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
       </div>
 
       {/* Selected day panel */}
-      {selectedDay && (selectedDeliverables.length > 0 || selectedExams.length > 0) && (
+      {selectedDay && selectedAllDeliverables.length > 0 && (
         <div className="border-t border-ink-800 px-3 py-3 flex flex-col gap-2">
           <p className="text-xs text-ink-500 font-medium mb-1">
             {new Date(selectedDay + 'T12:00:00').toLocaleDateString('es-ES', {
@@ -219,22 +210,27 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
             })}
           </p>
 
-          {/* Exam entries */}
-          {selectedExams.map(s => (
-            <div key={s.id} className="flex items-center gap-2">
+          {/* Exam deliverable entries */}
+          {selectedExamDeliverables.map(d => (
+            <div key={d.id} className="flex items-center gap-2">
               <span
                 className="w-2 h-2 rounded-sm rotate-45 flex-shrink-0"
-                style={{ backgroundColor: s.color ?? '#f59e0b' }}
+                style={{ backgroundColor: subjectColor[d.subjectId] ?? '#f59e0b' }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-amber-300 truncate">🎓 Examen</p>
-                <p className="text-xs text-ink-400 truncate">{s.name}</p>
+                <p className={`text-xs font-medium truncate ${isDeliverableCompleted(d.status) ? 'line-through text-ink-600' : 'text-amber-300'}`}>
+                  🎓 {d.name}
+                </p>
+                <p className={`text-xs ${STATUS_COLOR[d.status]}`}>
+                  {STATUS_LABEL[d.status]} · {subjectName[d.subjectId] ?? ''}
+                  {d.dueTime && ` · ${d.dueTime}`}
+                </p>
               </div>
             </div>
           ))}
 
-          {/* Deliverable entries */}
-          {selectedDeliverables.map(d => (
+          {/* Regular deliverable entries */}
+          {selectedRegularDeliverables.map(d => (
             <div key={d.id} className="flex items-center gap-2">
               <span
                 className="w-2 h-2 rounded-full flex-shrink-0"

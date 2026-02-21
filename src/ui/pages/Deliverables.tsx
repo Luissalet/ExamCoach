@@ -449,8 +449,8 @@ function DeliverableRow({
         {statusConf.shortLabel}
       </button>
 
-      {/* Continuous pts badge — click to edit */}
-      {editingPts ? (
+      {/* Continuous pts badge — click to edit (hidden for exams) */}
+      {d.type !== 'exam' && (editingPts ? (
         <input
           type="number"
           min={0}
@@ -480,10 +480,10 @@ function DeliverableRow({
         >
           {d.continuousPoints === 0 && d.type === 'activity' ? '? pts' : `${d.continuousPoints} pts`}
         </button>
-      )}
+      ))}
 
-      {/* Grade input (activities only) */}
-      {d.type === 'activity' && (
+      {/* Grade input (activities and exams) */}
+      {(d.type === 'activity' || d.type === 'exam') && (
         <input
           type="number"
           min={0}
@@ -508,10 +508,12 @@ function DeliverableRow({
             ? 'bg-blue-900/30 text-blue-400 border-blue-800/40'
             : d.type === 'otro'
             ? 'bg-purple-900/30 text-purple-400 border-purple-800/40'
+            : d.type === 'exam'
+            ? 'bg-rose-900/30 text-rose-400 border-rose-800/40'
             : 'bg-amber-900/20 text-amber-500 border-amber-800/30'
         }`}
       >
-        {d.type === 'test' ? 'Test' : d.type === 'otro' ? 'Otro' : 'Act.'}
+        {d.type === 'test' ? 'Test' : d.type === 'otro' ? 'Otro' : d.type === 'exam' ? '🎓 Exam' : 'Act.'}
       </span>
 
       {/* Delete */}
@@ -533,11 +535,12 @@ interface AddFormProps {
   defaultTestPoints: number;
   onAdd: (d: Omit<Deliverable, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onClose: () => void;
+  initialType?: DeliverableType;
 }
 
-function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: AddFormProps) {
+function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose, initialType }: AddFormProps) {
   const [name, setName] = useState('');
-  const [type, setType] = useState<DeliverableType>('activity');
+  const [type, setType] = useState<DeliverableType>(initialType ?? 'activity');
   const [dueDate, setDueDate] = useState('');
   const [dueTime, setDueTime] = useState('');
   const [continuousPoints, setContinuousPoints] = useState('');
@@ -546,12 +549,13 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
 
   const handleSubmit = () => {
     if (!name.trim()) return;
-    const pts = continuousPoints !== '' ? parseFloat(continuousPoints) : defaultPts;
+    const pts = type === 'exam' ? 0 : (continuousPoints !== '' ? parseFloat(continuousPoints) : defaultPts);
     onAdd({
       subjectId,
       name: name.trim(),
       type,
       dueDate: dueDate || undefined,
+      dueTime: dueTime || undefined,
       status: 'pending',
       grade: undefined,
       continuousPoints: isNaN(pts) ? defaultPts : pts,
@@ -562,7 +566,7 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
     <div className="flex flex-col gap-3 p-4 bg-ink-850 rounded-xl border border-ink-600">
       {/* Type selector */}
       <div className="flex gap-2">
-        {(['activity', 'test', 'otro'] as const).map((t) => (
+        {(['activity', 'test', 'exam', 'otro'] as const).map((t) => (
         <button
           key={t}
           onClick={() => setType(t)}
@@ -572,11 +576,13 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
                 ? 'bg-blue-600 text-white'
                 : t === 'otro'
                 ? 'bg-purple-600 text-white'
+                : t === 'exam'
+                ? 'bg-rose-600 text-white'
                 : 'bg-amber-500 text-ink-900'
               : 'bg-ink-800 text-ink-400 hover:text-ink-200'
           }`}
         >
-          {t === 'test' ? 'Test' : t === 'otro' ? 'Otros' : 'Actividad'}
+          {t === 'test' ? 'Test' : t === 'otro' ? 'Otro' : t === 'exam' ? 'Examen' : 'Actividad'}
         </button>
 ))}
       </div>
@@ -592,15 +598,27 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
 
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="text-xs text-ink-500 mb-1 block">Fecha límite</label>
+          <label className="text-xs text-ink-500 mb-1 block">
+            {type === 'exam' ? 'Fecha del examen' : 'Fecha límite'}
+          </label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="w-full bg-ink-800 border border-ink-700 rounded-lg px-3 py-2 text-sm text-ink-100 font-body"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-ink-500 mb-1 block">Hora (opcional)</label>
           <input
             type="time"
             value={dueTime}
             onChange={(e) => setDueTime(e.target.value)}
-            className="flex-1 bg-ink-800 border border-ink-700 rounded-lg px-3 py-2 text-sm text-ink-100 font-body"
-            placeholder="Hora (opcional)"
+            className="w-full bg-ink-800 border border-ink-700 rounded-lg px-3 py-2 text-sm text-ink-100 font-body"
           />
         </div>
+      </div>
+      {type !== 'exam' && (
         <div>
           <label className="text-xs text-ink-500 mb-1 block">
             Puntos continua {type === 'test' ? `(def. ${defaultTestPoints})` : ''}
@@ -615,7 +633,7 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
             className="w-full bg-ink-800 border border-ink-600 rounded-lg px-2 py-1.5 text-sm text-ink-100"
           />
         </div>
-      </div>
+      )}
 
       <div className="flex gap-2 justify-end">
         <Button size="sm" variant="ghost" onClick={onClose}>
@@ -646,6 +664,7 @@ export function DeliverablesPage() {
   });
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
+  const [showAddExam, setShowAddExam] = useState(false);
   const [csvMsg, setCsvMsg] = useState<string | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const csvInputRef = useRef<HTMLInputElement>(null);
@@ -746,8 +765,10 @@ export function DeliverablesPage() {
   const activities = deliverables.filter((d) => d.type === 'activity');
   const others = deliverables.filter(d => d.type === 'otro');
   const tests = deliverables.filter((d) => d.type === 'test');
+  const examDeliverables = deliverables.filter((d) => d.type === 'exam');
   const completedActs = activities.filter((d) => isDeliverableCompleted(d.status)).length;
   const completedTests = tests.filter((d) => isDeliverableCompleted(d.status)).length;
+  const completedExams = examDeliverables.filter((d) => isDeliverableCompleted(d.status)).length;
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
@@ -914,6 +935,50 @@ export function DeliverablesPage() {
               ) : (
                 <div className="flex flex-col gap-2">
                   {tests.map((d) => (
+                    <DeliverableRow
+                      key={d.id}
+                      d={d}
+                      onStatusChange={handleStatusChange}
+                      onGradeChange={handleGradeChange}
+                      onPointsChange={handlePointsChange}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Exámenes */}
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-base text-ink-200">
+                  🎓 Exámenes
+                  {examDeliverables.length > 0 && (
+                    <span className="text-ink-600 text-sm font-body ml-2">
+                      {completedExams}/{examDeliverables.length}
+                    </span>
+                  )}
+                </h2>
+                <Button size="sm" onClick={() => setShowAddExam(true)}>+ Añadir examen</Button>
+              </div>
+
+              {showAddExam && (
+                <div className="mb-3">
+                  <AddDeliverableForm
+                    subjectId={selectedSubjectId}
+                    defaultTestPoints={config.testContinuousPoints}
+                    onAdd={(d) => { handleAdd(d); setShowAddExam(false); }}
+                    onClose={() => setShowAddExam(false)}
+                    initialType="exam"
+                  />
+                </div>
+              )}
+
+              {examDeliverables.length === 0 ? (
+                <p className="text-sm text-ink-600 py-4 text-center">Sin exámenes añadidos aún</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {examDeliverables.map((d) => (
                     <DeliverableRow
                       key={d.id}
                       d={d}

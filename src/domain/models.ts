@@ -299,7 +299,7 @@ export interface AppSettings {
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────
 
-export type DeliverableType = 'activity' | 'test' | 'otro';
+export type DeliverableType = 'activity' | 'test' | 'exam' | 'otro';
 
 export type DeliverableStatus = 'pending' | 'in_progress' | 'done' | 'submitted';
 
