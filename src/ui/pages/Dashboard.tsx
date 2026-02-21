@@ -43,6 +43,10 @@ export function Dashboard() {
   const zipInputRef = useRef<HTMLInputElement>(null);
   const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
 
+
+  const [commitMsg, setCommitMsg] = useState('');
+  const [committing, setCommitting] = useState(false);
+
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
     loadSettings().then(() => {
@@ -169,6 +173,33 @@ export function Dashboard() {
     downloadJSON(bank, `global-bank.json`);
   };
 
+  const handleCommitAndClean = async () => {
+  if (!confirm(
+    '¿Integrar contributions en el banco global y limpiar la DB?\n\n' +
+    'Se actualizará src/data/global-bank.json con todo el contenido actual. ' +
+    'Las preguntas importadas de packs se eliminarán de tu IndexedDB (ya quedan en el archivo). ' +
+    'Tus propias preguntas NO se borran.'
+  )) return;
+
+  setCommitting(true);
+  setCommitMsg('');
+  try {
+    const { commitAndCleanContributions } = await import('@/data/exportImport');
+    const result = await commitAndCleanContributions();
+    if (result.wroteToFile) {
+      setCommitMsg(`✓ global-bank.json actualizado (${result.questionsInBank} preguntas) · ${result.deletedFromDB} eliminadas de DB · historial reseteado`);
+    } else {
+      setCommitMsg(`⚠ No se pudo escribir en disco (solo funciona en dev). ${result.deletedFromDB} preguntas eliminadas de DB.`);
+    }
+    await loadSubjects();
+  } catch (err) {
+    setCommitMsg('Error: ' + String(err));
+  } finally {
+    setCommitting(false);
+    setTimeout(() => setCommitMsg(''), 7000);
+  }
+};
+
   // ── Import (backup personal) ───────────────────────────────────────────────
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -247,6 +278,16 @@ export function Dashboard() {
               ↑ Exportar banco global
             </Button>
 
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCommitAndClean}
+              disabled={committing}
+              title="Integra todos los packs en el banco, actualiza el archivo y limpia la DB"
+            >
+              {committing ? '⏳…' : '🔄 Integrar & limpiar'}
+            </Button>
+
             {/* Backup personal */}
             <Button variant="ghost" size="sm" onClick={handleExportPersonal}>
               ↑ Backup personal
@@ -317,6 +358,17 @@ export function Dashboard() {
               : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
           }`}>
             {importMsg}
+          </div>
+        )}
+        {commitMsg && (
+          <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-body border ${
+            commitMsg.startsWith('Error')
+              ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+              : commitMsg.startsWith('⚠')
+              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+              : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
+          }`}>
+            {commitMsg}
           </div>
         )}
 

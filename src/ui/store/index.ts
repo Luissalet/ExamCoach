@@ -169,34 +169,22 @@ export const useStore = create<AppStore>((set, get) => ({
   },
 
   syncGlobalBank: async (force = false) => {
-    const { syncing, settings } = get();
-    if (syncing) return null;
+  const { syncing } = get();
+  if (syncing) return null;
 
-    // Decidir si sincronizar
-    if (!force && settings.globalBankSyncedAt) {
-      const lastSync = new Date(settings.globalBankSyncedAt).getTime();
-      const oneHour = 60 * 60 * 1000;
-      if (Date.now() - lastSync < oneHour) {
-        // Menos de 1h desde la última sync → no volver a hacerlo automáticamente
-        return null;
-      }
+  set({ syncing: true });
+  try {
+    const result = await syncWithGlobalBank();
+    if (result.subjectsAdded > 0 || result.topicsAdded > 0 || result.questionsAdded > 0) {
+      const subjects = await subjectRepo.getAll();
+      set({ subjects });
     }
-
-    set({ syncing: true });
-    try {
-      const result = await syncWithGlobalBank();
-      // Si hubo cambios, recargar asignaturas
-      if (result.subjectsAdded > 0 || result.topicsAdded > 0 || result.questionsAdded > 0) {
-        const subjects = await subjectRepo.getAll();
-        set({ subjects });
-      }
-      // Actualizar settings en memoria
-      const updatedSettings = await getSettings();
-      set({ settings: updatedSettings, lastSyncResult: result, syncing: false });
-      return result;
-    } catch (e) {
-      set({ syncing: false });
-      return null;
-    }
-  },
+    const updatedSettings = await getSettings();
+    set({ settings: updatedSettings, lastSyncResult: result, syncing: false });
+    return result;
+  } catch (e) {
+    set({ syncing: false });
+    return null;
+  }
+},
 }));

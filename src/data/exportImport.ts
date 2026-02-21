@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { db } from './db';
+import { db, getSettings, saveSettings } from './db';
 import { subjectRepo, topicRepo, questionRepo } from './repos';
 import type { BankExport, Subject, Topic, Question, PdfAnchor } from '@/domain/models';
 
@@ -140,7 +140,7 @@ export async function exportGlobalBank(subjectIds?: string[]): Promise<BankExpor
     ...bank,
     exportedAt: new Date().toISOString(),
     subjects: bank.subjects.map(({ examDate: _examDate, ...rest }) => rest as Subject),
-    questions: bank.questions.map((q) => ({
+    questions: bank.questions.map(({ sourcePackId: _sourcePackId, ...q }) => ({
       ...q,
       stats: { seen: 0, correct: 0, wrong: 0 },
     })),
@@ -248,4 +248,56 @@ export async function parseImportFile(file: File): Promise<unknown> {
     reader.onerror = () => reject(new Error('Error leyendo archivo'));
     reader.readAsText(file);
   });
+}
+
+// ─── Commit & Clean ────────────────────────────────────────────────────────────
+//
+// Actualiza src/data/global-bank.json con el estado actual de la DB (listo para
+// git commit), luego elimina de IndexedDB las preguntas que vinieron de
+// contribution packs y resetea el historial de packs importados.
+
+export interface CommitCleanResult {
+  questionsInBank: number;
+  deletedFromDB: number;
+  clearedPackIds: number;
+  wroteToFile: boolean;
+}
+
+export async function commitAndCleanContributions(): Promise<CommitCleanResult> {
+  const bank = await exportGlobalBank();
+
+  // Escribir al archivo via dev server
+  let wroteToFile = false;
+  try {
+    const res = await fetch('/api/write-global-bank', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bank),
+    });
+    wroteToFile = res.ok;
+  } catch {
+    // Dev server no disponible
+  }
+
+  // Eliminar de IndexedDB las preguntas importadas de contribution packs
+  const allQuestions = await db.questions.toArray();
+  const toDelete = allQuestions.filter((q) => !!q.sourcePackId).map((q) => q.id);
+  await db.questions.bulkDelete(toDelete);
+
+  // Resetear historial de packs importados
+  const settings = await getSettings();
+  const clearedPackIds = settings.importedPackIds.length;
+  await saveSettings({ importedPackIds: [] });
+
+  // ← CLAVE: re-merge inmediato con el banco que acabamos de generar,
+  // sin depender del import estático (que no se recarga en caliente)
+  const { mergeGlobalBank } = await import('./globalBank');
+  await mergeGlobalBank(bank);
+
+  return {
+    questionsInBank: bank.questions.length,
+    deletedFromDB: toDelete.length,
+    clearedPackIds,
+    wroteToFile,
+  };
 }

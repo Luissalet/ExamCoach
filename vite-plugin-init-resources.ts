@@ -412,7 +412,8 @@ export function initResourcesPlugin(): Plugin {
       registerUploadEndpoint(server, server.config.root);
       registerSyncMappingEndpoint(server, server.config.root);
       registerResourceUploadEndpoint(server, server.config.root);
-      registerQuestionImageUploadEndpoint(server, server.config.root); // ← ADD THIS
+      registerQuestionImageUploadEndpoint(server, server.config.root);
+      registerWriteGlobalBankEndpoint(server, server.config.root);
     },
   };
 }
@@ -455,6 +456,37 @@ function registerQuestionImageUploadEndpoint(server: import('vite').ViteDevServe
         res.end(JSON.stringify({ ok: true, filename: safeName }));
       } catch (e) {
         console.error('\x1b[31m[init-resources]\x1b[0m ❌ Error en upload-question-image:', e);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: String(e) }));
+      }
+    });
+  });
+}
+
+function registerWriteGlobalBankEndpoint(server: import('vite').ViteDevServer, root: string): void {
+  server.middlewares.use('/api/write-global-bank', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
+    if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'Method not allowed' })); return; }
+
+    let body = '';
+    req.setEncoding('utf-8');
+    req.on('data', (chunk: string) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const json = JSON.parse(body);
+        const content = JSON.stringify(json, null, 2) + '\n';
+
+        const srcPath = path.join(root, 'src', 'data', 'global-bank.json');
+        fs.writeFileSync(srcPath, content, 'utf-8');
+
+        console.log(`\x1b[36m[init-resources]\x1b[0m 🏦 global-bank.json actualizado (${json.questions?.length ?? '?'} preguntas)`);
+        res.statusCode = 200;
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) {
+        console.error('\x1b[31m[init-resources]\x1b[0m ❌ Error escribiendo global-bank.json:', e);
         res.statusCode = 500;
         res.end(JSON.stringify({ error: String(e) }));
       }

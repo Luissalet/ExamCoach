@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-20T17:34:25.144Z",
+  "exportedAt": "2026-02-21T15:57:36.950Z",
   "subjects": [
     {
       "id": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
@@ -640,6 +640,98 @@
   ],
   "questions": [
     {
+      "id": "01b78e46-bdff-400a-9f0c-8744bbe53a59",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "Una matriz de confusión es:",
+      "explanation": "Cruza **clase real** vs **clase predicha** para contar $TP, FP, TN, FN$ y derivar métricas.",
+      "difficulty": 1,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Una tabla que organiza las predicciones en función de los valores reales de los datos."
+        },
+        {
+          "id": "b",
+          "text": "Una tabla que tiene las predicciones de los diferentes clasificadores."
+        },
+        {
+          "id": "c",
+          "text": "Una tabla que contiene el valor real y el valor deseado."
+        },
+        {
+          "id": "d",
+          "text": "La matriz de confusión muestra la precisión absoluta de las predicciones."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:64a92d3551d3908d2410337dbd4e3ad6e62f6b1b0ea029e9bc7c75f9e2e60528",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
+      "id": "020490c2-a88e-466d-9c45-332b33c0eaf4",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre los **vectores de soporte** en SVM es **falsa**?",
+      "explanation": "Los vectores de soporte no se eligen al azar: aparecen como resultado de la optimización (son los puntos que caen sobre el margen o lo violan).",
+      "difficulty": 2,
+      "tags": [
+        "svm",
+        "vectores-de-soporte",
+        "margen"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Los vectores de soporte en SVM son puntos de datos que se encuentran más cerca del límite de decisión (hiperplano) entre diferentes clases."
+        },
+        {
+          "id": "b",
+          "text": "La posición y la orientación del hiperplano en SVM están determinadas por los vectores de soporte."
+        },
+        {
+          "id": "c",
+          "text": "Los vectores de soporte son cruciales para definir el margen, que es la distancia entre el hiperplano y los puntos de datos más cercanos de cada clase."
+        },
+        {
+          "id": "d",
+          "text": "Los vectores de soporte en SVM se seleccionan aleatoriamente a partir de los datos de entrenamiento."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:7d1c7d5f6d1e4dc77ee0ef0a150e049918a720ad79a8fe4c972e3bc5de2dd0b0",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
       "id": "03224454-0286-4fec-a549-fdfa23b7dbe6",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
@@ -796,6 +888,98 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "0a40fb06-7b84-49ec-afd1-9face45966d7",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "En Random Forest, ¿cómo se realiza la toma de decisiones final para un problema de **clasificación**?",
+      "explanation": "En **clasificación**, cada árbol predice una clase y el bosque decide por **voto mayoritario**.",
+      "difficulty": 1,
+      "tags": [
+        "random-forest",
+        "clasificacion",
+        "voto-mayoritario"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Votación."
+        },
+        {
+          "id": "b",
+          "text": "Promedio."
+        },
+        {
+          "id": "c",
+          "text": "Suma ponderada."
+        },
+        {
+          "id": "d",
+          "text": "Máxima probabilidad."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:e53f6d8887d2758897d2e16c5f048657cb511c61c2d3dfce330482125a4f1d57",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
+      "id": "0a736ce5-bab6-4bc7-8227-a764e6e61842",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "En un árbol de decisión, ¿de qué es responsable el **nodo raíz**?",
+      "explanation": "El nodo raíz realiza la **primera partición** del conjunto de datos usando la característica/split más informativo.",
+      "difficulty": 1,
+      "tags": [
+        "arboles-de-decision",
+        "nodo-raiz",
+        "splits"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hacer predicciones."
+        },
+        {
+          "id": "b",
+          "text": "Dividir los datos en subconjuntos según una característica."
+        },
+        {
+          "id": "c",
+          "text": "Poda del árbol."
+        },
+        {
+          "id": "d",
+          "text": "Almacenamiento de los valores objetivo reales."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:de50782a21a42279f784b44b9293a512f47539b30efb7acbb0da8c31a720f264",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
+    },
+    {
       "id": "0cc27ffc-4d14-4fec-b3e8-e0b141ce49f7",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -823,6 +1007,98 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "0d78f8ce-c5ae-4d56-aa0f-76cf2ec2c2c2",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones es verdadera sobre el clasificador ingenuo Naïve Bayes?",
+      "explanation": "Naïve Bayes es un método de **clasificación supervisada**: aprende a partir de ejemplos etiquetados (variable *target*).",
+      "difficulty": 1,
+      "tags": [
+        "naive-bayes",
+        "supervisado",
+        "clasificacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Es un algoritmo de aprendizaje supervisado."
+        },
+        {
+          "id": "b",
+          "text": "Es un algoritmo de aprendizaje no supervisado."
+        },
+        {
+          "id": "c",
+          "text": "Es un algoritmo de aprendizaje por refuerzo."
+        },
+        {
+          "id": "d",
+          "text": "No se utiliza para problemas de clasificación."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4e8e1a4d6c35c2b1d25e05386c5f40b0cfe5b6b7df2a79f84b8b0a5c6f3db9a7",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
+      "id": "0d893fd4-1d69-4150-bbba-46db134e7953",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "Marca la afirmación **falsa** sobre los árboles de decisión:",
+      "explanation": "Es falsa porque los árboles pueden **sobreajustar** si se dejan crecer sin restricciones (profundidad, min_samples, poda, etc.).",
+      "difficulty": 2,
+      "tags": [
+        "arboles-de-decision",
+        "overfitting",
+        "generalizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Los árboles de decisión son un método de aprendizaje supervisado que se basa en la estructura de un árbol para tomar decisiones a partir de datos, como en clasificación y regresión."
+        },
+        {
+          "id": "b",
+          "text": "La construcción de un árbol de decisión implica dividir el conjunto de datos en subconjuntos más pequeños, utilizando diferentes criterios, como la entropía o la ganancia de información."
+        },
+        {
+          "id": "c",
+          "text": "Los árboles de decisión son fáciles de interpretar y visualizar, lo que los hace útiles para comprender cómo se toman las decisiones en un modelo predictivo."
+        },
+        {
+          "id": "d",
+          "text": "Los árboles de decisión siempre producen modelos que son robustos frente al sobreajuste, lo que significa que nunca es necesario preocuparse por la generalización del modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:f4f63544f9ab9b376a2aff35f1fed809c5a170bdff57ae85252cd624cb80da50",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
     },
     {
       "id": "0daafc6e-f357-40e2-b471-69a2e677a07f",
@@ -989,6 +1265,52 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "159a98bf-addb-4d7e-93ae-ccdf2686bc8b",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Puede mejorar el $R^2$ (de entrenamiento) de un modelo de **regresión lineal múltiple** después de eliminar o agregar características?\n\nSeleccione una:",
+      "explanation": "El $R^2$ mide la proporción de varianza explicada por el modelo. Cambiar el conjunto de variables (añadiendo relevantes o eliminando irrelevantes) puede afectar a cuánto explica el modelo y, por tanto, al $R^2$.",
+      "difficulty": 2,
+      "tags": [
+        "r2",
+        "seleccion-de-variables",
+        "regresion-lineal-multiple"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sí, el $R^2$ (de entrenamiento) de un modelo de regresión lineal múltiple puede mejorar después de eliminar o agregar características. Esto ocurre porque el valor de $R^2$ es una medida de qué tan bien las variables independientes del modelo explican la variabilidad de la variable dependiente."
+        },
+        {
+          "id": "b",
+          "text": "Sí, el $R^2$ (de entrenamiento) de un modelo de regresión lineal múltiple puede mejorar después de eliminar o agregar características. Esto ocurre porque el valor de $R^2$ es una medida sobre cuántas variables independientes explican la variabilidad de la variable dependiente."
+        },
+        {
+          "id": "c",
+          "text": "No, el $R^2$ (de entrenamiento) de un modelo de regresión lineal múltiple siempre puede empeorar después de eliminar o agregar características. Esto ocurre porque el valor de $R^2$ es una medida que está altamente correlacionada con el número de características empleadas en el entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "No, el $R^2$ (de entrenamiento) de un modelo de regresión lineal múltiple permanece estable para los diferentes conjuntos de características empleadas en el entrenamiento. Esto es debido a que $R^2$ es una medida que relaciona los datos con los resultados."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:7465de211d14b72a8e951f6652ca1e499d25ca63d0582393a1269f9a86242b2f",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
       "id": "16361bc6-f451-4648-9b27-84f93bd87497",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -1027,6 +1349,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "16e7be4a-a4cc-4e18-9287-0e94077d6016",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "Son características generales del método **Stacking**:",
+      "explanation": "Stacking suele combinar **modelos base heterogéneos** y usa un **meta-modelo** (nivel 2) para aprender la mejor combinación (interpretada aquí como “promedio ponderado”).",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reduce bias o sesgo, su aprendizaje base es homogéneo, su entrenamiento base es secuencial, y su método de agregación es peso promedio."
+        },
+        {
+          "id": "b",
+          "text": "Mejora exactitud, su aprendizaje base es heterogéneo, su entrenamiento base es secuencial, y su método de agregación es peso promedio."
+        },
+        {
+          "id": "c",
+          "text": "Reduce varianza, es homogéneo, el entrenamiento es en paralelo, y la predicción está dada por el voto mayoritario o promedio."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:4f8e7e5ce8b2a4c2c7b0b3d3b9b381ccba31a71d0cf1b0a59ed3a4d5c0ed4f47",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
     },
     {
       "id": "17c97841-08a0-4c75-b36b-6a465bd34d70",
@@ -1068,6 +1438,98 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "17d341e9-8c4e-4fa7-864f-8f143a141eea",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "El algoritmo **Extra Trees** destaca por:",
+      "explanation": "Extra Trees introduce **mayor aleatoriedad** en la construcción: las **divisiones** se eligen de forma más aleatoria que en Random Forest.",
+      "difficulty": 2,
+      "tags": [
+        "extra-trees",
+        "ensamble",
+        "aleatoriedad"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Utilizar árboles de decisión poco profundos."
+        },
+        {
+          "id": "b",
+          "text": "Seleccionar características de manera más aleatoria durante la construcción de árboles."
+        },
+        {
+          "id": "c",
+          "text": "Utilizar técnicas avanzadas de regularización."
+        },
+        {
+          "id": "d",
+          "text": "Requiere un mayor número de árboles para converger."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:71ee3ab64147461b15c6f2d09e33b31aedb974031404694a86297081b005ca4c",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
+      "id": "18be8cda-b105-4a98-9aee-40835d8b8c09",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "El criterio de parada de la construcción de un árbol de decisión viene dado por:",
+      "explanation": "Son criterios típicos de parada: nodo (casi) puro, falta de splits útiles, o límites como profundidad/tamaño mínimos y máximos.",
+      "difficulty": 2,
+      "tags": [
+        "arboles-de-decision",
+        "parada",
+        "poda"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Todos, o casi todos, los ejemplos del nodo son de la misma clase."
+        },
+        {
+          "id": "b",
+          "text": "No existen variables para distinguir entre los ejemplos."
+        },
+        {
+          "id": "c",
+          "text": "El árbol ha alcanzado un tamaño predefinido."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:6710ea4528b5927f4e49fdcdd3343c952346789e0345e164dfaa5a069004d571",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
+    },
+    {
       "id": "1965fead-e9a9-47b8-9a90-567ae721036a",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -1106,6 +1568,97 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "1af8751d-683f-458c-b4b6-d4765b1d5b10",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "La métrica F1:",
+      "explanation": "F1 es la media armónica: $$F1 = 2\\,\\frac{\\text{Precision}\\cdot\\text{Recall}}{\\text{Precision}+\\text{Recall}}$$",
+      "difficulty": 2,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Se trata de una forma de calcular el AUC."
+        },
+        {
+          "id": "b",
+          "text": "Combina precisión y recall."
+        },
+        {
+          "id": "c",
+          "text": "Combina sensibilidad y especificidad."
+        },
+        {
+          "id": "d",
+          "text": "Es una medida que se calcula como la suma de la precisión y el recall."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:9d4b4b89decc4dfc3a9f4a0e12f2b6d3e5128a3d6a0c7bd6b4cc1a5f0d12fe49",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
+      "id": "1bb162a1-75d0-4c5b-8430-4b98c4bcf80b",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "En el siguiente conjunto de datos:\n\n```python\ndata = {\n  'Id': [1, 2, 3, 4, 5, 6, 7, 7],\n  'Primer_nombre': ['Angela', 'Adrian', 'Theodoro', 'Angela', 'Adrian', 'Beatriz', 'Olivia', 'Olivia'],\n  'Primer_apellido': ['Castro', 'Guzman', 'Rivadeniera', 'Castillo', 'Casas', 'Perez', 'Apraez', 'Apraez'],\n  'Edad': [27, 31, 36, 27, 53, 48, 36, 36],\n  'Estatura': [1.67, 1.80, 1.61, 1.67, 1.88, 1.69, 1.62, 1.62]\n}\n```\n\n¿Cuántos registros duplicados existen?",
+      "explanation": "Se consideran **2** registros duplicados: (1) el duplicado exacto de *Olivia Apraez* (fila repetida) y (2) un caso de duplicidad por alta coincidencia de atributos entre los registros de *Angela* (mismo nombre, edad y estatura).",
+      "difficulty": 3,
+      "tags": [
+        "duplicados",
+        "pandas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "0."
+        },
+        {
+          "id": "b",
+          "text": "1."
+        },
+        {
+          "id": "c",
+          "text": "2."
+        },
+        {
+          "id": "d",
+          "text": "3."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:fb6aeb8a8b839646c5df7db9f4e4a4b4e26a4f56c7d1d2f78e70a1a51f2a6b78",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
     },
     {
       "id": "1ddd2cd3-3a30-4ca4-8ad3-51441c365d4d",
@@ -1290,6 +1843,98 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "22be231e-5e01-412c-8ad0-ed512e6d205a",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "Un modelo con gran valor de recall:",
+      "explanation": "Recall (sensibilidad/TPR): $$\\text{Recall} = \\frac{TP}{TP+FN}$$. Alto recall ⇒ pocos **falsos negativos**.",
+      "difficulty": 2,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Captura un gran porcentaje de ejemplos negativos."
+        },
+        {
+          "id": "b",
+          "text": "Captura un gran porcentaje de ejemplos positivos."
+        },
+        {
+          "id": "c",
+          "text": "Indica que el modelo no captura bien los ejemplos negativos."
+        },
+        {
+          "id": "d",
+          "text": "Indica que el modelo no es capaz de detectar los ejemplos positivos."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:3a845c8628f1c76d9cc3f175b1bc56c8bfc19f41f0f17b0947dc37a6f5441748",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
+      "id": "234631a1-cbcd-4b25-9ec0-db0f66216168",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "El área bajo la curva (AUC):",
+      "explanation": "El AUC (de la ROC) suele expresarse en $[0,1]$; cuanto más cerca de 1, mejor separa clases.",
+      "difficulty": 2,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Es un valor comprendido entre 0 y 1."
+        },
+        {
+          "id": "b",
+          "text": "Es un valor comprendido entre 0 y 100."
+        },
+        {
+          "id": "c",
+          "text": "Es un porcentaje entre 0 y 100%."
+        },
+        {
+          "id": "d",
+          "text": "Es un valor que indica la precisión absoluta del modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:7b7c0f5a71e7e5b55fe7e5c7fd2109b51b12a4fb0d3370a24d34bdc8b35f3a1e",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
       "id": "23b52f93-2f60-490b-abfe-6bcc650868a0",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
@@ -1377,6 +2022,54 @@
       },
       "createdAt": "2026-02-20T17:34:13.897Z",
       "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
+      "id": "259175f3-8658-4f81-96b5-f1b084a11506",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "Son características generales del método **Boosting**:",
+      "explanation": "Boosting suele reducir **sesgo**, entrena **secuencialmente** y combina modelos con un esquema **ponderado**.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reduce bias o sesgo, su aprendizaje base es homogéneo, su entrenamiento base es secuencial, y su método de agregación es peso promedio."
+        },
+        {
+          "id": "b",
+          "text": "Mejora exactitud, su aprendizaje base es heterogéneo, su entrenamiento base es secuencial, y su método de agregación es peso promedio."
+        },
+        {
+          "id": "c",
+          "text": "Reduce varianza, es homogéneo, el entrenamiento es en paralelo, y la predicción está dada por el voto mayoritario o promedio."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:3f7f0d3434d6803b89f3e6e9b1c2e7eec8c7a0f7a672b7b1a8e8c2f0b92b7b74",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
     },
     {
       "id": "25a2d188-28f0-4c8b-aa6d-053d66c5a777",
@@ -1527,6 +2220,99 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "293e5a66-2b2d-496f-b008-dae1fe4058cd",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes visualizaciones es más adecuada para evaluar los **errores** en un modelo de regresión?\n\nSeleccione una:",
+      "explanation": "El gráfico **residuos vs. predichos** permite detectar patrones (no linealidad), heterocedasticidad (forma de embudo) y otros problemas: ideal para diagnóstico de regresión.",
+      "difficulty": 2,
+      "tags": [
+        "residuos",
+        "diagnostico",
+        "visualizacion",
+        "regresion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gráfico de barras de frecuencia de errores absolutos."
+        },
+        {
+          "id": "b",
+          "text": "Gráfico de dispersión de residuos vs. valores predichos."
+        },
+        {
+          "id": "c",
+          "text": "Gráfico de línea de errores relativos vs. iteraciones de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Gráfico de pastel de errores cuadráticos medios."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:f068d9087e720e2d97ddf3309328270eedbc5ab6d801a15620f549997a2bf125",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
+      "id": "29733545-2e53-472c-b953-f8be5a5a2df3",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "En Random Forest, ¿cómo se calcula la **importancia de las variables**?",
+      "explanation": "Se basa en la **reducción de impureza** (p. ej. índice Gini) aportada por una variable en los nodos donde se usa para dividir, agregada a lo largo del bosque.",
+      "difficulty": 3,
+      "tags": [
+        "random-forest",
+        "importancia-variables",
+        "gini"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Suma de las predicciones."
+        },
+        {
+          "id": "b",
+          "text": "Suma de las impurezas en los nodos donde se realiza una división."
+        },
+        {
+          "id": "c",
+          "text": "Número de nodos en los árboles."
+        },
+        {
+          "id": "d",
+          "text": "Número de variables en el conjunto de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:4377892a82f6f4254489e906dca3340123649bb73bc616a9528ab238f186195f",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
       "id": "2a3b878e-6411-4088-bbb3-5ad0c89a0fbe",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -1640,6 +2426,99 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "30892949-e0b8-475f-a274-6227ae65f543",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "Indica cuál de las siguientes afirmaciones sobre **soft margin** es **falsa**.",
+      "explanation": "No existe un 'siempre': si los datos son perfectamente separables y con poco ruido, *hard margin* puede funcionar igual o mejor; *soft margin* depende de $C$ y del ruido/outliers.",
+      "difficulty": 3,
+      "tags": [
+        "svm",
+        "soft-margin",
+        "hard-margin",
+        "C"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "SVM de *soft margin* permite cierta clasificación errónea de los puntos de datos de entrenamiento al introducir variables débiles que relajan la rigurosidad del margen."
+        },
+        {
+          "id": "b",
+          "text": "SVM de *soft margin* se utiliza cuando los datos de entrenamiento no son perfectamente separables por un hiperplano, lo que permite un límite más flexible que puede ser adecuado con datos ruidosos."
+        },
+        {
+          "id": "c",
+          "text": "El parámetro de regularización $C$ en SVM *soft margin* controla el equilibrio entre maximizar el margen y minimizar el error de clasificación en los datos de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "SVM de *soft margin* siempre funciona mejor que SVM de *hard margin* en conjuntos de datos linealmente separables."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:4ce4c7f5f1c0d5a2c0d5d69f4b2c2dfb4b8c8b0a36f7b7d7f5e8b154f5b1d0e3",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
+      "id": "31e90b03-e107-4582-b039-8a2d54b6f989",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "Cuando existen combinaciones desconocidas en los datos de entrada:",
+      "explanation": "Si aparecen combinaciones no vistas, algunas probabilidades estimadas pueden ser **0** y el posterior queda distorsionado; se suele aplicar suavizado.",
+      "difficulty": 2,
+      "tags": [
+        "naive-bayes",
+        "laplace",
+        "probabilidad-cero"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Las probabilidades a posteriori obtenidas pueden no tener sentido."
+        },
+        {
+          "id": "b",
+          "text": "El teorema de Bayes utiliza el estimador de Laplace."
+        },
+        {
+          "id": "c",
+          "text": "Se eliminan estas combinaciones de los datos de entrada."
+        },
+        {
+          "id": "d",
+          "text": "El algoritmo es capaz de ignorarlas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
     },
     {
       "id": "357ebcf6-1782-4a10-97ba-caf10e743a0b",
@@ -1765,6 +2644,52 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "3860e5f8-31f9-4d5b-bd40-9ce56ae643be",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe correctamente la **poda** de árboles de decisión?",
+      "explanation": "La poda elimina ramas poco útiles para **reducir complejidad** y **mejorar generalización** (normalmente validación/test).",
+      "difficulty": 2,
+      "tags": [
+        "poda",
+        "overfitting",
+        "regularizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La poda en árboles de decisión implica agregar más nodos al árbol para mejorar su capacidad de generalización y precisión en la predicción."
+        },
+        {
+          "id": "b",
+          "text": "La poda se realiza eliminando ramas del árbol que no contribuyen significativamente a mejorar su rendimiento en el conjunto de datos de prueba."
+        },
+        {
+          "id": "c",
+          "text": "La poda de árboles de decisión es un proceso que se lleva a cabo durante la etapa de construcción del árbol para mejorar su capacidad de ajuste a los datos de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "La poda de árboles de decisión solo se aplica en casos donde el árbol ha alcanzado un tamaño excesivo y se necesita reducir su complejidad para evitar el sobreajuste."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:14333d4bff76a652ec15829ec0d9011ad39b095b5b9dae5d6248584fad8758b3",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
+    },
+    {
       "id": "399b4775-8d48-4a37-8802-7f5893788933",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a0ee552f-68ca-4b05-bf4f-9e4f2edc904c",
@@ -1860,6 +2785,53 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "3c3cfc5c-aeee-4804-b4cb-2a6d49b90011",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "La búsqueda aleatoria de hiperparámetros:",
+      "explanation": "La búsqueda aleatoria de hiperparámetros puede no ser suficiente para encontrar la configuración óptima en modelos complejos o en problemas con conjuntos de datos particulares. En tales casos, pueden ser necesarios enfoques más avanzados, como la optimización bayesiana o la búsqueda en cuadrícula, para encontrar la mejor combinación de hiperparámetros.",
+      "difficulty": 2,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "random-search",
+        "limitaciones"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Siempre es suficiente."
+        },
+        {
+          "id": "b",
+          "text": "En algunos modelos complejos puede ser insuficiente."
+        },
+        {
+          "id": "c",
+          "text": "Que sea suficiente o insuficiente depende de los datos de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Es eficiente porque siempre encuentra la configuración óptima de hiperparámetros."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:4d5c6b7a8f9e0d1c2b3a495867768594d5c6b7a8f9e0d1c2b3a495867768594d",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
       "id": "3c93acd3-c9cb-4c59-a916-c2e5034d3fa2",
       "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
       "topicId": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
@@ -1908,6 +2880,191 @@
       "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
+      "id": "3cbdfcd8-58bf-4c1e-938b-87ab1c151823",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Qué indica un **coeficiente de regresión negativo** en un modelo lineal?\n\nSeleccione una:",
+      "explanation": "Si $\\beta<0$ en $\\hat{y}=\\beta_0+\\beta x$, al aumentar $x$ la predicción $\\hat{y}$ tiende a disminuir (relación inversa).",
+      "difficulty": 1,
+      "tags": [
+        "regresion-lineal",
+        "coeficientes",
+        "interpretacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La variable predictora tiene un efecto negativo en la variable de respuesta."
+        },
+        {
+          "id": "b",
+          "text": "No hay relación entre la variable predictora y la variable de respuesta."
+        },
+        {
+          "id": "c",
+          "text": "La variable predictora tiene un efecto positivo en la variable de respuesta."
+        },
+        {
+          "id": "d",
+          "text": "El modelo no es adecuado para hacer predicciones."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:f2427f17178330e9fea3738879df914d9105234e885e435f509d125d7b34ac61",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
+      "id": "3eb25634-fd5d-4b40-b531-018a3449b551",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Los modelos de procesos gaussianos:",
+      "explanation": "Los modelos de procesos gaussianos son una técnica utilizada para la optimización de hiperparámetros. Se aplican especialmente en casos donde la función objetivo es costosa de evaluar o no tiene una forma simple.",
+      "difficulty": 3,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "procesos-gaussianos",
+        "optimizacion-bayesiana"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son un método de optimización de hiperparámetros basado en búsqueda cartesiana."
+        },
+        {
+          "id": "b",
+          "text": "Se utilizan para optimizar parámetros de modelos complejos."
+        },
+        {
+          "id": "c",
+          "text": "Son un tipo de automatic sequential optimization."
+        },
+        {
+          "id": "d",
+          "text": "Son un método de optimización que ralentiza la búsqueda de hiperparámetros."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a29108f7e6d5c4b3a29108",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
+      "id": "41e849c3-3a02-4162-9d01-6e0e6b5dba9c",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "Es una característica del algoritmo Z-score:",
+      "explanation": "El Z-score estandariza los datos, dejándolos con **media 0** y **desviación 1**; en el temario se interpreta además como paso al espacio de la normal estándar (cuando los datos siguen una distribución normal).",
+      "difficulty": 2,
+      "tags": [
+        "z-score",
+        "estandarizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Consiste en la estandarización de un conjunto de datos."
+        },
+        {
+          "id": "b",
+          "text": "Transforma los datos en un espacio de distribución normal."
+        },
+        {
+          "id": "c",
+          "text": "La media es cero y la desviación es 1."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores son características del algoritmo Z-score."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:3c7b2a1f9d8e7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a291827364554433221100f",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
+    },
+    {
+      "id": "435f5b25-9b8a-476d-9743-0884fe8f62fc",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones es una **ventaja** de los *kernels*?",
+      "explanation": "La principal ventaja del *kernel trick* es poder obtener fronteras no lineales sin construir explícitamente las nuevas características en alta dimensión.",
+      "difficulty": 1,
+      "tags": [
+        "svm",
+        "kernels",
+        "kernel-trick",
+        "no-linealidad"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Permiten utilizar un menor volumen de información."
+        },
+        {
+          "id": "b",
+          "text": "El coste computacional es menor al utilizar *kernels*."
+        },
+        {
+          "id": "c",
+          "text": "Los *kernels* permiten obtener fronteras de decisión no lineales."
+        },
+        {
+          "id": "d",
+          "text": "Los *kernels* reducen la dimensionalidad de los datos al mapearlos a un espacio de características mayor."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0b1a2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
       "id": "44bbe46b-558f-46ed-88a5-b6dd23a0b494",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "1f1be644-ce4e-4134-8501-6bae5948e91c",
@@ -1946,6 +3103,52 @@
       },
       "createdAt": "2026-02-20T14:49:08.173Z",
       "updatedAt": "2026-02-20T14:49:08.173Z"
+    },
+    {
+      "id": "4539d94b-48cf-46eb-9921-5e6418375d3f",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes métricas no es utilizada en los modelos de clasificación?",
+      "explanation": "El **MSE** (*Mean Squared Error*) es típico de **regresión**. En clasificación se usan precisión, recall, F1, AUC, etc.",
+      "difficulty": 1,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Precisión."
+        },
+        {
+          "id": "b",
+          "text": "Recall."
+        },
+        {
+          "id": "c",
+          "text": "MSE."
+        },
+        {
+          "id": "d",
+          "text": "F-measure."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:4dbb8f3d0b839f1a5a4cd46a3c77b6dd3779e2d7a1622d3fbe13742e3b574c86",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
     },
     {
       "id": "47cd68c3-c882-45fb-89e3-eb334dfe137e",
@@ -2018,6 +3221,146 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "4c275a50-f8c8-45ea-8537-ddff49761787",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre un **clasificador de margen máximo** es **falsa**?",
+      "explanation": "Es falso en el sentido general de SVM: con *soft margin* se toleran errores/violaciones del margen; no requiere separabilidad perfecta.",
+      "difficulty": 2,
+      "tags": [
+        "svm",
+        "maximo-margen",
+        "soft-margin"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El clasificador de margen máximo, implementado en SVM, tiene como objetivo encontrar un hiperplano que maximice el margen entre clases."
+        },
+        {
+          "id": "b",
+          "text": "El clasificador de margen máximo selecciona el hiperplano que mejor separa los datos de entrenamiento y maximiza la distancia (margen) a los puntos de datos más cercanos de cada clase."
+        },
+        {
+          "id": "c",
+          "text": "El clasificador de margen máximo está diseñado para mejorar el rendimiento de la generalización maximizando la separación entre clases, reduciendo el riesgo de sobreajuste."
+        },
+        {
+          "id": "d",
+          "text": "El clasificador de margen máximo siempre requiere que las clases sean perfectamente separables mediante un hiperplano."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:bb51f50fd1b46d4c2f7fd2d61d5138a4c4c0d58a1e7d5d5d1ea5b0f9f69d5615",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
+      "id": "4cd331ef-1ae3-4727-89da-adc705f92bb6",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "¿Cuáles de los siguientes son algoritmos de tipo **Boosting**?",
+      "explanation": "**AdaBoost** (Adaptive Boosting) es un algoritmo clásico de boosting.",
+      "difficulty": 1,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "TotalBoost."
+        },
+        {
+          "id": "b",
+          "text": "OptimalBoosting."
+        },
+        {
+          "id": "c",
+          "text": "AdaBoost."
+        },
+        {
+          "id": "d",
+          "text": "ClatsBoost."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:3b1116dbf72e62d3f9bf7a5ed2a94aeb19b1514e5d4d1a4c68f519fb0f7bcf2c",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
+    },
+    {
+      "id": "4da577b4-3d04-4d7a-a06a-9fd8ea34059a",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "Indica la afirmación correcta sobre el **error cuadrático medio (MSE)**:\n\nSeleccione una:",
+      "explanation": "MSE = $\\frac{1}{n}\\sum (y-\\hat{y})^2$. Al cuadrar, penaliza más los errores grandes y es sensible a atípicos.",
+      "difficulty": 1,
+      "tags": [
+        "mse",
+        "metricas",
+        "error"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "MSE mide el promedio de los cuadrados de los errores."
+        },
+        {
+          "id": "b",
+          "text": "MSE es una medida robusta que ignora los valores atípicos."
+        },
+        {
+          "id": "c",
+          "text": "MSE proporciona una medida lineal de la precisión del modelo."
+        },
+        {
+          "id": "d",
+          "text": "MSE es menos sensible a los errores grandes en comparación con MAE."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:46c42b407b4ea5a2e331387fcd51f0b86b015988f47e806fdc94e665e0cb9baf",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
     },
     {
       "id": "4dd2ee86-fe01-4dd6-ad4c-7956262cb30f",
@@ -2138,6 +3481,51 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "51f068cb-b1ab-4906-bb65-489e345b85e4",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Cuál es el objetivo de la **regresión**?\n\nSeleccione una:",
+      "explanation": "En regresión se modela/estima la relación entre variables (predictores) y una salida continua: $Y \\approx f(X)$.",
+      "difficulty": 1,
+      "tags": [
+        "regresion",
+        "objetivo"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Comprender el valor de los predictores X."
+        },
+        {
+          "id": "b",
+          "text": "Comprender el valor del error."
+        },
+        {
+          "id": "c",
+          "text": "Comprender el valor de las salidas Y."
+        },
+        {
+          "id": "d",
+          "text": "Comprender la relación entre el predictor X y la salida Y."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:cb502a6e4a6c62d5ed6640f5904a339071922ef4dbad3d3de0291afc7e2018cb",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
       "id": "529c3dee-de07-4c21-98b2-800cc98eddec",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -2183,6 +3571,52 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "546e0086-d2da-4544-b53d-72c0edc84af6",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "¿Cuáles de las siguientes afirmaciones son **verdaderas** sobre los árboles de decisión?",
+      "explanation": "A es falsa (también hay árboles de **regresión**). B es falsa (no se exige pureza total). Por tanto D es falsa. La poda suele mejorar la generalización frente a crecer y cortar por criterios simples.",
+      "difficulty": 3,
+      "tags": [
+        "arboles-de-decision",
+        "poda",
+        "criterios-de-parada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo se pueden utilizar para clasificación."
+        },
+        {
+          "id": "b",
+          "text": "Todas las hojas deben ser puras."
+        },
+        {
+          "id": "c",
+          "text": "La poda generalmente logra una mayor precisión en los datos de test que introducir un criterio de parada."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:d78a8eea923b4eb78a54c22453e09b142be5fd135815341b16f3ef99573f12f9",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
+    },
+    {
       "id": "5684a8de-a142-49b0-9240-3e0b9712ab44",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a0ee552f-68ca-4b05-bf4f-9e4f2edc904c",
@@ -2213,6 +3647,146 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "57934f02-7e25-498c-a97b-fbf6ee581b88",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "Son técnicas para encontrar atributos redundantes:",
+      "explanation": "En el tema se proponen **correlación** y **covarianza** para variables numéricas, y pruebas para variables nominales (p. ej., chi-cuadrado) para detectar dependencia/redudancia.",
+      "difficulty": 2,
+      "tags": [
+        "redundancia",
+        "correlacion",
+        "covarianza"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Correlación."
+        },
+        {
+          "id": "b",
+          "text": "Covarianza."
+        },
+        {
+          "id": "c",
+          "text": "Prueba de datos nominales."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:65ab58f4f3e8c58c0f969c62ddc5b4de4f9a3c0b5c2dc220de8993e28a4f55fe",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
+    },
+    {
+      "id": "583b68ff-f677-4731-89b3-2e78b2b226a4",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Cuáles de las siguientes métricas **no** se usan para evaluar los problemas de regresión?\n\nSeleccione una:",
+      "explanation": "MAE, MSE y RMSE son métricas estándar en regresión. La RMSLE existe pero no es la más común/estándar en la mayoría de contextos de evaluación.",
+      "difficulty": 1,
+      "tags": [
+        "metricas",
+        "regresion",
+        "mae",
+        "mse",
+        "rmse",
+        "rmsle"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Error absoluto medio."
+        },
+        {
+          "id": "b",
+          "text": "Error cuadrático medio."
+        },
+        {
+          "id": "c",
+          "text": "Raíz del error cuadrático medio."
+        },
+        {
+          "id": "d",
+          "text": "Raíz del error logarítmico cuadrático."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:8e2ff12b6838556496fd77b71746cd066d7759c08050197f8aaa910a9cd75e24",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
+      "id": "5bbf69f6-ae45-4c4d-a695-2bde4b342231",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "¿Por qué es importante intentar llenar los valores faltantes?",
+      "explanation": "La mayoría de algoritmos no gestionan bien (o directamente no aceptan) valores faltantes, por lo que puede condicionar el algoritmo aplicable y el rendimiento.",
+      "difficulty": 2,
+      "tags": [
+        "datos-ausentes",
+        "preprocesado"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "No es agradable ver un conjunto de datos con valores faltantes."
+        },
+        {
+          "id": "b",
+          "text": "Porque la muestra no es representativa."
+        },
+        {
+          "id": "c",
+          "text": "Puede afectar el método de aprendizaje automático elegido."
+        },
+        {
+          "id": "d",
+          "text": "Todas son verdaderas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:7a78c02a1ea2d1c53bd5b56f07c1066e8e68c2e1c7b8aee2b5ccfad0f9ac6a3d",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
     },
     {
       "id": "5cf5a6e1-78e0-4b15-94f5-2c24941a8839",
@@ -2251,6 +3825,51 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "5d96bfd9-95cb-4efd-81ff-86bf630101af",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "Son técnicas de escalado:",
+      "explanation": "En escalado se incluyen tanto la **normalización** (p. ej., Min–Max) como la **estandarización** mediante **Z-score**.",
+      "difficulty": 1,
+      "tags": [
+        "escalado",
+        "z-score"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Normalización."
+        },
+        {
+          "id": "b",
+          "text": "Z-score."
+        },
+        {
+          "id": "c",
+          "text": "A y B son ciertas."
+        },
+        {
+          "id": "d",
+          "text": "A y B son falsas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0b2d1f4a6a8c9e1f2d3c4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
     },
     {
       "id": "5e3a1728-5469-4857-ade5-2cecfe8a1e5a",
@@ -2366,6 +3985,51 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "6003d382-3662-4147-9f03-652c70e34fc7",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "La discretización de variables:",
+      "explanation": "Discretizar consiste en convertir una variable numérica continua en **intervalos (bins)** para tratarla como categórica en el modelo.",
+      "difficulty": 2,
+      "tags": [
+        "discretizacion",
+        "naive-bayes"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Es una técnica que se aplica para utilizar el clasificador Naïve Bayes con variables numéricas."
+        },
+        {
+          "id": "b",
+          "text": "Es ideal cuando hay grandes cantidades de datos."
+        },
+        {
+          "id": "c",
+          "text": "Funciona mejor cuando hay pocos datos."
+        },
+        {
+          "id": "d",
+          "text": "A y B son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
       "id": "600c6185-3843-4d7d-a6e1-cc0c35c14113",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "1f1be644-ce4e-4134-8501-6bae5948e91c",
@@ -2430,6 +4094,145 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "6115535f-278a-4c76-9ee6-9978c9bea919",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "La expansión en forma de polinomios:",
+      "explanation": "Las características polinómicas (o un *kernel* polinómico) permiten modelar fronteras no lineales al trabajar en un espacio de mayor dimensión (explícito o implícito).",
+      "difficulty": 2,
+      "tags": [
+        "svm",
+        "kernel",
+        "polinomio",
+        "no-linealidad"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Permite capturar relaciones no lineales entre las características originales al mapear los datos a un espacio de características de mayor dimensión."
+        },
+        {
+          "id": "b",
+          "text": "La expansión en forma de polinomios en SVM solo se puede realizar utilizando un *kernel* lineal."
+        },
+        {
+          "id": "c",
+          "text": "La expansión en forma de polinomios en SVM siempre mejora el rendimiento del modelo en comparación con un enfoque lineal."
+        },
+        {
+          "id": "d",
+          "text": "La expansión en forma de polinomios en SVM transforma automáticamente el espacio de características original a un espacio de mayor dimensión sin introducir complejidad adicional."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:2b7a6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
+      "id": "61608da2-0fee-470c-a672-c190744694bd",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "Indica la afirmación correcta sobre el **Error absoluto medio (MAE)**:\n\nSeleccione una:",
+      "explanation": "El MAE es la media de $|y-\\hat{y}|$ (penalización lineal). No penaliza cuadráticamente (eso es MSE/RMSE) y no es “insensible” a atípicos, aunque suele ser más robusto que MSE.",
+      "difficulty": 1,
+      "tags": [
+        "mae",
+        "metricas",
+        "error"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "MAE mide la diferencia promedio entre predicciones y valores reales."
+        },
+        {
+          "id": "b",
+          "text": "MAE es una medida de la precisión del modelo de regresión."
+        },
+        {
+          "id": "c",
+          "text": "MAE penaliza de manera cuadrática las diferencias entre predicciones y valores reales."
+        },
+        {
+          "id": "d",
+          "text": "MAE es insensible a los valores atípicos en los datos."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:f676b9d05a18d598710a7767429594c0f26121c3def0d589933a824e62ef34cd",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
+      "id": "62a4ced2-c6c1-4c98-8468-cbd21bc150cd",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe **incorrectamente** los árboles de decisión?",
+      "explanation": "Es incorrecta porque los árboles de decisión son un método de **aprendizaje supervisado** (clasificación/regresión).",
+      "difficulty": 2,
+      "tags": [
+        "arboles-de-decision",
+        "supervisado",
+        "conceptos-basicos"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Los árboles de decisión son un tipo de modelo de aprendizaje no supervisado."
+        },
+        {
+          "id": "b",
+          "text": "Los árboles de decisión pueden manejar tanto variables numéricas como categóricas, como características de entrada."
+        },
+        {
+          "id": "c",
+          "text": "Los árboles de decisión dividen el espacio de características en regiones que representan decisiones basadas en reglas if-else"
+        },
+        {
+          "id": "d",
+          "text": "Los árboles de decisión son propensos al sobreajuste cuando se construyen con poca profundidad y se les permite crecer sin restricciones."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:1275edeb8fb429e7dbd7ae16a09082130431cddfcdd32606a8bc09821d56b484",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
     },
     {
       "id": "62dae287-a932-485d-9f1f-c0ac1ad2dcae",
@@ -2640,6 +4443,54 @@
       "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
+      "id": "69932326-4a46-4046-bc70-08c324645940",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre las máquinas de vector de soporte (SVM) es **falsa**?",
+      "explanation": "Es falso que *siempre* requieran separabilidad lineal: con *soft margin* se permiten violaciones del margen y con *kernels* se puede lograr separabilidad en un espacio transformado.",
+      "difficulty": 2,
+      "tags": [
+        "svm",
+        "conceptos",
+        "separabilidad",
+        "kernel",
+        "soft-margin"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Las SVM son eficaces para resolver problemas de clasificación binaria y también se pueden extender a problemas de regresión."
+        },
+        {
+          "id": "b",
+          "text": "El objetivo principal de las SVM es encontrar un hiperplano de separación óptimo que maximice el margen entre las clases en el espacio de características."
+        },
+        {
+          "id": "c",
+          "text": "Las SVM pueden manejar eficazmente conjuntos de datos de alta dimensionalidad y son robustas frente al sobreajuste cuando se utilizan técnicas como el margen suave y la optimización convexa."
+        },
+        {
+          "id": "d",
+          "text": "Las SVM siempre requieren que los datos sean linealmente separables en el espacio de características."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:39c7fcb929332dc8bfc200a4d39b91775f88da24690a603b5c4d9a4cd0c71d57",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
       "id": "6b42a671-e8f9-45db-bdf7-be4756d6dede",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -2779,6 +4630,52 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "6c2e40f0-2a37-4c61-b33b-0928b46e8061",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "La curva ROC mide:",
+      "explanation": "La ROC representa **TPR** frente a **FPR** al variar el umbral: $$TPR=\\frac{TP}{TP+FN},\\quad FPR=\\frac{FP}{FP+TN}$$",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La ratio de verdaderos positivos y falsos positivos."
+        },
+        {
+          "id": "b",
+          "text": "La ratio de verdaderos positivos y falsos negativos."
+        },
+        {
+          "id": "c",
+          "text": "La ratio de verdaderos negativos y falsos positivos."
+        },
+        {
+          "id": "d",
+          "text": "La ratio de verdaderos positivos y verdaderos negativos."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4c4d6c6c0d8d7d3b0c1c9e82d9c17fe9a2f16c1a7f8bfc9f0cfd6c7bf0d2a24a",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
     },
     {
       "id": "6c5ceae8-38f1-47e5-91c5-231cf20b4ec7",
@@ -3010,6 +4907,51 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "72cb9696-c89e-4588-add8-ef187ed545b5",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "Las tablas de frecuencias:",
+      "explanation": "Una tabla de frecuencias registra **conteos** (frecuencia absoluta/relativa) de valores/eventos en los datos.",
+      "difficulty": 1,
+      "tags": [
+        "frecuencias",
+        "estadistica"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Indican el número de veces que el evento aparece en cada una de las situaciones."
+        },
+        {
+          "id": "b",
+          "text": "Sirven para medir el éxito del modelo."
+        },
+        {
+          "id": "c",
+          "text": "Son las mismas tablas de verosimilitud."
+        },
+        {
+          "id": "d",
+          "text": "Son la base para la construcción del modelo Naïve Bayes."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:8d9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
       "id": "73a6b390-7561-46c9-bbc3-72a86e826172",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
@@ -3050,6 +4992,100 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "73ec77d1-d04a-4c9d-bc8a-b4f72b903ea2",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "El **Out-of-Bag (OOB) error** es una métrica utilizada en el método de Bagging que permite:",
+      "explanation": "En bagging, cada modelo deja fuera (~36.8%) muestras. Esas muestras **OOB** se usan como validación interna para estimar el error sin un *test* aparte.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Evaluar el rendimiento de un modelo en el conjunto de datos de entrenamiento, utilizando la técnica de validación cruzada."
+        },
+        {
+          "id": "b",
+          "text": "Medir la varianza del modelo mediante la generación de múltiples conjuntos de entrenamiento a partir de reemplazos aleatorios del conjunto de datos original."
+        },
+        {
+          "id": "c",
+          "text": "Estimar la precisión de un modelo en el conjunto de prueba, utilizando únicamente las muestras que no se utilizaron en el proceso de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Reducir el sesgo en la estimación de un modelo mediante la agregación de múltiples clasificadores débiles."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1f0e9d8c7b6a59483726150493827160",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
+    },
+    {
+      "id": "7539c98f-909e-45ad-a644-e8a31ae771b8",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "Los árboles de decisión:",
+      "explanation": "Un árbol implementa particiones sucesivas del espacio de características, generando **regiones** con predicción constante (por hoja).",
+      "difficulty": 2,
+      "tags": [
+        "arboles-de-decision",
+        "particion-del-espacio",
+        "regiones"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Transforman las variables de entrada utilizando funciones kernel."
+        },
+        {
+          "id": "b",
+          "text": "Dividen el espacio de las variables en una serie de regiones."
+        },
+        {
+          "id": "c",
+          "text": "Ejecutan diversas operaciones modificando las variables de entrada."
+        },
+        {
+          "id": "d",
+          "text": "Siempre producen modelos que son óptimos en términos de precisión y generalización, independientemente del tamaño y la complejidad del conjunto de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:59e20727d823c3e68d6a8d58b574b1b7d7a89bf0c7293299b5d29b976551ae00",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
+    },
+    {
       "id": "7545130d-2001-467a-b0b3-b3396b6bb45d",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -3078,6 +5114,51 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "75a2a857-48b0-49cf-b7fb-fb7ce805aa99",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe mejor el proceso de discretización de variables en el análisis de datos?",
+      "explanation": "La discretización divide una variable continua en **intervalos/categorías** discretas (p.ej. *binning*).",
+      "difficulty": 1,
+      "tags": [
+        "discretizacion",
+        "preprocesado"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Es un método utilizado para convertir variables numéricas en variables categóricas."
+        },
+        {
+          "id": "b",
+          "text": "Es un proceso utilizado para eliminar datos atípicos en un conjunto de datos."
+        },
+        {
+          "id": "c",
+          "text": "Es una técnica que se aplica para reducir la dimensionalidad de un conjunto de datos."
+        },
+        {
+          "id": "d",
+          "text": "Es un enfoque utilizado para dividir una variable continua en intervalos o categorías discretas."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
     },
     {
       "id": "771b01c2-6a06-4cb9-9910-4f3e4f987b0c",
@@ -3118,6 +5199,148 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "77d9332e-bafd-40af-9e00-c089527934aa",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación correcta sobre el método de optimización evolutiva:",
+      "explanation": "El método de optimización evolutiva implica la aplicación de algoritmos inspirados en la evolución biológica, como algoritmos genéticos, para buscar de manera eficiente en el espacio de hiperparámetros y encontrar la configuración óptima que maximice el rendimiento del modelo.",
+      "difficulty": 3,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "optimizacion-evolutiva",
+        "algoritmos-geneticos"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Consiste en ejecutar algoritmos evolutivos para encontrar el mejor conjunto de parámetros."
+        },
+        {
+          "id": "b",
+          "text": "Es una evolución del método cartesiano."
+        },
+        {
+          "id": "c",
+          "text": "Es una evolución del método bayesiano."
+        },
+        {
+          "id": "d",
+          "text": "La optimización evolutiva de hiperparámetros garantiza resultados precisos rápidamente."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:5b1e2d3c4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
+      "id": "7842bf12-3af0-4a5a-8ea6-69b5fef29721",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre el algoritmo **XGBoost** es correcta?",
+      "explanation": "XGBoost implementa **gradient boosting** con árboles (supervisado) y es conocido por su **eficiencia** y rendimiento.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "XGBoost es un algoritmo de *clustering* ampliamente utilizado en el campo del aprendizaje no supervisado."
+        },
+        {
+          "id": "b",
+          "text": "XGBoost es una técnica de reducción de dimensionalidad que busca proyectar los datos en un espacio de menor dimensión mientras conserva la estructura de la información original."
+        },
+        {
+          "id": "c",
+          "text": "XGBoost es una variante del algoritmo de regresión lineal que se utiliza para predecir valores numéricos continuos."
+        },
+        {
+          "id": "d",
+          "text": "XGBoost es un algoritmo de aprendizaje supervisado basado en árboles que se destaca por su eficiencia y alto rendimiento en competiciones de ciencia de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:6e4f0d7f0f8b54c3f6d3b2a1c0e9d8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
+    },
+    {
+      "id": "78c84da4-d42f-4994-9f94-21ec38267176",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación correcta sobre los hiperparámetros:",
+      "explanation": "Los hiperparámetros son parámetros que no se aprenden directamente del conjunto de datos durante el proceso de entrenamiento del modelo, y son específicos de cada tipo de modelo.",
+      "difficulty": 1,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "hiperparametros",
+        "definicion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son específicos de cada modelo."
+        },
+        {
+          "id": "b",
+          "text": "Son generales para todos los modelos."
+        },
+        {
+          "id": "c",
+          "text": "Se utilizan para mejorar el rendimiento en el conjunto de test."
+        },
+        {
+          "id": "d",
+          "text": "Los hiperparámetros no afectan el rendimiento del modelo de aprendizaje."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:dcce11c64a4c8c3e7e9a0c7f8e0c4ed8b21b6a8f03353aeab4f6f7a6d2a5d56b",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
     },
     {
       "id": "7974cd09-ee82-44a5-97e0-2562db5bc850",
@@ -3206,6 +5429,52 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "7a98e801-4a53-4346-b522-3ac518458254",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "Dos eventos son mutuamente excluyentes:",
+      "explanation": "Eventos mutuamente excluyentes son **disjuntos**: no pueden ocurrir a la vez ($A\\cap B=\\varnothing$).",
+      "difficulty": 1,
+      "tags": [
+        "probabilidad",
+        "eventos",
+        "mutuamente-excluyentes"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Deben ocurrir los dos."
+        },
+        {
+          "id": "b",
+          "text": "Al menos uno de los dos debe ocurrir."
+        },
+        {
+          "id": "c",
+          "text": "Si uno ocurre el otro no puede ocurrir."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores describe la exhaustividad."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:7c8d9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
       "id": "7aef192a-9695-49d4-b12f-65543ea474e4",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a0ee552f-68ca-4b05-bf4f-9e4f2edc904c",
@@ -3256,6 +5525,52 @@
       },
       "createdAt": "2026-02-20T16:19:01.998Z",
       "updatedAt": "2026-02-20T16:20:42.640Z"
+    },
+    {
+      "id": "7b27b54b-8a6f-44dd-97fb-aad68d992d5c",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones es **cierta**?",
+      "explanation": "En general puede haber múltiples hiperplanos que separen los datos; SVM selecciona el óptimo según el criterio de máximo margen (y penalización de errores si es *soft margin*).",
+      "difficulty": 1,
+      "tags": [
+        "svm",
+        "hiperplano",
+        "maximo-margen"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Para una serie de datos de entrenamiento de un problema binario existen múltiples hiperplanos posibles."
+        },
+        {
+          "id": "b",
+          "text": "Solo existe un hiperplano posible para cada uno de los conjuntos de datos."
+        },
+        {
+          "id": "c",
+          "text": "Los hiperplanos hay que crearlos únicamente para realizar predicciones."
+        },
+        {
+          "id": "d",
+          "text": "El objetivo de SVM es encontrar el hiperplano óptimo que maximice el margen entre todos los puntos de datos sin importar el error de clasificación."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:274891a465b91bb24ba7c1d7856f785a5bdb29e7b21c8df1ea7fb0e55e815bf2",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
     },
     {
       "id": "7b2a3578-a6c2-4cf7-a07a-6d1d1a01c1ba",
@@ -3334,6 +5649,52 @@
       },
       "createdAt": "2026-02-20T17:34:13.897Z",
       "updatedAt": "2026-02-20T17:34:13.897Z"
+    },
+    {
+      "id": "8447650f-5f18-4a7b-87e1-0878dc44ff67",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Qué representa el **intercepto** en un modelo de regresión lineal?\n\nSeleccione una:",
+      "explanation": "El intercepto $\\beta_0$ es el valor de $\\hat{y}$ cuando $x=0$ (o cuando todos los predictores valen 0 en el caso múltiple).",
+      "difficulty": 1,
+      "tags": [
+        "regresion-lineal",
+        "intercepto",
+        "interpretacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El valor esperado de la variable de respuesta cuando todas las variables predictoras son cero."
+        },
+        {
+          "id": "b",
+          "text": "La pendiente de la línea de regresión."
+        },
+        {
+          "id": "c",
+          "text": "La suma de los cuadrados de los residuos."
+        },
+        {
+          "id": "d",
+          "text": "La varianza explicada por el modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:5cc230c1392ca821733627732695a5a76f2cce4e66617f0e6a4fb92fa3d62a52",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
     },
     {
       "id": "8556c3ad-64e4-40b8-9143-66b157522d73",
@@ -3468,6 +5829,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "867340b3-f802-42a3-9c31-d72383057333",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "El muestreo **Bootstrap** es una técnica estadística utilizada para:",
+      "explanation": "Bootstrap = **remuestreo con reemplazo** para estimar la **variabilidad** (p. ej., varianza, intervalos de confianza) del estimador/modelo.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reducir el sesgo en la estimación de un modelo mediante la agregación de múltiples clasificadores débiles."
+        },
+        {
+          "id": "b",
+          "text": "Estimar la varianza de un modelo mediante la generación de múltiples conjuntos de entrenamiento a partir de reemplazos aleatorios del conjunto de datos original."
+        },
+        {
+          "id": "c",
+          "text": "Seleccionar características importantes de un conjunto de datos para mejorar el rendimiento del modelo."
+        },
+        {
+          "id": "d",
+          "text": "Reducir el sobreajuste en modelos de aprendizaje automático al eliminar datos atípicos."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:0b5c1d2e3f4a59687766554433221100ffeeddccbbaa99887766554433221100",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
     },
     {
       "id": "870db6c3-7923-4297-afa1-08407dc62355",
@@ -3619,6 +6028,53 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "8bea6660-e234-4dcf-9739-e0e218b83494",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación verdadera sobre el método cartesian grid search:",
+      "explanation": "El método cartesian grid search implica evaluar sistemáticamente todas las combinaciones posibles de hiperparámetros dentro de un conjunto predefinido de valores. Por lo tanto, es una búsqueda exhaustiva que explora todo el espacio de hiperparámetros.",
+      "difficulty": 2,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "grid-search",
+        "busqueda-exhaustiva"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Consiste en una búsqueda aleatoria de los parámetros."
+        },
+        {
+          "id": "b",
+          "text": "Consiste en una búsqueda exhaustiva de los parámetros."
+        },
+        {
+          "id": "c",
+          "text": "Consiste en una búsqueda estocástica de los parámetros."
+        },
+        {
+          "id": "d",
+          "text": "Consiste en una búsqueda exhaustiva acotada de los parámetros."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:99dcfe1ffb90d5b9d820aa447db7e8b45d7a85d37a7dfb0b2e8b33fbb25d1d05",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
       "id": "8c3f2907-4231-418e-b35d-cc50520cb238",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a0ee552f-68ca-4b05-bf4f-9e4f2edc904c",
@@ -3647,6 +6103,144 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "8d0ea51a-4f81-4a0f-b2bc-8bc0c7e4101a",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe **incorrectamente** el índice **Gini** en árboles de decisión?",
+      "explanation": "Gini es una **medida de impureza**. La **ganancia de información** se define típicamente con **entropía** (ID3/C4.5).",
+      "difficulty": 3,
+      "tags": [
+        "gini",
+        "impureza",
+        "ganancia-de-informacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El índice Gini mide la impureza de un conjunto de datos, donde un valor más alto indica una mayor impureza y una mezcla más desigual de clases."
+        },
+        {
+          "id": "b",
+          "text": "El índice Gini se utiliza para seleccionar la mejor división en un nodo de un árbol de decisión, buscando minimizar la impureza en los nodos hijos."
+        },
+        {
+          "id": "c",
+          "text": "El índice Gini asigna un valor de 0 cuando todos los ejemplos en un nodo pertenecen a la misma clase, lo que indica una pureza máxima."
+        },
+        {
+          "id": "d",
+          "text": "El índice Gini es una medida de la ganancia de información, utilizada para determinar qué característica proporciona la mayor separación entre las clases objetivo en un conjunto de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:5bd7f30a7a42c4d533f067f871d1fb80eadd30c3724e032dbfe4d0f9b4ef8625",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
+    },
+    {
+      "id": "8d801c40-b302-4852-b784-62b4378f4aac",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "¿Cuál es el propósito principal de **Random Forest** en aprendizaje automático?",
+      "explanation": "Al ser un método basado en *bagging* (agregación de múltiples árboles), su efecto principal es **reducir la varianza** y mejorar la generalización.",
+      "difficulty": 1,
+      "tags": [
+        "random-forest",
+        "bagging",
+        "sesgo-varianza"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reducir el sesgo."
+        },
+        {
+          "id": "b",
+          "text": "Reducir la varianza."
+        },
+        {
+          "id": "c",
+          "text": "Aumentar el sesgo."
+        },
+        {
+          "id": "d",
+          "text": "Aumentar la varianza."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:4cac0a7397e0d6a3e80b937525aac06c001b3a7de478c7331cec201930d83f7d",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
+      "id": "8d9a02a3-70f7-46d3-9aab-2293c16dbaaf",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "Es una ventaja que se tiene al transformar una variable nominal a una numérica:",
+      "explanation": "Muchos algoritmos requieren entradas numéricas. Al codificar variables nominales (one-hot, label encoding, etc.) el modelo puede entrenarse y operar con esos atributos.",
+      "difficulty": 2,
+      "tags": [
+        "nominal",
+        "one-hot",
+        "preprocesado"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Las redes neuronales no pueden lidiar con atributos nominales."
+        },
+        {
+          "id": "b",
+          "text": "Las máquinas de vector de soporte no trabajan correctamente con atributos nominales."
+        },
+        {
+          "id": "c",
+          "text": "Varios algoritmos no pueden lidiar con valores nominales y cuando se transforman los datos se pueden ejecutar."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores respuestas es una ventaja."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:8f7e6d5c4b3a29182736455443322110ffeeddccbbaa99887766554433221100",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
     },
     {
       "id": "8e8c9c9d-86c8-4d0d-9b5f-d09918da227b",
@@ -3687,6 +6281,100 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "8f3c232a-c066-4ca2-b2af-4b09ea7a6a89",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "La optimización de hiperparámetros:",
+      "explanation": "La optimización de hiperparámetros no se utiliza directamente para controlar el overfitting o el underfitting. Su objetivo principal es encontrar la configuración óptima de hiperparámetros que maximice el rendimiento del modelo en un conjunto de datos de prueba o validación.",
+      "difficulty": 2,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "optimizacion",
+        "overfitting",
+        "underfitting"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Permite controlar y resolver el overfitting."
+        },
+        {
+          "id": "b",
+          "text": "Permite controlar y resolver el underfitting."
+        },
+        {
+          "id": "c",
+          "text": "La optimización de hiperparámetros no tiene impacto en el rendimiento del modelo."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:10fa0a39f4cf49f3c6d2f7cda2a7f9a9bb8c9f6e0d2b63a4c3d1a8c9b1a7d2b6",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
+      "id": "9032a4b2-b6fd-4e4c-838a-c01bcffcb3de",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "Señala la afirmación correcta: «Los algoritmos de clasificación tienen como objetivo…»",
+      "explanation": "En **clasificación** el objetivo habitual es asignar una **etiqueta de clase** (la clase más probable) a cada instancia. Predecir un valor numérico es **regresión**.",
+      "difficulty": 1,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Predecir la clase más probable de entre varias posibles."
+        },
+        {
+          "id": "b",
+          "text": "Predecir la distribución de probabilidad de las clases de cada instancia."
+        },
+        {
+          "id": "c",
+          "text": "Predecir un valor numérico como variable objetivo."
+        },
+        {
+          "id": "d",
+          "text": "Ordenar las etiquetas de clase de un conjunto de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:71a4f43d2fcbac69bc28a8f8503547fcb47a1edddf5d593a3ef3372d1737c651",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
     },
     {
       "id": "9135a834-43aa-4f40-b8be-e79602a0c6ee",
@@ -3734,6 +6422,52 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "9135c584-ca68-4585-8e83-6f980dfa6724",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "¿Cuál es el propósito principal de utilizar múltiples árboles en un bosque de Random Forest?",
+      "explanation": "Combinar muchos árboles reduce la **variabilidad** del modelo (varianza) frente a un árbol único y mejora la **capacidad de generalización**.",
+      "difficulty": 2,
+      "tags": [
+        "random-forest",
+        "ensamble",
+        "generalizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aumentar la complejidad del modelo."
+        },
+        {
+          "id": "b",
+          "text": "Aumentar el sesgo."
+        },
+        {
+          "id": "c",
+          "text": "Reducir la varianza y generalizar el modelo."
+        },
+        {
+          "id": "d",
+          "text": "Reducir el sesgo."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:99ddfcda923afd5ed78cd720c97e16594691806fba0cd3d2dc8071d3ae9460ce",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
     },
     {
       "id": "91d8699e-1314-4ebc-a8ac-e32701cb349b",
@@ -3863,6 +6597,53 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "92c116df-5a52-4eb2-82a0-ffa1b444f8fa",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre la función sigmoide es **falsa**?",
+      "explanation": "Ningún *kernel* es el mejor *siempre*: el rendimiento depende del problema, los datos y la elección de hiperparámetros.",
+      "difficulty": 2,
+      "tags": [
+        "svm",
+        "kernel-sigmoide",
+        "tanh",
+        "seleccion-de-kernel"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La función de *kernel* sigmoide en SVM se define como $k(x,x')=\\\\tanh(\\\\alpha\\\\,x^T x' + c)$, donde $\\\\alpha$ y $c$ son parámetros ajustables."
+        },
+        {
+          "id": "b",
+          "text": "La función de *kernel* sigmoide puede ser útil para modelar relaciones no lineales en SVM y puede capturar patrones complejos en los datos."
+        },
+        {
+          "id": "c",
+          "text": "La función de *kernel* sigmoide transforma los datos a un espacio de características de mayor dimensión utilizando una función sigmoide para facilitar la separación lineal de clases."
+        },
+        {
+          "id": "d",
+          "text": "La función de *kernel* sigmoide en SVM siempre produce un mejor rendimiento que otros *kernels*, como el *kernel* lineal o el *kernel* polinomial."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1908f7e6d5c4b3a2f1e0d9c8b7a6f",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
     },
     {
       "id": "93098db5-bb9e-46e7-83cb-17b0e70809d6",
@@ -4164,6 +6945,52 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "9e73c189-0149-46e8-b1ed-e8b19b2a8efc",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "La métrica de accuracy:",
+      "explanation": "$$\\text{Accuracy} = \\frac{TP+TN}{TP+TN+FP+FN}$$",
+      "difficulty": 1,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Se conoce como la ratio de éxito."
+        },
+        {
+          "id": "b",
+          "text": "Representa el número de predicciones correctas entre el total de predicciones."
+        },
+        {
+          "id": "c",
+          "text": "Representa el número de falsos detectados."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:3c34b76f85573fa87e4b1b5c09b3b3e90b517c5088187b8dfc8b2f7c6c1a2b57",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
       "id": "a03b5e07-82c6-4f21-83c0-509fd3bbc1d2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
@@ -4202,6 +7029,99 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "a23d7c5b-0e4a-4442-85fd-c3db257b8d5b",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación correcta sobre los hiperparámetros:",
+      "explanation": "Los hiperparámetros son configuraciones que afectan el comportamiento y el rendimiento de los modelos de aprendizaje automático, y su optimización tiene como objetivo mejorar el rendimiento predictivo del modelo en conjuntos de datos nuevos y no vistos.",
+      "difficulty": 2,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "hiperparametros",
+        "optimizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sirven para optimizar los modelos."
+        },
+        {
+          "id": "b",
+          "text": "Su optimización puede generar sobreajuste a los datos de entrenamiento."
+        },
+        {
+          "id": "c",
+          "text": "Su optimización nunca genera sobreajuste, pues no modifican los datos de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Son iguales para todos los modelos."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:00d4b0b9287f493c2c9f2dc54fbe3e9bf8d1b1b4f0f2c8dfb13e6f54a5c6bd88",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
+      "id": "a2e52897-b8db-4966-adec-0f97d0cffceb",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre los hiperplanos es **cierta**?",
+      "explanation": "Un hiperplano es el límite de decisión en un espacio de características (de cualquier dimensión). En SVM se elige el que maximiza el margen (y en *soft margin* equilibrando margen y errores).",
+      "difficulty": 1,
+      "tags": [
+        "svm",
+        "hiperplano",
+        "margen"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un hiperplano solo se define para dos dimensiones."
+        },
+        {
+          "id": "b",
+          "text": "Límite de decisión entre clases que separa de manera óptima las instancias de datos, en espacio de características multidimensional."
+        },
+        {
+          "id": "c",
+          "text": "El hiperplano en SVM siempre pasa por el origen en el espacio de características."
+        },
+        {
+          "id": "d",
+          "text": "Un hiperplano busca el sobreajuste de las instancias de datos."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:9f795f6b56a29559c764e53a7bb46018c3877f557bff89fc3df4db8b4d3c6b4b",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
     },
     {
       "id": "a4581307-14dc-4f85-92ef-8aaf9ededd7d",
@@ -4243,6 +7163,101 @@
       "updatedAt": "2026-02-20T14:49:08.173Z"
     },
     {
+      "id": "a629701e-637d-4751-8e4b-ac0d65733f29",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación válida. Para la mayoría de los conjuntos de datos:",
+      "explanation": "En la mayoría de los conjuntos de datos, no todos los hiperparámetros son igualmente relevantes. Algunos pueden tener un impacto significativo en el rendimiento del modelo, mientras que otros pueden tener un impacto mínimo o incluso nulo. La determinación de la relevancia de los hiperparámetros depende del conjunto de datos específico y del problema que se esté abordando.",
+      "difficulty": 2,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "hiperparametros",
+        "relevancia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Todos los hiperparámetros son relevantes."
+        },
+        {
+          "id": "b",
+          "text": "Solo algunos de los hiperparámetros son relevantes."
+        },
+        {
+          "id": "c",
+          "text": "La relevancia o no de los hiperparámetros depende del volumen de los datos."
+        },
+        {
+          "id": "d",
+          "text": "Existe el mismo conjunto de hiperparámetros relevante."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:2a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f70819",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
+      "id": "a7235045-65b9-4187-b63a-17b4b31bb061",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "¿Cuáles son los pasos que sigue el método **Boosting**?",
+      "explanation": "Boosting entrena **secuencialmente** modelos débiles, reponderando las muestras (o optimizando una pérdida) para que cada iteración se centre en los errores de la anterior; la combinación final suele ser **ponderada**.",
+      "difficulty": 3,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Genera múltiples conjuntos de entrenamiento mediante muestreo con reemplazo, entrena en paralelo tantos clasificadores base como conjuntos de datos generados existan, combina las predicciones de cada clasificador base para obtener la predicción final."
+        },
+        {
+          "id": "b",
+          "text": "Genera múltiples conjuntos de entrenamiento mediante muestreo con reemplazo, entrena secuencialmente el clasificador base con cada conjunto de datos de entrenamiento generado, combina las predicciones de cada clasificador base a través del voto mayoritario."
+        },
+        {
+          "id": "c",
+          "text": "Asigna pesos a cada muestra del conjunto de entrenamiento, inicialmente todos tienen el mismo peso. Entrena el modelo débil utilizando el conjunto de datos de entrenamiento ponderado con los pesos actuales. Calcula el error del modelo débil. Asigna pesos al modelo débil. Actualiza los pesos de las muestras y repite los pasos hasta alcanzar un criterio de parada. Combina los modelos débiles para formar un modelo fuerte que se utiliza para futuras predicciones."
+        },
+        {
+          "id": "d",
+          "text": "Genera múltiples conjuntos de entrenamiento mediante muestreo con reemplazo. Entrena el modelo débil utilizando el conjunto de datos de entrenamiento ponderado con los pesos actuales. Asigna pesos al modelo débil. Actualiza los pesos de las muestras y repite desde el entrenamiento hasta alcanzar un criterio de parada. Combina los modelos débiles para formar un modelo fuerte."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:2c0a788e942384215be4acdd317cc744ac1795bad9689e295f243d2ef5bf9b91",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
+    },
+    {
       "id": "a7bd9cfa-2058-49a5-8378-43455165bb22",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -4272,6 +7287,51 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "a7e2d4e2-7a77-4c9d-9ece-3b819ad74444",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "¿Por qué aplicar normalización a los datos?",
+      "explanation": "Se normaliza para evitar que las variables con valores numéricos grandes dominen el cálculo (distancias, etc.) frente a variables con magnitudes pequeñas.",
+      "difficulty": 2,
+      "tags": [
+        "normalizacion",
+        "escalado"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Porque se utiliza la distancia euclídea y necesita la normalización para poder calcularse."
+        },
+        {
+          "id": "b",
+          "text": "Los atributos con magnitudes altas pesarán mucho más que los atributos con magnitudes bajas."
+        },
+        {
+          "id": "c",
+          "text": "A y B son ciertas."
+        },
+        {
+          "id": "d",
+          "text": "A y B son falsas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:df0b2f6f0c7d1ad1d9c4d5b5e89b7f2a4c68e5d2d05d2b13de4d8d4b1c0e3e5b",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
     },
     {
       "id": "a9a5cee2-284f-42f0-af7f-18415155aa14",
@@ -4338,6 +7398,100 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "aaff9803-4146-4b1b-aace-309db326cff3",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "El algoritmo original de **Boosting**:",
+      "explanation": "Según el temario, el algoritmo original se atribuye a **Schapire y Singer (1996)**.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fue propuesto por Freund y Schapire en 1996."
+        },
+        {
+          "id": "b",
+          "text": "Fue propuesto por Freund y Shapire en 1977."
+        },
+        {
+          "id": "c",
+          "text": "Fue propuesto por Schapire y Singer en 1996."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0f9c4ebd85a6f1795f0dbf8d6d2f1c306cc2b08f7b51db1dfddbe5a4fdf5b0be",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
+    },
+    {
+      "id": "abd02ae6-3e5a-4584-b037-23f9cce8470e",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "En el algoritmo Random Forest, ¿qué es el **Out-of-Bag (OOB) error**?",
+      "explanation": "El **OOB error** se estima con las observaciones que quedan **fuera** de la muestra *bootstrap* usada para entrenar cada árbol (instancias no utilizadas para ese árbol).",
+      "difficulty": 2,
+      "tags": [
+        "random-forest",
+        "oob",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El error en el conjunto de prueba."
+        },
+        {
+          "id": "b",
+          "text": "El error en el conjunto de entrenamiento."
+        },
+        {
+          "id": "c",
+          "text": "El error en las instancias no utilizadas durante el entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "El error en el conjunto de validación."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:5ee7d629ad1600520120af82d314cd2308923284332c1981af03ef1fe95db8b6",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
       "id": "b1a25422-e4ae-48fc-bc8a-65b27975afbb",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "9d6276cf-e9aa-48ad-a074-fe7ce913673d",
@@ -4369,6 +7523,97 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "b25f6deb-3562-462f-883e-ff55d68dfde1",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "Si dos eventos son exhaustivos:",
+      "explanation": "Dos eventos exhaustivos **cubren todos los casos**: necesariamente ocurre **al menos uno** ($A\\cup B=\\Omega$).",
+      "difficulty": 1,
+      "tags": [
+        "probabilidad",
+        "eventos",
+        "exhaustivos"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Deben ocurrir los dos."
+        },
+        {
+          "id": "b",
+          "text": "Al menos uno de los dos debe ocurrir."
+        },
+        {
+          "id": "c",
+          "text": "Si uno ocurre el otro no puede ocurrir."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores describe la exhaustividad."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
+      "id": "b3b52623-e5ad-46c9-997c-606da37f70c9",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "Son parte de las técnicas para imputar datos ausentes:",
+      "explanation": "En el tema se consideran como técnicas de tratamiento de datos ausentes tanto el enfoque probabilístico como la eliminación de registros/atributos con ausentes y la imputación simple (media/mediana/moda).",
+      "difficulty": 1,
+      "tags": [
+        "datos-ausentes",
+        "imputacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Enfoque probabilísticos."
+        },
+        {
+          "id": "b",
+          "text": "A, C y D son verdaderas."
+        },
+        {
+          "id": "c",
+          "text": "Imputación por eliminación."
+        },
+        {
+          "id": "d",
+          "text": "Imputación por media, mediana y moda."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:5dc445d2c4f1c39c5f7f1ff4a97b1b9a24fd463b96bbf0a6b48c0f7b2c18b6a1",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
     },
     {
       "id": "b44a586f-26b0-4c0d-ac79-2531a7f699eb",
@@ -4546,6 +7791,97 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "b9c18c7b-a21c-4c2d-a449-01f060414f55",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "Un modelo con gran valor de precisión:",
+      "explanation": "Precisión (PPV): $$\\text{Precision} = \\frac{TP}{TP+FP}$$. Alta precisión ⇒ pocos **falsos positivos**.",
+      "difficulty": 2,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Indica que la mayoría de las veces que se predice la clase negativa está en lo cierto."
+        },
+        {
+          "id": "b",
+          "text": "Indica que la mayoría de las veces que se predice la clase positiva está en lo cierto."
+        },
+        {
+          "id": "c",
+          "text": "Indica que el modelo es completamente impreciso y aleatorio."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:90f9b6c55d3d2fb39b24c7d3a8b8d4a3a5e6d1b0a0b4d9cdbda54c0ed0f7e3c2",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
+      "id": "bd373e0e-9d68-40da-a421-0a4b09429f76",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "La siguiente línea de código `dataset.dropna(inplace=True)` representa:",
+      "explanation": "`dropna` elimina los registros (por defecto, filas) que contienen valores faltantes. Con `inplace=True` modifica el `dataset` directamente.",
+      "difficulty": 1,
+      "tags": [
+        "datos-ausentes",
+        "pandas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Imputación de valores mediante el enfoque probabilístico."
+        },
+        {
+          "id": "b",
+          "text": "Imputación de valores mediante el algoritmo de esperanza-maximización."
+        },
+        {
+          "id": "c",
+          "text": "Imputación por eliminación."
+        },
+        {
+          "id": "d",
+          "text": "Imputación por media."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:25e02ccf6609a2c1c85e9c3e31f6a8d2d85c49ae6d8b0891e12f8c2af4f9f4b4",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
+    },
+    {
       "id": "c1ce0d01-4e81-4283-b61b-97518e9aa205",
       "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
       "topicId": "33ab0c5f-8035-43a2-8314-55bdc07b4b6d",
@@ -4640,6 +7976,53 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "c30efa52-17e5-43d3-88b0-1d0fc41b0b5a",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación correcta. El número de modelos necesarios para converger a un óptimo global:",
+      "explanation": "El número de modelos necesarios para converger a un óptimo global puede variar significativamente dependiendo de varios factores, como el algoritmo de optimización utilizado, la complejidad del problema, el conjunto de datos y la configuración de hiperparámetros. Por lo tanto, es importante considerar este aspecto al establecer el criterio de parada durante el proceso de optimización.",
+      "difficulty": 3,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "criterio-de-parada",
+        "convergencia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Por lo general es siempre el mismo."
+        },
+        {
+          "id": "b",
+          "text": "Puede variar bastante y el criterio de parada lo debe considerar."
+        },
+        {
+          "id": "c",
+          "text": "No es algo que debe ser tenido en cuenta."
+        },
+        {
+          "id": "d",
+          "text": "Debe estar predefinido por el ingeniero de machine learning."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:7f6e5d4c3b2a1908f7e6d5c4b3a29108f7e6d5c4b3a29108f7e6d5c4b3a29108",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
+    },
+    {
       "id": "c5b1e42c-6d41-4b64-9736-27afeeb68edf",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -4679,6 +8062,51 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "c5ba0a1f-bacd-49c3-8a49-ebf918faa603",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
+      "type": "TEST",
+      "prompt": "La siguiente línea de código `imputer = SimpleImputer(missing_values=nan, strategy='mean')` representa:",
+      "explanation": "`SimpleImputer(..., strategy='mean')` rellena los valores `NaN` usando la **media** de cada característica.",
+      "difficulty": 1,
+      "tags": [
+        "imputacion",
+        "sklearn"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Imputación de valores mediante el enfoque probabilísticos."
+        },
+        {
+          "id": "b",
+          "text": "Imputación de valores mediante el algoritmo de esperanza-maximización."
+        },
+        {
+          "id": "c",
+          "text": "Imputación por eliminación."
+        },
+        {
+          "id": "d",
+          "text": "Imputación por media."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:92f3b51a81b7a8b1dbf3b7c2cbd38b8a2a0e2f2f7a83bbacdd83f3a5ef4a5c30",
+      "createdBy": "Luis",
+      "sourcePackId": "0e6eac3f-f1c3-4e03-a88f-2b73adab0167",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:19:20.692Z",
+      "updatedAt": "2026-02-20T23:19:20.692Z"
+    },
+    {
       "id": "c5e767b8-5ca4-4eee-ac56-e73325eb40e1",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -4707,6 +8135,52 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "c65647be-b015-4b10-ac5a-dbd6419f058e",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones describe correctamente el **compromiso sesgo-varianza** en un modelo de *machine learning*?\n\nSeleccione una:",
+      "explanation": "Sesgo alto → modelo demasiado simple (subajuste). Varianza alta → modelo demasiado sensible a los datos de entrenamiento (sobreajuste).",
+      "difficulty": 2,
+      "tags": [
+        "sesgo-varianza",
+        "overfitting",
+        "underfitting"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El compromiso sesgo-varianza se refiere a la relación entre el sesgo y la varianza de un modelo, donde un sesgo alto puede llevar a un subajuste y una varianza alta puede llevar a un sobreajuste."
+        },
+        {
+          "id": "b",
+          "text": "El compromiso sesgo-varianza solo se aplica a modelos de regresión y no a otros tipos de modelos de machine learning."
+        },
+        {
+          "id": "c",
+          "text": "Un modelo con bajo sesgo y alta varianza generalmente se ajusta bien a los datos de entrenamiento y generaliza bien a nuevos datos."
+        },
+        {
+          "id": "d",
+          "text": "El compromiso sesgo-varianza no es relevante en el contexto de machine learning y no afecta el rendimiento del modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:cbd7b5002ba903afe755ce0f1bc85c8e5eafb76b164af592ba0974839457995e",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
     },
     {
       "id": "ca35c5a9-948e-4620-a2ab-d6c5d128a72f",
@@ -4747,6 +8221,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "cb4ac2af-e349-4486-93a4-c287aaee6f1c",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "Son características generales del método **Bagging**:",
+      "explanation": "Bagging reduce sobre todo **varianza**: modelos homogéneos, entrenamiento **en paralelo**, agregación por **voto/promedio**.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reduce bias o sesgo, su aprendizaje base es homogéneo, su entrenamiento base es secuencial, y su método de agregación es peso promedio."
+        },
+        {
+          "id": "b",
+          "text": "Mejora exactitud, su aprendizaje base es heterogéneo, su entrenamiento base es secuencial, y su método de agregación es peso promedio."
+        },
+        {
+          "id": "c",
+          "text": "Reduce varianza, es homogéneo, el entrenamiento es en paralelo, y la predicción está dada por el voto mayoritario o promedio."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:2e2e5ac2852e90ab1a8a6d0c19c8b2a6a4bb50a2a6c8d9e8c3d9a6d8f1e2a3b4",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
     },
     {
       "id": "cc4eb31c-2f77-489f-950f-d8e1cdef4447",
@@ -4793,6 +8315,52 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "cc93fc89-111b-4ba3-bd8a-7e47ca4382bb",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes opciones describe correctamente la **ganancia de información** en árboles de decisión?",
+      "explanation": "Definición: $$IG = H(\\text{padre}) - \\sum_{i} \\frac{n_i}{n} H(\\text{hijo}_i)$$",
+      "difficulty": 3,
+      "tags": [
+        "ganancia-de-informacion",
+        "entropia",
+        "splits"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La ganancia de información mide la pureza de un nodo en un árbol de decisión, donde un valor más alto indica una mayor homogeneidad en las clases."
+        },
+        {
+          "id": "b",
+          "text": "La ganancia de información se utiliza para seleccionar la característica que divide un conjunto de datos de la manera más equitativa posible, sin favorecer una clase sobre otra."
+        },
+        {
+          "id": "c",
+          "text": "La ganancia de información se calcula como la diferencia entre la entropía del nodo padre y la suma ponderada de las entropías de los nodos hijos después de una división."
+        },
+        {
+          "id": "d",
+          "text": "La ganancia de información asigna un valor de 0 cuando todas las muestras en un nodo pertenecen a la misma clase, lo que indica una falta de variabilidad en las clases objetivo."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:2fb6c815212e9e654d05bdc4a46b06c39b2d2854bcb968ab9efec2a894116b48",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
     },
     {
       "id": "cd8e436c-9340-49fb-a7bd-8b3ea496f1ca",
@@ -4919,6 +8487,97 @@
       "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
+      "id": "d09a8767-e4b6-4711-a22d-975923299326",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "¿En qué contexto sería preferible utilizar **Extra Trees** en lugar de Random Forest?",
+      "explanation": "Si se prioriza **rapidez de entrenamiento**, Extra Trees puede ser preferible por su construcción más aleatoria.",
+      "difficulty": 2,
+      "tags": [
+        "extra-trees",
+        "comparacion",
+        "entrenamiento"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cuando se busca una mayor interpretabilidad del modelo."
+        },
+        {
+          "id": "b",
+          "text": "Cuando se tiene un conjunto de datos pequeño."
+        },
+        {
+          "id": "c",
+          "text": "Cuando se desea mayor velocidad de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Cuando se necesita un modelo altamente preciso."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:5665765fe4223b0aa409df7b28eb6c3d07c95a53bbd59995de5d7351f4529915",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
+      "id": "d1244911-3389-4235-8df9-0f588b291b73",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "¿Qué suposición se hace sobre la independencia de las variables en Naïve Bayes?",
+      "explanation": "Naïve Bayes asume **independencia (condicional) entre variables** dado la clase, para simplificar el cálculo de la verosimilitud.",
+      "difficulty": 1,
+      "tags": [
+        "independencia",
+        "naive-bayes"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Las variables son dependientes entre sí."
+        },
+        {
+          "id": "b",
+          "text": "Las variables son independientes entre sí."
+        },
+        {
+          "id": "c",
+          "text": "No se hace ninguna suposición con respecto a las variables."
+        },
+        {
+          "id": "d",
+          "text": "La dependencia o independencia de las variables no es de interés para el algoritmo."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:5a32f1a6b60e4f1a7db1f0f7f9e5c0a5c0b1f2a3b4c5d6e7f8a9b0c1d2e3f4a5",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
       "id": "d2c262f2-e26e-4a3f-bf3d-b89e44c06b95",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
@@ -4957,6 +8616,54 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "d2e46a19-d86c-4861-b31f-4497655f8acf",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
+      "type": "TEST",
+      "prompt": "¿Cuáles son los pasos que sigue el método **Bagging**?",
+      "explanation": "Bagging = **bootstrap aggregating**: se crean *bootstrap samples* (con reemplazo), se entrenan modelos **en paralelo** e independientes, y se agregan (voto/promedio) sus predicciones.",
+      "difficulty": 2,
+      "tags": [
+        "tema-9",
+        "ensemble",
+        "bagging",
+        "boosting",
+        "bootstrap"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Genera múltiples conjuntos de entrenamiento mediante muestreo con reemplazo, entrena en paralelo tantos clasificadores base como conjuntos de datos generados existan, combina las predicciones de cada clasificador base para obtener la predicción final."
+        },
+        {
+          "id": "b",
+          "text": "Genera múltiples conjuntos de entrenamiento mediante muestreo con reemplazo, entrena secuencialmente el clasificador base con cada conjunto de datos de entrenamiento generado (hasta no terminar un entrenamiento no puede continuar con el siguiente), combina las predicciones de cada clasificador base a través del voto mayoritario."
+        },
+        {
+          "id": "c",
+          "text": "Asigna pesos a cada muestra del conjunto de entrenamiento, inicialmente todos tienen el mismo peso. Entrena el modelo débil utilizando el conjunto de datos de entrenamiento ponderado con los pesos actuales. Calcula el error del modelo débil. Asigna pesos al modelo débil. Actualiza los pesos de las muestras y repite hasta alcanzar un criterio de parada. Combina los modelos débiles para formar un modelo fuerte."
+        },
+        {
+          "id": "d",
+          "text": "Genera múltiples conjuntos de entrenamiento mediante muestreo con reemplazo. Entrena el modelo débil utilizando el conjunto de datos de entrenamiento ponderado con los pesos actuales. Asigna pesos al modelo débil. Actualiza los pesos de las muestras y repite hasta alcanzar un criterio de parada. Combina los modelos débiles para formar un modelo fuerte."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:a243ea09a1a12f0fa229d262f7fb013081f9f29b9b34b0480a62a6b6c31f2d0a",
+      "createdBy": "Luis",
+      "sourcePackId": "f55988d5-2c1d-4f7a-865b-2ef36a712ff0",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:16:43.076Z",
+      "updatedAt": "2026-02-21T15:16:43.076Z"
     },
     {
       "id": "d5d23a84-db33-40de-929e-f1ff39253ae4",
@@ -5065,6 +8772,52 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "d6d6935a-a890-4090-bc32-8194a4b4d104",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "¿Qué pasa si aumento el número de árboles a un número muy grande en Random Forest en términos de desempeño del modelo?",
+      "explanation": "En la práctica se estudia cómo **disminuye el error** (p. ej. OOB) según `n_estimators` y se observa cuándo el rendimiento **se estabiliza**: añadir más árboles aporta mejoras marginales.",
+      "difficulty": 3,
+      "tags": [
+        "random-forest",
+        "n-estimators",
+        "curva-error"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aumenta la precisión, pero también la varianza."
+        },
+        {
+          "id": "b",
+          "text": "Aumenta la precisión y reduce la varianza."
+        },
+        {
+          "id": "c",
+          "text": "Disminuye la precisión y reduce el sesgo."
+        },
+        {
+          "id": "d",
+          "text": "Es deseable analizar la disminución del error en términos del número de árboles para ver el desempeño del modelo."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:4b06a3591f8cb7ff1dc1365a494a045f72152f5ace549b99d9d143b18ddbb3e0",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
       "id": "d6ffbc89-743f-47ec-8f30-7f879e0415bd",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "450fb598-6a22-4be1-8621-ff78740c3973",
@@ -5095,6 +8848,98 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "d8f50505-d4f3-40f0-beb5-158346243f90",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
+      "type": "TEST",
+      "prompt": "Indica la afirmación correcta sobre la **raíz del error cuadrático medio (RMSE)**:\n\nSeleccione una:",
+      "explanation": "RMSE = $\\sqrt{\\frac{1}{n}\\sum (y-\\hat{y})^2}$. Hereda la penalización cuadrática del MSE, por eso castiga más los errores grandes que MAE. Además, queda en las mismas unidades que $y$.",
+      "difficulty": 1,
+      "tags": [
+        "rmse",
+        "metricas",
+        "error"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "RMSE es más sensible a los errores grandes en comparación con MAE en problemas de regresión de aprendizaje automático."
+        },
+        {
+          "id": "b",
+          "text": "RMSE proporciona una medida de error en diferentes unidades que la variable objetivo en problemas de regresión."
+        },
+        {
+          "id": "c",
+          "text": "RMSE calcula el logaritmo de la raíz cuadrada del promedio de los cuadrados de las diferencias entre predicciones y valores reales."
+        },
+        {
+          "id": "d",
+          "text": "RMSE es una medida de error robusta que ignora la magnitud de las diferencias entre las predicciones y los valores reales."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:a3fcad109f7e6e9b279658c97c1954a3fd20c01e444f76bb80c6a05f83a1230e",
+      "createdBy": "Luis",
+      "sourcePackId": "8a8d0ff6-0d9e-4f6e-a6b4-1a0d2b8f9a4b",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:36:29.551Z",
+      "updatedAt": "2026-02-20T23:36:29.551Z"
+    },
+    {
+      "id": "d98f9a5e-1c95-47da-ae57-db2aa88ff5ae",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
+      "type": "TEST",
+      "prompt": "Un árbol de decisión se obtiene:",
+      "explanation": "En cada nodo se elige el split que **más reduce la impureza** (p.ej., Gini) o que **más aumenta la ganancia de información** (entropía).",
+      "difficulty": 2,
+      "tags": [
+        "arboles-de-decision",
+        "split",
+        "impureza"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Por medio de un algoritmo que elige primero una variable aleatoria."
+        },
+        {
+          "id": "b",
+          "text": "Por medio de un algoritmo que elige primero aquella variable más predictiva."
+        },
+        {
+          "id": "c",
+          "text": "Por medio de un algoritmo que elige primero aquella variable menos predictiva."
+        },
+        {
+          "id": "d",
+          "text": "Por medio de una elección aleatoria de las variables más predictivas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:3c01bc3038c36888fbbcc4432519f8e8521ffabe1ed64fade3e29ed1aed2ff3b",
+      "createdBy": "Luis",
+      "sourcePackId": "6b1aa3c6-5f0c-46b7-9d4a-1a5a3f739f3a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T13:19:32.706Z",
+      "updatedAt": "2026-02-21T13:19:32.706Z"
     },
     {
       "id": "dacd8ccd-895a-472f-bf01-98d4821e7973",
@@ -5256,6 +9101,51 @@
       "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
+      "id": "e11cf2c6-c8bf-494b-9501-737bf9e8062d",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "Los eventos dependientes:",
+      "explanation": "Si dos eventos son dependientes, la ocurrencia de uno **afecta** a la probabilidad del otro (y viceversa).",
+      "difficulty": 2,
+      "tags": [
+        "probabilidad",
+        "dependencia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Permiten estimar la presencia de un evento en función del otro."
+        },
+        {
+          "id": "b",
+          "text": "Siempre ocurren a la vez."
+        },
+        {
+          "id": "c",
+          "text": "Implica que la existencia de uno puede conllevar la existencia del otro."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores describe los eventos dependientes."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
+    },
+    {
       "id": "e400140f-768a-4261-8a0b-edfb8d7106c2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -5406,6 +9296,52 @@
       "updatedAt": "2026-02-20T17:34:13.897Z"
     },
     {
+      "id": "e73fa2ad-3c9e-490b-9f35-e9148cba7699",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "¿Cuál es uno de los beneficios de **Extra Trees** en comparación con Random Forest?",
+      "explanation": "Al escoger divisiones de forma más aleatoria (sin buscar el mejor corte), suele ser **más rápido de entrenar** que Random Forest.",
+      "difficulty": 2,
+      "tags": [
+        "extra-trees",
+        "rendimiento",
+        "entrenamiento"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mayor interpretabilidad de los modelos."
+        },
+        {
+          "id": "b",
+          "text": "Mayor velocidad de entrenamiento."
+        },
+        {
+          "id": "c",
+          "text": "Menor capacidad para manejar datos ruidosos."
+        },
+        {
+          "id": "d",
+          "text": "Mayor sensibilidad al sobreajuste."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:3106d19776709adaa5cb566ef1c9754ec962919c9c20110b0aff48e70dd731d4",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
+    },
+    {
       "id": "e7f8212f-5db3-480c-abfb-ad355bc495cd",
       "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
       "topicId": "ce4369a8-42da-42d5-a4c2-dbbdce2a4eb0",
@@ -5491,6 +9427,52 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "ea2a890b-099f-4b58-adbe-5559149b5959",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
+      "type": "TEST",
+      "prompt": "¿Cuáles de las siguientes afirmaciones son ciertas sobre el clasificador de Naïve Bayes?",
+      "explanation": "Naïve Bayes estima probabilidades con datos (frecuencias/verosimilitudes) y asume **independencia condicional** entre características.",
+      "difficulty": 2,
+      "tags": [
+        "naive-bayes",
+        "verosimilitud",
+        "independencia-condicional"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Utiliza datos históricos para obtener la probabilidad observada de cada evento en función de su vector de características."
+        },
+        {
+          "id": "b",
+          "text": "Asume independencia condicional entre los eventos."
+        },
+        {
+          "id": "c",
+          "text": "A y B son ciertas."
+        },
+        {
+          "id": "d",
+          "text": "El cálculo riguroso del teorema de Bayes es computacionalmente costoso."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8",
+      "createdBy": "Luis",
+      "sourcePackId": "82432049-5937-495b-aab0-d3f6f9364ac6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:47:50.469Z",
+      "updatedAt": "2026-02-21T14:47:50.469Z"
     },
     {
       "id": "ebe5c654-5e68-40dd-bbab-f783f6b1ead5",
@@ -5635,6 +9617,52 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "f10bed8c-8620-4c24-9a27-fb4979a23ff4",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
+      "type": "TEST",
+      "prompt": "¿Qué hiperparámetro en Random Forest controla la cantidad de características consideradas en cada división de un árbol?",
+      "explanation": "`max_features` controla cuántas variables se **consideran** (subconjunto aleatorio) en cada **split** durante el crecimiento de cada árbol.",
+      "difficulty": 2,
+      "tags": [
+        "random-forest",
+        "hiperparametros",
+        "max-features"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "n_estimators."
+        },
+        {
+          "id": "b",
+          "text": "max_features."
+        },
+        {
+          "id": "c",
+          "text": "max_depth."
+        },
+        {
+          "id": "d",
+          "text": "min_samples_split."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:071bd4cdc8fcf218ebce321208a88ca55f447a4a7952bc25e1a77786971e238f",
+      "createdBy": "Luis",
+      "sourcePackId": "9f96fbbe-5d3e-4ac1-880e-87bbeeb8e70a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:32:54.836Z",
+      "updatedAt": "2026-02-21T15:32:54.836Z"
     },
     {
       "id": "f1b549b9-f7ea-472a-b272-f9308fa888ab",
@@ -5864,6 +9892,53 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "f7ebc0c0-4dfe-43d1-aaa4-fe7ba2aea58d",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes afirmaciones sobre el parámetro de regularización **$C$** en SVM es **falsa**?",
+      "explanation": "Aumentar $C$ puede mejorar el ajuste en entrenamiento pero también incrementar el sobreajuste y empeorar la generalización; no garantiza mejora en datos no vistos.",
+      "difficulty": 2,
+      "tags": [
+        "svm",
+        "C",
+        "regularizacion",
+        "generalizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El parámetro de regularización $C$ en SVM controla el equilibrio entre maximizar el margen y minimizar el error de clasificación en los datos de entrenamiento."
+        },
+        {
+          "id": "b",
+          "text": "Un valor más pequeño de $C$ conduce a un margen más amplio, pero puede dar lugar a más errores de entrenamiento permitidos por el modelo."
+        },
+        {
+          "id": "c",
+          "text": "Un valor mayor de $C$ da como resultado un margen más estrecho, pero reduce la cantidad de errores de entrenamiento tolerados por el modelo, lo que podría provocar un sobreajuste de los datos de entrenamiento."
+        },
+        {
+          "id": "d",
+          "text": "Aumentar el valor de $C$ en SVM siempre mejora el rendimiento del modelo en datos no vistos."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:0f8a5e5f0c6fdb3c4c7d14a1e0f7e8f5a9b6a8c9f0d1e2c3b4a5d6e7f8c9b0a1",
+      "createdBy": "Luis",
+      "sourcePackId": "f7a50bfe-3e7d-490a-8e9c-83ba7b00b08a",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T14:24:21.019Z",
+      "updatedAt": "2026-02-21T14:24:21.019Z"
+    },
+    {
       "id": "f90f20a1-d0ef-4673-b71e-fdd7955fa784",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
@@ -5941,6 +10016,99 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "fa8ee4f1-35d8-4e87-8780-9275fa29d832",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
+      "type": "TEST",
+      "prompt": "Dados dos clasificadores binarios, si se equivocan en las clases más probables de las mismas instancias, significa que:",
+      "explanation": "Si ambos fallan en las **mismas instancias**, a nivel de **acierto/fallo** pueden parecer equivalentes, pero si evaluamos las **probabilidades** (p. ej., *log-loss*), un modelo **muy seguro y equivocado** se penaliza más que uno **incierto**. Por eso, ante el mismo error en etiqueta, **mayor incertidumbre** suele implicar **mejor** comportamiento probabilístico.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "clasificacion",
+        "evaluacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son igual de buenos."
+        },
+        {
+          "id": "b",
+          "text": "Si uno tiene una mayor incertidumbre que el otro, es peor clasificador."
+        },
+        {
+          "id": "c",
+          "text": "Si uno tiene una mayor incertidumbre que el otro es mejor clasificador."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:5429d71e7b3d0d67aa2cd9c2d2c88a22a0e51dc63f5f92e8512c2411b591dcf9",
+      "createdBy": "Luis",
+      "sourcePackId": "880351b1-8284-4ec1-92c3-a51fdc07a803",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-20T23:55:43.364Z",
+      "updatedAt": "2026-02-20T23:55:43.364Z"
+    },
+    {
+      "id": "fb5b1721-aeef-4682-8d9a-3031698543ae",
+      "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
+      "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
+      "type": "TEST",
+      "prompt": "Señala la afirmación válida sobre el método de cartesian grid search:",
+      "explanation": "Se puede paralelizar. El método de búsqueda en cuadrícula (cartesian grid search) puede paralelizarse eficientemente, lo que significa que puede distribuirse entre múltiples recursos de computación para acelerar el proceso de búsqueda y encontrar la combinación óptima de hiperparámetros de manera más rápida.",
+      "difficulty": 2,
+      "tags": [
+        "tema-11",
+        "optimizacion-hiperparametros",
+        "grid-search",
+        "paralelizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "No se puede paralelizar."
+        },
+        {
+          "id": "b",
+          "text": "Se puede paralelizar."
+        },
+        {
+          "id": "c",
+          "text": "Se puede calcular de forma distribuida."
+        },
+        {
+          "id": "d",
+          "text": "Requiere entrenamiento del modelo en múltiples secuencias."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:9d2d8e5c1f4a7b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c",
+      "createdBy": "Luis",
+      "sourcePackId": "ee9187e5-8176-43cc-9a96-3ad398bdbf82",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-21T15:53:49.934Z",
+      "updatedAt": "2026-02-21T15:53:49.934Z"
     },
     {
       "id": "fd8070be-bab8-4145-b310-6fd090195ba9",
