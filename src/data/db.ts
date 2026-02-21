@@ -65,6 +65,42 @@ export class StudyDB extends Dexie {
       deliverables: 'id, subjectId, type, dueDate, completed, createdAt',
       gradingConfigs: 'id',
     });
+
+    // v4: reemplaza `completed: boolean` por `status: DeliverableStatus`
+    // Migración automática: completed=true+grade → submitted, completed=true → done, false → pending
+    this.version(4)
+      .stores({
+        subjects: 'id, name, examDate, createdAt',
+        topics: 'id, subjectId, order, createdAt',
+        questions:
+          'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+        sessions: 'id, subjectId, mode, createdAt',
+        pdfResources: 'id, subjectId, createdAt',
+        pdfAnchors: 'id, subjectId, pdfId',
+        settings: 'id',
+        questionImages: 'id, filename, createdAt',
+        deliverables: 'id, subjectId, type, dueDate, status, createdAt',
+        gradingConfigs: 'id',
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table('deliverables')
+          .toCollection()
+          .modify((d: Deliverable & { completed?: boolean }) => {
+            if (d.status) return; // ya migrado
+            const wasCompleted = !!(d as { completed?: boolean }).completed;
+            const hasGrade = d.grade != null;
+            if (wasCompleted && hasGrade) {
+              d.status = 'submitted';
+            } else if (wasCompleted) {
+              d.status = 'done';
+            } else {
+              d.status = 'pending';
+            }
+            // Limpiar campo legacy
+            delete (d as { completed?: boolean }).completed;
+          });
+      });
   }
 }
 

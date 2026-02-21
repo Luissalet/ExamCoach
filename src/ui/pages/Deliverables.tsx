@@ -1,16 +1,68 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+/**
+ * Deliverables.tsx
+ *
+ * Gestión de actividades y tests de evaluación continua.
+ * Cada deliverable tiene un estado (pending/in_progress/done/submitted)
+ * y opcionalmente una nota numérica, independientes entre sí.
+ */
+
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '@/data/db';
-import { deliverableRepo, gradingConfigRepo } from '@/data/deliverableRepo';
-import { subjectRepo } from '@/data/repos';
-import { calcGradeBreakdown, fmt, DEFAULT_GRADING_CONFIG } from '@/domain/grading';
-import type { Deliverable, Subject, SubjectGradingConfig } from '@/domain/models';
-import { Button, Modal } from '@/ui/components';
 import { v4 as uuidv4 } from 'uuid';
+import { Button } from '@/ui/components';
+import { deliverableRepo, gradingConfigRepo } from '@/data/deliverableRepo';
+import { calcGradeBreakdown, DEFAULT_GRADING_CONFIG, fmt } from '@/domain/grading';
+import { subjectRepo } from '@/data/repos';
+import type {
+  Deliverable,
+  DeliverableStatus,
+  Subject,
+  SubjectGradingConfig,
+} from '@/domain/models';
+import { isDeliverableCompleted } from '@/domain/models';
+
+// ─── Status config ────────────────────────────────────────────────────────────
+
+const STATUS_CYCLE: DeliverableStatus[] = ['pending', 'in_progress', 'done', 'submitted'];
+
+const STATUS_CONFIG: Record<
+  DeliverableStatus,
+  { label: string; shortLabel: string; icon: string; className: string }
+> = {
+  pending: {
+    label: 'Pendiente',
+    shortLabel: 'Pendiente',
+    icon: '○',
+    className: 'border-ink-600 text-ink-500 bg-ink-800 hover:border-ink-400 hover:text-ink-300',
+  },
+  in_progress: {
+    label: 'En progreso',
+    shortLabel: 'En progreso',
+    icon: '◑',
+    className: 'border-blue-700 text-blue-400 bg-blue-900/20 hover:border-blue-500',
+  },
+  done: {
+    label: 'Hecho',
+    shortLabel: 'Hecho',
+    icon: '✓',
+    className: 'border-sage-600 text-sage-400 bg-sage-900/20 hover:border-sage-400',
+  },
+  submitted: {
+    label: 'Entregado',
+    shortLabel: 'Entregado',
+    icon: '↑',
+    className: 'border-amber-600 text-amber-400 bg-amber-900/20 hover:border-amber-400',
+  },
+};
+
+function nextStatus(current: DeliverableStatus): DeliverableStatus {
+  const idx = STATUS_CYCLE.indexOf(current);
+  return STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function normalize(s: string) {
+function normalize(s: string): string {
   return s
     .toLowerCase()
     .normalize('NFD')
@@ -18,15 +70,12 @@ function normalize(s: string) {
     .trim();
 }
 
-function matchSubject(csvName: string, subjects: Subject[]): Subject | undefined {
-  const n = normalize(csvName);
-  return subjects.find(
-    (s) => normalize(s.name).includes(n) || n.includes(normalize(s.name)),
-  );
+function matchSubject(name: string, subjects: Subject[]): Subject | undefined {
+  const n = normalize(name);
+  return subjects.find((s) => normalize(s.name).includes(n) || n.includes(normalize(s.name)));
 }
 
 function parseGrade(raw: string): number | undefined {
-  if (!raw || raw.trim() === '-') return undefined;
   const cleaned = raw.replace(',', '.');
   const n = parseFloat(cleaned);
   return isNaN(n) ? undefined : n;
@@ -44,8 +93,9 @@ function isTestName(name: string) {
   return /^test/i.test(name.trim());
 }
 
-function dueDateColor(dueDate: string | undefined, completed: boolean): string {
-  if (completed) return 'text-sage-400';
+function dueDateColor(dueDate: string | undefined, status: DeliverableStatus): string {
+  const completed = isDeliverableCompleted(status);
+  if (completed) return 'text-ink-600';
   if (!dueDate) return 'text-ink-500';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -56,8 +106,9 @@ function dueDateColor(dueDate: string | undefined, completed: boolean): string {
   return 'text-ink-500';
 }
 
-function dueDateLabel(dueDate: string | undefined, completed: boolean): string {
+function dueDateLabel(dueDate: string | undefined, status: DeliverableStatus): string {
   if (!dueDate) return '';
+  const completed = isDeliverableCompleted(status);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const due = new Date(dueDate);
@@ -78,10 +129,7 @@ async function importFromCSV(
   subjects: Subject[],
   defaultTestPts: number,
 ): Promise<{ created: number; skipped: number }> {
-  // Normalize line endings and split
   const lines = csvText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
-
-  // Parse header
   const headerLine = lines[0];
   const headers = parseCSVRow(headerLine).map((h) => normalize(h));
 
@@ -111,10 +159,15 @@ async function importFromCSV(
     if (!subject) { skipped++; continue; }
 
     const type: 'activity' | 'test' = isTestName(name) ? 'test' : 'activity';
-    const completed = (row[idx.completed] ?? '').toUpperCase() === 'TRUE';
+    const wasCompleted = (row[idx.completed] ?? '').toUpperCase() === 'TRUE';
     const grade = parseGrade(row[idx.grade] ?? '');
     const dueDate = parseDateES(row[idx.end] ?? '');
     const startDate = parseDateES(row[idx.start] ?? '');
+
+    // Determinar status a partir del CSV
+    let status: DeliverableStatus = 'pending';
+    if (wasCompleted && grade != null) status = 'submitted';
+    else if (wasCompleted) status = 'done';
 
     const deliverable: Deliverable = {
       id: uuidv4(),
@@ -123,8 +176,8 @@ async function importFromCSV(
       type,
       startDate,
       dueDate,
-      completed,
-      grade: completed && grade != null ? grade : undefined,
+      status,
+      grade: wasCompleted && grade != null ? grade : undefined,
       continuousPoints: type === 'test' ? defaultTestPts : 0,
       createdAt: batchNow,
       updatedAt: batchNow,
@@ -178,7 +231,6 @@ function GradeCalculator({ config, deliverables, onConfigChange }: GradeCalculat
     setEditing(false);
   };
 
-  // Percentage of continuous used
   const continuousPct =
     config.maxContinuousPoints === 0
       ? 0
@@ -336,7 +388,7 @@ function GradeCalculator({ config, deliverables, onConfigChange }: GradeCalculat
 
 interface DeliverableRowProps {
   d: Deliverable;
-  onToggle: (id: string, completed: boolean) => void;
+  onStatusChange: (id: string, status: DeliverableStatus) => void;
   onGradeChange: (id: string, grade: number | undefined) => void;
   onPointsChange: (id: string, pts: number) => void;
   onDelete: (id: string) => void;
@@ -344,40 +396,39 @@ interface DeliverableRowProps {
 
 function DeliverableRow({
   d,
-  onToggle,
+  onStatusChange,
   onGradeChange,
   onPointsChange,
   onDelete,
 }: DeliverableRowProps) {
-  const dateColor = dueDateColor(d.dueDate, d.completed);
-  const dateLabel = dueDateLabel(d.dueDate, d.completed);
+  const completed = isDeliverableCompleted(d.status);
+  const dateColor = dueDateColor(d.dueDate, d.status);
+  const dateLabel = dueDateLabel(d.dueDate, d.status);
   const [editingPts, setEditingPts] = useState(false);
+  const statusConf = STATUS_CONFIG[d.status];
 
   return (
     <div
       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group ${
-        d.completed
+        completed
           ? 'bg-ink-900/40 border border-ink-800/30'
           : 'bg-ink-850 border border-ink-700 hover:border-ink-600'
       }`}
     >
-      {/* Checkbox */}
+      {/* Status cycle button */}
       <button
-        onClick={() => onToggle(d.id, !d.completed)}
-        className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-          d.completed
-            ? 'bg-sage-500 border-sage-500 text-white'
-            : 'border-ink-600 hover:border-sage-400'
-        }`}
+        onClick={() => onStatusChange(d.id, nextStatus(d.status))}
+        title={`Estado: ${statusConf.label} — clic para cambiar`}
+        className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 text-xs font-bold transition-all ${statusConf.className}`}
       >
-        {d.completed && <span className="text-xs leading-none">✓</span>}
+        {statusConf.icon}
       </button>
 
       {/* Name + date */}
       <div className="flex-1 min-w-0">
         <p
           className={`text-sm font-body ${
-            d.completed ? 'text-ink-500 line-through' : 'text-ink-200'
+            completed ? 'text-ink-500 line-through' : 'text-ink-200'
           }`}
         >
           {d.name}
@@ -386,6 +437,15 @@ function DeliverableRow({
           <p className={`text-xs mt-0.5 font-body ${dateColor}`}>{dateLabel}</p>
         )}
       </div>
+
+      {/* Status badge — also clickable to cycle */}
+      <button
+        onClick={() => onStatusChange(d.id, nextStatus(d.status))}
+        title={`Estado: ${statusConf.label} — clic para cambiar`}
+        className={`hidden sm:flex text-xs px-2 py-0.5 rounded border transition-colors flex-shrink-0 ${statusConf.className}`}
+      >
+        {statusConf.shortLabel}
+      </button>
 
       {/* Continuous pts badge — click to edit */}
       {editingPts ? (
@@ -428,7 +488,6 @@ function DeliverableRow({
           max={10}
           step={0.1}
           placeholder="nota"
-          disabled={!d.completed}
           value={d.grade ?? ''}
           onChange={(e) =>
             onGradeChange(
@@ -436,11 +495,7 @@ function DeliverableRow({
               e.target.value === '' ? undefined : parseFloat(e.target.value),
             )
           }
-          className={`w-16 bg-ink-800 border rounded px-2 py-0.5 text-xs text-center font-body transition-colors ${
-            d.completed
-              ? 'border-ink-600 text-ink-200 hover:border-amber-500 focus:border-amber-500 outline-none'
-              : 'border-ink-800 text-ink-700 cursor-not-allowed'
-          }`}
+          className="w-16 bg-ink-800 border border-ink-600 rounded px-2 py-0.5 text-xs text-center font-body transition-colors text-ink-200 hover:border-amber-500 focus:border-amber-500 outline-none"
         />
       )}
 
@@ -492,7 +547,7 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
       name: name.trim(),
       type,
       dueDate: dueDate || undefined,
-      completed: false,
+      status: 'pending',
       grade: undefined,
       continuousPoints: isNaN(pts) ? defaultPts : pts,
     });
@@ -521,11 +576,11 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
 
       <input
         autoFocus
-        placeholder={type === 'test' ? 'Test Tema 1' : 'Actividad 1: ...'}
+        placeholder={type === 'test' ? 'Nombre del test (ej: Test 1)' : 'Nombre de la actividad'}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && name.trim() && handleSubmit()}
-        className="bg-ink-800 border border-ink-600 rounded-lg px-3 py-2 text-sm text-ink-100 placeholder-ink-600 focus:border-amber-500 outline-none"
+        onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+        className="bg-ink-800 border border-ink-600 rounded-lg px-3 py-2 text-sm text-ink-100 placeholder:text-ink-600"
       />
 
       <div className="grid grid-cols-2 gap-2">
@@ -540,7 +595,7 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
         </div>
         <div>
           <label className="text-xs text-ink-500 mb-1 block">
-            Pts continua {type === 'test' ? `(def. ${defaultTestPoints})` : ''}
+            Puntos continua {type === 'test' ? `(def. ${defaultTestPoints})` : ''}
           </label>
           <input
             type="number"
@@ -567,6 +622,9 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
+
+// db import needed for CSV import helper
+import { db } from '@/data/db';
 
 export function DeliverablesPage() {
   const navigate = useNavigate();
@@ -610,10 +668,10 @@ export function DeliverablesPage() {
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
 
-  const handleToggle = async (id: string, completed: boolean) => {
-    await deliverableRepo.update(id, { completed });
+  const handleStatusChange = async (id: string, status: DeliverableStatus) => {
+    await deliverableRepo.update(id, { status });
     setDeliverables((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, completed } : d)),
+      prev.map((d) => (d.id === id ? { ...d, status } : d)),
     );
   };
 
@@ -647,7 +705,6 @@ export function DeliverablesPage() {
   const handleConfigChange = async (newConfig: SubjectGradingConfig) => {
     await gradingConfigRepo.save(newConfig);
     setConfig(newConfig);
-    // Refresh deliverables in case test points changed
     await loadSubjectData(selectedSubjectId);
   };
 
@@ -680,8 +737,8 @@ export function DeliverablesPage() {
   const currentSubject = subjects.find((s) => s.id === selectedSubjectId);
   const activities = deliverables.filter((d) => d.type === 'activity');
   const tests = deliverables.filter((d) => d.type === 'test');
-  const completedActs = activities.filter((d) => d.completed).length;
-  const completedTests = tests.filter((d) => d.completed).length;
+  const completedActs = activities.filter((d) => isDeliverableCompleted(d.status)).length;
+  const completedTests = tests.filter((d) => isDeliverableCompleted(d.status)).length;
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
@@ -696,223 +753,197 @@ export function DeliverablesPage() {
   if (subjects.length === 0) {
     return (
       <div className="min-h-screen bg-ink-950 flex flex-col items-center justify-center gap-4">
-        <p className="text-ink-400">No hay asignaturas. Créalas primero.</p>
-        <Button onClick={() => navigate('/')}>← Ir al inicio</Button>
+        <p className="text-ink-400">No hay asignaturas. Crea una en el dashboard primero.</p>
+        <Button onClick={() => navigate('/')}>← Volver al dashboard</Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-ink-950 flex flex-col">
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <header className="border-b border-ink-800 bg-ink-950/80 backdrop-blur sticky top-0 z-10 px-4 py-3 flex items-center gap-3">
+    <div className="min-h-screen bg-ink-950 text-ink-100">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-ink-950/95 backdrop-blur border-b border-ink-800 px-6 py-3 flex items-center gap-4">
         <button
           onClick={() => navigate('/')}
           className="text-ink-500 hover:text-ink-200 transition-colors text-sm"
         >
           ←
         </button>
-        <h1 className="font-display text-base text-ink-100">Actividades & Notas</h1>
+        <h1 className="font-display text-lg text-ink-100">Actividades y entregas</h1>
         <div className="flex-1" />
-
-        {csvMsg && (
-          <span
-            className={`text-xs px-3 py-1 rounded-lg border ${
-              csvMsg.startsWith('✓')
-                ? 'text-sage-400 border-sage-700/30 bg-sage-900/10'
-                : 'text-rose-400 border-rose-700/30 bg-rose-900/10'
-            }`}
-          >
-            {csvMsg}
-          </span>
-        )}
-        <input
-          ref={csvInputRef}
-          type="file"
-          accept=".csv"
-          className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleCSVImport(f);
-            e.target.value = '';
-          }}
-        />
-        <Button size="sm" variant="ghost" onClick={() => csvInputRef.current?.click()}>
-          📥 Importar CSV
-        </Button>
+        {/* Subject selector */}
+        <select
+          value={selectedSubjectId}
+          onChange={(e) => setSelectedSubjectId(e.target.value)}
+          className="bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-100 max-w-xs"
+        >
+          {subjects.map((s) => (
+            <option key={s.id} value={s.id}>{s.name}</option>
+          ))}
+        </select>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* ── Subject sidebar ──────────────────────────────────────────────── */}
-        <aside className="w-44 border-r border-ink-800 flex flex-col py-3 gap-0.5 px-2 overflow-y-auto flex-shrink-0">
-          {subjects.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setSelectedSubjectId(s.id)}
-              className={`w-full text-left px-2.5 py-2 rounded-lg text-sm transition-all font-body ${
-                s.id === selectedSubjectId
-                  ? 'bg-ink-800 text-ink-100 font-medium'
-                  : 'text-ink-500 hover:text-ink-300 hover:bg-ink-900'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                {s.color && (
-                  <div
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: s.color }}
-                  />
-                )}
-                <span className="truncate text-xs">{s.name}</span>
-              </div>
-            </button>
+      <main className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-6">
+        {/* Grade calculator */}
+        <GradeCalculator
+          config={config}
+          deliverables={deliverables}
+          onConfigChange={handleConfigChange}
+        />
+
+        {/* Stats bar */}
+        {deliverables.length > 0 && (
+          <div className="flex gap-4 text-xs text-ink-500">
+            <span>Actividades: {completedActs}/{activities.length}</span>
+            <span>·</span>
+            <span>Tests: {completedTests}/{tests.length}</span>
+            {/* Status summary */}
+            {['pending', 'in_progress', 'done', 'submitted'].map((s) => {
+              const count = deliverables.filter((d) => d.status === s).length;
+              if (count === 0) return null;
+              const conf = STATUS_CONFIG[s as DeliverableStatus];
+              return (
+                <span key={s} className="flex items-center gap-1">
+                  <span className={conf.className.split(' ')[2]}>{conf.icon}</span>
+                  <span>{count} {conf.label.toLowerCase()}</span>
+                </span>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Legend */}
+        <div className="flex gap-3 flex-wrap">
+          {(Object.entries(STATUS_CONFIG) as [DeliverableStatus, typeof STATUS_CONFIG[DeliverableStatus]][]).map(([key, conf]) => (
+            <div key={key} className="flex items-center gap-1.5">
+              <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs font-bold ${conf.className}`}>
+                {conf.icon}
+              </span>
+              <span className="text-xs text-ink-500">{conf.label}</span>
+            </div>
           ))}
-        </aside>
+          <span className="text-xs text-ink-700 self-center">— clic en el estado para cambiar</span>
+        </div>
 
-        {/* ── Main content ─────────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-6 py-6 flex flex-col gap-6">
-            {/* Subject header */}
-            {currentSubject && (
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="font-display text-xl text-ink-100 leading-tight">
-                  {currentSubject.name}
-                </h2>
-                <div className="flex items-center gap-3 text-xs text-ink-600 flex-shrink-0 mt-1">
-                  <span>{completedActs}/{activities.length} act.</span>
-                  <span>·</span>
-                  <span>{completedTests}/{tests.length} tests</span>
-                  {deliverables.length > 0 && (
-                    <>
-                      <span>·</span>
-                      <button
-                        onClick={() => setShowClearConfirm(true)}
-                        className="text-rose-700 hover:text-rose-400 transition-colors"
-                      >
-                        Limpiar
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Grade calculator */}
-            <GradeCalculator
-              config={config}
-              deliverables={deliverables}
-              onConfigChange={handleConfigChange}
-            />
-
-            {/* Activities section */}
-            <section className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-medium text-ink-500 uppercase tracking-widest">
-                  Actividades
-                </h3>
-                <span className="text-xs text-ink-700">
+        {/* Activities */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-display text-base text-ink-200">
+              Actividades
+              {activities.length > 0 && (
+                <span className="text-ink-600 text-sm font-body ml-2">
                   {completedActs}/{activities.length}
                 </span>
-              </div>
-
-              {activities.length === 0 ? (
-                <p className="text-xs text-ink-700 text-center py-3">
-                  Sin actividades. Importa un CSV o añade manualmente.
-                </p>
-              ) : (
-                <div className="flex flex-col gap-1.5">
-                  {activities.map((d) => (
-                    <DeliverableRow
-                      key={d.id}
-                      d={d}
-                      onToggle={handleToggle}
-                      onGradeChange={handleGradeChange}
-                      onPointsChange={handlePointsChange}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
               )}
-            </section>
+            </h2>
+            <Button size="sm" onClick={() => setShowAdd(true)}>+ Añadir</Button>
+          </div>
 
-            {/* Tests section */}
-            <section className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-medium text-ink-500 uppercase tracking-widest">
-                  Tests{' '}
-                  <span className="text-ink-700 normal-case">
-                    ({config.testContinuousPoints} pts c/u)
-                  </span>
-                </h3>
-                <span className="text-xs text-ink-700">
-                  {completedTests}/{tests.length}
-                </span>
-              </div>
-
-              {tests.length === 0 ? (
-                <p className="text-xs text-ink-700 text-center py-3">
-                  Sin tests registrados.
-                </p>
-              ) : (
-                <div className="flex flex-col gap-1.5">
-                  {tests.map((d) => (
-                    <DeliverableRow
-                      key={d.id}
-                      d={d}
-                      onToggle={handleToggle}
-                      onGradeChange={handleGradeChange}
-                      onPointsChange={handlePointsChange}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {/* Add form / button */}
-            {showAdd ? (
+          {showAdd && (
+            <div className="mb-3">
               <AddDeliverableForm
                 subjectId={selectedSubjectId}
                 defaultTestPoints={config.testContinuousPoints}
                 onAdd={handleAdd}
                 onClose={() => setShowAdd(false)}
               />
-            ) : (
-              <button
-                onClick={() => setShowAdd(true)}
-                className="w-full py-3 border-2 border-dashed border-ink-800 rounded-xl text-sm text-ink-700 hover:text-amber-500 hover:border-amber-800 transition-colors"
+            </div>
+          )}
+
+          {activities.length === 0 ? (
+            <p className="text-sm text-ink-600 py-4 text-center">Sin actividades aún</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {activities.map((d) => (
+                <DeliverableRow
+                  key={d.id}
+                  d={d}
+                  onStatusChange={handleStatusChange}
+                  onGradeChange={handleGradeChange}
+                  onPointsChange={handlePointsChange}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Tests */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-display text-base text-ink-200">
+              Tests
+              {tests.length > 0 && (
+                <span className="text-ink-600 text-sm font-body ml-2">
+                  {completedTests}/{tests.length}
+                </span>
+              )}
+            </h2>
+          </div>
+
+          {tests.length === 0 ? (
+            <p className="text-sm text-ink-600 py-4 text-center">Sin tests aún</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {tests.map((d) => (
+                <DeliverableRow
+                  key={d.id}
+                  d={d}
+                  onStatusChange={handleStatusChange}
+                  onGradeChange={handleGradeChange}
+                  onPointsChange={handlePointsChange}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* CSV import + tools */}
+        <section className="flex flex-col gap-3 pt-4 border-t border-ink-800">
+          <div className="flex items-center gap-3 flex-wrap">
+            <input
+              ref={csvInputRef}
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleCSVImport(f);
+                e.target.value = '';
+              }}
+            />
+            <Button size="sm" variant="secondary" onClick={() => csvInputRef.current?.click()}>
+              📥 Importar CSV
+            </Button>
+            {deliverables.length > 0 && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowClearConfirm(true)}
               >
-                + Añadir actividad o test
-              </button>
+                🗑 Limpiar todo
+              </Button>
             )}
           </div>
-        </main>
-      </div>
 
-      {/* Clear confirm modal */}
-      <Modal
-        open={showClearConfirm}
-        onClose={() => setShowClearConfirm(false)}
-        title="Limpiar actividades"
-      >
-        <div className="flex flex-col gap-4">
-          <p className="text-sm text-ink-300 font-body">
-            ¿Eliminar todas las actividades de{' '}
-            <strong className="text-ink-100">{currentSubject?.name}</strong>?
-            Esta acción no se puede deshacer.
-          </p>
-          <div className="flex justify-end gap-3">
-            <Button variant="ghost" onClick={() => setShowClearConfirm(false)}>
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleClearAll}
-              className="bg-rose-600 hover:bg-rose-500 text-white border-rose-600"
-            >
-              Eliminar todo
-            </Button>
-          </div>
-        </div>
-      </Modal>
+          {csvMsg && (
+            <p className={`text-xs ${csvMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+              {csvMsg}
+            </p>
+          )}
+
+          {showClearConfirm && (
+            <div className="flex items-center gap-3 p-3 bg-rose-900/20 border border-rose-700/40 rounded-lg">
+              <p className="text-sm text-rose-300 flex-1">
+                ¿Eliminar todos los deliverables de esta asignatura?
+              </p>
+              <Button size="sm" variant="danger" onClick={handleClearAll}>Eliminar</Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowClearConfirm(false)}>Cancelar</Button>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

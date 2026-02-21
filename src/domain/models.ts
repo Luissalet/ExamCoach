@@ -301,6 +301,13 @@ export interface AppSettings {
 
 export type DeliverableType = 'activity' | 'test';
 
+export type DeliverableStatus = 'pending' | 'in_progress' | 'done' | 'submitted';
+
+/** Helper: true si el estado cuenta como "completado" a efectos de nota continua. */
+export function isDeliverableCompleted(status: DeliverableStatus): boolean {
+  return status === 'done' || status === 'submitted';
+}
+
 /**
  * A course deliverable: an activity (graded) or a test (binary done/not-done).
  * - activity: graded 0-10, contributes `continuousPoints` proportionally
@@ -314,7 +321,8 @@ export interface Deliverable {
   type: DeliverableType;
   startDate?: string;   // ISO YYYY-MM-DD
   dueDate?: string;     // ISO YYYY-MM-DD
-  completed: boolean;
+  /** Estado del deliverable. Reemplaza el anterior `completed: boolean`. */
+  status: DeliverableStatus;
   /** 0-10 grade received. Activities only. */
   grade?: number;
   /** Max continuous raw points this deliverable contributes. */
@@ -322,6 +330,7 @@ export interface Deliverable {
   createdAt: string;
   updatedAt: string;
 }
+
 
 /**
  * Per-subject grading configuration. LOCAL data only.

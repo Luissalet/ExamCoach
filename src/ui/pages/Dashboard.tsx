@@ -63,7 +63,7 @@ export function Dashboard() {
     deliverableRepo.getAll().then(all => {
       const today = new Date().toISOString().split('T')[0];
       const upcoming = all
-        .filter(d => d.dueDate && d.dueDate >= today && !d.completed)
+        .filter(d => d.dueDate && d.dueDate >= today && !d.status.includes('done'))
         .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
         .slice(0, 5);
       setUpcomingDeliverables(upcoming);

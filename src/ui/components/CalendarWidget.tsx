@@ -3,12 +3,13 @@
  *
  * Mini calendario mensual para el Dashboard.
  * Muestra los deliverables (actividades/tests) de todas las asignaturas
- * con indicación de si están completados o pendientes.
+ * con indicación de estado (pending/in_progress/done/submitted).
  */
 
 import { useEffect, useState, useMemo } from 'react';
 import { deliverableRepo } from '@/data/deliverableRepo';
-import type { Deliverable, Subject } from '@/domain/models';
+import type { Deliverable, Subject, DeliverableStatus } from '@/domain/models';
+import { isDeliverableCompleted } from '@/domain/models';
 
 interface CalendarWidgetProps {
   subjects: Subject[];
@@ -29,6 +30,20 @@ function getFirstDayOfWeek(year: number, month: number) {
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
+
+const STATUS_LABEL: Record<DeliverableStatus, string> = {
+  pending: 'Pendiente',
+  in_progress: 'En progreso',
+  done: 'Hecho',
+  submitted: 'Entregado',
+};
+
+const STATUS_COLOR: Record<DeliverableStatus, string> = {
+  pending: 'text-ink-500',
+  in_progress: 'text-blue-400',
+  done: 'text-sage-400',
+  submitted: 'text-amber-400',
+};
 
 const MONTH_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -135,8 +150,8 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDay;
           const hasEvents = events.length > 0;
-          const allDone = hasEvents && events.every(e => e.completed);
-          const somePending = hasEvents && events.some(e => !e.completed);
+          const allDone = hasEvents && events.every(e => isDeliverableCompleted(e.status));
+          const somePending = hasEvents && events.some(e => !isDeliverableCompleted(e.status));
 
           return (
             <button
@@ -161,7 +176,7 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
                   {events.slice(0, 3).map((ev, idx) => (
                     <div
                       key={idx}
-                      className={`w-1.5 h-1.5 rounded-full transition-opacity ${ev.completed ? 'opacity-40' : 'opacity-100'}`}
+                      className={`w-1.5 h-1.5 rounded-full transition-opacity ${isDeliverableCompleted(ev.status) ? 'opacity-40' : 'opacity-100'}`}
                       style={{ backgroundColor: subjectColor[ev.subjectId] ?? '#f59e0b' }}
                     />
                   ))}
@@ -171,7 +186,7 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
                 </div>
               )}
 
-              {/* Status indicator on hover/selected day with events */}
+              {/* Status indicator */}
               {isSelected && hasEvents && (
                 <span className={`absolute -top-0.5 -right-0.5 text-[8px] font-bold ${allDone ? 'text-sage-400' : somePending ? 'text-amber-400' : ''}`}>
                   {allDone ? '✓' : '!'}
@@ -194,14 +209,14 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
                 className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ backgroundColor: subjectColor[ev.subjectId] ?? '#f59e0b' }}
               />
-              <span className={`text-xs flex-1 truncate ${ev.completed ? 'text-ink-500 line-through' : 'text-ink-200'}`}>
+              <span className={`text-xs flex-1 truncate ${isDeliverableCompleted(ev.status) ? 'text-ink-500 line-through' : 'text-ink-200'}`}>
                 {ev.name}
               </span>
               <span className="text-xs text-ink-600 flex-shrink-0">
                 {subjectName[ev.subjectId]?.split(' ')[0] ?? ''}
               </span>
-              <span className={`text-xs flex-shrink-0 ${ev.completed ? 'text-sage-400' : 'text-amber-500'}`}>
-                {ev.completed ? '✓' : ev.type === 'test' ? 'test' : 'act.'}
+              <span className={`text-xs flex-shrink-0 ${STATUS_COLOR[ev.status]}`}>
+                {STATUS_LABEL[ev.status]}
               </span>
             </div>
           ))}

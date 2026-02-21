@@ -1,4 +1,5 @@
 import type { Deliverable, SubjectGradingConfig } from './models';
+import { isDeliverableCompleted } from './models';
 
 export const DEFAULT_GRADING_CONFIG: Omit<SubjectGradingConfig, 'id'> = {
   continuousWeight: 0.4,
@@ -25,12 +26,12 @@ export interface GradeBreakdown {
 
 /**
  * Calculates the raw continuous score from completed deliverables.
- * - Tests: contribute `continuousPoints` flat if completed
- * - Activities: contribute `(grade / 10) * continuousPoints` if graded
+ * - Tests: contribute `continuousPoints` flat if done/submitted
+ * - Activities: contribute `(grade / 10) * continuousPoints` if graded and done/submitted
  */
 export function calcContinuousRaw(deliverables: Deliverable[]): number {
   return deliverables.reduce((sum, d) => {
-    if (!d.completed) return sum;
+    if (!isDeliverableCompleted(d.status)) return sum;
     if (d.type === 'test') return sum + d.continuousPoints;
     if (d.grade != null) return sum + (d.grade / 10) * d.continuousPoints;
     return sum;
@@ -64,7 +65,7 @@ export function calcGradeBreakdown(
     examContribution != null ? examContribution + continuousContribution : null;
 
   const potentialFromIncomplete = deliverables
-    .filter((d) => !d.completed)
+    .filter((d) => !isDeliverableCompleted(d.status))
     .reduce((sum, d) => sum + d.continuousPoints, 0);
 
   const remainingPotential = Math.max(
