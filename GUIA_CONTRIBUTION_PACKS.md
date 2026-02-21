@@ -630,17 +630,18 @@ VERIFICACIÓN FINAL antes de responder:
 
 | # | Título del Tema | `topicKey` |
 |---|-----------------|------------|
-| 1 | Tema 1- Introducción a la Investigación en IA | `tema-1-introduccion-a-la-investigacion-en-ia` |
-| 2 | Tema 2- Metodología de la Investigación | `tema-2-metodologia-de-la-investigacion` |
-| 3 | Tema 3- Gestión de Proyectos. Introducción y Enfoque metodológico | `tema-3-gestion-de-proyectos-introduccion-y-enfoque-metodologico` |
-| 4 | Tema 4- Gestión de Proyectos IA. Planificación | `tema-4-gestion-de-proyectos-ia-planificacion` |
-| 5 | Tema 5- Investigación en Aprendizaje Automático | `tema-5-investigacion-en-aprendizaje-automatico` |
-| 6 | Tema 6- Investigación en Procesamiento del Lenguaje Natural | `tema-6-investigacion-en-procesamiento-del-lenguaje-natural` |
-| 7 | Tema 7- Gestión de proyectos IA. Recursos materiales y recursos humanos | `tema-7-gestion-de-proyectos-ia-recursos-materiales-y-recursos-humanos` |
-| 8 | Tema 8- Gestión de proyectos IA. Análisis de riesgos y calidad | `tema-8-gestion-de-proyectos-ia-analisis-de-riesgos-y-calidad` |
-| 9 | Tema 9- Investigación en Visión Artificial | `tema-9-investigacion-en-vision-artificial` |
-| 10 | Tema 10- Investigación en Robótica | `tema-10-investigacion-en-robotica` |
+| 1 | Tema 1- Origen y evolución de la inteligencia artificial | `tema-1-origen-y-evolucion-de-la-inteligencia-artificial` |
+| 2 | Tema 2- Ciencia y método científico | `tema-2-ciencia-y-metodo-cientifico` |
+| 3 | Tema 3- Financiación de proyectos | `tema-3-financiacion-de-proyectos` |
+| 4 | Tema 4- Publicación de resultados y redacción científica | `tema-4-publicacion-de-resultados-y-redaccion-cientifica` |
+| 5 | Tema 5- Gestión de proyectos de inteligencia artificial. Enfoque metodológico | `tema-5-gestion-de-proyectos-de-inteligencia-artificial-enfoque-metodologico` |
+| 6 | Tema 6- Gestión de proyectos IA estructura de un proyecto IA y su despliegue | `tema-6-gestion-de-proyectos-ia-estructura-de-un-proyecto-ia-y-su-despliegue` |
+| 7 | Tema 7-Gestión de proyectos IA. Recursos materiales y recursos humanos | `tema-7-gestion-de-proyectos-ia-recursos-materiales-y-recursos-humanos` |
+| 8 | Tema 8- Investigación en agentes inteligentes y sistemas expertos | `tema-8-investigacion-en-agentes-inteligentes-y-sistemas-expertos` |
+| 9 | Tema 9- Investigación en aprendizaje automático | `tema-9-investigacion-en-aprendizaje-automatico` |
+| 10 | Tema 10- Investigación en sistemas cognitivos | `tema-10-investigacion-en-sistemas-cognitivos` |
 | 11 | Tema 11- Investigación en computación bioinspirada | `tema-11-investigacion-en-computacion-bioinspirada` |
+| 12 | Tema 12- Implicaciones filosóficas éticas y legales en la aplicación de la inteligencia artificial | `tema-12-implicaciones-filosoficas-eticas-y-legales-en-la-aplicacion-de-la-inteligencia-artificial` |
 
 ---
 
@@ -651,15 +652,18 @@ VERIFICACIÓN FINAL antes de responder:
 
 | # | Título del Tema | `topicKey` |
 |---|-----------------|------------|
-| 1 | Tema 1- Introducción al razonamiento y la planificación automática | `tema-1-introduccion-al-razonamiento-y-la-planificacion-automatica` |
-| 2 | Tema 2- Representación del conocimiento | `tema-2-representacion-del-conocimiento` |
-| 3 | Tema 3- Lógica proposicional | `tema-3-logica-proposicional` |
+| 1 | Tema 1- Introducción a la toma de decisiones | `tema-1-introduccion-a-la-toma-de-decisiones` |
+| 2 | Tema 2- Representación del conocimiento y razonamiento | `tema-2-representacion-del-conocimiento-y-razonamiento` |
+| 3 | Tema 3- Lógica y pensamiento humano | `tema-3-logica-y-pensamiento-humano` |
 | 4 | Tema 4- Búsqueda no informada | `tema-4-busqueda-no-informada` |
 | 5 | Tema 5- Búsqueda informada | `tema-5-busqueda-informada` |
-| 6 | Tema 6- Satisfacción de restricciones | `tema-6-satisfaccion-de-restricciones` |
-| 7 | Tema 7- Planificación clásica | `tema-7-planificacion-clasica` |
-| 8 | Tema 8- Planificación bajo incertidumbre | `tema-8-planificacion-bajo-incertidumbre` |
-
+| 6 | Tema 6- Búsqueda entre adversarios | `tema-6-busqueda-entre-adversarios` |
+| 7 | Tema 7- Problemas de planificación | `tema-7-problemas-de-planificacion` |
+| 8 | Tema 8- Sistemas basados en STRIP | `tema-8-sistemas-basados-en-strip` |
+| 9 | Tema 9- Redes de tareas jerárquicas (HTN) | `tema-9-redes-de-tareas-jerarquicas-htn` |
+| 10 | Tema 10- Planificación multi agente | `tema-10-planificacion-multi-agente` |
+| 11 | Tema 11- Planificación por múltiples agentes | `tema-11-planificacion-por-multiples-agentes` |
+| 12 | Tema 12- Reparación reactiva multi agente | `tema-12-reparacion-reactiva-multi-agente` |
 ---
 
 ### 5. Técnicas de Aprendizaje Automático
