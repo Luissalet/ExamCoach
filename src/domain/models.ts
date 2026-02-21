@@ -299,7 +299,7 @@ export interface AppSettings {
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────
 
-export type DeliverableType = 'activity' | 'test';
+export type DeliverableType = 'activity' | 'test' | 'otro';
 
 export type DeliverableStatus = 'pending' | 'in_progress' | 'done' | 'submitted';
 
@@ -321,6 +321,7 @@ export interface Deliverable {
   type: DeliverableType;
   startDate?: string;   // ISO YYYY-MM-DD
   dueDate?: string;     // ISO YYYY-MM-DD
+  dueTime?: string;     // HH:MM hora local (opcional)
   /** Estado del deliverable. Reemplaza el anterior `completed: boolean`. */
   status: DeliverableStatus;
   /** 0-10 grade received. Activities only. */

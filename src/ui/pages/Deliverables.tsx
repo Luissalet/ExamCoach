@@ -19,7 +19,7 @@ import type {
   Subject,
   SubjectGradingConfig,
 } from '@/domain/models';
-import { isDeliverableCompleted } from '@/domain/models';
+import { isDeliverableCompleted, DeliverableType } from '@/domain/models';
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
@@ -433,9 +433,11 @@ function DeliverableRow({
         >
           {d.name}
         </p>
-        {dateLabel && (
-          <p className={`text-xs mt-0.5 font-body ${dateColor}`}>{dateLabel}</p>
-        )}
+        {(dateLabel || d.dueTime) && (
+  <span className={`text-xs ${dateColor}`}>
+    {dateLabel}{d.dueTime ? ` · ${d.dueTime}` : ''}
+  </span>
+)}
       </div>
 
       {/* Status badge — also clickable to cycle */}
@@ -504,10 +506,12 @@ function DeliverableRow({
         className={`text-xs px-1.5 py-0.5 rounded border font-medium flex-shrink-0 ${
           d.type === 'test'
             ? 'bg-blue-900/30 text-blue-400 border-blue-800/40'
+            : d.type === 'otro'
+            ? 'bg-purple-900/30 text-purple-400 border-purple-800/40'
             : 'bg-amber-900/20 text-amber-500 border-amber-800/30'
         }`}
       >
-        {d.type === 'test' ? 'Test' : 'Act.'}
+        {d.type === 'test' ? 'Test' : d.type === 'otro' ? 'Otro' : 'Act.'}
       </span>
 
       {/* Delete */}
@@ -533,8 +537,9 @@ interface AddFormProps {
 
 function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: AddFormProps) {
   const [name, setName] = useState('');
-  const [type, setType] = useState<'activity' | 'test'>('activity');
+  const [type, setType] = useState<DeliverableType>('activity');
   const [dueDate, setDueDate] = useState('');
+  const [dueTime, setDueTime] = useState('');
   const [continuousPoints, setContinuousPoints] = useState('');
 
   const defaultPts = type === 'test' ? defaultTestPoints : 0;
@@ -557,21 +562,23 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
     <div className="flex flex-col gap-3 p-4 bg-ink-850 rounded-xl border border-ink-600">
       {/* Type selector */}
       <div className="flex gap-2">
-        {(['activity', 'test'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setType(t)}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              type === t
-                ? t === 'test'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-amber-500 text-ink-900'
-                : 'bg-ink-800 text-ink-400 hover:text-ink-200'
-            }`}
-          >
-            {t === 'test' ? 'Test' : 'Actividad'}
-          </button>
-        ))}
+        {(['activity', 'test', 'otro'] as const).map((t) => (
+        <button
+          key={t}
+          onClick={() => setType(t)}
+          className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            type === t
+              ? t === 'test'
+                ? 'bg-blue-600 text-white'
+                : t === 'otro'
+                ? 'bg-purple-600 text-white'
+                : 'bg-amber-500 text-ink-900'
+              : 'bg-ink-800 text-ink-400 hover:text-ink-200'
+          }`}
+        >
+          {t === 'test' ? 'Test' : t === 'otro' ? 'Otros' : 'Actividad'}
+        </button>
+))}
       </div>
 
       <input
@@ -587,10 +594,11 @@ function AddDeliverableForm({ subjectId, defaultTestPoints, onAdd, onClose }: Ad
         <div>
           <label className="text-xs text-ink-500 mb-1 block">Fecha límite</label>
           <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="w-full bg-ink-800 border border-ink-600 rounded-lg px-2 py-1.5 text-sm text-ink-100"
+            type="time"
+            value={dueTime}
+            onChange={(e) => setDueTime(e.target.value)}
+            className="flex-1 bg-ink-800 border border-ink-700 rounded-lg px-3 py-2 text-sm text-ink-100 font-body"
+            placeholder="Hora (opcional)"
           />
         </div>
         <div>
@@ -736,6 +744,7 @@ export function DeliverablesPage() {
 
   const currentSubject = subjects.find((s) => s.id === selectedSubjectId);
   const activities = deliverables.filter((d) => d.type === 'activity');
+  const others = deliverables.filter(d => d.type === 'otro');
   const tests = deliverables.filter((d) => d.type === 'test');
   const completedActs = activities.filter((d) => isDeliverableCompleted(d.status)).length;
   const completedTests = tests.filter((d) => isDeliverableCompleted(d.status)).length;
@@ -760,7 +769,7 @@ export function DeliverablesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100">
+    <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-ink-950/95 backdrop-blur border-b border-ink-800 px-6 py-3 flex items-center gap-4">
         <button
@@ -770,180 +779,202 @@ export function DeliverablesPage() {
           ←
         </button>
         <h1 className="font-display text-lg text-ink-100">Actividades y entregas</h1>
-        <div className="flex-1" />
-        {/* Subject selector */}
-        <select
-          value={selectedSubjectId}
-          onChange={(e) => setSelectedSubjectId(e.target.value)}
-          className="bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-100 max-w-xs"
-        >
-          {subjects.map((s) => (
-            <option key={s.id} value={s.id}>{s.name}</option>
-          ))}
-        </select>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-6">
-        {/* Grade calculator */}
-        <GradeCalculator
-          config={config}
-          deliverables={deliverables}
-          onConfigChange={handleConfigChange}
-        />
+      {/* Body: sidebar izquierdo + contenido */}
+      <div className="flex flex-1 overflow-hidden">
 
-        {/* Stats bar */}
-        {deliverables.length > 0 && (
-          <div className="flex gap-4 text-xs text-ink-500">
-            <span>Actividades: {completedActs}/{activities.length}</span>
-            <span>·</span>
-            <span>Tests: {completedTests}/{tests.length}</span>
-            {/* Status summary */}
-            {['pending', 'in_progress', 'done', 'submitted'].map((s) => {
-              const count = deliverables.filter((d) => d.status === s).length;
-              if (count === 0) return null;
-              const conf = STATUS_CONFIG[s as DeliverableStatus];
-              return (
-                <span key={s} className="flex items-center gap-1">
-                  <span className={conf.className.split(' ')[2]}>{conf.icon}</span>
-                  <span>{count} {conf.label.toLowerCase()}</span>
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Legend */}
-        <div className="flex gap-3 flex-wrap">
-          {(Object.entries(STATUS_CONFIG) as [DeliverableStatus, typeof STATUS_CONFIG[DeliverableStatus]][]).map(([key, conf]) => (
-            <div key={key} className="flex items-center gap-1.5">
-              <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs font-bold ${conf.className}`}>
-                {conf.icon}
-              </span>
-              <span className="text-xs text-ink-500">{conf.label}</span>
-            </div>
-          ))}
-          <span className="text-xs text-ink-700 self-center">— clic en el estado para cambiar</span>
-        </div>
-
-        {/* Activities */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-display text-base text-ink-200">
-              Actividades
-              {activities.length > 0 && (
-                <span className="text-ink-600 text-sm font-body ml-2">
-                  {completedActs}/{activities.length}
-                </span>
-              )}
-            </h2>
-            <Button size="sm" onClick={() => setShowAdd(true)}>+ Añadir</Button>
-          </div>
-
-          {showAdd && (
-            <div className="mb-3">
-              <AddDeliverableForm
-                subjectId={selectedSubjectId}
-                defaultTestPoints={config.testContinuousPoints}
-                onAdd={handleAdd}
-                onClose={() => setShowAdd(false)}
-              />
-            </div>
-          )}
-
-          {activities.length === 0 ? (
-            <p className="text-sm text-ink-600 py-4 text-center">Sin actividades aún</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {activities.map((d) => (
-                <DeliverableRow
-                  key={d.id}
-                  d={d}
-                  onStatusChange={handleStatusChange}
-                  onGradeChange={handleGradeChange}
-                  onPointsChange={handlePointsChange}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Tests */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-display text-base text-ink-200">
-              Tests
-              {tests.length > 0 && (
-                <span className="text-ink-600 text-sm font-body ml-2">
-                  {completedTests}/{tests.length}
-                </span>
-              )}
-            </h2>
-          </div>
-
-          {tests.length === 0 ? (
-            <p className="text-sm text-ink-600 py-4 text-center">Sin tests aún</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {tests.map((d) => (
-                <DeliverableRow
-                  key={d.id}
-                  d={d}
-                  onStatusChange={handleStatusChange}
-                  onGradeChange={handleGradeChange}
-                  onPointsChange={handlePointsChange}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* CSV import + tools */}
-        <section className="flex flex-col gap-3 pt-4 border-t border-ink-800">
-          <div className="flex items-center gap-3 flex-wrap">
-            <input
-              ref={csvInputRef}
-              type="file"
-              accept=".csv"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleCSVImport(f);
-                e.target.value = '';
-              }}
-            />
-            <Button size="sm" variant="secondary" onClick={() => csvInputRef.current?.click()}>
-              📥 Importar CSV
-            </Button>
-            {deliverables.length > 0 && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setShowClearConfirm(true)}
-              >
-                🗑 Limpiar todo
-              </Button>
-            )}
-          </div>
-
-          {csvMsg && (
-            <p className={`text-xs ${csvMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
-              {csvMsg}
+        {/* ── Sidebar izquierdo: lista de asignaturas ──────────────────────── */}
+        <aside className="w-52 flex-shrink-0 border-r border-ink-800 overflow-y-auto bg-ink-950/30">
+          <div className="p-3 pt-5 flex flex-col gap-0.5">
+            <p className="text-xs font-medium text-ink-600 uppercase tracking-widest px-2 mb-2">
+              Asignaturas
             </p>
-          )}
+            {subjects.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setSelectedSubjectId(s.id)}
+                className={`flex items-center gap-2.5 px-2 py-2 rounded-lg text-left w-full transition-colors ${
+                  s.id === selectedSubjectId
+                    ? 'bg-ink-800 text-ink-100'
+                    : 'text-ink-400 hover:bg-ink-800/60 hover:text-ink-200'
+                }`}
+              >
+                <span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: s.color ?? '#f59e0b' }}
+                />
+                <span className="text-sm truncate">{s.name}</span>
+              </button>
+            ))}
+          </div>
+        </aside>
 
-          {showClearConfirm && (
-            <div className="flex items-center gap-3 p-3 bg-rose-900/20 border border-rose-700/40 rounded-lg">
-              <p className="text-sm text-rose-300 flex-1">
-                ¿Eliminar todos los deliverables de esta asignatura?
-              </p>
-              <Button size="sm" variant="danger" onClick={handleClearAll}>Eliminar</Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowClearConfirm(false)}>Cancelar</Button>
+        {/* ── Contenido principal ──────────────────────────────────────────── */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-3xl mx-auto px-6 py-8 flex flex-col gap-6">
+            {/* Grade calculator */}
+            <GradeCalculator
+              config={config}
+              deliverables={deliverables}
+              onConfigChange={handleConfigChange}
+            />
+
+            {/* Stats bar */}
+            {deliverables.length > 0 && (
+              <div className="flex gap-4 text-xs text-ink-500">
+                <span>Actividades: {completedActs}/{activities.length}</span>
+                <span>·</span>
+                <span>Tests: {completedTests}/{tests.length}</span>
+                {['pending', 'in_progress', 'done', 'submitted'].map((s) => {
+                  const count = deliverables.filter((d) => d.status === s).length;
+                  if (count === 0) return null;
+                  const conf = STATUS_CONFIG[s as DeliverableStatus];
+                  return (
+                    <span key={s} className="flex items-center gap-1">
+                      <span className={conf.className.split(' ')[2]}>{conf.icon}</span>
+                      <span>{count} {conf.label.toLowerCase()}</span>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Legend */}
+            <div className="flex gap-3 flex-wrap">
+              {(Object.entries(STATUS_CONFIG) as [DeliverableStatus, typeof STATUS_CONFIG[DeliverableStatus]][]).map(([key, conf]) => (
+                <div key={key} className="flex items-center gap-1.5">
+                  <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs font-bold ${conf.className}`}>
+                    {conf.icon}
+                  </span>
+                  <span className="text-xs text-ink-500">{conf.label}</span>
+                </div>
+              ))}
+              <span className="text-xs text-ink-700 self-center">— clic en el estado para cambiar</span>
             </div>
-          )}
-        </section>
-      </main>
+
+            {/* Activities */}
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-base text-ink-200">
+                  Actividades
+                  {activities.length > 0 && (
+                    <span className="text-ink-600 text-sm font-body ml-2">
+                      {completedActs}/{activities.length}
+                    </span>
+                  )}
+                </h2>
+                <Button size="sm" onClick={() => setShowAdd(true)}>+ Añadir</Button>
+              </div>
+
+              {showAdd && (
+                <div className="mb-3">
+                  <AddDeliverableForm
+                    subjectId={selectedSubjectId}
+                    defaultTestPoints={config.testContinuousPoints}
+                    onAdd={handleAdd}
+                    onClose={() => setShowAdd(false)}
+                  />
+                </div>
+              )}
+
+              {activities.length === 0 ? (
+                <p className="text-sm text-ink-600 py-4 text-center">Sin actividades aún</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {activities.map((d) => (
+                    <DeliverableRow
+                      key={d.id}
+                      d={d}
+                      onStatusChange={handleStatusChange}
+                      onGradeChange={handleGradeChange}
+                      onPointsChange={handlePointsChange}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Tests */}
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-base text-ink-200">
+                  Tests
+                  {tests.length > 0 && (
+                    <span className="text-ink-600 text-sm font-body ml-2">
+                      {completedTests}/{tests.length}
+                    </span>
+                  )}
+                </h2>
+              </div>
+
+              {tests.length === 0 ? (
+                <p className="text-sm text-ink-600 py-4 text-center">Sin tests aún</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {tests.map((d) => (
+                    <DeliverableRow
+                      key={d.id}
+                      d={d}
+                      onStatusChange={handleStatusChange}
+                      onGradeChange={handleGradeChange}
+                      onPointsChange={handlePointsChange}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* CSV import + tools */}
+            <section className="flex flex-col gap-3 pt-4 border-t border-ink-800">
+              <div className="flex items-center gap-3 flex-wrap">
+                <input
+                  ref={csvInputRef}
+                  type="file"
+                  accept=".csv"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleCSVImport(f);
+                    e.target.value = '';
+                  }}
+                />
+                <Button size="sm" variant="secondary" onClick={() => csvInputRef.current?.click()}>
+                  📥 Importar CSV
+                </Button>
+                {deliverables.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowClearConfirm(true)}
+                  >
+                    🗑 Limpiar todo
+                  </Button>
+                )}
+              </div>
+
+              {csvMsg && (
+                <p className={`text-xs ${csvMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+                  {csvMsg}
+                </p>
+              )}
+
+              {showClearConfirm && (
+                <div className="flex items-center gap-3 p-3 bg-rose-900/20 border border-rose-700/40 rounded-lg">
+                  <p className="text-sm text-rose-300 flex-1">
+                    ¿Eliminar todos los deliverables de esta asignatura?
+                  </p>
+                  <Button size="sm" variant="danger" onClick={handleClearAll}>Eliminar</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setShowClearConfirm(false)}>Cancelar</Button>
+                </div>
+              )}
+            </section>
+          </div>
+        </main>
+
+      </div>
     </div>
   );
 }

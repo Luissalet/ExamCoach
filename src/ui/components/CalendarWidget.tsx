@@ -4,6 +4,7 @@
  * Mini calendario mensual para el Dashboard.
  * Muestra los deliverables (actividades/tests) de todas las asignaturas
  * con indicación de estado (pending/in_progress/done/submitted).
+ * También muestra las fechas de examen de cada asignatura con un marcador especial.
  */
 
 import { useEffect, useState, useMemo } from 'react';
@@ -74,6 +75,17 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
     return map;
   }, [subjects]);
 
+  // Exam dates from subjects: date → Subject[]
+  const examByDate = useMemo(() => {
+    const map: Record<string, Subject[]> = {};
+    for (const s of subjects) {
+      if (!s.examDate) continue;
+      if (!map[s.examDate]) map[s.examDate] = [];
+      map[s.examDate].push(s);
+    }
+    return map;
+  }, [subjects]);
+
   useEffect(() => {
     deliverableRepo.getAll().then(setDeliverables);
   }, []);
@@ -106,7 +118,8 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
   };
 
   // Selected day events
-  const selectedEvents = selectedDay ? (byDate[selectedDay] ?? []) : [];
+  const selectedDeliverables = selectedDay ? (byDate[selectedDay] ?? []) : [];
+  const selectedExams = selectedDay ? (examByDate[selectedDay] ?? []) : [];
 
   return (
     <div className="bg-ink-900 border border-ink-700 rounded-xl overflow-hidden">
@@ -147,85 +160,97 @@ export function CalendarWidget({ subjects }: CalendarWidgetProps) {
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
           const dateStr = toDateStr(viewYear, viewMonth, day);
           const events = byDate[dateStr] ?? [];
+          const exams = examByDate[dateStr] ?? [];
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDay;
-          const hasEvents = events.length > 0;
-          const allDone = hasEvents && events.every(e => isDeliverableCompleted(e.status));
-          const somePending = hasEvents && events.some(e => !isDeliverableCompleted(e.status));
+          const hasEvents = events.length > 0 || exams.length > 0;
 
           return (
             <button
               key={day}
               onClick={() => setSelectedDay(isSelected ? null : dateStr)}
-              className={`
-                relative flex flex-col items-center rounded-lg py-1 text-xs transition-all
-                ${isSelected ? 'bg-amber-500/20 ring-1 ring-amber-500' : 'hover:bg-ink-800'}
-                ${isToday ? 'font-bold' : ''}
-              `}
+              className={`relative flex flex-col items-center justify-center rounded-lg py-1 min-h-[28px] text-xs transition-all ${
+                isSelected
+                  ? 'bg-amber-500 text-ink-900 font-bold'
+                  : isToday
+                  ? 'bg-amber-500/20 text-amber-300 font-semibold'
+                  : hasEvents
+                  ? 'text-ink-200 hover:bg-ink-800'
+                  : 'text-ink-600 hover:bg-ink-800'
+              }`}
             >
-              <span className={`
-                w-6 h-6 flex items-center justify-center rounded-full
-                ${isToday ? 'bg-amber-500 text-ink-900 font-bold' : 'text-ink-300'}
-              `}>
-                {day}
-              </span>
-
-              {/* Event dots */}
+              {day}
+              {/* Dot row: deliverable dots + exam star */}
               {hasEvents && (
-                <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center max-w-[24px]">
-                  {events.slice(0, 3).map((ev, idx) => (
-                    <div
-                      key={idx}
-                      className={`w-1.5 h-1.5 rounded-full transition-opacity ${isDeliverableCompleted(ev.status) ? 'opacity-40' : 'opacity-100'}`}
-                      style={{ backgroundColor: subjectColor[ev.subjectId] ?? '#f59e0b' }}
+                <div className="flex items-center gap-0.5 mt-0.5">
+                  {/* Exam dots (star-ish, gold) */}
+                  {exams.slice(0, 2).map((s) => (
+                    <span
+                      key={s.id}
+                      className="w-1.5 h-1.5 rounded-sm rotate-45 flex-shrink-0"
+                      style={{ backgroundColor: s.color ?? '#f59e0b' }}
+                      title={`Examen: ${s.name}`}
                     />
                   ))}
-                  {events.length > 3 && (
-                    <span className="text-ink-600 text-[8px] leading-none">+{events.length - 3}</span>
+                  {/* Deliverable dots */}
+                  {events.slice(0, 3 - exams.length).map((d) => (
+                    <span
+                      key={d.id}
+                      className="w-1 h-1 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: subjectColor[d.subjectId] ?? '#f59e0b' }}
+                    />
+                  ))}
+                  {(events.length + exams.length) > 3 && (
+                    <span className="text-[8px] text-ink-500 leading-none">+</span>
                   )}
                 </div>
-              )}
-
-              {/* Status indicator */}
-              {isSelected && hasEvents && (
-                <span className={`absolute -top-0.5 -right-0.5 text-[8px] font-bold ${allDone ? 'text-sage-400' : somePending ? 'text-amber-400' : ''}`}>
-                  {allDone ? '✓' : '!'}
-                </span>
               )}
             </button>
           );
         })}
       </div>
 
-      {/* Selected day detail */}
-      {selectedDay && selectedEvents.length > 0 && (
-        <div className="border-t border-ink-800 px-4 py-3 flex flex-col gap-2">
-          <p className="text-xs text-ink-500 font-medium uppercase tracking-widest mb-1">
-            {new Date(selectedDay + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+      {/* Selected day panel */}
+      {selectedDay && (selectedDeliverables.length > 0 || selectedExams.length > 0) && (
+        <div className="border-t border-ink-800 px-3 py-3 flex flex-col gap-2">
+          <p className="text-xs text-ink-500 font-medium mb-1">
+            {new Date(selectedDay + 'T12:00:00').toLocaleDateString('es-ES', {
+              weekday: 'short', day: 'numeric', month: 'short'
+            })}
           </p>
-          {selectedEvents.map(ev => (
-            <div key={ev.id} className="flex items-center gap-2">
-              <div
-                className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ backgroundColor: subjectColor[ev.subjectId] ?? '#f59e0b' }}
+
+          {/* Exam entries */}
+          {selectedExams.map(s => (
+            <div key={s.id} className="flex items-center gap-2">
+              <span
+                className="w-2 h-2 rounded-sm rotate-45 flex-shrink-0"
+                style={{ backgroundColor: s.color ?? '#f59e0b' }}
               />
-              <span className={`text-xs flex-1 truncate ${isDeliverableCompleted(ev.status) ? 'text-ink-500 line-through' : 'text-ink-200'}`}>
-                {ev.name}
-              </span>
-              <span className="text-xs text-ink-600 flex-shrink-0">
-                {subjectName[ev.subjectId]?.split(' ')[0] ?? ''}
-              </span>
-              <span className={`text-xs flex-shrink-0 ${STATUS_COLOR[ev.status]}`}>
-                {STATUS_LABEL[ev.status]}
-              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-amber-300 truncate">🎓 Examen</p>
+                <p className="text-xs text-ink-400 truncate">{s.name}</p>
+              </div>
             </div>
           ))}
-        </div>
-      )}
 
-      {selectedDay && selectedEvents.length === 0 && (
-        <div className="border-t border-ink-800 px-4 py-3">
-          <p className="text-xs text-ink-600 text-center">Sin entregas este día</p>
+          {/* Deliverable entries */}
+          {selectedDeliverables.map(d => (
+            <div key={d.id} className="flex items-center gap-2">
+              <span
+                className="w-2 h-2 rounded-full flex-shrink-0"
+                style={{ backgroundColor: subjectColor[d.subjectId] ?? '#f59e0b' }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className={`text-xs truncate ${isDeliverableCompleted(d.status) ? 'line-through text-ink-600' : 'text-ink-300'}`}>
+                  {d.name}
+                </p>
+                <p className={`text-xs ${STATUS_COLOR[d.status]}`}>
+                  {STATUS_LABEL[d.status]} · {subjectName[d.subjectId] ?? ''}
+                  {d.dueTime && ` · ${d.dueTime}`}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
