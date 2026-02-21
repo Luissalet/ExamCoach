@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
-import { db } from '@/data/db';
+import { db, getSettings } from '@/data/db';
 import { Button, Input, Card, Select } from '@/ui/components';
-import { exportContributionPack, importContributionPack } from '@/data/contributionImport';
+import { exportContributionPack, importContributionPack,undoContributionImport} from '@/data/contributionImport';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
 import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
+import type { ImportHistoryEntry } from '@/domain/models';
 
 
 export function SettingsPage() {
@@ -19,6 +20,10 @@ export function SettingsPage() {
   const [compactExportSubjectId, setCompactExportSubjectId] = useState('');
   const [imageSyncResult, setImageSyncResult] = useState<ImageSyncResult | null>(null);
   const [syncingImages, setSyncingImages] = useState(false);
+  const [importHistory, setImportHistory] = useState<ImportHistoryEntry[]>([]);
+  const [undoMsg, setUndoMsg] = useState('');
+  const [undoingPackId, setUndoingPackId] = useState<string | null>(null);
+
   useEffect(() => {
     loadSettings();
     loadSubjects();
@@ -27,6 +32,7 @@ export function SettingsPage() {
   useEffect(() => {
     setAlias(settings.alias);
     setImportedPacks(settings.importedPackIds);
+    setImportHistory(settings.importHistory ?? []);
   }, [settings]);
 
 
@@ -44,6 +50,25 @@ export function SettingsPage() {
   const handleSaveAlias = async () => {
     await updateSettings({ alias });
   };
+
+
+  const handleUndo = async (packId: string) => {
+  if (!confirm('¿Eliminar todas las preguntas de este pack importado? La acción no se puede deshacer.')) return;
+  setUndoingPackId(packId);
+  setUndoMsg('');
+  try {
+    const result = await undoContributionImport(packId);
+    setUndoMsg(`✓ ${result.deletedQuestions} preguntas eliminadas`);
+    setImportHistory(h => h.filter(e => e.packId !== packId));
+    setImportedPacks(p => p.filter(id => id !== packId));
+    await loadSubjects();
+  } catch (err) {
+    setUndoMsg('Error: ' + String(err));
+  } finally {
+    setUndoingPackId(null);
+    setTimeout(() => setUndoMsg(''), 5000);
+  }
+};
 
   const handleImportContribution = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -287,6 +312,43 @@ export function SettingsPage() {
             </div>
           )}
         </Card>
+
+        {importHistory.length > 0 && (
+  <Card>
+    <h2 className="font-display text-base text-ink-200 mb-1">Historial de importaciones</h2>
+    <p className="text-sm text-ink-500 mb-4">
+      Puedes revertir cualquier contribution pack importado. Esto elimina las preguntas de ese pack de tu base de datos.
+    </p>
+    {undoMsg && (
+      <p className="text-sm text-sage-400 mb-3">{undoMsg}</p>
+    )}
+    <div className="flex flex-col gap-2">
+      {[...importHistory].reverse().map(entry => (
+        <div key={entry.packId} className="flex items-start justify-between gap-3 p-3 bg-ink-850 rounded-lg border border-ink-700">
+          <div className="flex flex-col gap-0.5 min-w-0">
+            <p className="text-sm text-ink-200 font-medium">{entry.createdBy}</p>
+            <p className="text-xs text-ink-500 truncate">
+              {entry.subjectNames.join(', ')} · {entry.questionCount} preguntas
+            </p>
+            <p className="text-xs text-ink-700">
+              {new Date(entry.importedAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })}
+            </p>
+          </div>
+          <button
+            onClick={() => handleUndo(entry.packId)}
+            disabled={undoingPackId === entry.packId}
+            className="text-xs text-rose-500 hover:text-rose-300 border border-rose-800 hover:border-rose-500 px-2 py-1 rounded transition-colors flex-shrink-0 disabled:opacity-50"
+          >
+            {undoingPackId === entry.packId ? 'Eliminando…' : 'Revertir'}
+          </button>
+        </div>
+      ))}
+    </div>
+  </Card>
+)}
+
+
+
 
         {/* Danger zone */}
         <Card className="border-rose-500/20">

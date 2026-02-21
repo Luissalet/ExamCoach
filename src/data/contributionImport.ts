@@ -5,7 +5,7 @@ import { getSettings, saveSettings } from './db';
 import { slugify } from '@/domain/normalize';
 import { computeContentHash } from '@/domain/hashing';
 import { buildImageMap, importImages, extractImageFilenames } from './questionImageStorage';
-import type { ContributionPack, Subject, Topic, Question } from '@/domain/models';
+import type { ContributionPack, Subject, Topic, Question,ImportHistoryEntry } from '@/domain/models';
 
 // ─── Zod schemas ──────────────────────────────────────────────────────────────
 
@@ -257,8 +257,22 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
   }
 
   // Mark pack as imported
+  const updatedSettings = await getSettings();
+
+  // Nombre de las asignaturas afectadas
+  const affectedSubjectNames = pack.targets.map(t => t.subjectName);
+
+  const historyEntry: ImportHistoryEntry = {
+    packId: pack.packId,
+    createdBy: pack.createdBy,
+    importedAt: now,
+    questionCount: result.newQuestions,
+    subjectNames: affectedSubjectNames,
+  };
+
   await saveSettings({
-    importedPackIds: [...settings.importedPackIds, pack.packId],
+    importedPackIds: [...updatedSettings.importedPackIds, pack.packId],
+    importHistory: [...(updatedSettings.importHistory ?? []), historyEntry],
   });
 
   return result;
@@ -354,4 +368,32 @@ export async function exportContributionPack(
     questions: contributionQuestions,
     questionImages: Object.keys(questionImages).length > 0 ? questionImages : undefined,
   };
+}
+
+export interface UndoImportResult {
+  packId: string;
+  deletedQuestions: number;
+}
+
+export async function undoContributionImport(packId: string): Promise<UndoImportResult> {
+  const allQuestions = await db.questions
+    .where('sourcePackId') // necesita índice — ver nota abajo
+    .equals(packId)
+    .toArray()
+    .catch(() =>
+      // fallback si no hay índice por sourcePackId
+      db.questions.toArray().then(qs => qs.filter(q => q.sourcePackId === packId))
+    );
+
+  const ids = allQuestions.map(q => q.id);
+  await db.questions.bulkDelete(ids);
+
+  // Actualizar settings: quitar del historial y de importedPackIds
+  const settings = await getSettings();
+  await saveSettings({
+    importedPackIds: (settings.importedPackIds ?? []).filter(id => id !== packId),
+    importHistory: (settings.importHistory ?? []).filter(e => e.packId !== packId),
+  });
+
+  return { packId, deletedQuestions: ids.length };
 }

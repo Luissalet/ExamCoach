@@ -269,6 +269,18 @@ export interface ContributionPack {
   questionImages?: Record<string, string>;
 }
 
+/**
+ * Registro de un contribution pack importado.
+ * Se guarda en AppSettings.importHistory para permitir undo.
+ */
+export interface ImportHistoryEntry {
+  packId: string;
+  createdBy: string;
+  importedAt: string;   // ISO timestamp
+  questionCount: number;
+  subjectNames: string[];
+}
+
 // ─── Settings ─────────────────────────────────────────────────────────────────
 
 export interface AppSettings {
@@ -276,9 +288,13 @@ export interface AppSettings {
   importedPackIds: string[];
   /**
    * ISO timestamp de la última vez que se sincronizó con el banco global.
-   * Si es undefined, nunca se ha sincronizado.
    */
   globalBankSyncedAt?: string;
+  /**
+   * Historial de contribution packs importados.
+   * Permite hacer undo de un import concreto eliminando sus preguntas.
+   */
+  importHistory?: ImportHistoryEntry[];
 }
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────

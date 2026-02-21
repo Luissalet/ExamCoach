@@ -7,6 +7,9 @@ import { loadSubjectExtraInfo } from '@/data/resourceLoader'; // ← ITER2
 import { importResourceZip } from '@/data/resourceImporter'; // ← ITER3
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
 import { db } from '@/data/db';
+import { CalendarWidget } from '@/ui/components/CalendarWidget';
+import { deliverableRepo } from '@/data/deliverableRepo';
+import type { Deliverable } from '@/domain/models';
 
 const SUBJECT_COLORS = [
   '#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6', '#f97316', '#06b6d4', '#ec4899',
@@ -46,6 +49,7 @@ export function Dashboard() {
 
   const [commitMsg, setCommitMsg] = useState('');
   const [committing, setCommitting] = useState(false);
+  const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
 
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -61,6 +65,14 @@ export function Dashboard() {
       });
     });
     loadSubjects();
+    deliverableRepo.getAll().then(all => {
+    const today = new Date().toISOString().split('T')[0];
+    const upcoming = all
+      .filter(d => d.dueDate && d.dueDate >= today && !d.completed)
+      .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
+      .slice(0, 5);
+    setUpcomingDeliverables(upcoming);
+  });
   }, []);
 
   // ── Stats por asignatura ───────────────────────────────────────────────────
@@ -632,6 +644,80 @@ export function Dashboard() {
           </div>
         </div>
       </Modal>
+      {/* ── Sección inferior: Calendario + Próximas entregas ───── */}
+<div className="max-w-5xl mx-auto px-6 pb-12 grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+  {/* Calendario */}
+  <div>
+    <h2 className="text-xs font-medium text-ink-500 uppercase tracking-widest mb-3">
+      Calendario
+    </h2>
+    <CalendarWidget subjects={subjects} />
+  </div>
+
+  {/* Próximas entregas */}
+  <div>
+    <div className="flex items-center justify-between mb-3">
+      <h2 className="text-xs font-medium text-ink-500 uppercase tracking-widest">
+        Próximas entregas
+      </h2>
+      <button
+        onClick={() => navigate('/deliverables')}
+        className="text-xs text-amber-500 hover:text-amber-300 transition-colors"
+      >
+        Ver todas →
+      </button>
+    </div>
+
+    {upcomingDeliverables.length === 0 ? (
+      <div className="bg-ink-900 border border-ink-700 rounded-xl p-6 text-center">
+        <p className="text-sm text-ink-600">Sin entregas pendientes próximas</p>
+        <button
+          onClick={() => navigate('/deliverables')}
+          className="text-xs text-amber-500 hover:text-amber-300 mt-2 transition-colors"
+        >
+          Gestionar actividades →
+        </button>
+      </div>
+    ) : (
+      <div className="flex flex-col gap-2">
+        {upcomingDeliverables.map(d => {
+          const subject = subjects.find(s => s.id === d.subjectId);
+          const dueDateObj = d.dueDate ? new Date(d.dueDate + 'T12:00:00') : null;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const daysLeft = dueDateObj
+            ? Math.ceil((dueDateObj.getTime() - today.getTime()) / 86400000)
+            : null;
+
+          return (
+            <div
+              key={d.id}
+              onClick={() => navigate('/deliverables')}
+              className="flex items-center gap-3 p-3 bg-ink-900 border border-ink-700 rounded-xl hover:border-ink-600 cursor-pointer transition-colors"
+            >
+              {subject?.color && (
+                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color }} />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-ink-200 truncate">{d.name}</p>
+                <p className="text-xs text-ink-500 truncate">{subject?.name}</p>
+              </div>
+              {daysLeft !== null && (
+                <span className={`text-xs flex-shrink-0 font-medium ${
+                  daysLeft === 0 ? 'text-rose-400' :
+                  daysLeft <= 3 ? 'text-rose-400' :
+                  daysLeft <= 7 ? 'text-amber-400' : 'text-ink-500'
+                }`}>
+                  {daysLeft === 0 ? '¡Hoy!' : daysLeft === 1 ? 'Mañana' : `${daysLeft}d`}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</div>
     </div>
   );
 }
