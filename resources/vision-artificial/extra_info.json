@@ -3,5 +3,11 @@
   "professor": "",
   "credits": 6,
   "description": "",
-  "pdfs": []
+  "pdfs": [],
+  "externalLinks": [
+    {
+      "name": "FilterLab",
+      "url": "https://github.com/Mlgpigeon/filterlab"
+    }
+  ]
 }
