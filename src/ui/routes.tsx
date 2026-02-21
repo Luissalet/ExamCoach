@@ -5,6 +5,7 @@ import { PracticeSessionPage } from './pages/PracticeSession';
 import { ResultsPage } from './pages/Results';
 import { SettingsPage } from './pages/Settings';
 import { FlashcardPage } from './pages/Flashcard';
+import { DeliverablesPage } from './pages/Deliverables';
 
 export function AppRouter() {
   return (
@@ -16,6 +17,7 @@ export function AppRouter() {
         <Route path="/results/:sessionId" element={<ResultsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/flashcard/:subjectId" element={<FlashcardPage />} />
+        <Route path="/deliverables" element={<DeliverablesPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

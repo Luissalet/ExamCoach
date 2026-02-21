@@ -280,3 +280,46 @@ export interface AppSettings {
    */
   globalBankSyncedAt?: string;
 }
+
+// ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────
+
+export type DeliverableType = 'activity' | 'test';
+
+/**
+ * A course deliverable: an activity (graded) or a test (binary done/not-done).
+ * - activity: graded 0-10, contributes `continuousPoints` proportionally
+ *   contribution = (grade / 10) * continuousPoints
+ * - test: binary, contributes `continuousPoints` flat when completed
+ */
+export interface Deliverable {
+  id: string;
+  subjectId: string;
+  name: string;
+  type: DeliverableType;
+  startDate?: string;   // ISO YYYY-MM-DD
+  dueDate?: string;     // ISO YYYY-MM-DD
+  completed: boolean;
+  /** 0-10 grade received. Activities only. */
+  grade?: number;
+  /** Max continuous raw points this deliverable contributes. */
+  continuousPoints: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Per-subject grading configuration. LOCAL data only.
+ * id === subjectId for easy lookup.
+ */
+export interface SubjectGradingConfig {
+  /** Same as subjectId — used as primary key. */
+  id: string;
+  /** Weight of continuous eval in final grade. e.g. 0.4 = 40% */
+  continuousWeight: number;
+  /** Cap for continuous raw score. e.g. 10 */
+  maxContinuousPoints: number;
+  /** Default continuousPoints for new test deliverables. e.g. 0.1 */
+  testContinuousPoints: number;
+  /** Exam grade (0-10) once taken. */
+  examGrade?: number;
+}

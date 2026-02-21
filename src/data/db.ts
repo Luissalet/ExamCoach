@@ -8,6 +8,8 @@ import type {
   PdfAnchor,
   AppSettings,
   QuestionImageRecord,
+  Deliverable,
+  SubjectGradingConfig,
 } from '@/domain/models';
 
 export class StudyDB extends Dexie {
@@ -19,6 +21,8 @@ export class StudyDB extends Dexie {
   pdfAnchors!: Table<PdfAnchor, string>;
   settings!: Table<AppSettings & { id: string }, string>;
   questionImages!: Table<QuestionImageRecord, string>;
+  deliverables!: Table<Deliverable, string>;
+  gradingConfigs!: Table<SubjectGradingConfig, string>;
 
   constructor() {
     super('StudyAppDB');
@@ -45,6 +49,21 @@ export class StudyDB extends Dexie {
       pdfAnchors: 'id, subjectId, pdfId',
       settings: 'id',
       questionImages: 'id, filename, createdAt',
+    });
+
+    // v3: deliverables + grading configs (local, never synced to global bank)
+    this.version(3).stores({
+      subjects: 'id, name, examDate, createdAt',
+      topics: 'id, subjectId, order, createdAt',
+      questions:
+        'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+      sessions: 'id, subjectId, mode, createdAt',
+      pdfResources: 'id, subjectId, createdAt',
+      pdfAnchors: 'id, subjectId, pdfId',
+      settings: 'id',
+      questionImages: 'id, filename, createdAt',
+      deliverables: 'id, subjectId, type, dueDate, completed, createdAt',
+      gradingConfigs: 'id',
     });
   }
 }

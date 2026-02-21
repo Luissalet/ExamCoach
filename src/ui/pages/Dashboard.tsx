@@ -327,7 +327,11 @@ export function Dashboard() {
                 {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
               </span>
             </label>
+            
 
+            <Button variant="ghost" size="sm" onClick={() => navigate('/deliverables')}>
+              📋 Actividades & Notas
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
               ⚙ Ajustes
             </Button>
