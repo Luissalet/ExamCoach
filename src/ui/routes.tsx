@@ -6,6 +6,7 @@ import { ResultsPage } from './pages/Results';
 import { SettingsPage } from './pages/Settings';
 import { FlashcardPage } from './pages/Flashcard';
 import { DeliverablesPage } from './pages/Deliverables';
+import { StatsPage } from './pages/Stats';
 
 export function AppRouter() {
   return (
@@ -13,6 +14,7 @@ export function AppRouter() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/subject/:subjectId" element={<SubjectView />} />
+        <Route path="/subject/:subjectId/stats" element={<StatsPage />} />
         <Route path="/practice/:sessionId" element={<PracticeSessionPage />} />
         <Route path="/results/:sessionId" element={<ResultsPage />} />
         <Route path="/settings" element={<SettingsPage />} />

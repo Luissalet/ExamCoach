@@ -145,12 +145,15 @@ export const questionRepo = {
   ): Promise<void> {
     const q = await db.questions.get(id);
     if (!q) return;
+    const { calcNextReview } = await import('@/domain/spacedRepetition');
+    const sm2 = calcNextReview(q.stats, result);
     const stats: QuestionStats = {
       seen: q.stats.seen + 1,
       correct: q.stats.correct + (result === 'CORRECT' ? 1 : 0),
       wrong: q.stats.wrong + (result === 'WRONG' ? 1 : 0),
       lastSeenAt: now(),
       lastResult: result,
+      ...sm2,
     };
     await db.questions.update(id, { stats, updatedAt: now() });
   },
@@ -198,5 +201,13 @@ export const sessionRepo = {
   },
   async delete(id: string): Promise<void> {
     await db.sessions.delete(id);
+  },
+  async updateAnswer(sessionId: string, questionId: string, patch: Partial<UserAnswer>): Promise<void> {
+    const session = await db.sessions.get(sessionId);
+    if (!session) return;
+    const answers = session.answers.map((a) =>
+      a.questionId === questionId ? { ...a, ...patch } : a
+    );
+    await db.sessions.update(sessionId, { answers });
   },
 };

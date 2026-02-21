@@ -25,15 +25,20 @@ export interface GradeBreakdown {
 }
 
 /**
- * Calculates the raw continuous score from completed deliverables.
- * - Tests: contribute `continuousPoints` flat if done/submitted
- * - Activities: contribute `(grade / 10) * continuousPoints` if graded and done/submitted
+ * Calculates the raw continuous score from deliverables.
+ * - Tests: contribute `continuousPoints` flat when done/submitted (binary completion)
+ * - Activities: contribute `(grade / 10) * continuousPoints` when graded
+ *   (having a grade implies the activity was returned and scored — status not required)
+ * - Exams / otros: do not contribute to continuous score
  */
 export function calcContinuousRaw(deliverables: Deliverable[]): number {
   return deliverables.reduce((sum, d) => {
-    if (!isDeliverableCompleted(d.status)) return sum;
-    if (d.type === 'test') return sum + d.continuousPoints;
-    if (d.grade != null) return sum + (d.grade / 10) * d.continuousPoints;
+    if (d.type === 'test') {
+      return isDeliverableCompleted(d.status) ? sum + d.continuousPoints : sum;
+    }
+    if (d.type === 'activity' && d.grade != null) {
+      return sum + (d.grade / 10) * d.continuousPoints;
+    }
     return sum;
   }, 0);
 }
@@ -64,8 +69,12 @@ export function calcGradeBreakdown(
   const finalGrade =
     examContribution != null ? examContribution + continuousContribution : null;
 
+  // Potential = tests not yet completed + activities not yet graded
   const potentialFromIncomplete = deliverables
-    .filter((d) => !isDeliverableCompleted(d.status))
+    .filter((d) =>
+      (d.type === 'test' && !isDeliverableCompleted(d.status)) ||
+      (d.type === 'activity' && d.grade == null)
+    )
     .reduce((sum, d) => sum + d.continuousPoints, 0);
 
   const remainingPotential = Math.max(

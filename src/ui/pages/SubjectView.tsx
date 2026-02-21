@@ -502,16 +502,25 @@ export function SubjectView() {
     { id: 'resources', label: 'Otros recursos' },
   ];
 
+  const handleStatsClick = () => {
+    navigate(`/subject/${subjectId}/stats`);
+  };
+
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       <header className="border-b border-ink-800 bg-ink-900/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 transition-colors text-sm">
-              ← Inicio
-            </button>
-            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
-            <h1 className="font-display text-xl text-ink-100">{subject.name}</h1>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 transition-colors text-sm">
+                ← Inicio
+              </button>
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
+              <h1 className="font-display text-xl text-ink-100">{subject.name}</h1>
+            </div>
+            <Button size="sm" variant="ghost" onClick={handleStatsClick}>
+              📊 Estadísticas
+            </Button>
           </div>
           <div className="mt-3">
             <Tabs tabs={tabs} active={tab} onChange={(id) => setTab(id as TabId)} />
@@ -963,12 +972,16 @@ interface PracticeConfigProps {
 
 function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: PracticeConfigProps) {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'random' | 'all' | 'failed' | 'topic'>('random');
+  const [mode, setMode] = useState<'random' | 'all' | 'failed' | 'topic' | 'smart'>('random');
   const [count, setCount] = useState('20');
   const [topicId, setTopicId] = useState(defaultTopicId ?? '');
 
   // Type filter checklist — all enabled by default
   const [enabledTypes, setEnabledTypes] = useState<Set<QuestionType>>(new Set(['TEST', 'DESARROLLO', 'COMPLETAR', 'PRACTICO']));
+
+  // Feature 4: Filters
+  const [onlyUnseen, setOnlyUnseen] = useState(false);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<Set<number>>(new Set([1, 2, 3, 4, 5]));
 
   const toggleType = (t: QuestionType) => {
     setEnabledTypes((prev) => {
@@ -986,24 +999,78 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
   // Count questions by type (to show next to checkbox)
   const countByType = (type: QuestionType) => questions.filter((q) => q.type === type).length;
 
+  // Count by difficulty
+  const countByDifficulty = (difficulty: number) => questions.filter((q) => q.difficulty === difficulty).length;
+
   // Filtered questions by enabled types
   const typeFilteredQuestions = questions.filter((q) => enabledTypes.has(q.type));
 
   const failedCount = typeFilteredQuestions.filter((q) => q.stats.lastResult === 'WRONG').length;
+
+  const getSmartReviewCount = () => {
+    const today = new Date().toISOString().split('T')[0];
+    return typeFilteredQuestions.filter((q) =>
+      !q.stats.nextReviewAt || q.stats.nextReviewAt <= today
+    ).length;
+  };
+  const smartReviewCount = getSmartReviewCount();
+
   const getAvailableCount = () => {
-    if (mode === 'failed') return failedCount;
-    if (mode === 'topic') return typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, topicId)).length;
-    return typeFilteredQuestions.length;
+    let base: Question[] = [];
+    if (mode === 'failed') base = typeFilteredQuestions.filter((q) => q.stats.lastResult === 'WRONG');
+    else if (mode === 'topic') base = typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, topicId));
+    else if (mode === 'smart') {
+      const today = new Date().toISOString().split('T')[0];
+      base = typeFilteredQuestions.filter((q) =>
+        !q.stats.nextReviewAt || q.stats.nextReviewAt <= today
+      );
+      if (base.length === 0) base = typeFilteredQuestions;
+    }
+    else base = typeFilteredQuestions;
+
+    // Apply Feature 4 filters
+    if (onlyUnseen) {
+      base = base.filter((q) => q.stats.seen === 0);
+    }
+    if (selectedDifficulties.size < 5) {
+      base = base.filter((q) => !q.difficulty || selectedDifficulties.has(q.difficulty));
+    }
+
+    return base.length;
   };
   const available = getAvailableCount();
 
   const handleStart = async () => {
     if (available === 0) return;
     let pool: Question[] = [];
+
     if (mode === 'all') pool = [...typeFilteredQuestions];
     else if (mode === 'failed') pool = typeFilteredQuestions.filter((q) => q.stats.lastResult === 'WRONG');
     else if (mode === 'topic') pool = typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, topicId));
-    else { const n = Math.min(parseInt(count) || 20, typeFilteredQuestions.length); pool = [...typeFilteredQuestions].sort(() => Math.random() - 0.5).slice(0, n); }
+    else if (mode === 'smart') {
+      const { sortByPriority } = await import('@/domain/spacedRepetition');
+      const today = new Date().toISOString().split('T')[0];
+      pool = typeFilteredQuestions.filter((q) =>
+        !q.stats.nextReviewAt || q.stats.nextReviewAt <= today
+      );
+      pool = sortByPriority(pool);
+      if (pool.length === 0) {
+        pool = sortByPriority(typeFilteredQuestions).slice(0, 20);
+      }
+    }
+    else {
+      const n = Math.min(parseInt(count) || 20, typeFilteredQuestions.length);
+      pool = [...typeFilteredQuestions].sort(() => Math.random() - 0.5).slice(0, n);
+    }
+
+    // Apply additional filters (Feature 4)
+    if (onlyUnseen) {
+      pool = pool.filter((q) => q.stats.seen === 0);
+    }
+    if (selectedDifficulties.size < 5) {
+      pool = pool.filter((q) => !q.difficulty || selectedDifficulties.has(q.difficulty));
+    }
+
     pool = pool.sort(() => Math.random() - 0.5);
     const { sessionRepo } = await import('@/data/repos');
     const session = await sessionRepo.create({ subjectId, mode, topicId: mode === 'topic' ? topicId : undefined, questionIds: pool.map((q) => q.id) });
@@ -1058,6 +1125,7 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
           <option value="random">Aleatorio</option>
           <option value="all">Todas las preguntas</option>
           <option value="failed">Sólo falladas ({failedCount})</option>
+          <option value="smart">Repaso inteligente ({smartReviewCount} pendientes)</option>
           <option value="topic">Por tema</option>
         </Select>
         {mode === 'random' && <Input label="Número de preguntas" type="number" min="1" max={typeFilteredQuestions.length} value={count} onChange={(e) => setCount(e.target.value)} />}
@@ -1067,6 +1135,54 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
             {topics.map((t) => { const n = typeFilteredQuestions.filter((q) => questionBelongsToTopic(q, t.id)).length; return <option key={t.id} value={t.id}>{t.title} ({n})</option>; })}
           </Select>
         )}
+
+        {/* Feature 4: Additional filters */}
+        <div className="border-t border-ink-700 pt-3">
+          <p className="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">Filtros adicionales</p>
+
+          {/* Only unseen filter */}
+          <label className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-ink-700 text-sm cursor-pointer hover:border-ink-600 transition-all mb-2">
+            <input
+              type="checkbox"
+              checked={onlyUnseen}
+              onChange={(e) => setOnlyUnseen(e.target.checked)}
+              className="accent-amber-500 w-3.5 h-3.5"
+            />
+            <span className="text-ink-300">Solo no vistas ({typeFilteredQuestions.filter(q => q.stats.seen === 0).length})</span>
+          </label>
+
+          {/* Difficulty filter */}
+          <div className="flex flex-wrap gap-1.5">
+            {[1, 2, 3, 4, 5].map((difficulty) => {
+              const count = countByDifficulty(difficulty);
+              const isSelected = selectedDifficulties.has(difficulty);
+              return (
+                <button
+                  key={difficulty}
+                  onClick={() => {
+                    setSelectedDifficulties((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(difficulty)) {
+                        if (next.size > 1) next.delete(difficulty);
+                      } else {
+                        next.add(difficulty);
+                      }
+                      return next;
+                    });
+                  }}
+                  className={`px-2 py-1 rounded text-xs font-medium transition-all ${
+                    isSelected
+                      ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300'
+                      : 'bg-ink-800 border border-ink-700 text-ink-500'
+                  }`}
+                  title={`${count} pregunta${count !== 1 ? 's' : ''}`}
+                >
+                  {'★'.repeat(difficulty)} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Divider */}
         <div className="flex flex-col gap-2">

@@ -391,6 +391,7 @@ interface DeliverableRowProps {
   onStatusChange: (id: string, status: DeliverableStatus) => void;
   onGradeChange: (id: string, grade: number | undefined) => void;
   onPointsChange: (id: string, pts: number) => void;
+  onEdit: (id: string, patch: { name: string; dueDate?: string; dueTime?: string }) => void;
   onDelete: (id: string) => void;
 }
 
@@ -399,14 +400,79 @@ function DeliverableRow({
   onStatusChange,
   onGradeChange,
   onPointsChange,
+  onEdit,
   onDelete,
 }: DeliverableRowProps) {
   const completed = isDeliverableCompleted(d.status);
   const dateColor = dueDateColor(d.dueDate, d.status);
   const dateLabel = dueDateLabel(d.dueDate, d.status);
   const [editingPts, setEditingPts] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(d.name);
+  const [editDueDate, setEditDueDate] = useState(d.dueDate ?? '');
+  const [editDueTime, setEditDueTime] = useState(d.dueTime ?? '');
   const statusConf = STATUS_CONFIG[d.status];
 
+  const openEdit = () => {
+    setEditName(d.name);
+    setEditDueDate(d.dueDate ?? '');
+    setEditDueTime(d.dueTime ?? '');
+    setEditing(true);
+  };
+
+  const saveEdit = () => {
+    if (!editName.trim()) return;
+    onEdit(d.id, {
+      name: editName.trim(),
+      dueDate: editDueDate || undefined,
+      dueTime: editDueTime || undefined,
+    });
+    setEditing(false);
+  };
+
+  // ── Edit mode ───────────────────────────────────────────────────────────────
+  if (editing) {
+    return (
+      <div className="flex flex-col gap-2 px-3 py-2.5 rounded-lg bg-ink-850 border border-amber-500/40">
+        <input
+          autoFocus
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditing(false); }}
+          className="bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-100 font-body w-full"
+          placeholder="Nombre"
+        />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="text-xs text-ink-500 mb-1 block">
+              {d.type === 'exam' ? 'Fecha del examen' : 'Fecha límite'}
+            </label>
+            <input
+              type="date"
+              value={editDueDate}
+              onChange={(e) => setEditDueDate(e.target.value)}
+              className="w-full bg-ink-800 border border-ink-700 rounded-lg px-2 py-1.5 text-xs text-ink-100"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="text-xs text-ink-500 mb-1 block">Hora (opcional)</label>
+            <input
+              type="time"
+              value={editDueTime}
+              onChange={(e) => setEditDueTime(e.target.value)}
+              className="w-full bg-ink-800 border border-ink-700 rounded-lg px-2 py-1.5 text-xs text-ink-100"
+            />
+          </div>
+        </div>
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>Cancelar</Button>
+          <Button size="sm" onClick={saveEdit} disabled={!editName.trim()}>Guardar</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Normal mode ─────────────────────────────────────────────────────────────
   return (
     <div
       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group ${
@@ -434,10 +500,10 @@ function DeliverableRow({
           {d.name}
         </p>
         {(dateLabel || d.dueTime) && (
-  <span className={`text-xs ${dateColor}`}>
-    {dateLabel}{d.dueTime ? ` · ${d.dueTime}` : ''}
-  </span>
-)}
+          <span className={`text-xs ${dateColor}`}>
+            {dateLabel}{d.dueTime ? ` · ${d.dueTime}` : ''}
+          </span>
+        )}
       </div>
 
       {/* Status badge — also clickable to cycle */}
@@ -515,6 +581,15 @@ function DeliverableRow({
       >
         {d.type === 'test' ? 'Test' : d.type === 'otro' ? 'Otro' : d.type === 'exam' ? '🎓 Exam' : 'Act.'}
       </span>
+
+      {/* Edit */}
+      <button
+        onClick={openEdit}
+        className="opacity-0 group-hover:opacity-100 text-ink-600 hover:text-amber-400 transition-all w-5 h-5 flex items-center justify-center text-xs flex-shrink-0"
+        title="Editar nombre y fecha"
+      >
+        ✎
+      </button>
 
       {/* Delete */}
       <button
@@ -716,6 +791,14 @@ export function DeliverablesPage() {
     );
   };
 
+  const handleEdit = async (id: string, patch: { name: string; dueDate?: string; dueTime?: string }) => {
+    await deliverableRepo.update(id, patch);
+    setDeliverables((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, ...patch } : d))
+        .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? '')),
+    );
+  };
+
   const handleDelete = async (id: string) => {
     await deliverableRepo.delete(id);
     setDeliverables((prev) => prev.filter((d) => d.id !== id));
@@ -910,6 +993,7 @@ export function DeliverablesPage() {
                       onStatusChange={handleStatusChange}
                       onGradeChange={handleGradeChange}
                       onPointsChange={handlePointsChange}
+                      onEdit={handleEdit}
                       onDelete={handleDelete}
                     />
                   ))}
@@ -941,6 +1025,7 @@ export function DeliverablesPage() {
                       onStatusChange={handleStatusChange}
                       onGradeChange={handleGradeChange}
                       onPointsChange={handlePointsChange}
+                      onEdit={handleEdit}
                       onDelete={handleDelete}
                     />
                   ))}
@@ -985,6 +1070,7 @@ export function DeliverablesPage() {
                       onStatusChange={handleStatusChange}
                       onGradeChange={handleGradeChange}
                       onPointsChange={handlePointsChange}
+                      onEdit={handleEdit}
                       onDelete={handleDelete}
                     />
                   ))}

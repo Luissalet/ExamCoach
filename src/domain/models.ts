@@ -56,6 +56,11 @@ export interface QuestionStats {
   wrong: number;
   lastSeenAt?: string;
   lastResult?: 'CORRECT' | 'WRONG';
+  // Spaced Repetition SM-2
+  easeFactor?: number;
+  interval?: number;
+  nextReviewAt?: string;  // ISO date
+  repetitions?: number;
 }
 
 export interface Question {

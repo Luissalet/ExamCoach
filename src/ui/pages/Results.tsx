@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { sessionRepo, questionRepo } from '@/data/repos';
 import { Button, TypeBadge, Badge } from '@/ui/components';
-import type { PracticeSession, Question } from '@/domain/models';
+import type { PracticeSession, Question, UserAnswer } from '@/domain/models';
 
 export function ResultsPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -12,6 +12,7 @@ export function ResultsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQ, setSelectedQ] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [answers, setAnswers] = useState<UserAnswer[]>([]);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -21,6 +22,7 @@ export function ResultsPage() {
       const qs = await questionRepo.getManyByIds(s.questionIds);
       setSession(s);
       setQuestions(qs);
+      setAnswers(s.answers);
       setLoading(false);
     })();
   }, [sessionId]);
@@ -33,14 +35,14 @@ export function ResultsPage() {
     );
   }
 
-  const correct = session.answers.filter((a) => a.result === 'CORRECT').length;
-  const wrong = session.answers.filter((a) => a.result === 'WRONG').length;
-  const pending = session.answers.filter((a) => a.result === null || a.result === undefined).length;
+  const correct = useMemo(() => answers.filter((a) => a.result === 'CORRECT').length, [answers]);
+  const wrong = useMemo(() => answers.filter((a) => a.result === 'WRONG').length, [answers]);
+  const pending = useMemo(() => answers.filter((a) => a.result === null || a.result === undefined).length, [answers]);
   const total = session.questionIds.length;
-  const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
+  const pct = useMemo(() => total === 0 ? 0 : Math.round((correct / total) * 100), [correct, total]);
 
   const handleRepeatFailed = async () => {
-    const failedIds = session.answers
+    const failedIds = answers
       .filter((a) => a.result === 'WRONG')
       .map((a) => a.questionId);
     if (failedIds.length === 0) return;
@@ -53,7 +55,18 @@ export function ResultsPage() {
   };
 
   const selectedQuestion = questions.find((q) => q.id === selectedQ);
-  const selectedAnswer = session.answers.find((a) => a.questionId === selectedQ);
+  const selectedAnswer = answers.find((a) => a.questionId === selectedQ);
+
+  const handleCorrectAnswer = async (result: 'CORRECT' | 'WRONG') => {
+    if (!selectedQ || !sessionId) return;
+    await sessionRepo.updateAnswer(sessionId, selectedQ, { manualResult: result, result });
+    await questionRepo.updateStats(selectedQ, result);
+    setAnswers((prev) =>
+      prev.map((a) =>
+        a.questionId === selectedQ ? { ...a, manualResult: result, result } : a
+      )
+    );
+  };
 
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100">
@@ -132,7 +145,7 @@ export function ResultsPage() {
             <h2 className="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">Preguntas</h2>
             {session.questionIds.map((qId, i) => {
               const q = questions.find((q) => q.id === qId);
-              const a = session.answers.find((a) => a.questionId === qId);
+              const a = answers.find((a) => a.questionId === qId);
               if (!q) return null;
               const result = a?.result;
               return (
@@ -198,6 +211,49 @@ export function ResultsPage() {
                     <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Respuesta correcta</p>
                     <CorrectAnswerSummary question={selectedQuestion} />
                   </div>
+
+                  {/* Display modelAnswer and keywords for DESARROLLO/PRACTICO before correction */}
+                  {(selectedQuestion.type === 'DESARROLLO' || selectedQuestion.type === 'PRACTICO') && selectedAnswer.result === null && (
+                    <>
+                      {selectedQuestion.modelAnswer && (
+                        <div className="mt-3 pt-3 border-t border-amber-500/30">
+                          <p className="text-xs text-amber-600 uppercase tracking-widest mb-1">Respuesta modelo</p>
+                          <p className="text-sm text-ink-300 whitespace-pre-wrap">{selectedQuestion.modelAnswer}</p>
+                        </div>
+                      )}
+                      {selectedQuestion.keywords && selectedQuestion.keywords.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          <p className="text-xs text-amber-600 uppercase tracking-widest w-full">Keywords</p>
+                          {selectedQuestion.keywords.map((kw) => (
+                            <span key={kw} className="text-xs bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded px-2 py-0.5">
+                              {kw}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* Manual correction buttons for DESARROLLO/PRACTICO */}
+                  {selectedAnswer.result === null && (selectedQuestion.type === 'DESARROLLO' || selectedQuestion.type === 'PRACTICO') && (
+                    <div className="mt-4 pt-3 border-t border-amber-500/30 flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleCorrectAnswer('CORRECT')}
+                        className="flex-1 bg-sage-600 hover:bg-sage-700 text-white"
+                      >
+                        ✓ Correcto
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleCorrectAnswer('WRONG')}
+                        className="flex-1 bg-rose-500 hover:bg-rose-600 text-white"
+                      >
+                        ✗ Incorrecto
+                      </Button>
+                    </div>
+                  )}
+
                   {selectedQuestion.explanation && (
                     <div className="mt-2 pt-3 border-t border-ink-700">
                       <p className="text-xs text-amber-600 uppercase tracking-widest mb-1">Explicación</p>

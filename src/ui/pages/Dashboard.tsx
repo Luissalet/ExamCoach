@@ -32,6 +32,7 @@ export function Dashboard() {
   const [importLoading, setImportLoading] = useState(false);
   const [importMsg, setImportMsg] = useState('');
   const [syncMsg, setSyncMsg] = useState('');
+  const [pendingCorrectionCount, setPendingCorrectionCount] = useState<Record<string, number>>({});
 
   const [zipImporting, setZipImporting] = useState(false);
   const [zipMsg, setZipMsg] = useState('');
@@ -84,6 +85,7 @@ export function Dashboard() {
   useEffect(() => {
     async function loadStats() {
       const result: Record<string, { total: number; correct: number; seen: number }> = {};
+      const pendingCounts: Record<string, number> = {};
       for (const s of subjects) {
         const qs = await db.questions.where('subjectId').equals(s.id).toArray();
         result[s.id] = {
@@ -91,8 +93,16 @@ export function Dashboard() {
           correct: qs.reduce((acc, q) => acc + q.stats.correct, 0),
           seen: qs.reduce((acc, q) => acc + q.stats.seen, 0),
         };
+        // Count pending corrections (finished sessions with unanswered DESARROLLO/PRACTICO)
+        const sessions = await db.sessions
+          .where('subjectId')
+          .equals(s.id)
+          .filter(sess => sess.finishedAt != null && sess.answers.some(a => a.result === null))
+          .toArray();
+        pendingCounts[s.id] = sessions.reduce((acc, sess) => acc + sess.answers.filter(a => a.result === null).length, 0);
       }
       setStats(result);
+      setPendingCorrectionCount(pendingCounts);
     }
     if (subjects.length) loadStats();
   }, [subjects]);
@@ -407,9 +417,16 @@ export function Dashboard() {
                       />
                       <div className="pt-1">
                         <div className="flex items-start justify-between mb-2">
-                          <h2 className="font-display text-lg text-ink-100 leading-tight group-hover:text-amber-300 transition-colors">
-                            {s.name}
-                          </h2>
+                          <div className="flex flex-col gap-1">
+                            <h2 className="font-display text-lg text-ink-100 leading-tight group-hover:text-amber-300 transition-colors">
+                              {s.name}
+                            </h2>
+                            {pendingCorrectionCount[s.id] > 0 && (
+                              <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded w-fit">
+                                {pendingCorrectionCount[s.id]} sin corregir
+                              </span>
+                            )}
+                          </div>
                           <div className="flex items-center gap-2">
                             {/* ── ITER2: indicador de apuntes ─────────────────── */}
                             {extra?.allowsNotes !== undefined && (
