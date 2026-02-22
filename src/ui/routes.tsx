@@ -7,6 +7,7 @@ import { SettingsPage } from './pages/Settings';
 import { FlashcardPage } from './pages/Flashcard';
 import { DeliverablesPage } from './pages/Deliverables';
 import { StatsPage } from './pages/Stats';
+import { GlobalStatsPage } from './pages/GlobalStats';
 
 export function AppRouter() {
   return (
@@ -20,6 +21,7 @@ export function AppRouter() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/flashcard/:subjectId" element={<FlashcardPage />} />
         <Route path="/deliverables" element={<DeliverablesPage />} />
+        <Route path="/stats" element={<GlobalStatsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

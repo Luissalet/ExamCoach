@@ -230,12 +230,30 @@ export async function mergeGlobalBank(raw: unknown): Promise<GlobalBankSyncResul
   }
 
   // ── 5. Procesar pdfAnchors ──────────────────────────────────────────────────
+  // Construir índice de anchors existentes (por pdfId + page + label) para evitar duplicados
+  const existingAnchors = await db.pdfAnchors.toArray();
+  const anchorKey = (subjectId: string, pdfId: string, page: number, label?: string) =>
+    `${subjectId}::${pdfId}::${page}::${label ?? ''}`;
+  const existingAnchorKeys = new Set(
+    existingAnchors.map((a) => anchorKey(a.subjectId, a.pdfId, a.page, a.label))
+  );
+
   for (const a of bank.pdfAnchors) {
     const localSubjectId = subjectIdMap.get(a.subjectId);
     if (!localSubjectId) continue;
+    const key = anchorKey(localSubjectId, a.pdfId, a.page, a.label);
+    if (existingAnchorKeys.has(key)) {
+      // Ya existe: mapear al anchor existente
+      const existing = existingAnchors.find(
+        (ea) => anchorKey(ea.subjectId, ea.pdfId, ea.page, ea.label) === key
+      );
+      if (existing) anchorIdMap.set(a.id, existing.id);
+      continue;
+    }
     const newId = uuidv4();
     anchorIdMap.set(a.id, newId);
     await db.pdfAnchors.add({ ...a, id: newId, subjectId: localSubjectId });
+    existingAnchorKeys.add(key);
   }
 
   // ── 6. Procesar preguntas ───────────────────────────────────────────────────

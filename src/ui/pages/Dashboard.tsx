@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { Button, Card, Modal, Input, Countdown, Progress, EmptyState } from '@/ui/components';
-import { exportBank, exportGlobalBank, importBank, parseImportFile, downloadJSON } from '@/data/exportImport';
+import { exportBank, exportGlobalBank, importBank, parseImportFile, downloadJSON, removeDuplicateQuestions, commitAndCleanContributions } from '@/data/exportImport';
 import { loadSubjectExtraInfo } from '@/data/resourceLoader';
 import { importResourceZip } from '@/data/resourceImporter';
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
@@ -42,6 +42,8 @@ export function Dashboard() {
 
   const [commitMsg, setCommitMsg] = useState('');
   const [committing, setCommitting] = useState(false);
+  const [dedupMsg, setDedupMsg] = useState('');
+  const [deduping, setDeduping] = useState(false);
   const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
   // nextExamDates: subjectId → next upcoming exam dueDate (from exam deliverables)
   const [nextExamDates, setNextExamDates] = useState<Record<string, string>>({});
@@ -187,21 +189,21 @@ export function Dashboard() {
 
   const handleCommitAndClean = async () => {
     if (!confirm(
-      '¿Integrar contributions en el banco global y limpiar la DB?\n\n' +
+      '¿Integrar contributions en el banco global?\n\n' +
       'Se actualizará src/data/global-bank.json con todo el contenido actual. ' +
-      'Las preguntas importadas de packs se eliminarán de tu IndexedDB (ya quedan en el archivo). ' +
-      'Tus propias preguntas NO se borran.'
+      'Las preguntas de contribution packs quedarán marcadas como preguntas del banco global ' +
+      '(se limpia su origen pero NO se eliminan de IndexedDB).\n\n' +
+      'Tus propias preguntas y estadísticas NO se tocan.'
     )) return;
 
     setCommitting(true);
     setCommitMsg('');
     try {
-      const { commitAndCleanContributions } = await import('@/data/exportImport');
       const result = await commitAndCleanContributions();
       if (result.wroteToFile) {
-        setCommitMsg(`✓ global-bank.json actualizado (${result.questionsInBank} preguntas) · ${result.deletedFromDB} eliminadas de DB · historial reseteado`);
+        setCommitMsg(`✓ global-bank.json actualizado (${result.questionsInBank} preguntas) · ${result.committedFromPacks} packs integrados · historial reseteado`);
       } else {
-        setCommitMsg(`⚠ No se pudo escribir en disco (solo funciona en dev). ${result.deletedFromDB} preguntas eliminadas de DB.`);
+        setCommitMsg(`⚠ No se pudo escribir en disco (solo funciona en dev). ${result.committedFromPacks} preguntas de packs marcadas como globales.`);
       }
       await loadSubjects();
     } catch (err) {
@@ -209,6 +211,32 @@ export function Dashboard() {
     } finally {
       setCommitting(false);
       setTimeout(() => setCommitMsg(''), 7000);
+    }
+  };
+
+  const handleRemoveDuplicates = async () => {
+    if (!confirm(
+      '¿Eliminar preguntas duplicadas?\n\n' +
+      'Se compararán las preguntas por su contentHash. Si hay duplicados, ' +
+      'se conservará la que tenga más historial de uso y se borrarán las demás.\n\n' +
+      'Esta operación NO se puede deshacer.'
+    )) return;
+
+    setDeduping(true);
+    setDedupMsg('');
+    try {
+      const result = await removeDuplicateQuestions();
+      if (result.removed === 0) {
+        setDedupMsg(`✓ Sin duplicados: ${result.checked} preguntas revisadas, ninguna eliminada.`);
+      } else {
+        setDedupMsg(`✓ Limpieza completada: ${result.removed} duplicadas eliminadas de ${result.checked} revisadas.`);
+        await loadSubjects();
+      }
+    } catch (err) {
+      setDedupMsg('Error: ' + String(err));
+    } finally {
+      setDeduping(false);
+      setTimeout(() => setDedupMsg(''), 7000);
     }
   };
 
@@ -295,9 +323,19 @@ export function Dashboard() {
               size="sm"
               onClick={handleCommitAndClean}
               disabled={committing}
-              title="Integra todos los packs en el banco, actualiza el archivo y limpia la DB"
+              title="Integra todos los packs en el banco global y actualiza el archivo"
             >
               {committing ? '⏳…' : '🔄 Integrar & limpiar'}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRemoveDuplicates}
+              disabled={deduping}
+              title="Detecta y elimina preguntas duplicadas (mismo contentHash)"
+            >
+              {deduping ? '⏳…' : '🔧 Eliminar duplicadas'}
             </Button>
 
             <Button variant="ghost" size="sm" onClick={handleExportPersonal}>
@@ -339,6 +377,9 @@ export function Dashboard() {
               </span>
             </label>
 
+            <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>
+              📊 Estadísticas
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
               ⚙ Ajustes
             </Button>
@@ -387,6 +428,15 @@ export function Dashboard() {
                   : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
               }`}>
                 {commitMsg}
+              </div>
+            )}
+            {dedupMsg && (
+              <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-body border ${
+                dedupMsg.startsWith('Error')
+                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                  : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
+              }`}>
+                {dedupMsg}
               </div>
             )}
 

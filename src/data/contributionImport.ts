@@ -397,3 +397,40 @@ export async function undoContributionImport(packId: string): Promise<UndoImport
 
   return { packId, deletedQuestions: ids.length };
 }
+
+// ─── Preview ───────────────────────────────────────────────────────────────────
+
+export interface ContributionPackPreview {
+  packId: string;
+  createdBy: string;
+  exportedAt: string;
+  subjects: string[];
+  topicsCount: number;
+  questionsCount: number;
+  questionsSample: string[];
+  alreadyImported: boolean;
+  rawPack: unknown;
+}
+
+export async function previewContributionPack(raw: unknown): Promise<ContributionPackPreview | { error: string }> {
+  const parsed = ContributionPackSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.message };
+  const pack = parsed.data;
+
+  const settings = await getSettings();
+  const alreadyImported = settings.importedPackIds.includes(pack.packId);
+
+  return {
+    packId: pack.packId,
+    createdBy: pack.createdBy,
+    exportedAt: pack.exportedAt,
+    subjects: pack.targets.map((t) => t.subjectName),
+    topicsCount: pack.targets.reduce((acc, t) => acc + t.topics.length, 0),
+    questionsCount: pack.questions.length,
+    questionsSample: pack.questions.slice(0, 5).map((q) =>
+      q.prompt.replace(/[#*`\n]/g, ' ').trim().slice(0, 80)
+    ),
+    alreadyImported,
+    rawPack: raw,
+  };
+}

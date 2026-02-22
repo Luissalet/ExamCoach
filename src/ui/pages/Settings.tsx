@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db, getSettings } from '@/data/db';
-import { Button, Input, Card, Select } from '@/ui/components';
-import { exportContributionPack, importContributionPack,undoContributionImport} from '@/data/contributionImport';
+import { Button, Input, Card, Select, Modal } from '@/ui/components';
+import { exportContributionPack, importContributionPack, undoContributionImport, previewContributionPack, type ContributionPackPreview } from '@/data/contributionImport';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
 import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
@@ -23,6 +23,7 @@ export function SettingsPage() {
   const [importHistory, setImportHistory] = useState<ImportHistoryEntry[]>([]);
   const [undoMsg, setUndoMsg] = useState('');
   const [undoingPackId, setUndoingPackId] = useState<string | null>(null);
+  const [packPreview, setPackPreview] = useState<ContributionPackPreview | null>(null);
 
   useEffect(() => {
     loadSettings();
@@ -76,7 +77,22 @@ export function SettingsPage() {
     setImportMsg('');
     try {
       const raw = await parseImportFile(file);
-      const result = await importContributionPack(raw);
+      const preview = await previewContributionPack(raw);
+      if ('error' in preview) {
+        setImportMsg('Error: ' + preview.error);
+      } else {
+        setPackPreview(preview);
+      }
+    } catch (err) {
+      setImportMsg('Error: ' + String(err));
+    }
+    e.target.value = '';
+  };
+
+  const handleConfirmImport = async () => {
+    if (!packPreview) return;
+    try {
+      const result = await importContributionPack(packPreview.rawPack);
       if (result.alreadyImported) {
         setImportMsg(`ℹ️ Pack ${result.packId.slice(0, 8)}... ya fue importado anteriormente.`);
       } else if (result.errors.length > 0) {
@@ -89,10 +105,10 @@ export function SettingsPage() {
         setImportedPacks((p) => [...p, result.packId]);
         await loadSubjects();
       }
+      setPackPreview(null);
     } catch (err) {
       setImportMsg('Error: ' + String(err));
     }
-    e.target.value = '';
   };
 
   const handleExportContribution = async () => {
@@ -396,6 +412,87 @@ export function SettingsPage() {
           <p className="mt-1">Built with React + Dexie + Vite · v1.0.0</p>
         </div>
       </main>
+
+      {/* Modal preview contribution pack */}
+      <Modal
+        open={!!packPreview}
+        onClose={() => setPackPreview(null)}
+        title="Vista previa del Contribution Pack"
+        size="lg"
+      >
+        {packPreview && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-sm text-ink-500 uppercase tracking-widest">Autor</p>
+                  <p className="text-base text-ink-100 font-medium">{packPreview.createdBy}</p>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-ink-500 uppercase tracking-widest">Exportado</p>
+                  <p className="text-base text-ink-100 font-medium">
+                    {new Date(packPreview.exportedAt).toLocaleDateString('es-ES')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-sm text-ink-500 uppercase tracking-widest">Asignaturas</p>
+                  <p className="text-base text-ink-100 font-medium">{packPreview.subjects.join(', ')}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <Card className="text-center py-3">
+                  <p className="text-2xl font-display text-amber-400">{packPreview.topicsCount}</p>
+                  <p className="text-xs text-ink-500 mt-1">Temas</p>
+                </Card>
+                <Card className="text-center py-3">
+                  <p className="text-2xl font-display text-sage-400">{packPreview.questionsCount}</p>
+                  <p className="text-xs text-ink-500 mt-1">Preguntas</p>
+                </Card>
+                {packPreview.alreadyImported && (
+                  <Card className="text-center py-3 border-amber-500/30">
+                    <p className="text-sm text-amber-400">⚠</p>
+                    <p className="text-xs text-amber-400 mt-1">Ya importado</p>
+                  </Card>
+                )}
+              </div>
+
+              {packPreview.questionsSample.length > 0 && (
+                <div>
+                  <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">Muestra de preguntas</p>
+                  <div className="flex flex-col gap-2 max-h-32 overflow-y-auto">
+                    {packPreview.questionsSample.map((q, i) => (
+                      <p key={i} className="text-xs text-ink-400 p-2 bg-ink-800 rounded border border-ink-700">
+                        {q}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {packPreview.alreadyImported && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                  <p className="text-sm text-amber-400">
+                    Este pack ya fue importado previamente. Importarlo de nuevo añadirá duplicados si hay preguntas nuevas.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-ink-800">
+              <Button variant="ghost" onClick={() => setPackPreview(null)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleConfirmImport}>
+                Importar
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

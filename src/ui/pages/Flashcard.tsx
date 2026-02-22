@@ -128,9 +128,12 @@ interface FlashcardProps {
   topicTitle: string;
   flipped: boolean;
   onFlip: () => void;
+  currentIndex: number;
+  selfEvalDone: Set<number>;
+  onSelfEval: (result: 'CORRECT' | 'WRONG') => void;
 }
 
-function Flashcard({ question, topicTitle, flipped, onFlip }: FlashcardProps) {
+function Flashcard({ question, topicTitle, flipped, onFlip, currentIndex, selfEvalDone, onSelfEval }: FlashcardProps) {
   return (
     <div
       className="w-full max-w-2xl cursor-pointer select-none"
@@ -258,6 +261,29 @@ function Flashcard({ question, topicTitle, flipped, onFlip }: FlashcardProps) {
             </div>
           )}
 
+          {/* Self-evaluation buttons */}
+          {!selfEvalDone.has(currentIndex) && (
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={(e) => { e.stopPropagation(); onSelfEval('WRONG'); }}
+                className="flex-1 py-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 text-sm font-medium transition-colors"
+              >
+                ✗ No lo sabía
+                <span className="text-xs opacity-60 ml-1">[1]</span>
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSelfEval('CORRECT'); }}
+                className="flex-1 py-2.5 rounded-xl border border-sage-500/30 bg-sage-500/10 text-sage-400 hover:bg-sage-500/20 text-sm font-medium transition-colors"
+              >
+                ✓ Lo sabía
+                <span className="text-xs opacity-60 ml-1">[2]</span>
+              </button>
+            </div>
+          )}
+          {selfEvalDone.has(currentIndex) && (
+            <p className="text-xs text-ink-600 text-center mt-2">✓ Evaluada</p>
+          )}
+
           <p className="text-xs text-ink-600 text-center pt-3 border-t border-ink-800 mt-auto">
             <kbd className="bg-ink-800 rounded px-1">←</kbd> Anterior ·{' '}
             <kbd className="bg-ink-800 rounded px-1">→</kbd> Siguiente
@@ -317,6 +343,7 @@ export function FlashcardPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [seenSet, setSeenSet] = useState<Set<number>>(new Set([0]));
+  const [selfEvalDone, setSelfEvalDone] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [finished, setFinished] = useState(false);
 
@@ -350,10 +377,15 @@ export function FlashcardPage() {
         pool = pool.filter((q) => q.stats.lastResult === 'WRONG');
       }
 
-      // Shuffle
-      pool = pool.sort(() => Math.random() - 0.5);
+      if (mode === 'smart') {
+        const { sortByPriority } = await import('@/domain/spacedRepetition');
+        pool = sortByPriority(pool);
+      } else {
+        // Shuffle
+        pool = pool.sort(() => Math.random() - 0.5);
+      }
 
-      if (mode !== 'all') {
+      if (mode !== 'all' && mode !== 'smart') {
         pool = pool.slice(0, count);
       }
 
@@ -361,6 +393,7 @@ export function FlashcardPage() {
       setCurrentIndex(0);
       setFlipped(false);
       setSeenSet(new Set([0]));
+      setSelfEvalDone(new Set());
       setLoading(false);
     })();
   }, [subjectId, searchParams]);
@@ -390,12 +423,33 @@ export function FlashcardPage() {
     setFlipped((f) => !f);
   }, []);
 
+  const handleSelfEval = useCallback(async (result: 'CORRECT' | 'WRONG') => {
+    const q = questions[currentIndex];
+    if (!q) return;
+    await questionRepo.updateStats(q.id, result);
+    setQuestions((prev) =>
+      prev.map((question, i) =>
+        i === currentIndex
+          ? { ...question, stats: { ...question.stats, lastResult: result, seen: question.stats.seen + 1 } }
+          : question
+      )
+    );
+    setSelfEvalDone((prev) => new Set([...prev, currentIndex]));
+    goNext();
+  }, [questions, currentIndex, goNext]);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       // Don't intercept if typing in an input
       if ((e.target as HTMLElement).matches('input, textarea')) return;
 
-      if (e.key === ' ' || e.key === 'Enter') {
+      if (e.key === '1' && flipped && !selfEvalDone.has(currentIndex)) {
+        e.preventDefault();
+        handleSelfEval('WRONG');
+      } else if ((e.key === '2' || e.key === 'Enter') && flipped && !selfEvalDone.has(currentIndex)) {
+        e.preventDefault();
+        handleSelfEval('CORRECT');
+      } else if (e.key === ' ') {
         e.preventDefault();
         handleFlip();
       } else if (e.key === 'ArrowRight' || e.key === 'l' || e.key === 'L') {
@@ -409,7 +463,7 @@ export function FlashcardPage() {
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [handleFlip, goNext, goPrev]);
+  }, [handleFlip, handleSelfEval, goNext, goPrev, flipped, currentIndex, selfEvalDone]);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -462,6 +516,7 @@ export function FlashcardPage() {
               setCurrentIndex(0);
               setFlipped(false);
               setSeenSet(new Set([0]));
+              setSelfEvalDone(new Set());
               setFinished(false);
             }}
           >
@@ -510,6 +565,9 @@ export function FlashcardPage() {
           topicTitle={topicTitle}
           flipped={flipped}
           onFlip={handleFlip}
+          currentIndex={currentIndex}
+          selfEvalDone={selfEvalDone}
+          onSelfEval={handleSelfEval}
         />
 
         {/* Navigation buttons */}

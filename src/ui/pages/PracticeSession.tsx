@@ -3,11 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '@/data/db';
 import { questionRepo, sessionRepo } from '@/data/repos';
 import { scoreAnswer } from '@/domain/scoring';
-import { Button, Progress, TypeBadge } from '@/ui/components';
-import type { Question, PracticeSession, UserAnswer } from '@/domain/models';
+import { Button, Progress, TypeBadge, Modal } from '@/ui/components';
+import type { Question, PracticeSession, UserAnswer, Topic } from '@/domain/models';
 import { v4 as uuidv4 } from 'uuid';
 import { renderMd } from '@/utils/renderMd';
 import { MdContent } from '@/ui/components/MdContent';
+import { QuestionForm } from '@/ui/components/QuestionForm';
 
 
 export function PracticeSessionPage() {
@@ -16,10 +17,12 @@ export function PracticeSessionPage() {
 
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
 
   // Per-question answer state
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -34,8 +37,10 @@ export function PracticeSessionPage() {
       const qs = await questionRepo.getManyByIds(s.questionIds);
       // Keep original order
       const ordered = s.questionIds.map((id) => qs.find((q) => q.id === id)).filter(Boolean) as Question[];
+      const ts = await db.topics.where('subjectId').equals(s.subjectId).toArray();
       setSession(s);
       setQuestions(ordered);
+      setTopics(ts);
       // Resume: figure out where we left off
       const answeredIds = new Set(s.answers.map((a) => a.questionId));
       const nextIdx = ordered.findIndex((q) => !answeredIds.has(q.id));
@@ -104,6 +109,15 @@ export function PracticeSessionPage() {
     if (!session) return;
     await sessionRepo.finish(session.id);
     navigate(`/results/${session.id}`);
+  };
+
+  const handleEditSave = async (data: Omit<Question, 'id' | 'stats' | 'createdAt' | 'updatedAt' | 'contentHash'>) => {
+    if (!editingQuestion) return;
+    await questionRepo.update(editingQuestion.id, data);
+    setQuestions((prev) =>
+      prev.map((q) => q.id === editingQuestion.id ? { ...q, ...data } : q)
+    );
+    setEditingQuestion(null);
   };
 
   if (loading) {
@@ -192,7 +206,7 @@ export function PracticeSessionPage() {
       {/* Question content */}
       <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
         {/* Question header */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <TypeBadge type={currentQuestion.type} />
           {currentQuestion.difficulty && (
             <span className="text-xs text-ink-500">
@@ -202,6 +216,13 @@ export function PracticeSessionPage() {
           {(currentQuestion.tags ?? []).slice(0, 3).map((tag) => (
             <span key={tag} className="text-xs bg-ink-800 text-ink-400 px-2 py-0.5 rounded">{tag}</span>
           ))}
+          <button
+            onClick={() => setEditingQuestion(currentQuestion)}
+            className="ml-auto text-xs text-ink-600 hover:text-amber-400 transition-colors flex items-center gap-1"
+            title="Editar esta pregunta"
+          >
+            ✎ Editar
+          </button>
         </div>
 
         {/* Prompt (supports MD) */}
@@ -300,6 +321,19 @@ export function PracticeSessionPage() {
           )}
         </div>
       </main>
+
+      {/* Modal edición de pregunta */}
+      {editingQuestion && (
+        <Modal open onClose={() => setEditingQuestion(null)} title="Editar pregunta">
+          <QuestionForm
+            subjectId={session.subjectId}
+            topics={topics}
+            initial={editingQuestion}
+            onSave={handleEditSave}
+            onCancel={() => setEditingQuestion(null)}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { sessionRepo, questionRepo } from '@/data/repos';
-import { Button, TypeBadge, Badge } from '@/ui/components';
-import type { PracticeSession, Question, UserAnswer } from '@/domain/models';
+import { db } from '@/data/db';
+import { Button, TypeBadge, Badge, Modal } from '@/ui/components';
+import type { PracticeSession, Question, UserAnswer, Topic } from '@/domain/models';
+import { QuestionForm } from '@/ui/components/QuestionForm';
 
 export function ResultsPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -10,18 +12,24 @@ export function ResultsPage() {
 
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedQ, setSelectedQ] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
 
   useEffect(() => {
     if (!sessionId) return;
     (async () => {
       const s = await sessionRepo.getById(sessionId);
       if (!s) { navigate('/'); return; }
-      const qs = await questionRepo.getManyByIds(s.questionIds);
+      const [qs, ts] = await Promise.all([
+        questionRepo.getManyByIds(s.questionIds),
+        db.topics.where('subjectId').equals(s.subjectId).toArray(),
+      ]);
       setSession(s);
       setQuestions(qs);
+      setTopics(ts);
       setAnswers(s.answers);
       setLoading(false);
     })();
@@ -56,6 +64,15 @@ export function ResultsPage() {
 
   const selectedQuestion = questions.find((q) => q.id === selectedQ);
   const selectedAnswer = answers.find((a) => a.questionId === selectedQ);
+
+  const handleEditSave = async (data: Omit<Question, 'id' | 'stats' | 'createdAt' | 'updatedAt' | 'contentHash'>) => {
+    if (!editingQuestion) return;
+    await questionRepo.update(editingQuestion.id, data);
+    setQuestions((prev) =>
+      prev.map((q) => q.id === editingQuestion.id ? { ...q, ...data } : q)
+    );
+    setEditingQuestion(null);
+  };
 
   const handleCorrectAnswer = async (result: 'CORRECT' | 'WRONG') => {
     if (!selectedQ || !sessionId) return;
@@ -260,12 +277,35 @@ export function ResultsPage() {
                       <p className="text-sm text-ink-300">{selectedQuestion.explanation}</p>
                     </div>
                   )}
+
+                  {/* Botón editar */}
+                  <div className="mt-3 pt-3 border-t border-ink-800">
+                    <button
+                      onClick={() => setEditingQuestion(selectedQuestion)}
+                      className="text-xs text-ink-600 hover:text-amber-400 transition-colors flex items-center gap-1"
+                    >
+                      ✎ Editar esta pregunta
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           )}
         </div>
       </main>
+
+      {/* Modal edición de pregunta */}
+      {editingQuestion && session && (
+        <Modal open onClose={() => setEditingQuestion(null)} title="Editar pregunta">
+          <QuestionForm
+            subjectId={session.subjectId}
+            topics={topics}
+            initial={editingQuestion}
+            onSave={handleEditSave}
+            onCancel={() => setEditingQuestion(null)}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

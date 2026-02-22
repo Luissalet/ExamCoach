@@ -227,6 +227,7 @@ export function SubjectView() {
   const [filterType, setFilterType] = useState('');
   const [filterOrigin, setFilterOrigin] = useState('');
   const [filterText, setFilterText] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   const [topicModal, setTopicModal] = useState(false);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
@@ -404,6 +405,17 @@ export function SubjectView() {
   const subjectQuestions = questions.filter((q) => q.subjectId === subjectId);
 
   const filteredQuestions = subjectQuestions.filter((q) => {
+    if (searchText.trim()) {
+      const terms = searchText.toLowerCase().split(/\s+/);
+      const hay = [
+        q.prompt,
+        q.explanation ?? '',
+        q.modelAnswer ?? '',
+        ...(q.tags ?? []),
+        ...(q.options?.map(o => o.text) ?? []),
+      ].join(' ').toLowerCase();
+      if (!terms.every(t => hay.includes(t))) return false;
+    }
     if (filterTopic && !questionBelongsToTopic(q, filterTopic)) return false;
     if (filterType && q.type !== filterType) return false;
     if (filterOrigin && q.origin !== filterOrigin) return false;
@@ -645,8 +657,16 @@ export function SubjectView() {
               <Button size="sm" onClick={() => { setEditingQuestion(null); setQuestionModal(true); }}>+ Nueva pregunta</Button>
             </div>
             {subjectQuestions.length > 0 && (
-              <div className="flex gap-3 flex-wrap">
-                <Select value={filterTopic} onChange={(e) => setFilterTopic(e.target.value)} className="text-xs py-1.5">
+              <div className="flex flex-col gap-3">
+                <input
+                  type="search"
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                  placeholder="Buscar en preguntas..."
+                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-sm text-ink-100 placeholder:text-ink-600 focus:outline-none focus:border-amber-500"
+                />
+                <div className="flex gap-3 flex-wrap">
+                  <Select value={filterTopic} onChange={(e) => setFilterTopic(e.target.value)} className="text-xs py-1.5">
                   <option value="">Todos los temas</option>
                   {subjectTopics.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
                 </Select>
@@ -670,11 +690,12 @@ export function SubjectView() {
                   placeholder="Buscar..."
                   className="bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-1.5 text-sm font-body placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {(filterTopic || filterType || filterOrigin || filterText) && (
-                  <Button size="sm" variant="ghost" onClick={() => { setFilterTopic(''); setFilterType(''); setFilterOrigin(''); setFilterText(''); }}>
+                {(searchText || filterTopic || filterType || filterOrigin || filterText) && (
+                  <Button size="sm" variant="ghost" onClick={() => { setSearchText(''); setFilterTopic(''); setFilterType(''); setFilterOrigin(''); setFilterText(''); }}>
                     × Limpiar
                   </Button>
                 )}
+                </div>
               </div>
             )}
             {subjectQuestions.length === 0 ? (

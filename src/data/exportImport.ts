@@ -253,12 +253,21 @@ export async function parseImportFile(file: File): Promise<unknown> {
 // ─── Commit & Clean ────────────────────────────────────────────────────────────
 //
 // Actualiza src/data/global-bank.json con el estado actual de la DB (listo para
-// git commit), luego elimina de IndexedDB las preguntas que vinieron de
-// contribution packs y resetea el historial de packs importados.
+// git commit), luego marca las preguntas de contribution packs como "committed"
+// (borra su sourcePackId) y resetea el historial de packs importados.
+//
+// NOTA IMPORTANTE sobre duplicados:
+// La versión anterior hacía bulkDelete + mergeGlobalBank(bank) al final, lo que
+// creaba una race condition con el syncWithGlobalBank() del arranque: ambas
+// llamadas construían su propio existingHashes snapshot antes de insertar, y
+// si se interleaban podían insertar la misma pregunta dos veces.
+//
+// La solución es NO borrar las preguntas — solo limpiar su sourcePackId para
+// marcarlas como preguntas del banco global. Así se evita cualquier reinserción.
 
 export interface CommitCleanResult {
   questionsInBank: number;
-  deletedFromDB: number;
+  committedFromPacks: number;   // preguntas de packs marcadas como comprometidas
   clearedPackIds: number;
   wroteToFile: boolean;
 }
@@ -279,25 +288,76 @@ export async function commitAndCleanContributions(): Promise<CommitCleanResult> 
     // Dev server no disponible
   }
 
-  // Eliminar de IndexedDB las preguntas importadas de contribution packs
+  // En lugar de borrar + re-insertar (que causa duplicados por race conditions),
+  // simplemente limpiamos el sourcePackId de las preguntas de contribution packs.
+  // Quedan en la DB como preguntas normales del banco global.
   const allQuestions = await db.questions.toArray();
-  const toDelete = allQuestions.filter((q) => !!q.sourcePackId).map((q) => q.id);
-  await db.questions.bulkDelete(toDelete);
+  const packQuestionIds = allQuestions
+    .filter((q) => !!q.sourcePackId)
+    .map((q) => q.id);
+
+  if (packQuestionIds.length > 0) {
+    await db.questions
+      .where('id')
+      .anyOf(packQuestionIds)
+      .modify({ sourcePackId: undefined });
+  }
 
   // Resetear historial de packs importados
   const settings = await getSettings();
   const clearedPackIds = settings.importedPackIds.length;
-  await saveSettings({ importedPackIds: [] });
-
-  // ← CLAVE: re-merge inmediato con el banco que acabamos de generar,
-  // sin depender del import estático (que no se recarga en caliente)
-  const { mergeGlobalBank } = await import('./globalBank');
-  await mergeGlobalBank(bank);
+  await saveSettings({ importedPackIds: [], importHistory: [] });
 
   return {
     questionsInBank: bank.questions.length,
-    deletedFromDB: toDelete.length,
+    committedFromPacks: packQuestionIds.length,
     clearedPackIds,
     wroteToFile,
   };
+}
+
+// ─── Remove Duplicates ─────────────────────────────────────────────────────────
+//
+// Detecta preguntas duplicadas (mismo contentHash) y conserva solo la mejor
+// (mayor número de vistas o más reciente), eliminando el resto.
+
+export interface RemoveDuplicatesResult {
+  removed: number;
+  checked: number;
+}
+
+export async function removeDuplicateQuestions(): Promise<RemoveDuplicatesResult> {
+  const allQuestions = await db.questions.toArray();
+  const checked = allQuestions.length;
+
+  // Agrupar por contentHash
+  const byHash = new Map<string, Question[]>();
+  const toDelete: string[] = [];
+
+  for (const q of allQuestions) {
+    if (!q.contentHash) continue; // sin hash: no podemos deduplicar de forma segura
+    if (!byHash.has(q.contentHash)) byHash.set(q.contentHash, []);
+    byHash.get(q.contentHash)!.push(q);
+  }
+
+  for (const [, group] of byHash) {
+    if (group.length <= 1) continue;
+
+    // Ordenar: conservar la que tiene más historial de uso, luego la más reciente
+    group.sort((a, b) => {
+      const scoreA = a.stats.seen + a.stats.correct + a.stats.wrong;
+      const scoreB = b.stats.seen + b.stats.correct + b.stats.wrong;
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      return b.createdAt.localeCompare(a.createdAt);
+    });
+
+    // Conservar la primera, eliminar el resto
+    toDelete.push(...group.slice(1).map((q) => q.id));
+  }
+
+  if (toDelete.length > 0) {
+    await db.questions.bulkDelete(toDelete);
+  }
+
+  return { removed: toDelete.length, checked };
 }
