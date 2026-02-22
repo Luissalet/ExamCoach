@@ -216,6 +216,18 @@ export function PracticeSessionPage() {
           {(currentQuestion.tags ?? []).slice(0, 3).map((tag) => (
             <span key={tag} className="text-xs bg-ink-800 text-ink-400 px-2 py-0.5 rounded">{tag}</span>
           ))}
+          {/* A5: Botón ★ difícil durante sesión */}
+          <button
+            onClick={async () => {
+              const newStarred = !currentQuestion.starred;
+              await questionRepo.update(currentQuestion.id, { starred: newStarred });
+              setQuestions((prev) => prev.map((q) => q.id === currentQuestion.id ? { ...q, starred: newStarred } : q));
+            }}
+            className={`text-sm transition-colors ${currentQuestion.starred ? 'text-amber-400' : 'text-ink-600 hover:text-amber-400'}`}
+            title={currentQuestion.starred ? 'Quitar de difíciles' : 'Marcar como difícil'}
+          >
+            {currentQuestion.starred ? '★' : '☆'}
+          </button>
           <button
             onClick={() => setEditingQuestion(currentQuestion)}
             className="ml-auto text-xs text-ink-600 hover:text-amber-400 transition-colors flex items-center gap-1"
@@ -264,6 +276,12 @@ export function PracticeSessionPage() {
             question={currentQuestion}
             answer={currentAnswer!}
             result={autoResult}
+            onNoteChange={async (note) => {
+              await questionRepo.update(currentQuestion.id, { notes: note });
+              setQuestions((prev) =>
+                prev.map((q) => q.id === currentQuestion.id ? { ...q, notes: note } : q)
+              );
+            }}
             onManualResult={async (r) => {
               // For DESARROLLO: update answer result and question stats
               const updated = { ...currentAnswer!, manualResult: r, result: r };
@@ -450,10 +468,13 @@ interface AnswerResultProps {
   answer: UserAnswer;
   result?: 'CORRECT' | 'WRONG' | null;
   onManualResult: (r: 'CORRECT' | 'WRONG') => void;
+  onNoteChange?: (note: string) => void;
 }
 
-function AnswerResult({ question, answer, result, onManualResult }: AnswerResultProps) {
+function AnswerResult({ question, answer, result, onManualResult, onNoteChange }: AnswerResultProps) {
   const [manualSet, setManualSet] = useState(false);
+  const [editingNote, setEditingNote] = useState(false);
+  const [noteText, setNoteText] = useState(question.notes ?? '');
 
   const isCorrect = result === 'CORRECT';
   const isWrong = result === 'WRONG';
@@ -527,6 +548,53 @@ function AnswerResult({ question, answer, result, onManualResult }: AnswerResult
         <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
           <p className="text-xs text-blue-400 uppercase tracking-widest mb-2">Resultado numérico esperado</p>
           <p className="text-lg font-mono text-blue-300">{question.numericAnswer}</p>
+        </div>
+      )}
+
+      {/* A4: Notas personales */}
+      {onNoteChange && (
+        <div className="border border-ink-700 rounded-xl p-4 bg-ink-800/40">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-ink-500 uppercase tracking-widest">Mis notas (privadas)</p>
+            {!editingNote && (
+              <button
+                onClick={() => setEditingNote(true)}
+                className="text-xs text-ink-600 hover:text-amber-400 transition-colors"
+              >
+                {question.notes ? '✎ Editar nota' : '+ Añadir nota'}
+              </button>
+            )}
+          </div>
+          {editingNote ? (
+            <div className="flex flex-col gap-2">
+              <textarea
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                rows={3}
+                placeholder="Apunta algo que quieras recordar sobre esta pregunta..."
+                className="w-full bg-ink-900 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body placeholder:text-ink-600 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                autoFocus
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => { setEditingNote(false); setNoteText(question.notes ?? ''); }}
+                  className="text-xs text-ink-500 hover:text-ink-300 transition-colors px-2 py-1"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => { onNoteChange(noteText); setEditingNote(false); }}
+                  className="text-xs bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30 rounded px-3 py-1 transition-colors"
+                >
+                  Guardar nota
+                </button>
+              </div>
+            </div>
+          ) : question.notes ? (
+            <p className="text-sm text-ink-300 whitespace-pre-wrap">{question.notes}</p>
+          ) : (
+            <p className="text-xs text-ink-600 italic">Sin notas</p>
+          )}
         </div>
       )}
     </div>

@@ -140,7 +140,7 @@ export async function exportGlobalBank(subjectIds?: string[]): Promise<BankExpor
     ...bank,
     exportedAt: new Date().toISOString(),
     subjects: bank.subjects.map(({ examDate: _examDate, ...rest }) => rest as Subject),
-    questions: bank.questions.map(({ sourcePackId: _sourcePackId, ...q }) => ({
+    questions: bank.questions.map(({ sourcePackId: _sourcePackId, notes: _notes, starred: _starred, ...q }) => ({
       ...q,
       stats: { seen: 0, correct: 0, wrong: 0 },
     })),

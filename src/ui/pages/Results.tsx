@@ -278,6 +278,14 @@ export function ResultsPage() {
                     </div>
                   )}
 
+                  {/* A4: Notas personales */}
+                  {selectedQuestion.notes && (
+                    <div className="mt-3 pt-3 border-t border-ink-700">
+                      <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Mis notas</p>
+                      <p className="text-sm text-ink-300 whitespace-pre-wrap">{selectedQuestion.notes}</p>
+                    </div>
+                  )}
+
                   {/* Botón editar */}
                   <div className="mt-3 pt-3 border-t border-ink-800">
                     <button

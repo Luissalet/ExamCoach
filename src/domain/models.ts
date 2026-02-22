@@ -111,6 +111,17 @@ export interface Question {
   sourcePackId?: string;
   contentHash?: string;
 
+  /**
+   * Nota personal del usuario. LOCAL — nunca se exporta al banco global,
+   * contribution packs, ni se incluye en contentHash.
+   */
+  notes?: string;
+
+  /**
+   * Marcada como "difícil" por el usuario. LOCAL — nunca se exporta.
+   */
+  starred?: boolean;
+
   stats: QuestionStats;
   createdAt: string;
   updatedAt: string;

@@ -359,6 +359,9 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
   const [clozeText, setClozeText] = useState(initial?.clozeText ?? '');
   const [blanks, setBlanks] = useState<ClozeBlank[]>(initial?.blanks ?? []);
 
+  // Notas personales (LOCAL — nunca exportadas)
+  const [notes, setNotes] = useState(initial?.notes ?? '');
+
   const addOption = () => setOptions([...options, { id: uuidv4(), text: '' }]);
   const removeOption = (id: string) => {
     setOptions(options.filter((o) => o.id !== id));
@@ -412,6 +415,10 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
       // Keep legacy imageDataUrls from initial (backward compat) but don't add new ones —
       // new images go inline in the prompt markdown
       imageDataUrls: initial?.imageDataUrls?.length ? initial.imageDataUrls : undefined,
+      // Notas personales (LOCAL — no se exportan ni hashean)
+      notes: notes.trim() || undefined,
+      // Starred se preserva del initial, no se edita desde el formulario (se hace inline)
+      starred: initial?.starred,
     });
   };
 
@@ -610,6 +617,20 @@ export function QuestionForm({ topics, initial, onSave, onCancel, subjectId }: Q
         onChange={(e) => setTags(e.target.value)}
         placeholder="ej: busqueda, heuristica, A*"
       />
+
+      {/* A4: Notas personales — LOCAL, nunca exportadas */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-medium text-ink-400 uppercase tracking-widest">
+          Mis notas (privadas) <span className="text-ink-600 normal-case font-normal">· solo visibles por ti</span>
+        </label>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={2}
+          placeholder="Apunta algo que quieras recordar…"
+          className="w-full bg-ink-800 border border-ink-700 text-ink-100 rounded-lg px-3 py-2 text-sm font-body placeholder:text-ink-600 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+        />
+      </div>
 
       {/* Actions */}
       <div className="flex gap-3 justify-end pt-1">

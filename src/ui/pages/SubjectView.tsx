@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import {
   Button, Card, Modal, Input, Tabs, Badge, TypeBadge, Difficulty,
@@ -213,6 +213,7 @@ function QuestionPreviewContent({ question }: { question: Question }) {
 export function SubjectView() {
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const {
     subjects, topics, questions,
     loadSubjects, loadTopics, loadQuestions,
@@ -221,7 +222,9 @@ export function SubjectView() {
   } = useStore();
 
   const subject = subjects.find((s) => s.id === subjectId);
-  const [tab, setTab] = useState<TabId>('topics');
+  const initialTab = (searchParams.get('tab') as TabId | null) ?? 'topics';
+  const autostart = searchParams.get('autostart') ?? '';
+  const [tab, setTab] = useState<TabId>(initialTab);
 
   const [filterTopic, setFilterTopic] = useState('');
   const [filterType, setFilterType] = useState('');
@@ -722,6 +725,10 @@ export function SubjectView() {
                             ))}
                             <Difficulty level={q.difficulty} />
                             {(q.tags ?? []).map((tag) => <Badge key={tag}>{tag}</Badge>)}
+                            {/* A5: indicador ★ siempre visible para preguntas marcadas */}
+                            {q.starred && <span className="text-amber-400 text-xs">★</span>}
+                            {/* A4: indicador de nota personal */}
+                            {q.notes && <span className="text-xs text-ink-600" title="Tiene notas personales">📝</span>}
                           </div>
                           <p className="text-sm text-ink-200 line-clamp-2">{q.prompt}</p>
                           <div className="mt-2">
@@ -729,6 +736,14 @@ export function SubjectView() {
                           </div>
                         </div>
                         <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                          {/* A5: Botón ★ para marcar como difícil */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); updateQuestion(q.id, { starred: !q.starred }); }}
+                            className={`text-base px-1.5 py-0.5 rounded transition-colors ${q.starred ? 'text-amber-400' : 'text-ink-600 hover:text-amber-400'}`}
+                            title={q.starred ? 'Quitar de difíciles' : 'Marcar como difícil'}
+                          >
+                            {q.starred ? '★' : '☆'}
+                          </button>
                           <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setEditingQuestion(q); setQuestionModal(true); }} title="Editar">✎</Button>
                           <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); duplicateQuestion(q.id); }} title="Duplicar">⧉</Button>
                           <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); if (confirm('¿Eliminar pregunta?')) deleteQuestion(q.id); }} title="Eliminar">
@@ -746,7 +761,7 @@ export function SubjectView() {
 
         {/* PRACTICAR */}
         {tab === 'practice' && (
-          <PracticeConfig subjectId={subjectId!} topics={subjectTopics} questions={subjectQuestions} defaultTopicId={filterTopic} />
+          <PracticeConfig subjectId={subjectId!} topics={subjectTopics} questions={subjectQuestions} defaultTopicId={filterTopic} autostart={autostart} />
         )}
 
         {/* OTROS RECURSOS */}
@@ -989,11 +1004,14 @@ interface PracticeConfigProps {
   topics: import('@/domain/models').Topic[];
   questions: Question[];
   defaultTopicId?: string;
+  autostart?: string;
 }
 
-function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: PracticeConfigProps) {
+function PracticeConfig({ subjectId, topics, questions, defaultTopicId, autostart }: PracticeConfigProps) {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'random' | 'all' | 'failed' | 'topic' | 'smart'>('random');
+  const [mode, setMode] = useState<'random' | 'all' | 'failed' | 'topic' | 'smart' | 'starred'>(
+    autostart === 'smart' ? 'smart' : 'random'
+  );
   const [count, setCount] = useState('20');
   const [topicId, setTopicId] = useState(defaultTopicId ?? '');
 
@@ -1036,6 +1054,8 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
   };
   const smartReviewCount = getSmartReviewCount();
 
+  const starredCount = typeFilteredQuestions.filter((q) => q.starred).length;
+
   const getAvailableCount = () => {
     let base: Question[] = [];
     if (mode === 'failed') base = typeFilteredQuestions.filter((q) => q.stats.lastResult === 'WRONG');
@@ -1047,6 +1067,7 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
       );
       if (base.length === 0) base = typeFilteredQuestions;
     }
+    else if (mode === 'starred') base = typeFilteredQuestions.filter((q) => q.starred);
     else base = typeFilteredQuestions;
 
     // Apply Feature 4 filters
@@ -1079,6 +1100,9 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
         pool = sortByPriority(typeFilteredQuestions).slice(0, 20);
       }
     }
+    else if (mode === 'starred') {
+      pool = typeFilteredQuestions.filter((q) => q.starred);
+    }
     else {
       const n = Math.min(parseInt(count) || 20, typeFilteredQuestions.length);
       pool = [...typeFilteredQuestions].sort(() => Math.random() - 0.5).slice(0, n);
@@ -1094,9 +1118,19 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
 
     pool = pool.sort(() => Math.random() - 0.5);
     const { sessionRepo } = await import('@/data/repos');
-    const session = await sessionRepo.create({ subjectId, mode, topicId: mode === 'topic' ? topicId : undefined, questionIds: pool.map((q) => q.id) });
+    const sessionMode = mode === 'starred' ? 'failed' : mode; // reusar 'failed' como modo base para sesiones starring
+    const session = await sessionRepo.create({ subjectId, mode: sessionMode as any, topicId: mode === 'topic' ? topicId : undefined, questionIds: pool.map((q) => q.id) });
     navigate(`/practice/${session.id}`);
   };
+
+  // Auto-launch cuando viene del badge "Repaso de hoy" (A1)
+  const autostartedRef = useRef(false);
+  useEffect(() => {
+    if (autostart === 'smart' && !autostartedRef.current && questions.length > 0) {
+      autostartedRef.current = true;
+      handleStart();
+    }
+  }, [autostart, questions.length]);
 
   const handleFlashcard = () => {
     if (available === 0) return;
@@ -1147,6 +1181,7 @@ function PracticeConfig({ subjectId, topics, questions, defaultTopicId }: Practi
           <option value="all">Todas las preguntas</option>
           <option value="failed">Sólo falladas ({failedCount})</option>
           <option value="smart">Repaso inteligente ({smartReviewCount} pendientes)</option>
+          <option value="starred">★ Solo difíciles ({starredCount})</option>
           <option value="topic">Por tema</option>
         </Select>
         {mode === 'random' && <Input label="Número de preguntas" type="number" min="1" max={typeFilteredQuestions.length} value={count} onChange={(e) => setCount(e.target.value)} />}

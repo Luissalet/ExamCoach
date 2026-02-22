@@ -28,6 +28,8 @@ export function Dashboard() {
   const [subjectColor, setSubjectColor] = useState(SUBJECT_COLORS[0]);
 
   const [stats, setStats] = useState<Record<string, { total: number; correct: number; seen: number }>>({});
+  const [dueToday, setDueToday] = useState<Record<string, number>>({});
+  const [incompleteSessions, setIncompleteSessions] = useState<Record<string, string>>({}); // subjectId → sessionId
   const [extraInfo, setExtraInfo] = useState<Record<string, SubjectExtraInfo | null>>({});
   const [importLoading, setImportLoading] = useState(false);
   const [importMsg, setImportMsg] = useState('');
@@ -88,6 +90,10 @@ export function Dashboard() {
     async function loadStats() {
       const result: Record<string, { total: number; correct: number; seen: number }> = {};
       const pendingCounts: Record<string, number> = {};
+      const dueTodayMap: Record<string, number> = {};
+      const incompleteSessionsMap: Record<string, string> = {};
+      const today = new Date().toISOString().split('T')[0];
+
       for (const s of subjects) {
         const qs = await db.questions.where('subjectId').equals(s.id).toArray();
         result[s.id] = {
@@ -95,6 +101,9 @@ export function Dashboard() {
           correct: qs.reduce((acc, q) => acc + q.stats.correct, 0),
           seen: qs.reduce((acc, q) => acc + q.stats.seen, 0),
         };
+        // SM-2 preguntas pendientes hoy (para badge "Repaso de hoy")
+        dueTodayMap[s.id] = qs.filter(q => !q.stats.nextReviewAt || q.stats.nextReviewAt <= today).length;
+
         // Count pending corrections (finished sessions with unanswered DESARROLLO/PRACTICO)
         const sessions = await db.sessions
           .where('subjectId')
@@ -102,9 +111,23 @@ export function Dashboard() {
           .filter(sess => sess.finishedAt != null && sess.answers.some(a => a.result === null))
           .toArray();
         pendingCounts[s.id] = sessions.reduce((acc, sess) => acc + sess.answers.filter(a => a.result === null).length, 0);
+
+        // Sesión incompleta más reciente (A3)
+        const incompleteSess = await db.sessions
+          .where('subjectId')
+          .equals(s.id)
+          .filter(sess => sess.finishedAt == null && sess.answers.length > 0)
+          .toArray();
+        if (incompleteSess.length > 0) {
+          // Tomar la más reciente
+          incompleteSess.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+          incompleteSessionsMap[s.id] = incompleteSess[0].id;
+        }
       }
       setStats(result);
       setPendingCorrectionCount(pendingCounts);
+      setDueToday(dueTodayMap);
+      setIncompleteSessions(incompleteSessionsMap);
     }
     if (subjects.length) loadStats();
   }, [subjects]);
@@ -475,6 +498,32 @@ export function Dashboard() {
                               <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded w-fit">
                                 {pendingCorrectionCount[s.id]} sin corregir
                               </span>
+                            )}
+                            {/* A1: Badge "Repaso de hoy" */}
+                            {(dueToday[s.id] ?? 0) > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/subject/${s.id}?tab=practice&autostart=smart`);
+                                }}
+                                className="text-xs bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30 px-2 py-0.5 rounded w-fit transition-colors font-medium"
+                                title="Lanzar repaso inteligente del día"
+                              >
+                                🧠 {dueToday[s.id]} por repasar hoy
+                              </button>
+                            )}
+                            {/* A3: Badge "Sesión en curso" */}
+                            {incompleteSessions[s.id] && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/practice/${incompleteSessions[s.id]}`);
+                                }}
+                                className="text-xs bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 border border-orange-500/30 px-2 py-0.5 rounded w-fit transition-colors font-medium"
+                                title="Reanudar sesión en curso"
+                              >
+                                ▶ Sesión en curso
+                              </button>
                             )}
                           </div>
                           <div className="flex items-center gap-2">
