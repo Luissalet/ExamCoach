@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-22T02:52:33.317Z",
+  "exportedAt": "2026-02-22T17:17:55.983Z",
   "subjects": [
     {
       "id": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
@@ -751,6 +751,46 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "00b169ef-6844-438e-88b4-4be83941f3db",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "¿Un POP es?\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "planificacion",
+        "orden-parcial"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un plan en el que se especifican todas las precedencias entre las acciones."
+        },
+        {
+          "id": "b",
+          "text": "Un plan en el que solo se especifican algunas de las precedencias entre sus acciones."
+        },
+        {
+          "id": "c",
+          "text": "Una red de tareas jerárquicas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:45bb59ac9e4d9fdf3b5d3360cb9c0b20b5bc14c2e74db04f6a6f37d2e8e8a8b51",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
+    },
+    {
       "id": "00b9c371-558d-4f15-86b5-c726b17ed9d5",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
@@ -840,6 +880,89 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "0225a57c-a5c2-48d1-9471-e0588cc1e039",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Los PMA (planificadores multi agentes) son:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pma",
+        "planificacion-multiagente"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aptos para entornos en los que varios agentes desean conseguir elaborar un plan conjunto para resolver un problema."
+        },
+        {
+          "id": "b",
+          "text": "Construcciones de redes de tareas jerárquicas de tipo STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "Aptos para entornos en los que un agente desea resolver varios problemas a la vez."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
+    },
+    {
+      "id": "023e70fe-aeb7-4cc7-b5c8-3d8e0ab5c704",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUna búsqueda se diferencia de una planificación en:",
+      "explanation": "En planificación se explota la estructura del problema (acciones, precondiciones/efectos y metas), mientras que una búsqueda general trata el espacio de estados de forma más abstracta.",
+      "difficulty": 3,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nada, son lo mismo."
+        },
+        {
+          "id": "b",
+          "text": "Las búsquedas generales no toman en consideración la estructura de los estados y la planificación sí."
+        },
+        {
+          "id": "c",
+          "text": "Que en la planificación no se realizan búsquedas."
+        },
+        {
+          "id": "d",
+          "text": "Que las metas de los planificadores no son estados ni características de ellos."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:64e23504c8e25b0f118ca7bbdcd4e7e79e8d1c18fd1117e63f14f606a1eef246",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
     },
     {
       "id": "02d67d0d-08e0-4b9b-b31a-eec8adeea974",
@@ -971,6 +1094,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "04959a5f-9f05-422e-99fa-4bd3ff2e4361",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "La búsqueda de coste uniforme:\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Asume un coste positivo para todas las acciones."
+        },
+        {
+          "id": "opt2",
+          "text": "Encuentra la solución óptima."
+        },
+        {
+          "id": "opt3",
+          "text": "Es completa."
+        },
+        {
+          "id": "opt4",
+          "text": "Todas son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt4"
+      ],
+      "contentHash": "sha256:5ffb91388e42d400d3f9c768ad56984f9f64f12186528152060786e41269b94a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
     },
     {
       "id": "05d1ae8c-ed2b-478b-a84b-fe7df4b612d5",
@@ -1472,6 +1638,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "0bbfeefd-8ce9-441c-bc9c-6c4c57ab996c",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nA qué tipo de lógica corresponde la siguiente definición: «deriva de la lógica matemática y se aplica al área de las ciencias de la computación. Permite trabajar con lenguajes de programación».",
+      "explanation": "La definición alude explícitamente a su aplicación en computación y lenguajes de programación.",
+      "difficulty": 2,
+      "tags": [
+        "tipos-de-logica",
+        "logica-computacional"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lógica de primer orden."
+        },
+        {
+          "id": "b",
+          "text": "Lógica computacional."
+        },
+        {
+          "id": "c",
+          "text": "Lógica informal."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:2d1f1d2f6dd36c86b4d4d3feccf8f0b6d0d2e93e1d0d3cbf4b4c0fd59d5c6c3a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
     },
     {
       "id": "0c1839c2-bd2a-4a5c-a898-b3f1387b7515",
@@ -2257,6 +2463,46 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "14b316da-293a-49f8-b5f6-bcc45c50df53",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nLa coordinación de planes de múltiples agentes se realiza:",
+      "explanation": "En la coordinación de planes (plan merge), los agentes construyen planes individuales y se coordinan a posteriori para evitar conflictos.",
+      "difficulty": 2,
+      "tags": [
+        "coordinacion",
+        "plan-merge"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Antes de la planificación."
+        },
+        {
+          "id": "b",
+          "text": "Después de la planificación."
+        },
+        {
+          "id": "c",
+          "text": "Durante la ejecución del plan."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:e8cb7814d7b64630ad920d8149d967694c55c19a1891b39d1f064776711adbe1",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
       "id": "14d6d713-a6c9-451d-982a-69a1a1289cf8",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
@@ -2417,6 +2663,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "15c6962c-f149-4df2-be43-e4e7e03b9889",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: ¿Un agente reactivo?",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "reactivo"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "No incluye ningún tipo de modelo simbólico central del mundo."
+        },
+        {
+          "id": "b",
+          "text": "Tiene procesos cognitivos con semejanzas biológicas."
+        },
+        {
+          "id": "c",
+          "text": "No emplea la percepción dentro del modelo de razonamiento."
+        },
+        {
+          "id": "d",
+          "text": "Funciona de modo asistido por el usuario."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4888c40f4097a47e9670c84eb62b3ca38af7c0f6fa62ce740b775007ce455091",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
     },
     {
       "id": "15e227e0-eeb3-46d5-b476-40665571145a",
@@ -2734,6 +3023,90 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "186326a4-c6af-419f-8119-a3f5dca4e73d",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nEn entornos multi agentes nos encontramos con:",
+      "explanation": "En escenarios multi agente se contemplan entornos cooperativos, competitivos o parcialmente cooperativos.",
+      "difficulty": 1,
+      "tags": [
+        "entornos",
+        "cooperacion",
+        "competencia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Agentes no cooperativos, y competitivos."
+        },
+        {
+          "id": "b",
+          "text": "Agente cooperativos, competitivos o parcialmente cooperativos."
+        },
+        {
+          "id": "c",
+          "text": "Agentes parcialmente cooperativos, y altruistas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:ac0f01d8438c908150670cec57678ee9a7e6c956881b2c2d3ceeed109ce65528",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
+      "id": "18a259fa-0238-4a17-9f62-c0d7c6125465",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: ¿En la fase de razonamiento de un agente?",
+      "difficulty": 2,
+      "tags": [
+        "agentes",
+        "razonamiento"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Se deciden las acciones a realizar."
+        },
+        {
+          "id": "b",
+          "text": "Se crean juicios e inferencias derivadas de las percepciones actuales y de los hechos recordados."
+        },
+        {
+          "id": "c",
+          "text": "Se filtran los valores percibidos por los sensores."
+        },
+        {
+          "id": "d",
+          "text": "La A y la C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:50635f19eb01b1f464505b7f1638a2aa0844bcfcdd0f9bb10d02f9c5946c8b07",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
+    },
+    {
       "id": "199bd473-1c48-433d-a800-1fac816c19a1",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "3e455905-4b03-4822-be94-a82ef4467f8c",
@@ -2958,6 +3331,52 @@
       "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
+      "id": "1b99f4f4-716f-47f6-920a-704873e5556c",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una o más de una.\n\nSeñala qué enunciados no son declarativos:",
+      "explanation": "Los enunciados no declarativos incluyen órdenes (imperativos) y preguntas, ya que no afirman algo con valor de verdad.",
+      "difficulty": 1,
+      "tags": [
+        "enunciados",
+        "declarativos",
+        "proposiciones"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La tierra es redonda."
+        },
+        {
+          "id": "b",
+          "text": "Recoge las zapatillas, por favor."
+        },
+        {
+          "id": "c",
+          "text": "$$12-3=9$$"
+        },
+        {
+          "id": "d",
+          "text": "¿Cómo te encuentras?"
+        }
+      ],
+      "correctOptionIds": [
+        "b",
+        "d"
+      ],
+      "contentHash": "sha256:8b2d51a1b2b0ef8b07b01c16be2c3cc35d46fcb8d8a6dff1f30f6a1e2c3f5d39",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "1bd6aa24-a4ae-47ba-842e-4fe1028b44e8",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "bd41142a-dbac-4d3d-a749-f1b9ca6338c4",
@@ -3007,6 +3426,46 @@
       "updatedAt": "2026-02-22T02:25:56.435Z"
     },
     {
+      "id": "1bfb5414-7d87-4fa3-afbb-3521853a8e7d",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nUn sistema distribuido de planificación:",
+      "explanation": "En un sistema distribuido, la información se distribuye entre agentes mediante un sistema multiagente; no implica ejecutar todo en un único agente ni obliga a STRIPS en cada agente.",
+      "difficulty": 2,
+      "tags": [
+        "planificacion-distribuida",
+        "multiagente"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Debe ser capaz de distribuir la información entre varios agentes por medio de un sistema multiagente."
+        },
+        {
+          "id": "b",
+          "text": "Tiene que ejecutar todas las tareas en un único agente en un orden determinado."
+        },
+        {
+          "id": "c",
+          "text": "Debe usar un planificador de tipo STRIPS en cada agente."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:0be07c4d425605b6cae8f21511c24011db9d0ee79f2424e0437be0f7b27cabdf",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
       "id": "1c248af6-80bc-43a4-909c-00414ae35d1c",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
@@ -3049,6 +3508,90 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "1d1db199-6021-42e1-9341-620b68f51530",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: La percepción de un agente...",
+      "difficulty": 1,
+      "tags": [
+        "agentes",
+        "percepcion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Proviene de los sensores."
+        },
+        {
+          "id": "b",
+          "text": "Es creada exclusivamente por el agente."
+        },
+        {
+          "id": "c",
+          "text": "Contiene información no alcanzable por los sensores."
+        },
+        {
+          "id": "d",
+          "text": "Se descompone en acciones."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:9d5cf57b088e887c65c36b77f3f0f29fe25c90a305a63f90cc4a7ad978b7e6c3",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
+    },
+    {
+      "id": "1d5ca485-ccbd-49ce-908c-1c287fce0f73",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "En un modelo de planificación reactiva multi agente:\n\nSeleccione una.",
+      "explanation": "En el modelo reactivo, los agentes son de ejecución y deben planificar/recuperarse en tiempo limitado durante la ejecución.",
+      "difficulty": 2,
+      "tags": [
+        "planificacion-reactiva",
+        "multiagente",
+        "agentes"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Los agentes son entidades de planificación."
+        },
+        {
+          "id": "b",
+          "text": "Los agentes son entidades de ejecución que planifican empleando todo el tiempo que necesiten."
+        },
+        {
+          "id": "c",
+          "text": "Los agentes son entidades de ejecución que planifican en un tiempo limitado."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:3b8f898257ebb7035b01b533b1d7c61a2981a2b38a5097dbb7fd7ec709e57437",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "1d81ab68-00d0-4f58-9613-a39af3c45890",
@@ -3094,6 +3637,50 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "1e7daafb-9651-41e0-bd21-3d3756dfa5e4",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: ¿Se dice que en un problema bien definido un estado es discreto?",
+      "difficulty": 3,
+      "tags": [
+        "problemas-bien-definidos",
+        "estados",
+        "discreto"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Si se puede concebir el mundo en estados."
+        },
+        {
+          "id": "b",
+          "text": "En cada estado hay un conjunto finito de percepciones y acciones."
+        },
+        {
+          "id": "c",
+          "text": "Cada estado presenta un cardinalidad inferior a diez elementos."
+        },
+        {
+          "id": "d",
+          "text": "A y B son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:eeaca79bfb5af1aee3764080e17c8cb9aba0923d95d8889619dc35a1cb79af22",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
     },
     {
       "id": "1ece15ad-b150-4435-94d8-aa02e92f206d",
@@ -3274,6 +3861,47 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "1fea014a-c64f-4421-a9dd-0c96ae7cead0",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl considerado padre de la lógica difusa es:",
+      "explanation": "Lotfi A. Zadeh es quien introduce formalmente la lógica difusa.",
+      "difficulty": 1,
+      "tags": [
+        "logica-difusa",
+        "zadeh",
+        "historia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aristóteles."
+        },
+        {
+          "id": "b",
+          "text": "Zadeh."
+        },
+        {
+          "id": "c",
+          "text": "Gödel."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:7d6c5b4a392817160514131211100f0e0d0c0b0a09080706050403020100ffeedd",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "200af3c5-d91f-4c85-80b0-1dd584f9ddc6",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
@@ -3436,6 +4064,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "21b52f62-af0a-49aa-be94-8a38a9e554a1",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nUna de las razones para realizar la planificación multi agente antes de la ejecución es:",
+      "explanation": "Entre las razones para planificar por y/o para múltiples agentes se incluye que, en muchos casos, un sistema distribuido puede resolver problemas más eficientemente que uno centralizado.",
+      "difficulty": 3,
+      "tags": [
+        "planificacion-antes-ejecucion",
+        "eficiencia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Representa aquellas propiedades que son precondición de alguna acción presente en el plan y que todavía no se han enlazado por medio de ningún arco causal."
+        },
+        {
+          "id": "b",
+          "text": "Un número de agentes de planificación que generan sus propios planes."
+        },
+        {
+          "id": "c",
+          "text": "En muchos casos, resuelve problemas más eficientemente que un sistema centralizado."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:d6c72112d04a22a00d06cdc434ee1d7eed2b23b30f5a9835a544ef0e1eeddb7d",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
     },
     {
       "id": "21fcbb54-5e99-4f7e-8835-3f2d5c7f94bb",
@@ -4348,6 +5016,47 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "304c0691-2775-41c8-af8a-b68e72fd77a4",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "La idea básica de la búsqueda online es: **(Seleccione una)**",
+      "explanation": "La búsqueda online combina un **paso de búsqueda** con un **paso de actuación**.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "single-choice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "La combinación de un paso de búsqueda con un paso de actuación."
+        },
+        {
+          "id": "opt2",
+          "text": "Realizar solo pasos de búsqueda de manera sucesiva."
+        },
+        {
+          "id": "opt3",
+          "text": "Ninguna de las respuestas anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:69c0fdb8fda4d4df28566dfa3e09fdd8f70c3b1b8f9a5c9a2c7e92f608d946c8",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "3086f7a0-25ec-4d4b-a501-6985a5306dd1",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
@@ -4734,6 +5443,47 @@
       },
       "createdAt": "2026-02-22T02:52:25.526Z",
       "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "3484b39f-bf52-4531-9771-a464b823d946",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUna tarea primitiva está compuesta de:",
+      "explanation": "Las tareas (y en particular las primitivas que modelan acciones) se definen por las precondiciones necesarias para ejecutarlas y los efectos que producen en el entorno.",
+      "difficulty": 2,
+      "tags": [
+        "precondiciones",
+        "efectos",
+        "acciones"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Precondiciones y valores."
+        },
+        {
+          "id": "b",
+          "text": "Precondiciones y efectos."
+        },
+        {
+          "id": "c",
+          "text": "Efectos y utilidad."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:c5300a3ca0e8d271e6ae7c38647d4444a237c5709de09acd18d670d2d8262cd2",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
     },
     {
       "id": "3508e758-ace2-44a5-98fb-fffa43157892",
@@ -5205,6 +5955,51 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "38dd7b2d-cfe9-4fc9-b985-d311e021b49a",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\n¿Cuáles de las siguientes son proposiciones?",
+      "explanation": "Una proposición es un enunciado al que se le puede asignar un valor de verdad (verdadero o falso). Incluso si una igualdad matemática es falsa, sigue siendo una proposición.",
+      "difficulty": 1,
+      "tags": [
+        "proposiciones",
+        "enunciados",
+        "logica-proposicional"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ayer fue martes."
+        },
+        {
+          "id": "b",
+          "text": "El motor tiene un fallo."
+        },
+        {
+          "id": "c",
+          "text": "$$(A+B)(A-B)=2A-2B$$"
+        },
+        {
+          "id": "d",
+          "text": "Todas son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:ad2a2ea54eb4f2d13c88b0db730ca14a401e6aa4a7a5a7d0a04d3b83e0bfdf60",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "390d265f-88b1-4c68-ba4a-9ee8021af7bd",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -5246,6 +6041,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "3946a244-411e-4d7a-b1e1-a26bc9dc603d",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "En general, un algoritmo de POP debe:\n\nSeleccione una.",
+      "explanation": "Un POP busca una secuencia de refinamientos desde un plan parcial inicial hasta un plan (parcial) solución.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "refinamiento",
+        "planificacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Encontrar todas las acciones del plan global."
+        },
+        {
+          "id": "b",
+          "text": "Aplicar heurísticas de tipo STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "Encontrar la secuencia de refinamiento que, partiendo del plan parcial inicial, llegue a un plan parcial solución."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:5645dc514330d2a22b2be54cdf6bf784ca1203f5cf5742bed9207d80f1b2d403",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "3961dfc1-42cb-48ac-959b-c2bd8b3e0e89",
@@ -5476,6 +6312,47 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "3c0e7673-c87d-4715-8147-a7d79bab0d59",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "Los planificadores reactivos multi agente y la planificación por múltiples agentes se diferencian en:\n\nSeleccione una.",
+      "explanation": "Se diferencian tanto en dónde se coordina la planificación como en el tiempo disponible/necesario para encontrar un plan.",
+      "difficulty": 3,
+      "tags": [
+        "planificacion-reactiva",
+        "pbma",
+        "coordinacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "El punto donde se realiza la coordinación de las actividades de planificación entre los agentes."
+        },
+        {
+          "id": "b",
+          "text": "El tiempo que necesitan para encontrar un plan."
+        },
+        {
+          "id": "c",
+          "text": "Las dos características anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:9432932b75429738368e9d773998d18836af96dc312b1164f700a443c6ff2d5f",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
+    },
+    {
       "id": "3c3c3b64-d7cf-4097-b49e-dc4832734e06",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "bae420cf-ae91-488c-a876-710db0be84d6",
@@ -5551,6 +6428,50 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "3ce3798b-8bea-45cb-81b4-89c48e762b6c",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nSe define planificación como:",
+      "explanation": "En planificación se busca (de forma formalizada) una secuencia de acciones que, desde un estado inicial, permita satisfacer la meta.",
+      "difficulty": 2,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La definición lógica de un escenario concreto de fases y tareas."
+        },
+        {
+          "id": "b",
+          "text": "El proceso formalizado de búsqueda de secuencias de acciones que satisfacen una meta."
+        },
+        {
+          "id": "c",
+          "text": "La búsqueda de soluciones en un espacio de restricciones."
+        },
+        {
+          "id": "d",
+          "text": "La creación de un proceso no estructurado."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:1d4103a57da0ec513b7117d4965b322dbfb249f664fa7dfd39f3d6974604cc93",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
     },
     {
       "id": "3d62e39d-dfcc-4049-9e8b-62c22213bb29",
@@ -5839,6 +6760,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "3eec4b1f-73bd-49c0-9e0a-aae1e82686ee",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "¿Qué es una búsqueda online?\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "La que emplea buscadores de Internet para alcanzar el estado meta."
+        },
+        {
+          "id": "opt2",
+          "text": "La que no tiene estados meta bien definidos."
+        },
+        {
+          "id": "opt3",
+          "text": "La que toma decisiones mientras realiza búsquedas acotadas."
+        },
+        {
+          "id": "opt4",
+          "text": "Todas son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt3"
+      ],
+      "contentHash": "sha256:e5aa08086b3cbd8aaa18ee70e617886c59e1d4f80ae7a9bf3ea144a3390a953c",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "3efe54f0-c5d2-4fd9-9d54-82a287c86632",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "3e455905-4b03-4822-be94-a82ef4467f8c",
@@ -5924,6 +6888,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "3f392ff0-8fea-43b7-9241-6b8d28349f41",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "La eficiencia de minimax con poda alfa-beta:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "alpha-beta",
+        "eficiencia",
+        "orden-de-expansion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Es independiente del orden en el que se exploran los nodos."
+        },
+        {
+          "id": "optB",
+          "text": "El orden en el que se exploran los nodos no influye."
+        },
+        {
+          "id": "optC",
+          "text": "Depende del orden en el que se exploran los nodos."
+        }
+      ],
+      "correctOptionIds": [
+        "optC"
+      ],
+      "contentHash": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "3fcc0407-4827-4e54-ab6f-0c88881a98cc",
@@ -6012,6 +7017,93 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "416edf76-2585-443c-b70f-e28d32a2c3d3",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nUn agente de planificación centralizado:",
+      "explanation": "El agente de planificación centralizado mantiene una visión global del estado del mundo y genera/coordina los planes de los agentes de ejecución.",
+      "difficulty": 2,
+      "tags": [
+        "agente-centralizado",
+        "estado-del-mundo"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Comunica el estado del mundo a los otros agentes de ejecución."
+        },
+        {
+          "id": "b",
+          "text": "Genera y coordina los planes de otros agentes de ejecución."
+        },
+        {
+          "id": "c",
+          "text": "Mantiene una visión global del estado del mundo."
+        },
+        {
+          "id": "d",
+          "text": "B y C son correctas"
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:a4230d1e8b77b6b4a1c3c5f2420502300812b498d5a3e329810c8238462cdef2",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
+      "id": "41e9771b-f735-405f-b6d4-1a6d3c238228",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "Los algoritmos de búsqueda no informada:\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Indican el orden de las acciones para que se pueda alcanzar un estado meta."
+        },
+        {
+          "id": "opt2",
+          "text": "Expanden nodos que representan estados alcanzados por medio de las acciones del agente."
+        },
+        {
+          "id": "opt3",
+          "text": "Tienen en cuenta el conocimiento a priori de los expertos que los programan."
+        },
+        {
+          "id": "opt4",
+          "text": "A y B son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt4"
+      ],
+      "contentHash": "sha256:7732d1652a034863c98a9065d12b59a819cc67e683cee5fb0f96d0fbb29f0dda",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
     },
     {
       "id": "4222176f-173a-49be-b693-0c8954efd3b5",
@@ -6318,6 +7410,47 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "47a564c5-3c8d-4496-8bf1-5ed63904b648",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "En la búsqueda con horizonte: **(Seleccione una)**",
+      "explanation": "En búsqueda con horizonte, la **primera acción** del plan que llega a un nodo con evaluación heurística óptima suele pertenecer al camino óptimo.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "single-choice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "La primera acción de un plan que lleva a un nodo con una evaluación heurística óptima tiene una buena probabilidad de pertenecer al camino óptimo."
+        },
+        {
+          "id": "opt2",
+          "text": "Son reiteradas acciones de un plan las que llevan a un nodo con una evaluación heurística óptima."
+        },
+        {
+          "id": "opt3",
+          "text": "Asegura que hay optimalidad y completitud."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:1fbdf6ece028b8f4ff8fdce7e33ed543c0d6d4a2f2101bd31f0193ed6f8d2c85",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "4822d5f5-cbca-44cd-a2e7-aa9e6d49cfcb",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -6398,6 +7531,43 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "498f3d5e-a115-4779-bc4e-72704ccb0c3a",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "En general, todo sistema multi agente debe contener un protocolo:\n\nSeleccione una.",
+      "explanation": "En sistemas multiagente se requiere un protocolo para coordinar/organizar la interacción (p. ej., planificación por turnos).",
+      "difficulty": 1,
+      "tags": [
+        "multiagente",
+        "protocolo",
+        "coordinacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Verdadero."
+        },
+        {
+          "id": "b",
+          "text": "Falso."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:d44d964791eb17464c3760c574c726b9d1d011c1fe940257ef82eb58d4649e9c",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "4a57b5e0-8ddd-4c61-a75d-414fea867cec",
@@ -6587,6 +7757,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "4be2d46c-23fb-440f-84d2-fa118b83e517",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUna tarea…",
+      "explanation": "En una HTN una tarea puede ser primitiva (se ejecuta) o compuesta/no primitiva (se descompone en subtareas).",
+      "difficulty": 2,
+      "tags": [
+        "htn",
+        "tareas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Puede ser primitiva o no."
+        },
+        {
+          "id": "b",
+          "text": "No se puede descomponer en subtareas."
+        },
+        {
+          "id": "c",
+          "text": "Todas se descomponen en tareas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4c63f60a5b76c16f09e2cf5397b7718440f3470f4ab9ac1663900108e8d25596",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
     },
     {
       "id": "4ce974f5-f4a8-425e-83ce-b262c6282f22",
@@ -7194,6 +8404,47 @@
       "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
+      "id": "5162f05b-6eac-400e-af62-ce6353c2d408",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nHTN se basa en:",
+      "explanation": "En HTN el objetivo se expresa como una red de tareas que se descompone en subtareas (primitivas o compuestas) hasta obtener tareas primitivas ejecutables.",
+      "difficulty": 2,
+      "tags": [
+        "htn",
+        "tareas",
+        "descomposicion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Planes de orden completo."
+        },
+        {
+          "id": "b",
+          "text": "Tareas y subtareas."
+        },
+        {
+          "id": "c",
+          "text": "Valores aleatorios de planes."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:2912aa144423a3b45ac643d570e5c105b90eeaddfcd2b1d4850cb622a38eba67",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
+    },
+    {
       "id": "517fd039-c7b0-4ee1-92bd-744c7b129794",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -7236,6 +8487,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "51842a0b-b0f5-4445-8b57-9ecf46385a4f",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEn una HTN:",
+      "explanation": "En orden parcial no se fija una secuencia total: solo se imponen restricciones de precedencia; por eso algunas tareas pueden permutarse mientras respeten el orden parcial.",
+      "difficulty": 2,
+      "tags": [
+        "orden-parcial",
+        "restricciones",
+        "htn"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Da igual el orden de aplicación de todas las tareas."
+        },
+        {
+          "id": "b",
+          "text": "Todas las tareas tienen que ejecutarse en un orden determinado."
+        },
+        {
+          "id": "c",
+          "text": "Algunas tareas pueden ejecutarse en órdenes no establecidos mientras que guarden el orden parcial."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:82cceabd4fca53933c1dcaa479f850258e1a7f9b01ab5f844f8f552d9b7f0960",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
     },
     {
       "id": "5319f97b-a31b-4c33-a5d2-a3a528d8ba71",
@@ -7616,6 +8908,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "55ef05a1-2e60-41be-a2d4-eb9fefb7ef4d",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: La memoria interna del agente...",
+      "difficulty": 3,
+      "tags": [
+        "agentes",
+        "memoria"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Almacena solo las percepciones de un instante determinado."
+        },
+        {
+          "id": "b",
+          "text": "Guarda una secuencia episódica."
+        },
+        {
+          "id": "c",
+          "text": "Almacena las acciones."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:54e4632b80a8c9f5269106df52b7fc48af43851f29a56b37d9d00c66a67f02ff",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
+    },
+    {
       "id": "565edb14-d29b-467c-b56e-49f77da50749",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "bae420cf-ae91-488c-a876-710db0be84d6",
@@ -7658,6 +8993,81 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "56c09027-6ee2-4168-9078-f1b2c81197c2",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Los PMA admiten la hipótesis de:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pma",
+        "mundo-abierto"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mundo cerrado."
+        },
+        {
+          "id": "b",
+          "text": "Mundo abierto."
+        },
+        {
+          "id": "c",
+          "text": "Mundo distribuido."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
+    },
+    {
+      "id": "57495924-8fa1-4eb6-b279-53f436b4b298",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLa diferencia entre razonamiento inductivo y razonamiento deductivo es:",
+      "difficulty": 2,
+      "tags": [
+        "razonamiento",
+        "induccion",
+        "deduccion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Que en el razonamiento inductivo la conclusión no se obtiene obligatoriamente de las premisas."
+        },
+        {
+          "id": "opt2",
+          "text": "Que en el razonamiento deductivo la conclusión no se obtiene obligatoriamente de las premisas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:0b2fe5fe19bb6a6a5b2d68b0e0cfc8acb1e89ac42e0033b05e68c3f36c9c6d83",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
     },
     {
       "id": "5776ca79-a036-49c6-8de8-ddb2e24e6cdc",
@@ -8341,6 +9751,47 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "5d002a5d-1aa0-4e17-91ac-47fa638bb587",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "La búsqueda online para optimización es útil para problemas con: **(Seleccione una)**",
+      "explanation": "La búsqueda online para optimización es útil cuando hay **número infinito de estados**.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "single-choice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Número infinito de estados."
+        },
+        {
+          "id": "opt2",
+          "text": "Número finito de estados."
+        },
+        {
+          "id": "opt3",
+          "text": "Tanto para número infinito como finito de estados."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:1b05f81ac87b526f9000fe7f346a0e21d9ff59d8a8d7be1f9303ef58834ac803",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "5d3cc829-e55c-44b9-920b-e0fb26086482",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
@@ -8381,6 +9832,46 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "5d508461-9bce-40e7-aea7-4b026d34bf0b",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "La complejidad de expectiminimax es:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "expectiminimax",
+        "complejidad"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Inversamente proporcional al número de nodos del árbol."
+        },
+        {
+          "id": "optB",
+          "text": "Proporcional al número de nodos en el árbol."
+        },
+        {
+          "id": "optC",
+          "text": "No tiene relación con el número de nodos en el árbol."
+        }
+      ],
+      "correctOptionIds": [
+        "optB"
+      ],
+      "contentHash": "sha256:0a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "5d543712-f6fe-47d8-8b9e-42f007de5a75",
@@ -8425,6 +9916,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "5e15b968-3934-47c3-a0b1-23e64db1d240",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "Se llama estrategia óptima a la que:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "estrategia-optima",
+        "juegos",
+        "minimax"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Implica el mejor resultado garantizado para max."
+        },
+        {
+          "id": "optB",
+          "text": "Implica el mejor resultado garantizado para min."
+        },
+        {
+          "id": "optC",
+          "text": "Implica que tanto max como min obtengan el mejor resultado garantizado."
+        }
+      ],
+      "correctOptionIds": [
+        "optA"
+      ],
+      "contentHash": "sha256:4c8b57e4c0c256b3b7b8a6e1b0b6fbb66d807e44f3f47f3a11f0b7b01b0f1ff8",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "5ea3d929-6ff8-44be-8c94-b492c2fd5801",
@@ -8552,6 +10084,48 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "608eb586-faff-4a9b-af8a-d0bb78569dc5",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "En un problema de optimización: **(Seleccione una o más de una)**",
+      "explanation": "En optimización no se busca un estado exacto, sino **acercarse al máximo objetivo** y hallar el **mejor estado** según una función objetivo.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "multichoice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "El camino para llegar al estado siempre es relevante."
+        },
+        {
+          "id": "opt2",
+          "text": "No busca un estado exacto, sino que se acerque al máximo objetivo."
+        },
+        {
+          "id": "opt3",
+          "text": "El objetivo es encontrar el mejor estado según una función objetivo."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2",
+        "opt3"
+      ],
+      "contentHash": "sha256:1cc0ee074eea6244b782aa9fbb42f1d5cae1a141f80b84ce4c0c0b93b6d8b14c",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
     },
     {
       "id": "6095dab0-44d4-48ea-9af7-df54cd4b0a3d",
@@ -8858,6 +10432,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "642c126e-dc30-40c8-b23e-2ae9d569c9b1",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "La búsqueda en amplitud es:\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Completa, pero no óptima."
+        },
+        {
+          "id": "opt2",
+          "text": "Completa y óptima."
+        },
+        {
+          "id": "opt3",
+          "text": "Incompleta."
+        },
+        {
+          "id": "opt4",
+          "text": "Poco compleja."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:186e015a1638890cef9213de6b0a01607f177fe46f8678f5815fb39cc62323f7",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "64729763-b42b-42d4-adc6-569b75f0019a",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -8939,6 +10556,45 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "648f7c88-5a28-471a-9245-585feba6fec8",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl siguiente ejemplo de razonamiento:\n\nPremisa primera: «Veo un cisne blanco».\n\nPremisa segunda: «Veo otro cisne blanco».\n\nResultado: «Todos los cisnes son blancos». Corresponde a:",
+      "difficulty": 2,
+      "tags": [
+        "induccion",
+        "generalizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Razonamiento inductivo."
+        },
+        {
+          "id": "opt2",
+          "text": "Razonamiento deductivo."
+        },
+        {
+          "id": "opt3",
+          "text": "Razonamiento abductivo."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:9f7e20a12fc9d2a2b082d86ff9df6e2b0e3f5b9f5b8c0f943d7eb1d0d2a9b2a8",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
     },
     {
       "id": "64b5b50d-7633-49ec-974b-a2441ea31ab8",
@@ -9031,6 +10687,47 @@
       "updatedAt": "2026-02-21T23:29:41.680Z"
     },
     {
+      "id": "64f340df-beb2-41e1-85c0-712e64afbc9d",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "¿Qué es reparar un plan?\n\nSeleccione una.",
+      "explanation": "Reparar un plan consiste en obtener un plan solución conservando, en lo posible, el mayor número de acciones del plan que falló.",
+      "difficulty": 2,
+      "tags": [
+        "reparacion",
+        "planificacion-reactiva",
+        "multiagente"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Generar un plan desde cero."
+        },
+        {
+          "id": "b",
+          "text": "Encontrar un plan solución manteniendo el mayor número de acciones del plan que falla."
+        },
+        {
+          "id": "c",
+          "text": "Ejecutar un plan mientras se va arreglando el fallo del plan."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:103399e8a64879502352dada9fb7c3974502d5fe220bdfe9e7567487287ddf14",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
+    },
+    {
       "id": "6546d19b-238a-48f0-93bb-062f1eb7d57f",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "9d6276cf-e9aa-48ad-a074-fe7ce913673d",
@@ -9073,6 +10770,48 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "66f08877-09e1-4a74-9e8f-f6d8d2623252",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl conocimiento explícito:",
+      "difficulty": 2,
+      "tags": [
+        "conocimiento-explicito"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Es descrito mediante análisis introspectivo del propio proceso de razonamiento."
+        },
+        {
+          "id": "opt2",
+          "text": "Es siempre completo."
+        },
+        {
+          "id": "opt3",
+          "text": "Es análogo al conocimiento implícito."
+        },
+        {
+          "id": "opt4",
+          "text": "Representa el conocimiento que se tiene del dominio del problema."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:f7a1e93efafc4a6c979ad5561d4a3c37eacda4d1e10b7e8b9f3e4fa71b92d19e",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
     },
     {
       "id": "6768ec39-56a2-4f84-a975-16922a95c99c",
@@ -9551,6 +11290,48 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "6bbeafc2-2a5e-49d8-9976-1370b0d16e99",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nLa PBMA y la planificación clásica se diferencian en:",
+      "explanation": "La diferencia con planificación clásica incluye coordinación entre agentes (p.ej., protocolos/turnos) y distribución de la información (visión parcial por agente).",
+      "difficulty": 3,
+      "tags": [
+        "pbma",
+        "planificacion-clasica",
+        "coordinacion",
+        "informacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La coordinación de las actividades de planificación."
+        },
+        {
+          "id": "b",
+          "text": "La distribución de la información entre agentes."
+        },
+        {
+          "id": "c",
+          "text": "Las dos características anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0a548972bd8147b1055d07cc23caa5a4e9933488b5e88bed12ca3b1ac87dafbc",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
       "id": "6c36a4bb-cdac-45b4-b10d-b344c3f72868",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5f556862-dbdd-47aa-95e5-cb0861ea715d",
@@ -9588,6 +11369,50 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "6c6b1562-647c-47a3-a58a-b8ea1176d259",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nSon tareas que se deben resolver en un problema de planificación multi agente:",
+      "explanation": "Para resolver un problema de planificación multi agente se consideran tareas como refinar la meta global, asignar tareas a agentes y ejecutar el plan, entre otras.",
+      "difficulty": 2,
+      "tags": [
+        "tareas",
+        "planificacion-multiagente"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Detallar y refinar la meta global."
+        },
+        {
+          "id": "b",
+          "text": "Asignar tareas a los agentes."
+        },
+        {
+          "id": "c",
+          "text": "Ejecutar un plan."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:e995ccd90f443954998bc0d89b97439e35d9ba42ac4a838c53c83dce25f897b6",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
     },
     {
       "id": "6c845ffb-41e8-4b59-852b-a8061547ab0d",
@@ -9936,6 +11761,46 @@
       "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
+      "id": "6e79f3b5-d145-402f-b80b-be5e25dce017",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nUna de las tareas de un agente centralizado es:",
+      "explanation": "Entre las tareas centralizadas están unificar los estados recibidos y generar un plan solución que consiga los objetivos comunes de los agentes de ejecución.",
+      "difficulty": 2,
+      "tags": [
+        "tareas",
+        "planificacion-centralizada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Generar un plan solución que consiga los objetivos comunes de los agentes de ejecución."
+        },
+        {
+          "id": "b",
+          "text": "Aplicar heurísticas de tipo STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "Encontrar la secuencia de refinamiento que, partiendo del plan parcial inicial, llegue a un plan parcial solución."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:48d86c65a9b3fe78f37d497a72e0be8132e4d029946a4485a59eabe4ada17aae",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
       "id": "6e99888b-58cc-41ae-b591-0b10314d5778",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "502e9489-f902-45a4-8614-1f853b90f62f",
@@ -10055,6 +11920,47 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "6f512a57-9336-4e65-a1d1-f492564a97fc",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "Los planificadores multi agentes (PMA) son:\n\nSeleccione una.",
+      "explanation": "Los PMA se orientan a entornos donde varios agentes cooperan para construir un plan conjunto.",
+      "difficulty": 2,
+      "tags": [
+        "planificacion-multiagente",
+        "pma",
+        "cooperacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aptos para entornos en los que varios agentes desean conseguir elaborar un plan conjunto para resolver un problema."
+        },
+        {
+          "id": "b",
+          "text": "Construcciones de redes de tareas jerárquicas de tipo STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "Aptos para entornos en los que un agente desea resolver varios problemas a la vez."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4e1d5b587a5a56642e0794714b5e4180af167d86ff4448b51b6da2746679e231",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "702d7d59-398d-4ca2-a4a9-8d4eb6533347",
@@ -10323,6 +12229,43 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "71366253-2c18-4ce6-aa0e-c6e09efb58f8",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLa siguiente tabla de verdad corresponde a una contingencia:\n\n$$\n\\begin{array}{c|c|c|c|c}\np & q & (p \\lor q) & \\neg(p \\lor q) & (p \\lor q)\\Leftrightarrow \\neg(p \\lor q)\\\\\\hline\nV & V & V & F & F\\\\\nV & F & V & F & F\\\\\nF & V & V & F & F\\\\\nF & F & F & V & F\n\\end{array}\n$$",
+      "explanation": "La columna final es siempre $F$, luego la fórmula es una **contradicción**, no una contingencia.",
+      "difficulty": 2,
+      "tags": [
+        "tabla-de-verdad",
+        "contingencia",
+        "contradiccion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Verdadero."
+        },
+        {
+          "id": "b",
+          "text": "Falso."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:1f2e3d4c5b6a79808f9e0d1c2b3a4958675645342312010f0e0d0c0b0a090807",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "71638aba-fc0e-4d16-902d-8d9e7653d9ed",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "502e9489-f902-45a4-8614-1f853b90f62f",
@@ -10495,6 +12438,47 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "73839951-5f70-4867-9a9c-383c3f6a4f79",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "El algoritmo expectiminimax utiliza el algoritmo minimax y:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "expectiminimax",
+        "azar",
+        "nodos-de-azar"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Añade un árbol complejo teniendo en cuenta el azar para que en cada uno de los nodos ocurra siempre el mismo resultado."
+        },
+        {
+          "id": "optB",
+          "text": "Añade el azar como si fuera un jugador y lo incluye en el árbol siempre."
+        },
+        {
+          "id": "optC",
+          "text": "Añade el azar como si fuera un jugador, siempre que haya un evento con independencia de los jugadores cuyo resultado sea aleatorio."
+        }
+      ],
+      "correctOptionIds": [
+        "optC"
+      ],
+      "contentHash": "sha256:8c6f4b3a2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
+    },
+    {
       "id": "73bf9cf9-a8fd-4486-8789-33b2b05ba3bb",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "bd41142a-dbac-4d3d-a749-f1b9ca6338c4",
@@ -10585,6 +12569,47 @@
       },
       "createdAt": "2026-02-22T02:52:25.526Z",
       "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "746eeded-f46d-418c-bb36-f2cf69749d26",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "Los juegos se pueden clasificar en función de:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "clasificacion-de-juegos",
+        "azar",
+        "informacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Número de jugadores, elementos de azar e información."
+        },
+        {
+          "id": "optB",
+          "text": "Información y número de jugadores."
+        },
+        {
+          "id": "optC",
+          "text": "Elementos de azar y número de jugadores."
+        }
+      ],
+      "correctOptionIds": [
+        "optA"
+      ],
+      "contentHash": "sha256:5c1f4932f0c34e2ad7b0f41b2df01fd5f7a0b1b4b7a468b9e5b2c49f1d8797ac",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "749e315e-9f55-4fe5-af8c-135d5ecc347b",
@@ -10701,6 +12726,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "74e05d82-5e3f-4126-acb2-952e73480d3b",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "El algoritmo minimax con poda alfa-beta:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "alpha-beta",
+        "poda",
+        "minimax"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Produce el mismo resultado que sin poda."
+        },
+        {
+          "id": "optB",
+          "text": "Nunca produce el mismo resultado que sin poda."
+        },
+        {
+          "id": "optC",
+          "text": "El resultado depende de la exploración de los nodos, por lo que no se tiene el mismo resultado nunca."
+        }
+      ],
+      "correctOptionIds": [
+        "optA"
+      ],
+      "contentHash": "sha256:4e3e7d2c3f6b5a1f8c9d0a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "7557b237-cf35-4544-9cb4-21f724578001",
@@ -11319,6 +13385,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "7dc05373-3949-49a5-8680-194846006bff",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "¿Qué es una acción en un modelo de búsqueda?\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Es una operación que cambia el estado de alguna manera."
+        },
+        {
+          "id": "opt2",
+          "text": "Es una variable del entorno."
+        },
+        {
+          "id": "opt3",
+          "text": "Es una operación que el agente puede estudiar para ver si le permite acceder al estado meta."
+        },
+        {
+          "id": "opt4",
+          "text": "La A y la C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt4"
+      ],
+      "contentHash": "sha256:83aab60964a5f06bc4436a72e0727ef39ce52e4e83ac151b039a8a887eea9f32",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "7dd5f6fa-ef57-458d-8511-71afb3af65c8",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -11667,6 +13776,50 @@
       "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
+      "id": "83eb8502-49f6-4f82-8a8b-4062de0f56fd",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLos planificadores, atendiendo a su mecanismo de exploración, pueden ser:",
+      "explanation": "Según cómo exploran el espacio de búsqueda, se distinguen planificadores hacia delante (progresión) y hacia atrás (regresión).",
+      "difficulty": 2,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hacia delante o hacia atrás."
+        },
+        {
+          "id": "b",
+          "text": "Estructurados o no estructurados."
+        },
+        {
+          "id": "c",
+          "text": "Divisibles o indivisibles."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:b87c04775691caabd6ee51c80e43941e508f647950cf8ad24574a28f8001200a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
+    },
+    {
       "id": "83f311b7-8a25-43dd-a5da-c1feb348f788",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "067cd1e1-d35d-47ca-9713-f712013ed237",
@@ -11776,6 +13929,50 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "853400b8-540e-469b-9ca4-9cc892dfe0a1",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: ¿Todas las técnicas de inteligencia artificial son aplicables a todos los problemas?",
+      "difficulty": 2,
+      "tags": [
+        "ia",
+        "metodologia",
+        "seleccion-de-tecnicas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sí, existen algoritmos que resuelven todos los problemas."
+        },
+        {
+          "id": "b",
+          "text": "No, debemos buscar la técnica que mejor se adapta a un problema de entre las distintas que son aplicables."
+        },
+        {
+          "id": "c",
+          "text": "Sí, los algoritmos genéticos resuelven todos los problemas."
+        },
+        {
+          "id": "d",
+          "text": "No, cada problema es solo resuelto por un único algoritmo."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:ce458d318488c31e4a59c95a78e2136296cbb56d22e3754e8000f4cf2cc665e6",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
+    },
+    {
       "id": "85467849-327b-48f4-a525-25f91029f0d1",
       "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
       "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
@@ -11820,6 +14017,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "855b787d-17a2-4f04-9238-4dba09e86938",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Un POP está compuesto por:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "enlaces-causales",
+        "precondiciones-abiertas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tareas y subtareas."
+        },
+        {
+          "id": "b",
+          "text": "Nodos, arcos (causales y no causales) y precondiciones abiertas."
+        },
+        {
+          "id": "c",
+          "text": "Planes, acciones y propiedades."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:bcf3d99f15e7a8c59cc9f44fd0c2d2d6b6b0d0a2c2b0e8a7cbd85f4a9f3d0af4",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
     },
     {
       "id": "85c0d716-c04f-4a42-b56f-45fc9e3f9815",
@@ -12018,6 +14255,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "86bacde4-3552-4df5-bcb1-aaba5d02cc7e",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\n¿La representación del conocimiento no debe ser?",
+      "difficulty": 2,
+      "tags": [
+        "representacion-del-conocimiento",
+        "caracteristicas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Formal."
+        },
+        {
+          "id": "opt2",
+          "text": "Expresiva."
+        },
+        {
+          "id": "opt3",
+          "text": "Natural."
+        },
+        {
+          "id": "opt4",
+          "text": "Artificial."
+        }
+      ],
+      "correctOptionIds": [
+        "opt4"
+      ],
+      "contentHash": "sha256:8ddf7d917fc1d5b57e816f1c1b3ec6a8ed73f28d260cd7b3d49b07a2574f44ab",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
+    },
+    {
       "id": "86bb1579-c060-4267-8c23-a9ba9f15ae35",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -12093,6 +14373,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "8757c421-bcd3-470c-8f42-dbe4c535b0a1",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "En algunos modelos los agentes pueden publicitarse servicios. Los servicios ayudan a:\n\nSeleccione una.",
+      "explanation": "Los servicios publicitados informan de antemano qué fluents puede conseguir cada agente, facilitando pedir ayuda ante fallos.",
+      "difficulty": 2,
+      "tags": [
+        "servicios",
+        "publicidad",
+        "reparacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Distribuir la información de forma segura."
+        },
+        {
+          "id": "b",
+          "text": "Conocer que agentes pueden ayudar para reparar un fallo."
+        },
+        {
+          "id": "c",
+          "text": "Mantener la integridad en la información."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:6ae507fab98aaaee2da8f7108cde2fd4d312d67b60819b2fef0755d420b92e32",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "87cf17b4-0560-4651-9174-1026051629cd",
@@ -12232,6 +14553,50 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "88cea304-f959-49f1-997f-dd303cc5ce93",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUna acción es:",
+      "explanation": "Una acción se entiende como un paso atómico que puede aplicarse (si se cumplen sus precondiciones) para avanzar hacia la meta.",
+      "difficulty": 1,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cualquier condición que un agente quiera satisfacer."
+        },
+        {
+          "id": "b",
+          "text": "Es un paso simple y atómico."
+        },
+        {
+          "id": "c",
+          "text": "Una planificación de entorno."
+        },
+        {
+          "id": "d",
+          "text": "Un modelo de comportamiento del agente."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:aa0edc039fec5029c979364018bfa7f715106913ded82889bb19564d0107b462",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
+    },
+    {
       "id": "89134c98-cb58-49f7-a882-08bb28239e24",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a6ccfde3-d77b-42db-af38-4df19e2f1b3d",
@@ -12319,6 +14684,48 @@
       "updatedAt": "2026-02-21T22:34:51.487Z"
     },
     {
+      "id": "8a66fb65-08ff-4588-b10d-fa125a4bba1a",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "La idea que subyace en la búsqueda por ascenso de colinas es: **(Seleccione una o más de una)**",
+      "explanation": "El ascenso de colinas reduce la exploración: elige siempre la acción más prometedora y reitera el ciclo percepción–acción.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "multichoice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Reducir profundidad del árbol expandido y realizar siempre la acción más prometedora."
+        },
+        {
+          "id": "opt2",
+          "text": "Expandir el árbol solo un nivel, realizar la acción hacia el mejor nodo y repetir el ciclo percepción-acción de manera continuada."
+        },
+        {
+          "id": "opt3",
+          "text": "Ninguna de las respuestas anteriores es correcta."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1",
+        "opt2"
+      ],
+      "contentHash": "sha256:fd6fe4a846fd9bc4e7793ec6f73b61f41d59b5e6d4de4f47f7f2f355c5bb0a20",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "8aa66675-27b3-4d1a-95fe-1930f074857d",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -12389,6 +14796,86 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "8bb826be-df3c-4bcd-a78b-763cf7dbdced",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "Un operador de STRIPS está compuesto de:\n\n**Seleccione una.**",
+      "explanation": "Un operador STRIPS se define por precondiciones y efectos separados en lista de adición y lista de eliminación.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "strips",
+        "add-delete"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Precondiciones, lista de acciones y lista de estados."
+        },
+        {
+          "id": "b",
+          "text": "Precondiciones, lista de adición y lista de eliminación."
+        },
+        {
+          "id": "c",
+          "text": "Precondiciones y lista de modificación."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:b178871d07a4d6ca437a568898bb4c0e146a4f2868490b2de0bb412783a68fad",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
+    },
+    {
+      "id": "8bd4444a-a632-4dcf-8ee0-71e9f1515100",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "En general, un algoritmo POP debe:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "refinamiento"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Encontrar todas las acciones del plan global."
+        },
+        {
+          "id": "b",
+          "text": "Aplicar heurísticas de tipo STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "Encontrar la secuencia de refinamiento que, partiendo del plan parcial inicial, llegue a un plan parcial solución."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:8f0e1d2c3b4a59687766554433221100ffeeddccbbaa99887766554433221100",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
     },
     {
       "id": "8be0ddd2-68a3-4733-b224-9eb303ef6067",
@@ -12849,6 +15336,50 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "90470083-2fdd-4c5e-b020-6095a8352f31",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUn plan es:",
+      "explanation": "Un plan es el resultado de la planificación: una secuencia (ordenada) de acciones.",
+      "difficulty": 1,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Una secuencia de acciones."
+        },
+        {
+          "id": "b",
+          "text": "Un paso simple y atómico."
+        },
+        {
+          "id": "c",
+          "text": "Una meta no formalizada."
+        },
+        {
+          "id": "d",
+          "text": "Una entrada proporcionada a un planificador."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:5b04b49e5bb3555577419b70c8300cce425a16f5b3b28c6d278027a63927af2c",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
+    },
+    {
       "id": "91349cec-d90f-4390-b7f8-24be3625a748",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "241e24a8-9e71-4933-8c51-1fb4812b3606",
@@ -13024,6 +15555,47 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "926d493e-61cb-4d10-ab1d-1701113dad45",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "En un juego en el que max puede asumir que min hará lo mejor para sí mismo, lo que implica que es lo peor para max, la estrategia óptima para max es:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "minimax",
+        "maximin",
+        "estrategia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Minimizar la utilidad mínima en cada jugada, minimax."
+        },
+        {
+          "id": "optB",
+          "text": "Maximizar la utilidad mínima en cada jugada, minimax."
+        },
+        {
+          "id": "optC",
+          "text": "No existe una estrategia óptima para estos casos."
+        }
+      ],
+      "correctOptionIds": [
+        "optB"
+      ],
+      "contentHash": "sha256:7f4a0aa3c3f56f1b64d2a16e8b2b8e4d6c61a7d1f6b6c7c0d9f4e71b8a3c21c6",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
+    },
+    {
       "id": "927714a4-097f-426a-a549-19badb5286c0",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "9d6276cf-e9aa-48ad-a074-fe7ce913673d",
@@ -13100,6 +15672,133 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "92f9dd71-3010-419f-b3f3-767cced22fe6",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\n¿Qué afirmación es verdadera?",
+      "explanation": "HTN (Hierarchical Task Network) se basa en la descomposición jerárquica de tareas, rompiendo con la planificación clásica estilo STRIPS; por tanto, no es un ejemplo de STRIPS sino un enfoque distinto.",
+      "difficulty": 2,
+      "tags": [
+        "htn",
+        "strips",
+        "planificacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "HTN es un ejemplo de STRIPS."
+        },
+        {
+          "id": "b",
+          "text": "HTN es distinto de STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "HTN es admitido por todo el mundo."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:8a71c84a8d0868a9035631d626bea6d4c06985949996b5d770f931028716d15b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
+    },
+    {
+      "id": "932d1b45-6e64-4f7f-af2d-dd35ad94825f",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUna red de tareas jerárquica:",
+      "explanation": "Las HTN abordan planificación compleja descomponiendo tareas de alto nivel en subtareas (complejas y simples) hasta llegar a acciones ejecutables.",
+      "difficulty": 3,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Subdivide el problema en metas"
+        },
+        {
+          "id": "b",
+          "text": "Subdivide el problema en tareas complejas y simples."
+        },
+        {
+          "id": "c",
+          "text": "Es un mecanismo de planificación de problemas complejos."
+        },
+        {
+          "id": "d",
+          "text": "La B y la C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:8ad907e357f748085d26ee81acb1b1a9495c47d95823881d31d4fb477a8a98f9",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
+    },
+    {
+      "id": "93c59bef-2898-4ed7-b2d2-ab5c72c4b6b9",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "La aplicación fuerte de heurísticas hace que: **(Seleccione una o más de una)**",
+      "explanation": "La aplicación fuerte de heurísticas **reduce el espacio de búsqueda** y busca **soluciones buenas** aunque no sean óptimas.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "multichoice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Se reduzca el espacio de búsqueda."
+        },
+        {
+          "id": "opt2",
+          "text": "Siempre encuentre la mejor solución."
+        },
+        {
+          "id": "opt3",
+          "text": "Tiene como objetivo encontrar soluciones buenas, aunque no sean necesariamente óptimas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1",
+        "opt3"
+      ],
+      "contentHash": "sha256:fe49a16f5edb013d66b00f20d4adbd65486ca0badb9b642be6eb1774e4dd71f9",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "943bd57f-7153-4810-8e02-034b02bb3557",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
@@ -13143,6 +15842,49 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "94737df7-32ca-44e7-91c3-3ffe61549f82",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "La búsqueda en profundidad es:\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Completa para todos los casos."
+        },
+        {
+          "id": "opt2",
+          "text": "Óptima para todos los casos."
+        },
+        {
+          "id": "opt3",
+          "text": "Muy eficiente si se toma la rama correcta u la profundidad de la solución es elevada."
+        },
+        {
+          "id": "opt4",
+          "text": "Incompleta y óptima."
+        }
+      ],
+      "correctOptionIds": [
+        "opt3"
+      ],
+      "contentHash": "sha256:80fbcdaf134e56cd579940a056d41c19d31f1515f67a44d63647ee05663cbee7",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "94ec06fb-cd04-4c11-92f1-4b7cdd5d8b8d",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -13177,6 +15919,88 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "950f27a9-64d8-406c-828e-dbedf32aa280",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "La anomalía de Sussman:\n\n**Seleccione una.**",
+      "explanation": "La anomalía de Sussman ilustra la interferencia entre submetas: al lograr una se puede deshacer otra, provocando ciclos si se aborda ingenuamente.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "strips",
+        "sussman"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Deriva de las acciones que se concatenan en orden inverso."
+        },
+        {
+          "id": "b",
+          "text": "Presenta el problema de destruir y construir de modo infinito submetas."
+        },
+        {
+          "id": "c",
+          "text": "No se da en STRIPS."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:7292503d5388c95e7db062c83e3968d204e16304c66e4e5734f5336fce226576",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
+    },
+    {
+      "id": "957455b6-dfa0-4a46-b75d-9a46201ae7d4",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "Una de las dificultades de la reparación multi agente es:\n\nSeleccione una.",
+      "explanation": "La comunicación entre agentes es un hándicap que impacta en el tiempo de generación del plan solución, por lo que debe minimizarse.",
+      "difficulty": 3,
+      "tags": [
+        "reparacion",
+        "multiagente",
+        "comunicacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Alguna acción presente en el plan y que todavía no se han enlazado por medio de ningún arco causal."
+        },
+        {
+          "id": "b",
+          "text": "El tiempo en la comunicación entre los agentes."
+        },
+        {
+          "id": "c",
+          "text": "Las acciones que faltan por ejecutar en el problema."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:c473731e973c163e1d02b72d544e163177e92d9107644481938df1f216528244",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "95e68f57-36cb-4212-aa1d-38904416698d",
@@ -13308,6 +16132,50 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "96690cee-5a7e-4211-b095-79ae7344a41f",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLa anomalía de Sussman:",
+      "explanation": "La anomalía de Sussman es el caso típico de interacción entre subobjetivos: al lograr uno, puede ser necesario deshacer otro ya conseguido.",
+      "difficulty": 4,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Surge al tener objetivos que interaccionan entre sí."
+        },
+        {
+          "id": "b",
+          "text": "Contempla el escenario en el que para cumplir un subobjetivo debemos destruir otro ya alcanzado."
+        },
+        {
+          "id": "c",
+          "text": "Presenta la complejidad de subdividir un plan en tareas jerárquicas."
+        },
+        {
+          "id": "d",
+          "text": "La A y la B son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:bd18604072b11dfae4500d311e4df3538b8a9dcd54fc29b15cb447eac1198f6b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
     },
     {
       "id": "9696ea46-62c3-4448-b853-c3b63c0b35c8",
@@ -13520,6 +16388,132 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "9820ded2-b211-41db-8e38-3fea957db08a",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una o más de una.\n\nUn sistema difuso:",
+      "explanation": "Un sistema difuso infiere una salida a partir de reglas *si-entonces* y puede usarse en control para actuar sobre un entorno.",
+      "difficulty": 2,
+      "tags": [
+        "sistemas-difusos",
+        "reglas",
+        "control"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "La salida final puede actuar sobre el entorno físico."
+        },
+        {
+          "id": "b",
+          "text": "Emplea reglas de la forma «si antecedente, entonces consecuente»."
+        },
+        {
+          "id": "c",
+          "text": "Nunca produce ninguna salida."
+        }
+      ],
+      "correctOptionIds": [
+        "a",
+        "b"
+      ],
+      "contentHash": "sha256:0c8d2f3a4b5c6d7e8f9012a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
+      "id": "988199ce-777d-4f35-aeba-4d99a05c22b6",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "¿Qué afirmación sobre STRIPS es verdadera?\n\n**Seleccione una.**",
+      "explanation": "En STRIPS, los operadores se modelan como acciones del agente (con precondiciones y efectos).",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "strips",
+        "operadores"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "STRIPS define problemas de búsqueda."
+        },
+        {
+          "id": "b",
+          "text": "Los operadores STRIPS se pueden proyectar en las acciones de un agente."
+        },
+        {
+          "id": "c",
+          "text": "STRIPS es un planificador de orden parcial."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:32d149cba91a2fee4157dddd887eeeaf00b9c9e7db284546f3484e679588c140",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
+    },
+    {
+      "id": "9ad7adea-eb89-47a4-8b36-5094c33c95a9",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "¿En cuáles de los siguientes entornos no es posible o útil encontrar un plan completo?: **(Seleccione una o más de una)**",
+      "explanation": "En entornos **no deterministas**, **inaccesibles** o con **agentes reactivos/objetivo continuo**, un plan completo no es posible o no es útil.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "multichoice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Entornos no deterministas."
+        },
+        {
+          "id": "opt2",
+          "text": "Entornos inaccesibles."
+        },
+        {
+          "id": "opt3",
+          "text": "Agentes reactivos que actúan de forma rápida o con objetivo continuo."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1",
+        "opt2",
+        "opt3"
+      ],
+      "contentHash": "sha256:5a191c1b16c16156a99793cd4459a3a805d87e28c8d5d58b2b3c5c4bb653ef52",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "9b260654-f087-4952-b11a-e3ebbafc3661",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
@@ -13650,6 +16644,50 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "9c492544-26bb-46fc-b1cc-2adff59efc95",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUna meta es:",
+      "explanation": "La meta se define como una condición (o conjunto de condiciones) que el agente pretende que se cumpla.",
+      "difficulty": 1,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cualquier condición que un agente quiera satisfacer."
+        },
+        {
+          "id": "b",
+          "text": "Es un paso simple y atómico."
+        },
+        {
+          "id": "c",
+          "text": "Es un objetivo no final."
+        },
+        {
+          "id": "d",
+          "text": "Es una fase del desarrollo de un plan."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:2b5804707a60c2fb1148a9bffac3356eac43e738ba6755c49a3ef7fab0f5a469",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
+    },
+    {
       "id": "9c527109-8ee6-4439-8c78-d561aacb0311",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a0ee552f-68ca-4b05-bf4f-9e4f2edc904c",
@@ -13736,6 +16774,50 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "9c81be74-0ce3-405e-b37a-7cba8f463d06",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUn planificador de orden parcial:",
+      "explanation": "Un planificador de orden parcial (POP) no fija un orden total; solo impone las restricciones de precedencia necesarias entre acciones.",
+      "difficulty": 3,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Construye planes en los que solo se especifican algunas de las precedencias entre sus acciones."
+        },
+        {
+          "id": "b",
+          "text": "No resuelve problemas generales."
+        },
+        {
+          "id": "c",
+          "text": "No busca en el espacio de planes."
+        },
+        {
+          "id": "d",
+          "text": "Crea ordenes de subobjetivos concatenados hacia delante."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:2f994f0f45e10b8e9cecebc2a261b890ecc16fe921b57b1415b615d6ee7ece1f",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
     },
     {
       "id": "9ccc2722-6f2a-4899-abe4-e96c038ebc22",
@@ -13825,6 +16907,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "9d6ce691-8821-45a4-97bc-8fdeee3fb9aa",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "En GOAP:\n\n**Seleccione una.**",
+      "explanation": "En GOAP es típico modelar efectos como una única lista/estructura de cambios sobre propiedades, no como add/delete separados.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "goap",
+        "operadores"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Existe una lista de añadir y otra de eliminar en los operadores."
+        },
+        {
+          "id": "b",
+          "text": "Todas las acciones deben tener el mismo coste."
+        },
+        {
+          "id": "c",
+          "text": "Existe una única lista de modificación de propiedades en los operadores."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:53b848698b6129757804ad1daf79e99bbbb473e4e1e27f8161637af99daa1c4a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
     },
     {
       "id": "9da49dfd-3cda-4275-9751-62778011fea4",
@@ -14216,6 +17339,46 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "a32ce0cb-5943-42f2-a146-289b59cc6507",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Una acción entra en conflicto con un enlace causal.\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "amenazas",
+        "enlace-causal"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Si la acción tiene el efecto de eliminar un efecto producido por el enlace causal."
+        },
+        {
+          "id": "b",
+          "text": "Si tiene más de dos propiedades a las que afecte con sus efectos."
+        },
+        {
+          "id": "c",
+          "text": "Si no se puede descomponer."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:5c1b2a3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
+    },
+    {
       "id": "a3a88b75-96a5-4ad9-9e8e-4d86f208515d",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -14395,6 +17558,48 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "a57554e7-96cd-4e0a-8082-e1cd9ffc9a9b",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl conocimiento superficial:",
+      "difficulty": 2,
+      "tags": [
+        "conocimiento-superficial"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Se extrae del análisis general del marco teórico del problema."
+        },
+        {
+          "id": "opt2",
+          "text": "Es el derivado de la experiencia obtenida al resolver problemas similares."
+        },
+        {
+          "id": "opt3",
+          "text": "Es eminentemente práctico."
+        },
+        {
+          "id": "opt4",
+          "text": "La B y la C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:5c83d2ea6e0c2ce1ba3a97f5f5117c0968c36b016c52ce31b579f0701c4a6fc4",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
+    },
+    {
       "id": "a580603b-f1f7-4dbc-889d-de80ad368b51",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "9d6276cf-e9aa-48ad-a074-fe7ce913673d",
@@ -14506,6 +17711,46 @@
       "updatedAt": "2026-02-22T02:19:26.453Z"
     },
     {
+      "id": "a6c070e7-d795-4bfa-90da-4873bb473a9a",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEn la lógica matemática:",
+      "explanation": "La lógica matemática busca formalización precisa, con símbolos y significados bien definidos.",
+      "difficulty": 1,
+      "tags": [
+        "logica-matematica",
+        "formalizacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Las expresiones no tienen por qué tener significado exacto."
+        },
+        {
+          "id": "b",
+          "text": "Cada expresión tiene un significado exacto."
+        },
+        {
+          "id": "c",
+          "text": "Las expresiones se formalizan de manera poco concreta y no se emplea el simbolismo."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:2a7f6e3c7a8a4f76f3cf9c8d2c85f70d9d3ad8c4e1e9e8b0c0b4b5d2a3f4e5d6",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "a6f9af8d-c305-4a8a-87e1-6131ecd13368",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "5fd196fa-df50-4e1a-8e3e-e3a27f407591",
@@ -14552,6 +17797,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "a78293cf-79c2-44cb-8b3c-2a703800a63e",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLa representación mediante reglas:",
+      "difficulty": 2,
+      "tags": [
+        "reglas",
+        "sistemas-de-reglas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Emplea sentencias condicionales si-entonces."
+        },
+        {
+          "id": "opt2",
+          "text": "Combina encadenamiento hacia atrás y hacia delante."
+        },
+        {
+          "id": "opt3",
+          "text": "Representa estereotipos."
+        },
+        {
+          "id": "opt4",
+          "text": "La A y la B son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:420ab1c52bc69fa0aee0a8e65d69162a96399cd8c84b8bd54d76b87b3e710e04",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
+    },
+    {
       "id": "a7a37720-8ce3-4fd8-9c52-79cb24f88528",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
@@ -14593,6 +17881,46 @@
       },
       "createdAt": "2026-02-22T02:52:25.526Z",
       "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "a7e21559-aac4-4d11-adf4-a0b500f02cf7",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nLa PBMA son:",
+      "explanation": "La planificación por múltiples agentes (PBMA) aborda entornos donde varios agentes planifican de forma incremental para generar un plan conjunto.",
+      "difficulty": 2,
+      "tags": [
+        "pbma",
+        "planificacion-distribuida"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aptos para entornos en los que varios agentes desean conseguir elaborar un plan conjunto para resolver un problema."
+        },
+        {
+          "id": "b",
+          "text": "Construcciones de redes de tareas jerárquicas de tipo STRIPS."
+        },
+        {
+          "id": "c",
+          "text": "Aptos para entornos en los que un agente desea resolver varios problemas a la vez."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:9b9ad681103fdd3ff4c6b08e1dbc902155455d12ce42d139f046014a366a0be9",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
     },
     {
       "id": "a80c2748-ee5e-439e-af5c-cf7fde435418",
@@ -15416,6 +18744,86 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "aeb60b56-b1e2-4e4b-b09b-a570a34ffcb9",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLas tareas pueden tener acciones que no se implementen directamente el entorno:",
+      "explanation": "Lo que se considera “primitivo” es subjetivo: una acción final puede requerir detalle adicional mediante controladores dentro de una jerarquía del agente.",
+      "difficulty": 2,
+      "tags": [
+        "htn",
+        "controladores",
+        "jerarquia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sí, porque pueden ser parte de una jerarquía de controladores."
+        },
+        {
+          "id": "b",
+          "text": "No, todas las tareas deben ejecutar acciones concretas del mundo."
+        },
+        {
+          "id": "c",
+          "text": "No, porque las tareas pueden descomponerse siempre en subtareas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:82966354d8440d856ee498655d75664e9d496172cc3be9eaa5021e0b42ad712b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
+    },
+    {
+      "id": "aef288ef-cc9f-478c-811c-fb5123eb78db",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl siguiente ejemplo de razonamiento:\n\nPremisa mayor: «Toda planta tiene vida».\n\nPremisa menor: «Todo rosal es una planta».\n\nResultado: «Todo rosal tiene vida». Corresponde a:",
+      "difficulty": 2,
+      "tags": [
+        "deduccion",
+        "silogismo"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Razonamiento inductivo."
+        },
+        {
+          "id": "opt2",
+          "text": "Razonamiento deductivo."
+        },
+        {
+          "id": "opt3",
+          "text": "Razonamiento abductivo."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:5efaccc72c6ad71f9a403e3f322bcb7043ed2f75af2476c85bd8ffb30a71df85",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
+    },
+    {
       "id": "af0b412b-52c7-4463-8969-42cf161780f8",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "1f1be644-ce4e-4134-8501-6bae5948e91c",
@@ -15535,6 +18943,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "b01afbac-d39f-4fe0-ae46-8cf7a5b3ee7c",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLos HTN:",
+      "explanation": "La planificación HTN es controvertida por requerir conocimiento de dominio bien concebido y estructurado (muchas tareas, métodos y guía sobre cómo resolver el problema).",
+      "difficulty": 2,
+      "tags": [
+        "htn",
+        "conocimiento-dominio"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Requieren de mucho conocimiento a priori de las tareas posibles."
+        },
+        {
+          "id": "b",
+          "text": "No requieren de tareas."
+        },
+        {
+          "id": "c",
+          "text": "Crea todas las tareas y subtareas por búsqueda."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:986dfec78984253e76f1f7ff784ed0dee4a5c74fee4e9508a1477fb4006d2f7f",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
     },
     {
       "id": "b023f643-4b00-4694-8902-3f5ac02f9c1c",
@@ -15669,6 +19117,47 @@
       },
       "createdAt": "2026-02-22T02:52:25.526Z",
       "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "b0ec6f91-da87-4ecd-95b9-9b1c1343b80c",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "Minimax genera:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "minimax",
+        "arbol-de-juego",
+        "dfs"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "El árbol de juego incompleto, primero en profundidad, pero no llega a cubrir todos los nodos."
+        },
+        {
+          "id": "optB",
+          "text": "El árbol de juego completo, primero en profundidad, hasta los nodos de suspensión."
+        },
+        {
+          "id": "optC",
+          "text": "No genera ningún árbol."
+        }
+      ],
+      "correctOptionIds": [
+        "optB"
+      ],
+      "contentHash": "sha256:0c8a18f1c8a5f64f0a6a4a9e3b9b4b0fd55d1f0f3a3a7d3b8c4d6a2f2b9a1c77",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "b2125275-8788-43a8-997a-f204d8a012df",
@@ -15943,6 +19432,47 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "b3ab9963-9f8c-4a74-8b43-30e1d50b1985",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "Para utilizar un POP como método de reparación, tendríamos que:\n\nSeleccione una.",
+      "explanation": "En reparación mediante POP se parte del plan actual como plan parcial inicial (nodo raíz) y se refina hasta resolver el fallo.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "reparacion",
+        "planificacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Comenzar con un plan vacío en el nodo raíz."
+        },
+        {
+          "id": "b",
+          "text": "Comenzar con el plan actual en el nodo raíz."
+        },
+        {
+          "id": "c",
+          "text": "Dejar de conseguir las precondiciones abiertas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:ccaffd5a02d30bf468e243daefb12083d8a620384feca2a0cd2b2ff7d70d2860",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
+    },
+    {
       "id": "b3d4c11a-34d8-40d1-8f3a-660e9915d80e",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
@@ -16158,6 +19688,50 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "b50a04e4-34d7-4971-b4d0-7f4c77ea4672",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "cd44d928-a82f-42a0-9d13-c7676c9a8964",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nUn plan se construye:",
+      "explanation": "Un plan se compone de acciones (atómicas), se orienta a una meta y debe respetar las precondiciones de aplicabilidad de las acciones.",
+      "difficulty": 2,
+      "tags": [
+        "planificacion",
+        "tema-7"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Por medio de acciones atómicas."
+        },
+        {
+          "id": "b",
+          "text": "Para alcanzar una meta, que puede ser una combinación de características del entorno en una configuración determinada."
+        },
+        {
+          "id": "c",
+          "text": "Atendiendo a las precondiciones que se deben dar en el entorno para poder activar una acción."
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:3d093833de14b61c91ee1b66d9a0b8802ba56783e89d1fb07f97b5e953c11c1e",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:36.439Z",
+      "updatedAt": "2026-02-22T17:16:36.439Z"
+    },
+    {
       "id": "b53a5980-6e79-4184-8a65-dd2ccadbf21b",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
@@ -16246,6 +19820,87 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "b5ed5f47-a12e-415b-9017-5382dbc812d5",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLos efectos de una tarea:",
+      "explanation": "Los efectos describen cómo cambia el estado del mundo tras aplicar la acción/tarea, es decir, actualizan propiedades del entorno.",
+      "difficulty": 2,
+      "tags": [
+        "efectos",
+        "estado",
+        "mundo"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Afectan a valores de propiedades del mundo."
+        },
+        {
+          "id": "b",
+          "text": "Forman todos parte del resultado objetivo de la búsqueda."
+        },
+        {
+          "id": "c",
+          "text": "Se descomponen en subefectos."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:9a2d9f41c25f6df0d24bfdeea57306baf5f4a11800cee3d22e314df8e4b543c4",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
+    },
+    {
+      "id": "b6045714-ad82-477a-889d-c9e51e7599d7",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "El caso ideal de $e$ en la función de evaluación $e$ es:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "funcion-de-evaluacion",
+        "heuristica"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Una transformación lineal positiva de dicha probabilidad."
+        },
+        {
+          "id": "optB",
+          "text": "Una regresión lineal positiva de dicha probabilidad."
+        },
+        {
+          "id": "optC",
+          "text": "Una transformación lineal negativa de dicha probabilidad."
+        }
+      ],
+      "correctOptionIds": [
+        "optA"
+      ],
+      "contentHash": "sha256:1f2e3d4c5b6a79808f9e0d1c2b3a4f5e6d7c8b9a0f1e2d3c4b5a69788796a5b4",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "b60c6b76-7c2f-49e8-b620-1ccfa02e96c4",
@@ -16445,6 +20100,41 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "b7366fa7-8f08-49d3-9010-be4939192213",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl método abductivo:",
+      "difficulty": 2,
+      "tags": [
+        "abduccion",
+        "razonamiento"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Emplea abducciones que se definen como conjeturas espontáneas de la razón."
+        },
+        {
+          "id": "opt2",
+          "text": "Parte de hechos directamente observados."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:18c0d9e826597a03a413f39e84f93e10e438c53b8f8c0f6c9e9bdb49fe8eb9e1",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
     },
     {
       "id": "b7936ba6-d2a8-4bda-add7-7bc474ced544",
@@ -16771,6 +20461,49 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "bc1798e4-f1aa-4683-b05e-a057166c5578",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\n¿Qué técnica no es una forma de representación explícita del conocimiento?",
+      "difficulty": 2,
+      "tags": [
+        "representacion-del-conocimiento",
+        "formas-explicitas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Reglas."
+        },
+        {
+          "id": "opt2",
+          "text": "Morfológica."
+        },
+        {
+          "id": "opt3",
+          "text": "Marcos."
+        },
+        {
+          "id": "opt4",
+          "text": "Lógica."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:18925c72db13035a018f990bf779e29edce9452adc09b3a43df0e23a4991d147",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
+    },
+    {
       "id": "bc7386be-e80f-4064-bbb5-c071243090e9",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "450fb598-6a22-4be1-8621-ff78740c3973",
@@ -16902,6 +20635,49 @@
       "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
+      "id": "bce36bc1-69c0-4bc7-a4bb-36296c3a66de",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "Los estados repetidos en un árbol de búsqueda, ¿son un problema?\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "No, nunca, todos los algoritmos los filtran automáticamente."
+        },
+        {
+          "id": "opt2",
+          "text": "Sí, pero se pueden filtrar en muchos casos los bucles que se formen."
+        },
+        {
+          "id": "opt3",
+          "text": "Sí, cuando el algoritmo explora siempre en el mismo orden los nodos pendientes."
+        },
+        {
+          "id": "opt4",
+          "text": "B y C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt4"
+      ],
+      "contentHash": "sha256:46d46906fa9fef9fe9812a95c36d9d002f88baa6239f2e47ae6559d8e8ae3421",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "bcfb5403-9bf7-4674-8a65-b4ef403ab9bc",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "784cdbf0-caf2-4f78-9f11-73f5902e2182",
@@ -16975,6 +20751,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "beaf70a4-c2d6-415a-89e0-781517ef2516",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "Las acciones en GOAP:\n\n**Seleccione una.**",
+      "explanation": "En GOAP, las acciones suelen encapsular procedimientos/implementación (no solo operadores declarativos estilo STRIPS).",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "goap",
+        "acciones"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son atómicas."
+        },
+        {
+          "id": "b",
+          "text": "Son secuenciales."
+        },
+        {
+          "id": "c",
+          "text": "Son procedurales."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:b4790b4d4c2acf43f54aecf2d162aa6ad427710a971f71bdfa3c6699ef5c3997",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
     },
     {
       "id": "bf26d353-9a84-4e66-b1c3-184157809786",
@@ -17278,6 +21095,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "c1a13043-a797-4413-b852-2dbe3de3f7da",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "¿Una búsqueda es óptima?\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Si encuentra la solución en poco tiempo."
+        },
+        {
+          "id": "opt2",
+          "text": "Si encuentra la solución que tiene asociado un menor coste (por ejemplo, número de acciones)."
+        },
+        {
+          "id": "opt3",
+          "text": "Si no comente errores al duplicar estados."
+        },
+        {
+          "id": "opt4",
+          "text": "La A y la C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:92389012da3e1f4d8268600f1906e56a2df1ac89d9d3b75cca005b711a6991f2",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "c1f2672d-39ff-4f5e-943e-0728aac1b95d",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "8f5d239d-251a-4f0c-b03e-3d300f5cd4b5",
@@ -17361,6 +21221,45 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "c2672451-9d52-47b5-90ae-5adbc16450b7",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Un enlace causal:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "enlace-causal"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son las restricciones de orden parcial entre dos acciones."
+        },
+        {
+          "id": "b",
+          "text": "Especifica la relación entre un efecto y una precondición."
+        },
+        {
+          "id": "c",
+          "text": "Es la causa de un efecto entre tres o más acciones conjuntas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:2d8c0b8cfae3f9a2a6d7f0b1c4e5d6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
     },
     {
       "id": "c27daa02-9b2d-44a6-b028-87312b33deef",
@@ -17625,6 +21524,48 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "c4fef02f-3695-4f05-856f-1c762bcf0992",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "En el algoritmo $A^*$ se usan heurísticas para: **(Seleccione una o más de una)**",
+      "explanation": "En $A^*$ la heurística se usa para **guiar la búsqueda** y se considera una **aplicación débil** de la información heurística.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "multichoice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Reducir el espacio de posibles soluciones."
+        },
+        {
+          "id": "opt2",
+          "text": "Guiar la búsqueda."
+        },
+        {
+          "id": "opt3",
+          "text": "Se emplea una aplicación débil de información heurística."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2",
+        "opt3"
+      ],
+      "contentHash": "sha256:3496462b80eab96dba264a92ea6c3a4f6a8624bd0947adadfdb4de7ad9ee4b9c",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
     },
     {
       "id": "c5b1e42c-6d41-4b64-9736-27afeeb68edf",
@@ -18357,6 +22298,46 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "cd88aa5e-2e6f-4894-bb8f-8e028b6aff5f",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLas HTN:",
+      "explanation": "Para construir el plan, HTN utiliza técnicas de planificación de orden parcial junto con la descomposición jerárquica para llegar al plan final.",
+      "difficulty": 2,
+      "tags": [
+        "orden-parcial",
+        "htn"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Emplean planificación de orden total."
+        },
+        {
+          "id": "b",
+          "text": "Planificación de orden parcial."
+        },
+        {
+          "id": "c",
+          "text": "No emplean planificación."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:69f1b8e7477bd88c56e51770285d3c37176ed76bc58811c4954e76ad011a4f87",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
+    },
+    {
       "id": "ce59d8d5-919e-40c1-9daa-44bea32382b6",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "5b7c1734-f5fa-45fd-8985-5f5bed417f36",
@@ -18517,6 +22498,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "d06c97b7-c187-49bd-930e-ae41c794286d",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cfd3b69-3e91-4485-a3b4-6731be7ca93c",
+      "type": "TEST",
+      "prompt": "En la reparación reactiva se deben:\n\nSeleccione una.",
+      "explanation": "En reparación reactiva se evitan técnicas clásicas por consumo de tiempo/memoria, priorizando eficiencia aunque se pierda optimalidad.",
+      "difficulty": 2,
+      "tags": [
+        "reparacion-reactiva",
+        "eficiencia",
+        "optimalidad"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Usar técnicas de planificación clásica porque son más eficientes y encuentran el plan óptimo."
+        },
+        {
+          "id": "b",
+          "text": "Usar técnicas que mantengan la optimalidad del plan solución."
+        },
+        {
+          "id": "c",
+          "text": "Usar técnicas más eficientes, aunque se sacrifique la optimalidad del plan solución."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:2586357c2d2c64695b871e09b1a1799cc4bd142df959d37e0b91d0ed878b8750",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:28.222Z",
+      "updatedAt": "2026-02-22T17:17:28.222Z"
     },
     {
       "id": "d09af1b6-ecb5-48d7-ae4a-bd51f7480fe7",
@@ -18971,6 +22993,91 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "d3e9ac3c-97a7-4dd0-8073-08d1fe363d50",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: La arquitectura SOAR:",
+      "difficulty": 3,
+      "tags": [
+        "soar",
+        "arquitecturas",
+        "cognitivas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ejecuta continuamente intentando aplicar el operador actual y seleccionar el siguiente operador."
+        },
+        {
+          "id": "b",
+          "text": "Es una arquitectura reactiva."
+        },
+        {
+          "id": "c",
+          "text": "Emplea un sistema de creencias para representar sus intenciones."
+        },
+        {
+          "id": "d",
+          "text": "La B y C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:94055c0f7c3eae65ccfd4a48ac0e19f06a2d36909c2c06c07f415b458ff11b14",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
+    },
+    {
+      "id": "d450dfb8-1103-4ef4-b662-1d72ec960f70",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "a201f234-28ed-4d81-b20d-5a3e7edd54d9",
+      "type": "TEST",
+      "prompt": "**Seleccione una.**\n\nLa ventaja principal de la planificación para múltiples agentes es:",
+      "explanation": "En la planificación para múltiples agentes se usa un agente de planificación centralizado y su ventaja es que puede emplear cualquier planificador del estado del arte.",
+      "difficulty": 2,
+      "tags": [
+        "planificacion",
+        "multiagente",
+        "ptma"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ofrece restricciones de orden parcial entre dos acciones."
+        },
+        {
+          "id": "b",
+          "text": "Puede utilizar cualquier planificador del estado del arte."
+        },
+        {
+          "id": "c",
+          "text": "Ofrece un efecto entre tres o más acciones conjuntas."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:f96cc252aaccca0100b049ed9d3bfaf2e16bbca19aa01c1132463574eff42a54",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:57.406Z",
+      "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
       "id": "d4d3a2aa-08eb-49a0-a27a-b3bfd47038d5",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
@@ -19099,6 +23206,43 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "d614d119-81b0-43bb-aa66-8a6aa080e009",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLa siguiente tabla de verdad es una tautología:\n\n$$\n\\begin{array}{c|c|c|c}\np & q & (p \\land q) & (p \\land q)\\Rightarrow p\\\\\\hline\nV & V & V & V\\\\\nV & F & F & V\\\\\nF & V & F & V\\\\\nF & F & F & V\n\\end{array}\n$$",
+      "explanation": "La columna final es siempre $V$, por tanto la fórmula es verdadera para cualquier asignación de $p$ y $q$ (tautología).",
+      "difficulty": 2,
+      "tags": [
+        "tabla-de-verdad",
+        "tautologia",
+        "implicacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Verdadero."
+        },
+        {
+          "id": "b",
+          "text": "Falso."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:9c9a2b6db6db1ccf8f3f5cf2d02b2e1ff0f3c7f9a7e5c9b0b84a0a2f5dc2e4a9",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "d6177d71-42a2-4f41-9c94-7f1cbc42159d",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "067cd1e1-d35d-47ca-9713-f712013ed237",
@@ -19141,6 +23285,90 @@
       },
       "createdAt": "2026-02-21T22:34:51.487Z",
       "updatedAt": "2026-02-21T22:34:51.487Z"
+    },
+    {
+      "id": "d6638626-47d6-4c9d-ba6b-66ef8c9bb9c5",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "¿Qué es una búsqueda offline?\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Aquella que se realiza antes de empezar a ejecutar cualquier acción sobre el entorno del agente."
+        },
+        {
+          "id": "opt2",
+          "text": "La que se hace sin conexión a Internet."
+        },
+        {
+          "id": "opt3",
+          "text": "En la que solo existen dos acciones en cada estado."
+        },
+        {
+          "id": "opt4",
+          "text": "Todas son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt1"
+      ],
+      "contentHash": "sha256:402746e1f49efa22cfec11426750994567ead34391ed4cd9557d2da5f69fa8be",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
+      "id": "d6eb2356-249a-48d0-8a81-003711be06a0",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "ea2d7b80-984e-436b-9e35-30cb471cb134",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nDado un dominio de HTN:",
+      "explanation": "Con distintas descomposiciones y tareas disponibles, el planificador puede construir diferentes planes solución según el contexto/estado y la elección de tareas durante la descomposición.",
+      "difficulty": 2,
+      "tags": [
+        "htn",
+        "planes",
+        "dominio"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo existe un plan que es solución al problema."
+        },
+        {
+          "id": "b",
+          "text": "Nunca produce el mismo resultado para una misma búsqueda."
+        },
+        {
+          "id": "c",
+          "text": "Puede crear varios planes que sean solución al problema y dependerá de las propiedades de cada instante el que se creen unos u otros."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:3ede40d88156a7db9df1066bc0ca59320f334e82de9911fa08ee81da2f8fb7fa",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:52.706Z",
+      "updatedAt": "2026-02-22T17:16:52.706Z"
     },
     {
       "id": "d7fc61d9-d7eb-4f5c-87e1-8b39a59c0ff5",
@@ -19360,6 +23588,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "da01a401-b50f-489b-9383-ee88871b241b",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "4a9f0b02-502c-4539-bb8d-223423ff0149",
+      "type": "TEST",
+      "prompt": "Los tipos de problemas multiagente contemplan:\n\n**Seleccione una**",
+      "difficulty": 2,
+      "tags": [
+        "tema-6",
+        "multiagente",
+        "tipos-de-problemas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "optA",
+          "text": "Escenarios parcialmente cooperativos y escenarios con metas opuestas."
+        },
+        {
+          "id": "optB",
+          "text": "Escenarios con metas compartidas y escenarios con metas opuestas."
+        },
+        {
+          "id": "optC",
+          "text": "Escenarios con metas compartidas, escenarios parcialmente cooperativos y escenarios con metas opuestas."
+        }
+      ],
+      "correctOptionIds": [
+        "optC"
+      ],
+      "contentHash": "sha256:02a5c2aa6e6f338a3a6fe0d27d2c8e14b4f14a070d4b0a9b6bd9c1d8d26a0d86",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:30.273Z",
+      "updatedAt": "2026-02-22T17:16:30.273Z"
     },
     {
       "id": "da9a35fe-57fb-4f03-b910-ed48408cf033",
@@ -19587,6 +23855,47 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "dd1e963d-ffbb-4651-b5ac-85df545c66e2",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nLa lógica difusa permite:",
+      "explanation": "La lógica difusa se usa para modelar conceptos imprecisos (vaguedad) y manejar grados, lo que se asocia también a tratar incertidumbre en sistemas basados en reglas.",
+      "difficulty": 1,
+      "tags": [
+        "logica-difusa",
+        "vaguedad",
+        "incertidumbre"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Representar matemáticamente la vaguedad."
+        },
+        {
+          "id": "b",
+          "text": "Representar matemáticamente la incertidumbre."
+        },
+        {
+          "id": "c",
+          "text": "Ambas respuestas son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:9b1b17bf0e2c7d0b18b927d8f7fd7cb90a55a6e83cfcdcc9a4122ff2a0c0c98b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
+    },
+    {
       "id": "dd28cd7b-99c7-41d2-9297-467d3abab274",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
@@ -19767,6 +24076,49 @@
       "updatedAt": "2026-02-22T02:25:56.435Z"
     },
     {
+      "id": "de3efe63-7e39-4cb2-84cf-274b1c0ffea5",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: ¿Qué arquitecturas se basan en modelos de la mente humana?",
+      "difficulty": 2,
+      "tags": [
+        "arquitecturas",
+        "cognitivas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Arquitecturas reactivas."
+        },
+        {
+          "id": "b",
+          "text": "Arquitecturas cognitivas."
+        },
+        {
+          "id": "c",
+          "text": "Arquitecturas deliberativas."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:a4b4e7e55beed9cf722431a839a154c34a4d1d54dc5133ea2c300399048b15b6",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
+    },
+    {
       "id": "deef259d-6e2c-4503-817e-06edc9420b30",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -19917,6 +24269,49 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "e0eb9d9d-ab27-4cba-b4b8-d735a97fb514",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: Los algoritmos de búsqueda...",
+      "difficulty": 2,
+      "tags": [
+        "busqueda",
+        "espacio-de-estados"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Emplean la descripción del estado como punto de partida para toda exploración."
+        },
+        {
+          "id": "b",
+          "text": "Crean sistemas de restricciones."
+        },
+        {
+          "id": "c",
+          "text": "Son reactivos."
+        },
+        {
+          "id": "d",
+          "text": "La B y C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:93388a4105991908ed3eeac446d9dff4f9d443164edcf0af7fc317327ddff634",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
     },
     {
       "id": "e1d569f2-4f60-4e68-b1d8-0da62bbb378a",
@@ -20124,6 +24519,45 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "e3bfd758-4bd1-4066-8602-6f6260578ecc",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Un sistema distribuido de planificación:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pma",
+        "sistema-distribuido"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Debe ser capaz de distribuir la información entre varios agentes por medio de un sistema multiagente."
+        },
+        {
+          "id": "b",
+          "text": "Tiene que ejecutar todas las tareas en un único agente en un orden determinado."
+        },
+        {
+          "id": "c",
+          "text": "Debe usar un planificador de tipo STRIPS en cada agente."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:11223344556677889900aabbccddeeff00112233445566778899aabbccddeeff",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
+    },
+    {
       "id": "e400140f-768a-4261-8a0b-edfb8d7106c2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -20161,6 +24595,47 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "e4962380-6386-46a0-b6a0-5f817a0d96ea",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "En PDDL los estados se definen como:\n\n**Seleccione una.**",
+      "explanation": "En PDDL, un estado se describe mediante los *fluents* (hechos/proposiciones) que son verdaderos.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "pddl",
+        "fluents"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un conjunto de acciones."
+        },
+        {
+          "id": "b",
+          "text": "Un conjunto de fluents."
+        },
+        {
+          "id": "c",
+          "text": "Un conjunto de variables."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:4adbce04f2beb9c87cdf56477e39b107adcc8c4124ce4ac2866e4db903a7d035",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
     },
     {
       "id": "e6a30651-7704-4f57-a27f-46086b3bb72b",
@@ -20427,6 +24902,47 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "ea59aed8-5c79-459c-b505-e18aede09df5",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "Una planificación hacia delante:\n\n**Seleccione una.**",
+      "explanation": "La planificación hacia delante parte del estado inicial y aplica acciones posibles, lo que suele implicar mucha ramificación.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "planificacion",
+        "hacia-delante"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tiene un factor de ramificación potencialmente muy alto."
+        },
+        {
+          "id": "b",
+          "text": "Empieza en las metas a conseguir y explora las acciones hasta el estado inicial."
+        },
+        {
+          "id": "c",
+          "text": "Se descompone en tareas."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:eaa9eec1282240e77753fe697d9337d712abda51331a8093bddcaa9b9cd1eeee",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
+    },
+    {
       "id": "eafacbcc-c5b1-449b-8345-b3d21f3afc8e",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "9d6276cf-e9aa-48ad-a074-fe7ce913673d",
@@ -20678,6 +25194,87 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "ef5cc072-7e2f-47f1-8c62-2aeb24f0cbfa",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "2968cd5d-b397-4859-923c-6dcfecc3f71d",
+      "type": "TEST",
+      "prompt": "Una precondición abierta:\n\nSeleccione una.",
+      "difficulty": 3,
+      "tags": [
+        "pop",
+        "precondiciones-abiertas"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Representa aquellas propiedades que son precondición de alguna acción presente en el plan y que todavía no se han enlazado por medio de ningún arco causal."
+        },
+        {
+          "id": "b",
+          "text": "Representa aquellas acciones que son precondición de alguna acción presente en el plan y que todavía no se han enlazado por medio de ningún arco causal."
+        },
+        {
+          "id": "c",
+          "text": "Las acciones abiertas en el problema."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:9a9df2a0e7f2c4fdb3b5dca52b7b0a4bafaf8d1f7f4e2c9b2d2a6d9df0c7a0f1",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:17:04.589Z",
+      "updatedAt": "2026-02-22T17:17:04.589Z"
+    },
+    {
+      "id": "efab0367-7b01-4b0c-86a2-824aa16fd88b",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "El objetivo de la búsqueda por subobjetivos es: **(Seleccione una o más de una)**",
+      "explanation": "La búsqueda por subobjetivos busca **reducir la complejidad** subdividiendo el problema en subproblemas.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "multichoice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Ampliar la complejidad de un problema de búsqueda."
+        },
+        {
+          "id": "opt2",
+          "text": "Reducir la complejidad de un problema de búsqueda."
+        },
+        {
+          "id": "opt3",
+          "text": "Subdividir el problema en varios problemas pequeños mediante la aplicación de una heurística fuerte."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2",
+        "opt3"
+      ],
+      "contentHash": "sha256:85e6a4308865d86e4b91afef77e78241fca4f10c4763f57e4f6dcda3efc63419",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
+    },
+    {
       "id": "efe7d711-62d5-443c-905a-0dddeaf9bff2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f59e591e-9b7d-47ab-942c-d343fbf9517d",
@@ -20799,6 +25396,46 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "f13595e0-4563-4418-9ba4-ae9b0495f11c",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0cad12a0-9e92-4602-af26-8b0138f36c88",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nCuál de los siguientes tipos de lógica permite valores intermedios como templado, cerca...",
+      "explanation": "Las lógicas multievaluadas (incluida la difusa) permiten más de dos valores de verdad o grados de verdad.",
+      "difficulty": 1,
+      "tags": [
+        "logica-multievaluada",
+        "valores-intermedios"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lógica multievaluada."
+        },
+        {
+          "id": "b",
+          "text": "Lógica de segundo orden."
+        },
+        {
+          "id": "c",
+          "text": "Lógica de primer orden."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:3c2b1a0f9e8d7c6b5a493827161514131211100f0e0d0c0b0a09080706050403",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:36.507Z",
+      "updatedAt": "2026-02-22T17:15:36.507Z"
     },
     {
       "id": "f14100fd-1586-4219-80f7-05a162f9e286",
@@ -21002,6 +25639,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "f37593a7-5daa-4258-bef2-ce9761e25182",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "46279c70-c904-41a7-a27a-afa6fd2ed026",
+      "type": "TEST",
+      "prompt": "Un estado para este tipo de problemas es:\n\n**Seleccione una.**",
+      "difficulty": 3,
+      "tags": [
+        "tema-4",
+        "busqueda-no-informada"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Una colección de variables que presentan estructura."
+        },
+        {
+          "id": "opt2",
+          "text": "Un «identificador» sin estructura, pero diferenciable entre sí."
+        },
+        {
+          "id": "opt3",
+          "text": "Un objetivo que no se puede alcanzar."
+        },
+        {
+          "id": "opt4",
+          "text": "Todas son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:4fe4e35bc452e8ece1b1f8a9e6b9f40f54199f686ac6c9b57723ac2f30003869",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:16.757Z",
+      "updatedAt": "2026-02-22T17:16:16.757Z"
+    },
+    {
       "id": "f3eb1027-54f9-42f3-a31b-3401c746112e",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "5b7c1734-f5fa-45fd-8985-5f5bed417f36",
@@ -21044,6 +25724,50 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "f40b98b1-35f8-4992-bb74-1f91cb820ff2",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "48e54f53-3eba-4c56-afe1-7268edc0a96b",
+      "type": "TEST",
+      "prompt": "Seleccione una: Las arquitecturas multicapa:",
+      "difficulty": 2,
+      "tags": [
+        "arquitecturas",
+        "agentes",
+        "multicapa"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tienen dos capas."
+        },
+        {
+          "id": "b",
+          "text": "Tienen un sistema de percepción reactivo que toma los componentes de actuación."
+        },
+        {
+          "id": "c",
+          "text": "Suele tener una capa reactiva para gestionar los eventos de corto plazo."
+        },
+        {
+          "id": "d",
+          "text": "Son cognitivas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:99970fa311844abf09f4ca9ec4d95f5c640d82f61e22f6ca09587c7d6ec4c5b7",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:18.923Z",
+      "updatedAt": "2026-02-22T17:15:18.923Z"
     },
     {
       "id": "f4311e46-4140-4d8f-aa6f-188fe6bffc52",
@@ -21178,6 +25902,49 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "f5d49dab-abc4-4f97-bc18-44fcf8433c8b",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "bea29b4a-68af-4309-8fa3-8b66b17a9aad",
+      "type": "TEST",
+      "prompt": "Seleccione una.\n\nEl conocimiento del dominio:",
+      "difficulty": 2,
+      "tags": [
+        "conocimiento-del-dominio",
+        "inferencia"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Normalmente se expresa de modo declarativo."
+        },
+        {
+          "id": "opt2",
+          "text": "Es un conjunto general de criterios aplicable a varios problemas."
+        },
+        {
+          "id": "opt3",
+          "text": "Se separa del conocimiento de inferencia."
+        },
+        {
+          "id": "opt4",
+          "text": "La A y la C son correctas."
+        }
+      ],
+      "correctOptionIds": [
+        "opt4"
+      ],
+      "contentHash": "sha256:4bf1e446893470813d4b9b9d0c25f92e79fac32b4b1a705774a7dc8defb8f808",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:15:25.606Z",
+      "updatedAt": "2026-02-22T17:15:25.606Z"
     },
     {
       "id": "f60fd50e-e5ad-417b-a81d-7c22e80836cc",
@@ -21670,6 +26437,47 @@
       "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
+      "id": "fb9efc04-ad88-4fe2-aba1-b8f5127c2781",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "PDDL es:\n\n**Seleccione una.**",
+      "explanation": "PDDL (Planning Domain Definition Language) es un lenguaje para describir dominios y problemas de planificación.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "pddl",
+        "planificacion"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un lenguaje estándar para la definición de problemas de planificación."
+        },
+        {
+          "id": "b",
+          "text": "Un algoritmo de tareas jerárquicas."
+        },
+        {
+          "id": "c",
+          "text": "Un estándar con una especificación única, la 17."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:66e43df284e7604b1f18a06d7830406abc8015b3f1e5ae5b204820308d2f581e",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
+    },
+    {
       "id": "fbd87a13-7fe3-48b1-8f64-5efa33f996fd",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -21711,6 +26519,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "fc3f31a5-c2d0-409f-a04d-fc401e3d7b3a",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "0dff3eb5-8e3d-43d5-84fc-30170a036ba6",
+      "type": "TEST",
+      "prompt": "En la búsqueda por ascenso de colinas, se puede conseguir completitud si: **(Seleccione una)**",
+      "explanation": "Se puede conseguir completitud si el conjunto de estados posibles es **finito**.",
+      "difficulty": 3,
+      "tags": [
+        "tema-5",
+        "busqueda-informada",
+        "single-choice"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "opt1",
+          "text": "El conjunto de posibles estados es infinito."
+        },
+        {
+          "id": "opt2",
+          "text": "El conjunto de posibles estados es finito."
+        },
+        {
+          "id": "opt3",
+          "text": "Se eliminan todos los estados por los que se ha ido pasando."
+        }
+      ],
+      "correctOptionIds": [
+        "opt2"
+      ],
+      "contentHash": "sha256:12dd91573a8bfac7ac6b4d4a6bc05d5fd54f66db8d14f1c1cdb2c6ee1d6a9a33",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:22.323Z",
+      "updatedAt": "2026-02-22T17:16:22.323Z"
     },
     {
       "id": "fc4ec18c-088a-4722-ac9f-c16da139d8f3",
@@ -21811,6 +26660,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "fd5cdd67-4848-41fa-a837-7f6fd6486fb4",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "Una propiedad definida para STRIPS es:\n\n**Seleccione una.**",
+      "explanation": "En STRIPS clásico, el estado se representa como un conjunto de proposiciones (verdadero/falso), es decir, propiedades booleanas.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "strips",
+        "estado"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "De tipo entero."
+        },
+        {
+          "id": "b",
+          "text": "De tipo booleano."
+        },
+        {
+          "id": "c",
+          "text": "De cualquier tipo."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:1540e8d74799b4ef9304334ce25e5a8d0f5306f00da9c3a8a25ccc45168a57aa",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
     },
     {
       "id": "fd73e00e-bb63-4acb-9b54-70c9e19daf33",
@@ -21930,6 +26820,47 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "fee92ebd-a54a-48ce-8cf7-0827efa53542",
+      "subjectId": "8bfe1052-58e7-4f44-b5d2-483911af507d",
+      "topicId": "8ef77057-143b-459b-8800-ab011ccd5b94",
+      "type": "TEST",
+      "prompt": "La heurística de STRIPS:\n\n**Seleccione una.**",
+      "explanation": "La heurística asociada a STRIPS puede estimar el coste resolviendo subobjetivos (propiedades abiertas) y concatenando subplanes.",
+      "difficulty": 2,
+      "tags": [
+        "tema-8",
+        "strips",
+        "heuristica"
+      ],
+      "origin": "test",
+      "options": [
+        {
+          "id": "a",
+          "text": "Descompone el problema en subplanes que concatena para resolver cada una de las propiedades abiertas en el estado meta."
+        },
+        {
+          "id": "b",
+          "text": "No usa operadores."
+        },
+        {
+          "id": "c",
+          "text": "Emplea planificación hacia delante."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:be91145130a3faa269b885b54e7e0b2574e84c77b84d8a1fd5f9e9760c96e2f7",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T17:16:40.523Z",
+      "updatedAt": "2026-02-22T17:16:40.523Z"
     },
     {
       "id": "fff6f364-8ccd-47dc-b32c-6fdfd7de2d2f",
