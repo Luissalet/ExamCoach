@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db, getSettings } from '@/data/db';
-import { Button, Input, Card, Select, Modal } from '@/ui/components';
+import { Button, Input, Card, Select, Modal, TypeBadge } from '@/ui/components';
 import { exportContributionPack, importContributionPack, undoContributionImport, previewContributionPack, type ContributionPackPreview } from '@/data/contributionImport';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
 import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
-import type { ImportHistoryEntry } from '@/domain/models';
+import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
+import type { ImportHistoryEntry, Question } from '@/domain/models';
 
 
 export function SettingsPage() {
@@ -24,6 +25,7 @@ export function SettingsPage() {
   const [undoMsg, setUndoMsg] = useState('');
   const [undoingPackId, setUndoingPackId] = useState<string | null>(null);
   const [packPreview, setPackPreview] = useState<ContributionPackPreview | null>(null);
+  const [previewSampleQuestion, setPreviewSampleQuestion] = useState<Question | null>(null);
 
   useEffect(() => {
     loadSettings();
@@ -413,6 +415,31 @@ export function SettingsPage() {
         </div>
       </main>
 
+      {/* Modal preview pregunta individual (desde contribution pack) */}
+      {previewSampleQuestion && (
+        <Modal
+          open={!!previewSampleQuestion}
+          onClose={() => setPreviewSampleQuestion(null)}
+          title={previewSampleQuestion.prompt.replace(/[#*`]/g, '').trim().slice(0, 60) + (previewSampleQuestion.prompt.length > 60 ? '…' : '')}
+          size="lg"
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              <TypeBadge type={previewSampleQuestion.type} />
+              {previewSampleQuestion.difficulty && (
+                <span className="text-xs text-ink-500">{'★'.repeat(previewSampleQuestion.difficulty)}</span>
+              )}
+            </div>
+            <QuestionPreviewContent question={previewSampleQuestion} />
+            <div className="flex justify-end pt-2 border-t border-ink-800">
+              <Button size="sm" variant="ghost" onClick={() => setPreviewSampleQuestion(null)}>
+                Cerrar
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {/* Modal preview contribution pack */}
       <Modal
         open={!!packPreview}
@@ -488,14 +515,24 @@ export function SettingsPage() {
                 </div>
               )}
 
-              {packPreview.questionsSample.length > 0 && (
+              {packPreview.questionsSampleFull.length > 0 && (
                 <div>
-                  <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">Muestra de preguntas nuevas</p>
-                  <div className="flex flex-col gap-2 max-h-32 overflow-y-auto">
-                    {packPreview.questionsSample.map((q, i) => (
-                      <p key={i} className="text-xs text-ink-400 p-2 bg-ink-800 rounded border border-ink-700">
-                        {q}
-                      </p>
+                  <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">
+                    Preguntas nuevas ({packPreview.questionsSampleFull.length})
+                  </p>
+                  <div className="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
+                    {packPreview.questionsSampleFull.map((q, i) => (
+                      <button
+                        key={q.id ?? i}
+                        onClick={() => setPreviewSampleQuestion(q)}
+                        className="w-full text-left group flex items-start gap-3 p-3 bg-ink-800 rounded-lg border border-ink-700 hover:border-ink-500 hover:bg-ink-750 transition-all duration-150 cursor-pointer"
+                      >
+                        <TypeBadge type={q.type} />
+                        <span className="text-xs text-ink-300 group-hover:text-ink-100 transition-colors line-clamp-2 flex-1">
+                          {q.prompt.replace(/[#*`]/g, '').trim()}
+                        </span>
+                        <span className="text-ink-600 group-hover:text-ink-400 text-xs flex-shrink-0 mt-0.5">›</span>
+                      </button>
                     ))}
                   </div>
                 </div>

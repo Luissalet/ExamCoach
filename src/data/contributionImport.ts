@@ -489,6 +489,8 @@ export interface ContributionPackPreview {
   /** C1: Per-subject/topic breakdown */
   rows: ContributionPackPreviewRow[];
   questionsSample: string[];
+  /** Full Question-shaped objects for all new questions (for interactive preview) */
+  questionsSampleFull: Question[];
   alreadyImported: boolean;
   rawPack: unknown;
 }
@@ -526,6 +528,35 @@ export async function previewContributionPack(raw: unknown): Promise<Contributio
     }
   }
 
+  const newQuestions = pack.questions.filter((q) => !q.contentHash || !existingHashes.has(q.contentHash));
+
+  // Map contribution questions to Question-shaped objects for interactive preview
+  const now = new Date().toISOString();
+  const questionsSampleFull: Question[] = newQuestions.map((cq) => ({
+    id: cq.id,
+    subjectId: '',
+    topicId: '',
+    type: cq.type,
+    prompt: cq.prompt,
+    explanation: cq.explanation,
+    difficulty: cq.difficulty as Question['difficulty'],
+    tags: cq.tags,
+    origin: cq.origin,
+    options: cq.options,
+    correctOptionIds: cq.correctOptionIds,
+    modelAnswer: cq.modelAnswer,
+    keywords: cq.keywords,
+    numericAnswer: cq.numericAnswer,
+    clozeText: cq.clozeText,
+    blanks: cq.blanks,
+    createdBy: cq.createdBy,
+    contentHash: cq.contentHash,
+    imageDataUrls: cq.imageDataUrls,
+    stats: { seen: 0, correct: 0, wrong: 0 },
+    createdAt: now,
+    updatedAt: now,
+  }));
+
   return {
     packId: pack.packId,
     createdBy: pack.createdBy,
@@ -535,10 +566,10 @@ export async function previewContributionPack(raw: unknown): Promise<Contributio
     questionsCount: pack.questions.length,
     newQuestionsCount: totalNew,
     rows,
-    questionsSample: pack.questions
-      .filter((q) => !q.contentHash || !existingHashes.has(q.contentHash))
+    questionsSample: newQuestions
       .slice(0, 5)
       .map((q) => q.prompt.replace(/[#*`\n]/g, ' ').trim().slice(0, 80)),
+    questionsSampleFull,
     alreadyImported,
     rawPack: raw,
   };
