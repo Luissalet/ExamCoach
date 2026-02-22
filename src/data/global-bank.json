@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-22T02:26:38.443Z",
+  "exportedAt": "2026-02-22T02:52:33.317Z",
   "subjects": [
     {
       "id": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
@@ -842,6 +842,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "02d67d0d-08e0-4b9b-b31a-eec8adeea974",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "El análisis de sentimientos:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Obtiene de manera automática el sentimiento asociado a un texto aplicando diferentes algoritmos"
+        },
+        {
+          "id": "b",
+          "text": "Analiza el sentido de las palabras y así compone el sentido global de una oración mediante el principio de composicionalidad"
+        },
+        {
+          "id": "c",
+          "text": "No se puede obtener el sentimiento expresado por el emisor del mensaje mediante el análisis del texto"
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:2ca28a36a4704c1ce8c0238b0f1f85c527a471ca0602b714617b29325d5f101a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "03d51da8-b4ea-4bfc-86b0-405eb0ab64f5",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
@@ -1079,6 +1122,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "0739abbf-1269-448c-809f-66c4989e8318",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
+      "type": "TEST",
+      "prompt": "En el análisis semántico dirigido por la sintaxis,\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-5-analisis-semantico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "El analizador semántico precisa tanto del conocimiento sobre el árbol sintáctico como de conocimiento sobre el ejemplo o dominio concretos de la frase"
+        },
+        {
+          "id": "b",
+          "text": "En el análisis sintáctico guiado por la sintaxis, la composición del significado de la oración se hace a partir de la estructura sintáctica de la frase."
+        },
+        {
+          "id": "c",
+          "text": "Las anotaciones semánticas son instrucciones que especifican cómo generar la representación del significado a partir de sus constituyentes"
+        },
+        {
+          "id": "d",
+          "text": "Todas son correctas"
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:d127ffb724811bdedb204587b578aafae9e62c1faf0be232b712001dde6b86ed",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "07aebc00-4fe7-4479-93ea-bb7cc8b3fb91",
@@ -1388,6 +1474,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "0c1839c2-bd2a-4a5c-a898-b3f1387b7515",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bd41142a-dbac-4d3d-a749-f1b9ca6338c4",
+      "type": "TEST",
+      "prompt": "Un chatbot basado en reglas...\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-10-agentes-conversacionales"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Es un modelo teórico que se trató de utilizar en los años 60, pero no tiene utilidad práctica a día de hoy."
+        },
+        {
+          "id": "b",
+          "text": "Es la única forma de generar un chatbot."
+        },
+        {
+          "id": "c",
+          "text": "Aplica técnicas de minería de datos a grandes conjuntos de conversaciones para extraer posibles respuestas del chatbot al usuario."
+        },
+        {
+          "id": "d",
+          "text": "Suele generar la respuesta basándose en el turno de palabra inmediatamente anterior."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:0a658bb5c17a736c3a3ecdbc827cab0cf6f7f0e111279b2ce96f4aac50291ad5",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "0c1fd0fe-53cc-444f-a696-7115e9222de5",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a0ee552f-68ca-4b05-bf4f-9e4f2edc904c",
@@ -1473,6 +1602,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "0e3a6dc7-fc67-47ea-b324-0d00bd9d109c",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "Indica la afirmación verdadera en el contexto de las tareas de Traducción Automática:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un buen sistema de Traducción Automática puede centrarse sólo en la traducción individual de las palabras, sin considerar el contexto general de la frase."
+        },
+        {
+          "id": "b",
+          "text": "Las traducciones entre dos lenguas son directas ya que las diferencias que pueda haber entre ellas no son relevantes para hacer una traducción"
+        },
+        {
+          "id": "c",
+          "text": "Los aspectos de divergencia léxica no son relevantes en el ámbito de la Traducción Automática."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:1cc254fdf55c26b329e814fbf0cbb52189e78f196aa11477bd53598fb1687353",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "0e920e99-44c6-42c6-8847-619a6520a125",
@@ -1681,6 +1853,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "10521aa4-c0d4-4d20-989c-f9250a420e9c",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "Indica cuál de las siguientes definiciones de Procesamiento de Lenguaje Natural es incorrecta:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "El procesamiento del lenguaje natural es un campo que tiene como objetivo que las máquinas sean capaces de realizar tareas que involucren el lenguaje humano."
+        },
+        {
+          "id": "b",
+          "text": "El Procesamiento del Lenguaje Natural es un campo que estudia las interacciones entre las computadoras y el lenguaje humano."
+        },
+        {
+          "id": "c",
+          "text": "El Procesamiento del Lenguaje Natural es un campo de conocimiento interdisciplinario que busca la creación de una inteligencia artificial general a través del análisis de textos escritos."
+        },
+        {
+          "id": "d",
+          "text": "El Procesamiento del Lenguaje Natural es un campo de conocimiento interdisciplinario que une a ingenieros informáticos y lingüistas para la automatización de tareas que involucran al lenguaje humano escrito."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:03a0030202e030ef27eb78e8f8af4cd98f3b5c5ea0e9484eb0ac2b5d88d869f1",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "114b7c1d-647c-4442-89a4-faa7716e45f3",
@@ -1908,6 +2123,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "13dc5e40-87a0-4d94-a466-8d21753deb1a",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "241e24a8-9e71-4933-8c51-1fb4812b3606",
+      "type": "TEST",
+      "prompt": "¿Cuál es una de las principales desventajas de los modelos basados en RNN para el procesamiento de secuencias de texto?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-8-modelado-neuronal-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "No tiene memoria a corto plazo"
+        },
+        {
+          "id": "b",
+          "text": "Dificultad para el procesamiento en paralelo de la información"
+        },
+        {
+          "id": "c",
+          "text": "Incapacidad para modelar secuencias"
+        },
+        {
+          "id": "d",
+          "text": "Todas son falsas"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:f01817ebc9b8ea404573dd19b8cff4d23f10c4231a7fb7d564aa147ee65bb6f8",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "1446abb6-45a2-45ae-b4ed-a8b55d9882ca",
@@ -2344,6 +2602,49 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "17e96f28-ca74-45de-9e6e-d8a125a1f7ca",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "3e455905-4b03-4822-be94-a82ef4467f8c",
+      "type": "TEST",
+      "prompt": "¿Cuál es el resultado de hacer stemming en la palabra “estudiando”?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-2-el-texto-como-dato"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "estudiar"
+        },
+        {
+          "id": "b",
+          "text": "estudi"
+        },
+        {
+          "id": "c",
+          "text": "estudiando"
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:50e1dcd10798337e6f26f318a9133fe68145434d91819d4bfebc00873b1eafe3",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "18490388-2d66-479d-bf50-1587756f5027",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "241e24a8-9e71-4933-8c51-1fb4812b3606",
@@ -2612,6 +2913,49 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "1b25ffab-59cb-4084-a975-4e1f62735e3f",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
+      "type": "TEST",
+      "prompt": "En un corpus de 6000 documentos, la palabra \"prueba\" aparece en 100 documentos. Si en un documento específico, la palabra \"prueba\" aparece 50 veces, ¿cuál es el valor del TF-IDF para \"prueba\" en ese documento? (nota: usa el logaritmo en base 10)\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-7-modelado-estadistico-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "121.10"
+        },
+        {
+          "id": "b",
+          "text": "10.44"
+        },
+        {
+          "id": "c",
+          "text": "88.91"
+        },
+        {
+          "id": "d",
+          "text": "60.53"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:e4fda410d9bdb8ae018f0a927954edb6448863f5b8689945198f51cac01365e4",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "1bd6aa24-a4ae-47ba-842e-4fe1028b44e8",
@@ -3181,6 +3525,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "244a4b1b-6ffa-4f1d-8319-72e3c5031911",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "¿Qué paradigma surgió en la década de 1950 a partir del estudio de Alan Turing?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Paradigma simbólico"
+        },
+        {
+          "id": "b",
+          "text": "Autómatas"
+        },
+        {
+          "id": "c",
+          "text": "Teoría de la información"
+        },
+        {
+          "id": "d",
+          "text": "Teoría del lenguaje formal"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:a2438e80f53a48cf4dd2fe7902a6e087340fe9815604f7625f2f73998b760e20",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "245e0375-cf8b-4758-b8c5-838812dbb2d2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
@@ -3483,6 +3870,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "2908416b-8dba-4717-8b8c-475ef91ccc07",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "¿Cuál de estas reglas es una regla gramatical?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "NP -> Juan"
+        },
+        {
+          "id": "b",
+          "text": "V -> saltar"
+        },
+        {
+          "id": "c",
+          "text": "SN -> D N"
+        },
+        {
+          "id": "d",
+          "text": "N -> playa"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:08674a37a1ca604dce628967186b150825e62debbd4127308d952a67e16310ff",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "290fede9-51ed-41b0-b16e-4205208f7680",
@@ -4263,6 +4693,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "33ba5f81-8d76-4881-8178-da0b2f1fe5a8",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
+      "type": "TEST",
+      "prompt": "En un corpus de 12000 documentos, la palabra \"dragón\" aparece en 1000 documentos. Si en un documento específico, la palabra \"dragón\" aparece 200 veces, ¿cuál es el valor del TFIDF para \"prueba\" en ese documento? (nota: usa el logaritmo en base 10)\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-7-modelado-estadistico-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "50.10"
+        },
+        {
+          "id": "b",
+          "text": "88.21"
+        },
+        {
+          "id": "c",
+          "text": "121.43"
+        },
+        {
+          "id": "d",
+          "text": "215.84"
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:4183476fa24c21431a7df7d7758ed33e234d454696a7454c3378a1164c7a00da",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "3508e758-ace2-44a5-98fb-fffa43157892",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "f70bfda8-a13c-4b49-ac0b-c407bcf62f59",
@@ -4424,6 +4897,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "37264c84-8f02-40c7-b2b4-738a8bc3b828",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "TEST",
+      "prompt": "La similitud entre palabras basada en tesauros:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-6-semantica-lexica"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Requiere de un corpus de texto para valorar la relación estadística entre las palabras. Código de examen: 10208499"
+        },
+        {
+          "id": "b",
+          "text": "Requiere de un diccionario, para valorar la similitud entre las firmas de dichas palabras."
+        },
+        {
+          "id": "c",
+          "text": "Suele utilizar la jerarquía de hiperonimia/hiponimia para realizar el cálculo de similitud."
+        },
+        {
+          "id": "d",
+          "text": "Es un valor derivado del uso de embedings, y se calcula calculando la similitud del coseno entre los vectores que representan a las palabras."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:5a12a43122bc78172ae40ba2c71b1660e78bbd266525b8f8fbb35c0545d4fff7",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "3756dc11-eda7-41f7-88da-8cfd39700440",
@@ -5323,6 +5839,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "3efe54f0-c5d2-4fd9-9d54-82a287c86632",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "3e455905-4b03-4822-be94-a82ef4467f8c",
+      "type": "TEST",
+      "prompt": "¿Cuál es el resultado de hacer stemming en la palabra “corriendo”?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-2-el-texto-como-dato"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "correr"
+        },
+        {
+          "id": "b",
+          "text": "corr"
+        },
+        {
+          "id": "c",
+          "text": "corriendo"
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:ad5cef6b9cb5fe0f2c0077e3f2bbd801b9bade215840a6e138bb9a3c6c726e99",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "3f11ce2e-6f21-45a9-9560-ed31184ed19e",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
@@ -5623,6 +6182,49 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "441a38d4-8fd3-48e5-936b-046f3172d4f2",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un modelo de etiquetado POS, se observa que la etiqueta \"NN\" (sustantivo) aparece en el corpus 1400 veces y la etiqueta \"VB\" (verbo base) aparece 2000 veces. Si la palabra \"comer\" aparece etiquetada como \"NN\" 100 veces y como \"VB\" 500 veces, ¿cuál es la probabilidad de emisión de \"comer\" como \"VB\"?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.071"
+        },
+        {
+          "id": "b",
+          "text": "0.25"
+        },
+        {
+          "id": "c",
+          "text": "0.42"
+        },
+        {
+          "id": "d",
+          "text": "0.12"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:d825bd3a6e84439e2ab05948ef9dc1ed0dc76487404365a185c3e1c951b07018",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "445d1030-a39f-4562-9f9f-46b4a5c3486a",
@@ -6549,6 +7151,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "5117fd14-d248-44f2-a0d0-fa7ad21678aa",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bd41142a-dbac-4d3d-a749-f1b9ca6338c4",
+      "type": "TEST",
+      "prompt": "El subsistema de gestión del diálogo en agentes conversacionales.\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-10-agentes-conversacionales"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sólo se aplican a sistemas sencillos, en los que la tarea a realizar es siempre la misma."
+        },
+        {
+          "id": "b",
+          "text": "Los agentes conversacionales no tienen un módulo dedicado a la gestión del diálogo."
+        },
+        {
+          "id": "c",
+          "text": "Es el encargado de transformar el sonido a texto y viceversa."
+        },
+        {
+          "id": "d",
+          "text": "Se encarga de identificar la acción que debe realizar el agente conversacional en el siguiente turno de palabra y cómo se debe continuar la conversación."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:c36b2589eae088c14ad926fd22a1d6206ecbf9a338de30d80a1c0ac934f01c3d",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "517fd039-c7b0-4ee1-92bd-744c7b129794",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "119c1fc3-3c0a-40fb-89de-d8018d4cf018",
@@ -6722,6 +7367,136 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "539d06a8-a0bd-4d18-acd7-87d9963adcf0",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "Los modelos de traducción automática…\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Implementan decoders"
+        },
+        {
+          "id": "b",
+          "text": "Los más avanzados están basados en reglas"
+        },
+        {
+          "id": "c",
+          "text": "Implementan una estructura encoder-decoder basados en arquitecturas neuronales (RRNN, Transformers)"
+        },
+        {
+          "id": "d",
+          "text": "Utilizan diccionarios para generar las traducciones palabra a palabra"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:34fa969e0c1e20afb25591568cc196670bba268b9058ee421cd9f7b7a403d625",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "546f3866-5d7d-4643-ac27-995cccec7b9f",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "¿Qué tendencia marcó la última parte de la década de 1990 y se aceleró en el nuevo milenio?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Paradigma estocástico"
+        },
+        {
+          "id": "b",
+          "text": "Revivir del empirismo y los modelos de estados finitos"
+        },
+        {
+          "id": "c",
+          "text": "Auge del aprendizaje automático"
+        },
+        {
+          "id": "d",
+          "text": "Unión de las diferentes vertientes"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:04f03f91627418845d215a71c18f24eafea8c1ed842275afc52aa14e339668a5",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "54f259f2-fc06-4f32-ba55-8fca51c07968",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un modelo de etiquetado POS, se observa que la etiqueta \"NN\" (sustantivo) aparece en el corpus 5000 veces y la etiqueta \"VB\" (verbo base) aparece 21000 veces. Si la palabra \"dormir\" aparece etiquetada como \"NN\" 200 veces y como \"VB\" 350 veces, ¿cuál es la probabilidad de emisión de \"dormir\" como \"VB\"?\n\nSeleccione una:",
+      "explanation": "P(“dormir”|VB) = Frecuencia de “dormir” etiquetada como VB / Frecuencia total etiqueta VB = 350 / 21000 = 0.017",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.04"
+        },
+        {
+          "id": "b",
+          "text": "0.017"
+        },
+        {
+          "id": "c",
+          "text": "0.03"
+        },
+        {
+          "id": "d",
+          "text": "0.02"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:d5717f1e4d68eb660cb83382edc5cd02182cee884bb45c576fd6aad6a279fc27",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "551ba4c4-56ef-4ad5-bfec-864b44211120",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -6883,6 +7658,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "5776ca79-a036-49c6-8de8-ddb2e24e6cdc",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un modelo de etiquetado POS, se observa que la etiqueta \"NN\" (sustantivo) aparece en el corpus 5000 veces y la etiqueta \"VB\" (verbo base) aparece 21000 veces. Si la palabra \"dormir\" aparece etiquetada como \"NN\" 200 veces y como \"VB\" 350 veces ¿cuál es la probabilidad de emisión de \"dormir\" como \"NN\"?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.04"
+        },
+        {
+          "id": "b",
+          "text": "0.017"
+        },
+        {
+          "id": "c",
+          "text": "0.021"
+        },
+        {
+          "id": "d",
+          "text": "0.442"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:cc2a2cd701f3c0a53a7c45fcb8ea3cadb9140c58cdcfb379f876e47ccd05993b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "579a5d8f-bb34-4d24-bc22-ec105a260d72",
@@ -7177,6 +7995,49 @@
       "updatedAt": "2026-02-21T22:34:51.487Z"
     },
     {
+      "id": "5a6486ce-54bc-4bcf-8929-7c00e18b5f35",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "TEST",
+      "prompt": "Una de las técnicas habituales para desambiguación semántica es el algoritmo de Lesk. Este algoritmo utiliza como información de apoyo:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-6-semantica-lexica"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un corpus semático anotado."
+        },
+        {
+          "id": "b",
+          "text": "Un diccionario."
+        },
+        {
+          "id": "c",
+          "text": "El etiquetado POS de las palabras."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores es cierta."
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:7064b2d59ee04e6839f17180968b29c29fffc9c48ef720284feaf910b68acd0b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "5b615a6a-2cf6-42c7-82fb-e947076b54bb",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "5b7c1734-f5fa-45fd-8985-5f5bed417f36",
@@ -7263,6 +8124,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "5bc136ef-d589-44c5-9c1c-925b5d97dbb7",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
+      "type": "TEST",
+      "prompt": "Las palabras desconocidas para un modelo de lenguaje:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-7-modelado-estadistico-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "No son importantes, se ignoran y las estimaciones son correctas"
+        },
+        {
+          "id": "b",
+          "text": "Limitan el funcionamiento del modelo de lenguaje. Se modelan como un token (UNK) asignándoles un peso de probabilidad."
+        },
+        {
+          "id": "c",
+          "text": "Limitan el funcionamiento del modelo de lenguaje. No se pueden modelar y necesitan un rediseño del modelo"
+        },
+        {
+          "id": "d",
+          "text": "Los OOV se modelan a parte y se inyecta su distribución mediante mecanismos de fusión con el modelo de lenguaje principal"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:b1972bfaa3e22bf682f9619868e0b705d7e26b8a2f98fc4b7509bb8b9bbe4285",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "5bda8b11-67b5-49cb-a6a9-eaf114b3081f",
@@ -7648,6 +8552,92 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "6095dab0-44d4-48ea-9af7-df54cd4b0a3d",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
+      "type": "TEST",
+      "prompt": "¿Cuál de estas afirmaciones es verdadera sobre la implementación de la hipótesis rule-to-rule?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-5-analisis-semantico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Se parte de una gramática libre de contexto, donde se añaden expresiones del cálculo lambda únicamente a las reglas gramaticales, de cara a anotarlas semánticamente."
+        },
+        {
+          "id": "b",
+          "text": "En su tercer principio establece que para las reglas gramaticales de un único constituyente se deben copiar las anotaciones semánticas correspondientes de las reglas léxicas."
+        },
+        {
+          "id": "c",
+          "text": "Una regla gramatical del tipo M-> P Q se extendería con una anotación semántica como {P.sem(Q.sem)}."
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:6ca93c70ef2da41c48c8d45e170effb07e5a63e1c89308bd15a43522b6a528c5",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "60a6bcc4-bb22-429a-89a9-032cd6008b89",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "241e24a8-9e71-4933-8c51-1fb4812b3606",
+      "type": "TEST",
+      "prompt": "¿Qué función cumple la capa softmax en el cálculo de la salida de la capa de self-attention?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-8-modelado-neuronal-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Realiza un producto escalar entre los vectores q y k"
+        },
+        {
+          "id": "b",
+          "text": "Genera un vector de probabilidades para cada elemento de entrada"
+        },
+        {
+          "id": "c",
+          "text": "Hace un average pooling de los vectores de embeddings para generar un único vector"
+        },
+        {
+          "id": "d",
+          "text": "Genera un vector de embeddings posicionales para cada elemento de entrada"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:dcf49875e148f7373019b25b803e147be47117578d05a8c0a9ca9570d88ecb9d",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "626eb69a-7109-4882-868f-a43e4ad4cb6b",
@@ -8766,6 +9756,49 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "6cf3c02c-8de9-49e7-90fc-66da283c462c",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "Indica la afirmación falsa relativa a agentes conversacionales dedicados.\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Están configurados para mantener conversaciones cortas con la persona."
+        },
+        {
+          "id": "b",
+          "text": "Están orientados a la realización de una tarea concreta."
+        },
+        {
+          "id": "c",
+          "text": "Las interacciones son complejas, igual que en una conversación normal entre humanos."
+        },
+        {
+          "id": "d",
+          "text": "Alexa o Siri son ejemplos de este tipo de sistemas."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:ad74f1da14162d60c2997c53b69951fad5efcde0935ba2f3913538a3ae65edb8",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "6de2ccbd-fcc0-4e35-81e9-eba2270a9c89",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
@@ -8858,6 +9891,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "6e3eb927-24d3-4f80-a884-2f608274c974",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
+      "type": "TEST",
+      "prompt": "Indica cuál de las siguientes afirmaciones no es cierta:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-4-analisis-sintactico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "La ambigüedad estructural se debe a la existencia de múltiples reglas de una gramática que permiten encontrar varios análisis sintácticos para una oración."
+        },
+        {
+          "id": "b",
+          "text": "Las relaciones estructurales entre palabras pueden formularse mediante reglas"
+        },
+        {
+          "id": "c",
+          "text": "Las relaciones estructurales entre palabras no pueden formularse mediante reglas"
+        },
+        {
+          "id": "d",
+          "text": "Una gramática sintagmática permite definir la estructura formal del lenguaje"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:a654cb1fe24a37a03dd99942c2490462e63bdc90b1f18d28e77a75d8a5a0b216",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "6e99888b-58cc-41ae-b591-0b10314d5778",
@@ -9468,6 +10544,49 @@
       "updatedAt": "2026-02-22T02:25:56.435Z"
     },
     {
+      "id": "73c2cb1d-5565-4388-bcd4-055f50b86878",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "241e24a8-9e71-4933-8c51-1fb4812b3606",
+      "type": "TEST",
+      "prompt": "¿Cuál es una de las principales desventajas de los modelos basados en RNN para el procesamiento de secuencias de texto?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-8-modelado-neuronal-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "No tienen memoria a corto plazo"
+        },
+        {
+          "id": "b",
+          "text": "Dificultad para el procesamiento en paralelo de la información"
+        },
+        {
+          "id": "c",
+          "text": "Incapacidad para modelar secuencias"
+        },
+        {
+          "id": "d",
+          "text": "Todas son falsas"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:b30608112671b27fa1f8afb7fed10bf6f132c9c415f6508f4ee54f2e034735f0",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "749e315e-9f55-4fe5-af8c-135d5ecc347b",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "971fb6e6-0b0d-4637-8d69-7db209dd146e",
@@ -9495,6 +10614,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "74bf28a5-9739-44cc-802b-306cb78beb72",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "TEST",
+      "prompt": "La similitud entre palabras basada en tesauros:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-6-semantica-lexica"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Requiere de un corpus de texto para valorar la relación estadística entre las palabras."
+        },
+        {
+          "id": "b",
+          "text": "Requiere de un diccionario, para valorar la similitud entre las firmas de dichas palabras."
+        },
+        {
+          "id": "c",
+          "text": "Suele utilizar la jerarquía de hiperonimia/hiponimia para realizar el cálculo de similitud."
+        },
+        {
+          "id": "d",
+          "text": "Es un valor derivado del uso de embedings, y se calcula calculando la similitud del coseno entre los vectores que representan a las palabras."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:e77e6079302211a3e9fa3374ac56d86a2b8250b6e1d6416a8033004e328a01e6",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "74c1bb02-d025-4f59-9f36-067912c44c4e",
@@ -9667,6 +10829,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "77f4e2a8-8c2d-42f1-b910-b9d090ab3365",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un corpus donde aparecen los POS Tags ADJ y NOUN, donde ADJ aparece antes de NOUN 90 veces, ADJ aparece después de NOUN 45 veces, ADJ aparece 542 veces y NOUN aparece 350 veces, el cálculo de la probabilidad de transición para tener ADJ dado NOUN es\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.166"
+        },
+        {
+          "id": "b",
+          "text": "0.129"
+        },
+        {
+          "id": "c",
+          "text": "0.189"
+        },
+        {
+          "id": "d",
+          "text": "0.111"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:8000cccb28f1f292d788458c8ce2ec20bf1c79722ca9fdd58c081aeb7dd6870e",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "78a9eceb-c754-4efa-84e7-d8c1d64c5a90",
@@ -10374,6 +11579,92 @@
       },
       "createdAt": "2026-02-22T01:01:21.474Z",
       "updatedAt": "2026-02-22T01:01:21.474Z"
+    },
+    {
+      "id": "81ab56e2-c765-4f14-b7e0-2d3056e7682c",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un modelo de etiquetado POS, se observa que la etiqueta \"NN\" (sustantivo) aparece en el corpus 6000 veces y la etiqueta \"VB\" (verbo base) aparece 3000 veces. Si la palabra \"aprender\" aparece etiquetada como \"NN\" 200 veces y como \"VB\" 350 veces, ¿cuál es la probabilidad de emisión de \"aprender\" como \"VB\"?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.017"
+        },
+        {
+          "id": "b",
+          "text": "0.033"
+        },
+        {
+          "id": "c",
+          "text": "0.117"
+        },
+        {
+          "id": "d",
+          "text": "0.04"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:988abf2aae924b5a7c509c4fccf33649eb260a5a30dc40019105aa5902b84742",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "830134cf-ff07-4f92-873c-2c6d41040638",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un corpus donde aparecen los POS Tags ADJ y NOUN, donde ADJ aparece antes de NOUN 60 veces, ADJ aparece después de NOUN 70 veces, ADJ aparece 542 veces y NOUN aparece 350 veces, el cálculo de la probabilidad de transición para tener NOUN dado ADJ es\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.11"
+        },
+        {
+          "id": "b",
+          "text": "0.18"
+        },
+        {
+          "id": "c",
+          "text": "0.2"
+        },
+        {
+          "id": "d",
+          "text": "0.28"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4723d470b2cccf796ed11cfc73f5d630ced32d2bcd21c1324b4cfb639b1b597f",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "83f311b7-8a25-43dd-a5da-c1feb348f788",
@@ -11932,6 +13223,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "9608105c-2a91-4d48-9a1e-bccd4634f5df",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "TEST",
+      "prompt": "Indica la afirmación correcta sobre un tesauro:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-6-semantica-lexica"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Debe contener información sobre las relaciones de sinonimia."
+        },
+        {
+          "id": "b",
+          "text": "Los términos que conforman un tesauro se relacionan entre sí para mostrar las relaciones entre significados"
+        },
+        {
+          "id": "c",
+          "text": "Si la jerarquía del tesauro se basa en las relaciones de meronimia/holonimia, cualquier término del tesauro es un descendiente del concepto de raíz."
+        },
+        {
+          "id": "d",
+          "text": "Todas son correctas"
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:08dd9b4b1ac510dd9f32b1bf0559c1a654796f2917d7993cf07d04c7fb3eebd0",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "964d31e2-9115-43c0-ae56-5fc0c2b0f114",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "45ad1f2c-e5ec-4983-99cb-a195d9aa604f",
@@ -12184,6 +13518,49 @@
       },
       "createdAt": "2026-02-20T14:48:47.946Z",
       "updatedAt": "2026-02-20T14:48:47.946Z"
+    },
+    {
+      "id": "9b260654-f087-4952-b11a-e3ebbafc3661",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un corpus donde aparecen los POS Tags ADJ y NOUN, donde ADJ aparece antes de NOUN 21 veces, ADJ aparece después de NOUN 30 veces, ADJ aparece 150 veces y NOUN aparece 500 veces, el cálculo de la probabilidad de transición para tener NOUN dado ADJ es\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.14"
+        },
+        {
+          "id": "b",
+          "text": "0.21"
+        },
+        {
+          "id": "c",
+          "text": "0.06"
+        },
+        {
+          "id": "d",
+          "text": "0.01"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:b3b1d7a16e852dcf949c62aa13294c68ee8e4f87b51726c6f92c6f80e0bfa433",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "9b54bbab-783b-4dfd-b899-3cb166d36d3a",
@@ -13175,6 +14552,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "a7a37720-8ce3-4fd8-9c52-79cb24f88528",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
+      "type": "TEST",
+      "prompt": "Indica la afirmación correcta con respecto al análisis semántico:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-5-analisis-semantico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Como resultado del análisis semántico se obtiene la representación del significado de la oración."
+        },
+        {
+          "id": "b",
+          "text": "El análisis semántico tiene como objetivo único la desambiguación de las palabras polisémicas."
+        },
+        {
+          "id": "c",
+          "text": "El resultado del análisis semántico es una representación semántica de las palabras individuales que componen la oración, incluyendo su categoría gramatical."
+        },
+        {
+          "id": "d",
+          "text": "Como resultado del análisis semántico se obtiene la categoría gramatical de cada uno de los constituyentes semánticos de la oración."
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:18f7d0457a296f932b42ff0fd0913d17c1c8cc50339093cd28995edf05a64e06",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "a80c2748-ee5e-439e-af5c-cf7fde435418",
       "subjectId": "7ed5e91c-79e6-4e30-b6b9-ca1e3a29c9a3",
       "topicId": "388275e1-be5b-44fd-8fbd-52591fd74159",
@@ -13376,6 +14796,178 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "aab27ccf-52fb-4b6e-b5b4-aa3e5de3dce5",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "¿Qué es la tarea principal para la que BERT fue pre-entrenado?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Clasificación de oraciones"
+        },
+        {
+          "id": "b",
+          "text": "Predicción de palabras faltantes (Masked Language Model)"
+        },
+        {
+          "id": "c",
+          "text": "Traducción automática"
+        },
+        {
+          "id": "d",
+          "text": "Análisis de sentimientos"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:a778ba4d601153c66f68f8040bfc8610725d9324c2d52aa2929382b29baf8f03",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "aac1b9f1-c88a-4552-8809-1f5fcad3ec3f",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "TEST",
+      "prompt": "En lo que se refiere al significado de las palabras\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-6-semantica-lexica"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aunque una palabra en su forma original sea ambigua, el lema siempre tendrá un único significado"
+        },
+        {
+          "id": "b",
+          "text": "Las palabras homónimas son aquellas que se escriben igual y su significado es el mismo."
+        },
+        {
+          "id": "c",
+          "text": "En la frase “estuvimos toda la tarde viendo a Scorsese” tenemos un ejemplo de metonimia."
+        },
+        {
+          "id": "d",
+          "text": "Dos palabras homógrafas siempre van a tener un significado distinto."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:34dfbc5e8d2336b45fa6e6269bb9d3db297781159f85414d8456e1c8b8c25991",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "ab88c478-7511-48ec-a900-cb67d2670fee",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
+      "type": "TEST",
+      "prompt": "El algoritmo CKY:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-4-analisis-sintactico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "No es válido para todas las gramáticas libres de contexto, sino sólo para aquellas que se pueden transcribir en la forma normal de Chomsky."
+        },
+        {
+          "id": "b",
+          "text": "Es válido para todas las gramáticas, puesto que todas ellas se pueden transcribir en la forma normal de Chomsky."
+        },
+        {
+          "id": "c",
+          "text": "Es válido para todas las gramáticas libres de contexto, puesto que todas ellas se pueden transcribir en la forma normal de Chomsky."
+        },
+        {
+          "id": "d",
+          "text": "Es válido para todas las gramáticas de dependencias, puesto que todas ellas se pueden transcribir en la forma normal de Chomsky."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:54f20c8e4073ef626e1bb53f8b9069d79688ecdd34e47e55e64d4add63f61f2f",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "abc30290-888f-4246-9192-0f222c2afc11",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
+      "type": "TEST",
+      "prompt": "¿Qué tipo de conocimiento es esencial para determinar la intención de un usuario al realizar una interacción en una conversación?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-4-analisis-sintactico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Morfología"
+        },
+        {
+          "id": "b",
+          "text": "Pragmática"
+        },
+        {
+          "id": "c",
+          "text": "Sintaxis"
+        },
+        {
+          "id": "d",
+          "text": "Fonética y fonología"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:b862e6010dc24b22afd7f9036f2c5d3090cf278dab9bc8d5abd3a3d53b3bd460",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "abd6464f-e651-440a-b120-81bfc80eaf80",
@@ -13863,6 +15455,49 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "af4bc59e-a70e-454e-971c-e26f0cf93431",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "En los sistemas de Question Answering\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Las factoid questions y las preguntas abiertas son lo mismo"
+        },
+        {
+          "id": "b",
+          "text": "Los sistemas de Information Retrieval contestan preguntas de un usuario a partir de la información de una colección de documentos"
+        },
+        {
+          "id": "c",
+          "text": "Los sistemas de QA basados en técnicas de CBOW y de vectores densos tienen las mismas limitaciones"
+        },
+        {
+          "id": "d",
+          "text": "Los modelos de transfomer tipo BERT no se pueden usar para resolver esta tarea"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:7916b2089a28bd83719e6d76a9755ccf4d5ef224fd08338dcbde2026ceb30503",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "af72f42c-27df-4b2c-b6f2-1504ca4e2535",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "d2ab0f5c-fef4-4458-ad2e-209fd21cf452",
@@ -13991,6 +15626,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "b0eb72e1-923b-40de-acc7-064089650fb4",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
+      "type": "TEST",
+      "prompt": "En un corpus de 500 documentos, la palabra \"regalo\" aparece en 12 documentos. Si en un documento específico, la palabra \"regalo\" aparece 6 veces, ¿cuál es el valor del TF-IDF para \"regalo\" en ese documento? (nota: usa el logaritmo en base 10)\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-7-modelado-estadistico-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "9.72"
+        },
+        {
+          "id": "b",
+          "text": "21.54"
+        },
+        {
+          "id": "c",
+          "text": "37.78"
+        },
+        {
+          "id": "d",
+          "text": "42.62"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:6c86ac9162fe5f2fe7ab4f6f96e3b32d8fb2a6d64f7d136a309f14f3657eb5d5",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "b2125275-8788-43a8-997a-f204d8a012df",
@@ -14172,6 +15850,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "b338538c-c605-4305-b41a-a35a98f9f101",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "TEST",
+      "prompt": "Dado un corpus donde aparecen los POS Tags ADJ y NOUN, donde ADJ aparece antes de NOUN 60 veces, ADJ aparece después de NOUN 70 veces, ADJ aparece 542 veces y NOUN aparece 350 veces, el cálculo de la probabilidad de transición para tener ADJ dado NOUN es\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-3-etiquetado-morfosintactico-pos-tagging"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.11"
+        },
+        {
+          "id": "b",
+          "text": "0.19"
+        },
+        {
+          "id": "c",
+          "text": "0.2"
+        },
+        {
+          "id": "d",
+          "text": "0.29"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:8ae6ce3b3b87d5b01472991317a6ba81ae5f63b0975312eaf4e9c2e7d26c3f17",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "b3521593-ab75-4a31-9595-49fba86ccf7d",
@@ -14769,6 +16490,49 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "b79a79cd-078c-4c4a-aa7f-60c879cff59a",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
+      "type": "TEST",
+      "prompt": "El reconocimiento sintáctico con el algoritmo CKY\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-4-analisis-sintactico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Da siempre como salida un único árbol sintáctico"
+        },
+        {
+          "id": "b",
+          "text": "Se lleva a cabo mediante una matriz triangular, donde los elementos de la diagonal principal son los últimos en calcularse, mientras que los de la primera fila se calculan todos los primeros"
+        },
+        {
+          "id": "c",
+          "text": "Pueden trabajar con cualquier gramática libre de contexto mientras ésta no sea del tipo CNF."
+        },
+        {
+          "id": "d",
+          "text": "Por sí mismo no es capaz de resolver ambigüedades en el análisis sintáctico, si no se complementa con otras técnicas, como es el caso del CKY probabilístico."
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:08a7e800c207fee91c01acb66ac1f91be2a6e66a7df58a08326b82f98fd5f03a",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "b7c5b99d-c221-4800-a7f9-a12903b97b7d",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "bae420cf-ae91-488c-a876-710db0be84d6",
@@ -14933,6 +16697,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "bba2895e-af28-45d8-aeb3-66d04ea799cc",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "¿Qué paradigma se basa en el teorema de codificación de canal de Shannon?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Autómatas"
+        },
+        {
+          "id": "b",
+          "text": "Teoría de la información"
+        },
+        {
+          "id": "c",
+          "text": "Paradigma simbólico"
+        },
+        {
+          "id": "d",
+          "text": "Paradigma estocástico"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:82ede83ecb076121f8edc1883b936d7a9364ed7276211af38e9f02fc450cc139",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "bc066f0a-be1a-4971-8e50-3ad2787aa6e8",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "9d6276cf-e9aa-48ad-a074-fe7ce913673d",
@@ -15049,6 +16856,50 @@
       },
       "createdAt": "2026-02-21T22:34:51.487Z",
       "updatedAt": "2026-02-21T22:34:51.487Z"
+    },
+    {
+      "id": "bcbea4e6-7669-41cf-a06b-f37f9cc2cc97",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bd41142a-dbac-4d3d-a749-f1b9ca6338c4",
+      "type": "TEST",
+      "prompt": "Indica la afirmación correcta sobre Natural Language Toolkit (NLTK):\n\nSeleccione una o más de una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-10-agentes-conversacionales"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "No proporciona herramientas para analizar textos en español."
+        },
+        {
+          "id": "b",
+          "text": "Está desarrollada con frameworks de Deep Learning, como PyTorch."
+        },
+        {
+          "id": "c",
+          "text": "Permite integrar software de terceros por ejemplo la API de Stanford CoreNLP."
+        },
+        {
+          "id": "d",
+          "text": "Es la plataforma más utilizada para desarrollar aplicaciones de procesamiento del lenguaje natural en Python."
+        }
+      ],
+      "correctOptionIds": [
+        "c",
+        "d"
+      ],
+      "contentHash": "sha256:cecef8c97877dbd208a21575e4d770e65064cd01357df85481644525fae13f2b",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "bcfb5403-9bf7-4674-8a65-b4ef403ab9bc",
@@ -15296,6 +17147,49 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "c093b12f-03fc-48e0-a4fb-a714002a4d31",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "Cuál de las siguientes aplicaciones no es propia del Procesamiento del Lenguaje Natural\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Question Answering"
+        },
+        {
+          "id": "b",
+          "text": "Traducción Automática"
+        },
+        {
+          "id": "c",
+          "text": "Generación de imágenes a partir de una descripción textual"
+        },
+        {
+          "id": "d",
+          "text": "Agentes Conversacionales"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:8a9dfb97a5378f3b5c3d91bb3a5cf40fabb9c9a699b4107aeee46ceb6e4ad501",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "c0d4218a-f1b3-49eb-8c23-f7c760eb1ab5",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "450fb598-6a22-4be1-8621-ff78740c3973",
@@ -15467,6 +17361,92 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "c27daa02-9b2d-44a6-b028-87312b33deef",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
+      "type": "TEST",
+      "prompt": "¿Cuál de las siguientes gramáticas NO está en forma normal de Chomsky (CNF)?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-4-analisis-sintactico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "R = {O -> NP VP, NP -> D N, VP -> V NP, D -> el, N -> perro, V -> corre}"
+        },
+        {
+          "id": "b",
+          "text": "R = {O -> SN V, SN -> D N, SV -> V SN, Pron -> el, V -> mira, D -> un, N -> cuadro}"
+        },
+        {
+          "id": "c",
+          "text": "R = {O -> NP VP, NP -> N, VP -> V NP, D -> el, N -> gato D, V -> duerme}"
+        },
+        {
+          "id": "d",
+          "text": "R = {O -> SN V, SN -> D N, SV -> V SN, Pron -> el, V -> mira, D -> un, N -> cuadro}"
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:e54c7c3e74d062701bc21123cf7aa710c720481dcb027f6d1306722d42b4e019",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
+      "id": "c38f6410-692f-4c4c-a866-9e5f76c7ae44",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6805cc98-d6be-4d7d-a4a2-feb4c3af7d35",
+      "type": "TEST",
+      "prompt": "Si A es hiperónimo de B, y B es hiperónimo de C:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-1-introduccion-al-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "A es hipónimo de C"
+        },
+        {
+          "id": "b",
+          "text": "C es hipónimo de A"
+        },
+        {
+          "id": "c",
+          "text": "C es hiperónimo de A"
+        },
+        {
+          "id": "d",
+          "text": "Ninguna de las anteriores"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:065d22102d7d55591a2f2af94b2f3b158b7540bdaefe7d6bce66b66a5338e8c8",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "c3aea40a-f2dd-4316-a0dc-6321173fad5e",
@@ -17207,6 +19187,49 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "d8b98fc7-e3be-4f5b-ab41-ae29b6048cb3",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "241e24a8-9e71-4933-8c51-1fb4812b3606",
+      "type": "TEST",
+      "prompt": "¿Cuál es una de las principales ventajas de BERT en comparación con modelos de lenguaje anteriores como Word2Vec o GloVe?\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-8-modelado-neuronal-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "BERT puede generar embedings diferentes para una misma palabra dependiendo del contexto en el que ésta se utiliza"
+        },
+        {
+          "id": "b",
+          "text": "BERT siempre genera representaciones de palabras con mejor calidad"
+        },
+        {
+          "id": "c",
+          "text": "BERT es más rápido en su entrenamiento"
+        },
+        {
+          "id": "d",
+          "text": "BERT es más rápido en tiempo de inferencia"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:4b179a5763356d3b8e967520dea3253f04110eafbb0d6098af21fdd191af3efb",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
+    },
+    {
       "id": "d8e98359-4134-47c4-b53f-20824af7e52e",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "7303369f-c8fc-447e-93e9-4ecfd3e7212a",
@@ -17337,6 +19360,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "da9a35fe-57fb-4f03-b910-ed48408cf033",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "TEST",
+      "prompt": "La tarea text-to-speech (TTS)\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-9-aplicaciones-del-procesamiento-del-lenguaje-natural"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Permite a una máquina entender un mensaje de voz y convertirlo en un texto para poder procesarlo"
+        },
+        {
+          "id": "b",
+          "text": "Es una tarea equivalente al Reconocimiento Automático del Habla (ASR)"
+        },
+        {
+          "id": "c",
+          "text": "Un sistema TTS tiene que ser robusto a audios de diferentes hablantes"
+        },
+        {
+          "id": "d",
+          "text": "Para un sistema TTS no es relevante que el sistema sea entrenado con datos de distintos hablantes porque genera un tipo de voz fija"
+        }
+      ],
+      "correctOptionIds": [
+        "d"
+      ],
+      "contentHash": "sha256:68449a4cba5161dae99dcf433396bebdcc36b4cf7b4b7516f211cafb54017fdf",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "dae966ae-75a6-43df-be9e-9fc3fdf00d4c",
@@ -17562,6 +19628,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.177Z",
       "updatedAt": "2026-02-21T22:10:27.177Z"
+    },
+    {
+      "id": "dd5232f8-e464-4dbc-a743-79707f710a39",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bd41142a-dbac-4d3d-a749-f1b9ca6338c4",
+      "type": "TEST",
+      "prompt": "Indica cuál de las siguientes opciones no es un subsistema típico de un agente conversacional:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-10-agentes-conversacionales"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reconocimiento de voz."
+        },
+        {
+          "id": "b",
+          "text": "Generación de respuestas."
+        },
+        {
+          "id": "c",
+          "text": "Generación de imágenes."
+        },
+        {
+          "id": "d",
+          "text": "Gestión del diálogo."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:beafbdc1b91f646e9d79679ad5894f35d3461ab14d15e04022b4744dd9b8ed59",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "dd93da4a-70ac-408f-8d0d-d676e2de05bd",
@@ -17837,6 +19946,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "e1e5f3d0-9efd-4f53-b743-3502ad80aea4",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
+      "type": "TEST",
+      "prompt": "En un corpus de 45000 documentos, la palabra \"volcán\" aparece en 500 documentos. Si en un documento específico, la palabra \"volcán\" aparece 400 veces, ¿cuál es el valor del TF-IDF para \"volcán\" en ese documento? (nota: usa el logaritmo en base 10)\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-7-modelado-estadistico-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "221.13"
+        },
+        {
+          "id": "b",
+          "text": "781.7"
+        },
+        {
+          "id": "c",
+          "text": "891.11"
+        },
+        {
+          "id": "d",
+          "text": "987.54"
+        }
+      ],
+      "correctOptionIds": [
+        "b"
+      ],
+      "contentHash": "sha256:52b6944b9212c81e79cf23c31e30f26e706f79b58e72bc53f6f2affa21fcf1dc",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "e2004e04-921e-4694-927b-78ac0ca08773",
@@ -18392,6 +20544,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "ec575d9d-8a92-4cdb-af16-0ebba874ca66",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "483cbb38-0e43-449b-be1b-b3d7a3ed74d1",
+      "type": "TEST",
+      "prompt": "En un corpus de 12000 documentos, la palabra \"carmesí\" aparece en 10 documentos. Si en un documento específico, la palabra \"carmesí\" aparece 60 veces, ¿cuál es el valor del TF-IDF para \"carmesí\" en ese documento? (nota: usa el logaritmo en base 10)\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-7-modelado-estadistico-del-lenguaje"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "184.75"
+        },
+        {
+          "id": "b",
+          "text": "214.15"
+        },
+        {
+          "id": "c",
+          "text": "304.75"
+        },
+        {
+          "id": "d",
+          "text": "124.15"
+        }
+      ],
+      "correctOptionIds": [
+        "a"
+      ],
+      "contentHash": "sha256:b0085ea9fb4dca53486e92f5fbb9dc397df6ef57c83c9217ac77dfdc687a1d46",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "ec9bfffe-cbdd-4faa-839d-3b665124628d",
@@ -19430,6 +21625,49 @@
       },
       "createdAt": "2026-02-21T22:10:27.106Z",
       "updatedAt": "2026-02-21T22:10:27.106Z"
+    },
+    {
+      "id": "fa790b71-b964-4dc2-b640-b2e051532b1b",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "6fece5ea-56be-4190-9eb8-0f9cce9122e3",
+      "type": "TEST",
+      "prompt": "Indica cuál de las siguientes opciones pertenece a una gramática libre de contexto anotada semánticamente:\n\nSeleccione una:",
+      "difficulty": 3,
+      "tags": [
+        "examen_anterior",
+        "tema-5-analisis-semantico"
+      ],
+      "origin": "examen_anterior",
+      "options": [
+        {
+          "id": "a",
+          "text": "N → restaurante"
+        },
+        {
+          "id": "b",
+          "text": "SN → Det N."
+        },
+        {
+          "id": "c",
+          "text": "N → hotel {��r.Hotel(�� )}"
+        },
+        {
+          "id": "d",
+          "text": "Todas las anteriores."
+        }
+      ],
+      "correctOptionIds": [
+        "c"
+      ],
+      "contentHash": "sha256:0df115d1893392546baf82c84113970c00f8ffe6fce7f977db67886be1d7196f",
+      "createdBy": "Luis",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-22T02:52:25.526Z",
+      "updatedAt": "2026-02-22T02:52:25.526Z"
     },
     {
       "id": "fbd87a13-7fe3-48b1-8f64-5efa33f996fd",
