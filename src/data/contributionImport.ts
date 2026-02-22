@@ -370,6 +370,76 @@ export async function exportContributionPack(
   };
 }
 
+/**
+ * C2: Export a contribution pack from specific question IDs (selective export).
+ */
+export async function exportContributionPackByIds(
+  alias: string,
+  questionIds: string[],
+): Promise<ContributionPack> {
+  const questions = await db.questions.where('id').anyOf(questionIds).toArray();
+  if (questions.length === 0) throw new Error('No se encontraron preguntas');
+
+  const subjectIds = [...new Set(questions.map((q) => q.subjectId))];
+  const subjects = await db.subjects.where('id').anyOf(subjectIds).toArray();
+  const topicIds = [...new Set(questions.map((q) => q.topicId))];
+  const topics = await db.topics.where('id').anyOf(topicIds).toArray();
+
+  const targets = subjects.map((s) => ({
+    subjectKey: slugify(s.name),
+    subjectName: s.name,
+    topics: topics
+      .filter((t) => t.subjectId === s.id)
+      .map((t) => ({ topicKey: slugify(t.title), topicTitle: t.title })),
+  }));
+
+  const contributionQuestions = questions.map((q) => {
+    const subject = subjects.find((s) => s.id === q.subjectId);
+    const topic = topics.find((t) => t.id === q.topicId);
+    return {
+      id: q.id,
+      subjectKey: subject ? slugify(subject.name) : q.subjectId,
+      topicKey: topic ? slugify(topic.title) : q.topicId,
+      type: q.type,
+      prompt: q.prompt,
+      origin: q.origin,
+      options: q.options,
+      correctOptionIds: q.correctOptionIds,
+      modelAnswer: q.modelAnswer,
+      keywords: q.keywords,
+      numericAnswer: q.numericAnswer,
+      clozeText: q.clozeText,
+      blanks: q.blanks,
+      imageDataUrls: q.imageDataUrls,
+      explanation: q.explanation,
+      difficulty: q.difficulty,
+      tags: q.tags,
+      createdBy: q.createdBy ?? alias,
+      contentHash: q.contentHash,
+    };
+  });
+
+  const allTexts: string[] = [];
+  for (const q of contributionQuestions) {
+    if (q.prompt) allTexts.push(q.prompt);
+    if (q.explanation) allTexts.push(q.explanation);
+    if (q.modelAnswer) allTexts.push(q.modelAnswer);
+    if (q.clozeText) allTexts.push(q.clozeText);
+  }
+  const questionImages = await buildImageMap(allTexts);
+
+  return {
+    version: 1,
+    kind: 'contribution',
+    packId: uuidv4(),
+    createdBy: alias || 'unknown',
+    exportedAt: new Date().toISOString(),
+    targets,
+    questions: contributionQuestions,
+    questionImages: Object.keys(questionImages).length > 0 ? questionImages : undefined,
+  };
+}
+
 export interface UndoImportResult {
   packId: string;
   deletedQuestions: number;
@@ -400,6 +470,13 @@ export async function undoContributionImport(packId: string): Promise<UndoImport
 
 // ─── Preview ───────────────────────────────────────────────────────────────────
 
+export interface ContributionPackPreviewRow {
+  subjectName: string;
+  topicName: string;
+  questionsCount: number;
+  newCount: number;
+}
+
 export interface ContributionPackPreview {
   packId: string;
   createdBy: string;
@@ -407,6 +484,10 @@ export interface ContributionPackPreview {
   subjects: string[];
   topicsCount: number;
   questionsCount: number;
+  /** C1: Number of new (non-duplicate) questions */
+  newQuestionsCount: number;
+  /** C1: Per-subject/topic breakdown */
+  rows: ContributionPackPreviewRow[];
   questionsSample: string[];
   alreadyImported: boolean;
   rawPack: unknown;
@@ -420,6 +501,31 @@ export async function previewContributionPack(raw: unknown): Promise<Contributio
   const settings = await getSettings();
   const alreadyImported = settings.importedPackIds.includes(pack.packId);
 
+  // C1: Gather existing contentHashes for dedup check
+  const existingHashes = new Set<string>();
+  const allQuestions = await db.questions.toArray();
+  allQuestions.forEach((q) => { if (q.contentHash) existingHashes.add(q.contentHash); });
+
+  // C1: Build per-subject/topic rows with new count
+  const rows: ContributionPackPreviewRow[] = [];
+  let totalNew = 0;
+  for (const target of pack.targets) {
+    for (const topic of target.topics) {
+      const topicQuestions = pack.questions.filter((q) => {
+        const tKeys = q.topicKeys?.length ? q.topicKeys : [q.topicKey];
+        return tKeys.includes(topic.topicKey);
+      });
+      const newCount = topicQuestions.filter((q) => !q.contentHash || !existingHashes.has(q.contentHash)).length;
+      totalNew += newCount;
+      rows.push({
+        subjectName: target.subjectName,
+        topicName: topic.topicTitle,
+        questionsCount: topicQuestions.length,
+        newCount,
+      });
+    }
+  }
+
   return {
     packId: pack.packId,
     createdBy: pack.createdBy,
@@ -427,9 +533,12 @@ export async function previewContributionPack(raw: unknown): Promise<Contributio
     subjects: pack.targets.map((t) => t.subjectName),
     topicsCount: pack.targets.reduce((acc, t) => acc + t.topics.length, 0),
     questionsCount: pack.questions.length,
-    questionsSample: pack.questions.slice(0, 5).map((q) =>
-      q.prompt.replace(/[#*`\n]/g, ' ').trim().slice(0, 80)
-    ),
+    newQuestionsCount: totalNew,
+    rows,
+    questionsSample: pack.questions
+      .filter((q) => !q.contentHash || !existingHashes.has(q.contentHash))
+      .slice(0, 5)
+      .map((q) => q.prompt.replace(/[#*`\n]/g, ' ').trim().slice(0, 80)),
     alreadyImported,
     rawPack: raw,
   };

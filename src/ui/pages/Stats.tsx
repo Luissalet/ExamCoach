@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '@/data/db';
 import { subjectRepo, questionRepo } from '@/data/repos';
 import { Button, Card, Badge, Difficulty, Progress } from '@/ui/components';
-import type { Subject, Topic, Question } from '@/domain/models';
+import type { Subject, Topic, Question, PracticeSession } from '@/domain/models';
 
 export function StatsPage() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -12,6 +12,7 @@ export function StatsPage() {
   const [subject, setSubject] = useState<Subject | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [sessions, setSessions] = useState<PracticeSession[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,9 +25,15 @@ export function StatsPage() {
       }
       const ts = await db.topics.where('subjectId').equals(subjectId).toArray();
       const qs = await questionRepo.getBySubject(subjectId);
+      const allSessions = await db.sessions.where('subjectId').equals(subjectId).toArray();
+      const finished = allSessions
+        .filter((s) => s.finishedAt)
+        .sort((a, b) => (b.finishedAt! > a.finishedAt! ? 1 : -1))
+        .slice(0, 20);
       setSubject(s);
       setTopics(ts);
       setQuestions(qs);
+      setSessions(finished);
       setLoading(false);
     })();
   }, [subjectId]);
@@ -220,6 +227,67 @@ export function StatsPage() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* B4: Historial de sesiones */}
+        {sessions.length > 0 && (
+          <Card>
+            <div className="flex flex-col gap-4">
+              <h2 className="font-display text-lg text-ink-100">Historial de sesiones</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-ink-700 text-ink-500 text-xs text-left">
+                      <th className="pb-2 font-normal">Fecha</th>
+                      <th className="pb-2 font-normal">Modo</th>
+                      <th className="pb-2 font-normal text-center">Preguntas</th>
+                      <th className="pb-2 font-normal text-center">Aciertos</th>
+                      <th className="pb-2 font-normal text-center">% Acierto</th>
+                      <th className="pb-2 font-normal"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sessions.map((s) => {
+                      const correct = s.answers.filter((a) => a.result === 'CORRECT').length;
+                      const total = s.questionIds.length;
+                      const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
+                      const MODE_LABELS: Record<string, string> = {
+                        random: 'Aleatorio', all: 'Todas', failed: 'Falladas',
+                        topic: 'Tema', smart: 'Smart', exam: 'Examen',
+                      };
+                      return (
+                        <tr key={s.id} className="border-b border-ink-800 last:border-0 hover:bg-ink-800/30">
+                          <td className="py-2 text-ink-300">
+                            {new Date(s.finishedAt!).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          </td>
+                          <td className="py-2">
+                            <span className="text-xs bg-ink-800 text-ink-400 px-2 py-0.5 rounded">
+                              {MODE_LABELS[s.mode] ?? s.mode}
+                            </span>
+                          </td>
+                          <td className="py-2 text-center text-ink-300">{total}</td>
+                          <td className="py-2 text-center text-sage-400">{correct}</td>
+                          <td className="py-2 text-center">
+                            <span className={`font-bold ${pct >= 70 ? 'text-sage-400' : pct >= 40 ? 'text-amber-400' : 'text-rose-400'}`}>
+                              {pct}%
+                            </span>
+                          </td>
+                          <td className="py-2 text-right">
+                            <button
+                              onClick={() => navigate(`/results/${s.id}`)}
+                              className="text-xs text-amber-500 hover:text-amber-400 transition-colors"
+                            >
+                              Ver →
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
           </Card>

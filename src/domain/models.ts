@@ -145,7 +145,7 @@ export interface QuestionImageRecord {
 
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
-export type SessionMode = 'random' | 'all' | 'failed' | 'topic' | 'smart';
+export type SessionMode = 'random' | 'all' | 'failed' | 'topic' | 'smart' | 'exam';
 
 export interface UserAnswer {
   questionId: string;

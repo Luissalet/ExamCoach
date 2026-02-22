@@ -436,13 +436,6 @@ export function SettingsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <p className="text-sm text-ink-500 uppercase tracking-widest">Asignaturas</p>
-                  <p className="text-base text-ink-100 font-medium">{packPreview.subjects.join(', ')}</p>
-                </div>
-              </div>
-
               <div className="grid grid-cols-3 gap-3">
                 <Card className="text-center py-3">
                   <p className="text-2xl font-display text-amber-400">{packPreview.topicsCount}</p>
@@ -450,19 +443,54 @@ export function SettingsPage() {
                 </Card>
                 <Card className="text-center py-3">
                   <p className="text-2xl font-display text-sage-400">{packPreview.questionsCount}</p>
-                  <p className="text-xs text-ink-500 mt-1">Preguntas</p>
+                  <p className="text-xs text-ink-500 mt-1">Total preguntas</p>
                 </Card>
-                {packPreview.alreadyImported && (
-                  <Card className="text-center py-3 border-amber-500/30">
-                    <p className="text-sm text-amber-400">⚠</p>
-                    <p className="text-xs text-amber-400 mt-1">Ya importado</p>
-                  </Card>
-                )}
+                <Card className="text-center py-3 border-sage-600/30">
+                  <p className="text-2xl font-display text-sage-300">{'newQuestionsCount' in packPreview ? (packPreview as any).newQuestionsCount : '?'}</p>
+                  <p className="text-xs text-ink-500 mt-1">Nuevas</p>
+                </Card>
               </div>
+
+              {packPreview.alreadyImported && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                  <p className="text-sm text-amber-400">
+                    ⚠ Este pack ya fue importado previamente.
+                  </p>
+                </div>
+              )}
+
+              {/* C1: Detailed per-topic breakdown table */}
+              {'rows' in packPreview && (packPreview as any).rows.length > 0 && (
+                <div>
+                  <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">Desglose por tema</p>
+                  <div className="overflow-x-auto max-h-48 overflow-y-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-ink-700 text-ink-500 text-left">
+                          <th className="pb-1.5 font-normal">Asignatura</th>
+                          <th className="pb-1.5 font-normal">Tema</th>
+                          <th className="pb-1.5 font-normal text-center">Preguntas</th>
+                          <th className="pb-1.5 font-normal text-center">Nuevas</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(packPreview as any).rows.map((r: any, i: number) => (
+                          <tr key={i} className="border-b border-ink-800 last:border-0">
+                            <td className="py-1.5 text-ink-300">{r.subjectName}</td>
+                            <td className="py-1.5 text-ink-300">{r.topicName}</td>
+                            <td className="py-1.5 text-center text-ink-400">{r.questionsCount}</td>
+                            <td className="py-1.5 text-center text-sage-400 font-medium">{r.newCount}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               {packPreview.questionsSample.length > 0 && (
                 <div>
-                  <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">Muestra de preguntas</p>
+                  <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">Muestra de preguntas nuevas</p>
                   <div className="flex flex-col gap-2 max-h-32 overflow-y-auto">
                     {packPreview.questionsSample.map((q, i) => (
                       <p key={i} className="text-xs text-ink-400 p-2 bg-ink-800 rounded border border-ink-700">
@@ -472,22 +500,16 @@ export function SettingsPage() {
                   </div>
                 </div>
               )}
-
-              {packPreview.alreadyImported && (
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
-                  <p className="text-sm text-amber-400">
-                    Este pack ya fue importado previamente. Importarlo de nuevo añadirá duplicados si hay preguntas nuevas.
-                  </p>
-                </div>
-              )}
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-ink-800">
               <Button variant="ghost" onClick={() => setPackPreview(null)}>
                 Cancelar
               </Button>
-              <Button onClick={handleConfirmImport}>
-                Importar
+              <Button onClick={handleConfirmImport} disabled={'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount === 0}>
+                {'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount > 0
+                  ? `Importar ${(packPreview as any).newQuestionsCount} preguntas nuevas`
+                  : 'Sin preguntas nuevas'}
               </Button>
             </div>
           </div>

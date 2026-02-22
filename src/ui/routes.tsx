@@ -8,6 +8,7 @@ import { FlashcardPage } from './pages/Flashcard';
 import { DeliverablesPage } from './pages/Deliverables';
 import { StatsPage } from './pages/Stats';
 import { GlobalStatsPage } from './pages/GlobalStats';
+import { ReadModePage } from './pages/ReadMode';
 
 export function AppRouter() {
   return (
@@ -16,6 +17,7 @@ export function AppRouter() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/subject/:subjectId" element={<SubjectView />} />
         <Route path="/subject/:subjectId/stats" element={<StatsPage />} />
+        <Route path="/subject/:subjectId/read/:topicId" element={<ReadModePage />} />
         <Route path="/practice/:sessionId" element={<PracticeSessionPage />} />
         <Route path="/results/:sessionId" element={<ResultsPage />} />
         <Route path="/settings" element={<SettingsPage />} />

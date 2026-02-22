@@ -313,6 +313,18 @@ export function Dashboard() {
     ? new Date(settings.globalBankSyncedAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })
     : null;
 
+  // C3: Check if global bank sync is stale (>7 days or never synced)
+  const [syncBannerDismissed, setSyncBannerDismissed] = useState(false);
+  const syncStale = (() => {
+    if (syncBannerDismissed) return false;
+    if (!settings.globalBankSyncedAt) return true;
+    const daysSince = (Date.now() - new Date(settings.globalBankSyncedAt).getTime()) / (1000 * 60 * 60 * 24);
+    return daysSince > 7;
+  })();
+  const syncStaleDays = settings.globalBankSyncedAt
+    ? Math.floor((Date.now() - new Date(settings.globalBankSyncedAt).getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="h-screen bg-ink-950 text-ink-100 flex flex-col overflow-hidden">
@@ -409,6 +421,31 @@ export function Dashboard() {
           </div>
         </div>
       </header>
+
+      {/* C3: Stale sync banner */}
+      {syncStale && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-2 flex items-center justify-between flex-shrink-0">
+          <span className="text-xs text-amber-400">
+            {syncStaleDays != null
+              ? `El banco global no se ha sincronizado en ${syncStaleDays} días.`
+              : 'El banco global nunca se ha sincronizado.'}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => { handleSyncManual(); setSyncBannerDismissed(true); }}
+              className="text-xs text-amber-400 hover:text-amber-300 font-medium underline underline-offset-2"
+            >
+              Sincronizar ahora
+            </button>
+            <button
+              onClick={() => setSyncBannerDismissed(true)}
+              className="text-xs text-ink-600 hover:text-ink-400 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Body: main + sidebar ───────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { db } from '@/data/db';
 import { questionRepo, sessionRepo } from '@/data/repos';
 import { scoreAnswer } from '@/domain/scoring';
@@ -14,6 +14,11 @@ import { QuestionForm } from '@/ui/components/QuestionForm';
 export function PracticeSessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // D1: Exam mode
+  const isExamMode = searchParams.get('examMode') === 'true';
+  const examDurationMin = parseInt(searchParams.get('duration') ?? '60') || 60;
 
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -50,9 +55,43 @@ export function PracticeSessionPage() {
     })();
   }, [sessionId]);
 
+  // D1: Exam timer
+  const [examTimeLeft, setExamTimeLeft] = useState(examDurationMin * 60); // seconds
+  const [examTimedOut, setExamTimedOut] = useState(false);
+
+  useEffect(() => {
+    if (!isExamMode || loading || examTimedOut) return;
+    const interval = setInterval(() => {
+      setExamTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setExamTimedOut(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isExamMode, loading, examTimedOut]);
+
+  // Auto-finish when exam times out
+  useEffect(() => {
+    if (examTimedOut && session) {
+      sessionRepo.finish(session.id).then(() => {
+        navigate(`/results/${session.id}`);
+      });
+    }
+  }, [examTimedOut, session]);
+
   const currentQuestion = questions[currentIndex];
   const isFinished = currentIndex >= questions.length;
   const progress = questions.length === 0 ? 0 : currentIndex / questions.length;
+
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   const resetAnswerState = () => {
     setSelectedOptions([]);
@@ -119,6 +158,64 @@ export function PracticeSessionPage() {
     );
     setEditingQuestion(null);
   };
+
+  // ─── B1: Keyboard navigation ─────────────────────────────────────────────────
+  const canSubmit =
+    currentQuestion &&
+    !submitted &&
+    !(currentQuestion.type === 'TEST' && selectedOptions.length === 0) &&
+    !(currentQuestion.type === 'COMPLETAR' && Object.keys(blankAnswers).length === 0);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Don't intercept when typing in inputs/textareas or when editing modal is open
+      if ((e.target as HTMLElement).matches('input, textarea, select')) return;
+      if (editingQuestion) return;
+      if (isFinished) return;
+
+      // Enter / Space: submit or next
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (!submitted && canSubmit) {
+          handleSubmitAnswer();
+        } else if (submitted) {
+          handleNext();
+        }
+        return;
+      }
+
+      // 1-4: toggle options for TEST questions
+      if (['1', '2', '3', '4'].includes(e.key) && currentQuestion?.type === 'TEST' && !submitted) {
+        e.preventDefault();
+        const idx = parseInt(e.key) - 1;
+        const opts = currentQuestion.options ?? [];
+        if (idx < opts.length) {
+          handleToggleOption(opts[idx].id);
+        }
+        return;
+      }
+
+      // ArrowLeft / ArrowRight: navigate between already-answered questions
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        e.preventDefault();
+        const prevIdx = currentIndex - 1;
+        const prevAnswer = answers.find((a) => a.questionId === questions[prevIdx]?.id);
+        if (prevAnswer) {
+          setCurrentIndex(prevIdx);
+          setSubmitted(true);
+        }
+        return;
+      }
+      if (e.key === 'ArrowRight' && submitted && currentIndex < questions.length - 1) {
+        e.preventDefault();
+        handleNext();
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [submitted, canSubmit, currentIndex, currentQuestion, editingQuestion, isFinished, answers, questions, selectedOptions, blankAnswers]);
 
   if (loading) {
     return (
@@ -195,11 +292,24 @@ export function PracticeSessionPage() {
             >
               ✕ Salir
             </button>
-            <span className="text-sm text-ink-400 font-body">
-              {currentIndex + 1} / {questions.length}
-            </span>
+            <div className="flex items-center gap-3">
+              {/* D1: Exam timer */}
+              {isExamMode && (
+                <span className={`text-sm font-mono font-bold ${examTimeLeft < 60 ? 'text-rose-400 animate-pulse' : examTimeLeft < 300 ? 'text-amber-400' : 'text-sage-400'}`}>
+                  ⏱ {formatTime(examTimeLeft)}
+                </span>
+              )}
+              <span className="text-sm text-ink-400 font-body">
+                {currentIndex + 1} / {questions.length}
+              </span>
+            </div>
           </div>
           <Progress value={currentIndex} max={questions.length} color="amber" />
+          <div className="flex gap-3 mt-1.5 text-[10px] text-ink-600">
+            <span>⏎ {submitted ? 'siguiente' : 'enviar'}</span>
+            {currentQuestion?.type === 'TEST' && !submitted && <span>1-4 opciones</span>}
+            <span>← → navegar</span>
+          </div>
         </div>
       </header>
 
@@ -271,6 +381,11 @@ export function PracticeSessionPage() {
             onFreeTextChange={setFreeText}
             onBlankChange={(id, val) => setBlankAnswers((prev) => ({ ...prev, [id]: val }))}
           />
+        ) : isExamMode ? (
+          /* D1: In exam mode, don't show feedback — just a minimal confirmation */
+          <div className="text-center py-6">
+            <span className="text-ink-500 text-sm">Respuesta registrada</span>
+          </div>
         ) : (
           <AnswerResult
             question={currentQuestion}

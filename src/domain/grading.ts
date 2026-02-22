@@ -34,7 +34,10 @@ export interface GradeBreakdown {
 export function calcContinuousRaw(deliverables: Deliverable[]): number {
   return deliverables.reduce((sum, d) => {
     if (d.type === 'test') {
-      return isDeliverableCompleted(d.status) ? sum + d.continuousPoints : sum;
+      if (!isDeliverableCompleted(d.status)) return sum;
+      // If graded, use proportional contribution like activities; otherwise flat points
+      if (d.grade != null) return sum + (d.grade / 10) * d.continuousPoints;
+      return sum + d.continuousPoints;
     }
     if (d.type === 'activity' && d.grade != null) {
       return sum + (d.grade / 10) * d.continuousPoints;
@@ -69,10 +72,10 @@ export function calcGradeBreakdown(
   const finalGrade =
     examContribution != null ? examContribution + continuousContribution : null;
 
-  // Potential = tests not yet completed + activities not yet graded
+  // Potential = tests not yet completed or completed without grade + activities not yet graded
   const potentialFromIncomplete = deliverables
     .filter((d) =>
-      (d.type === 'test' && !isDeliverableCompleted(d.status)) ||
+      (d.type === 'test' && (!isDeliverableCompleted(d.status) || d.grade == null)) ||
       (d.type === 'activity' && d.grade == null)
     )
     .reduce((sum, d) => sum + d.continuousPoints, 0);

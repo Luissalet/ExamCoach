@@ -548,8 +548,8 @@ function DeliverableRow({
         </button>
       ))}
 
-      {/* Grade input (activities and exams) */}
-      {(d.type === 'activity' || d.type === 'exam') && (
+      {/* Grade input (activities, tests and exams) */}
+      {(d.type === 'activity' || d.type === 'test' || d.type === 'exam') && (
         <input
           type="number"
           min={0}
