@@ -9,6 +9,7 @@ import { DeliverablesPage } from './pages/Deliverables';
 import { StatsPage } from './pages/Stats';
 import { GlobalStatsPage } from './pages/GlobalStats';
 import { ReadModePage } from './pages/ReadMode';
+import { SessionHistoryPage } from './pages/SessionHistory';
 
 export function AppRouter() {
   return (
@@ -23,6 +24,7 @@ export function AppRouter() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/flashcard/:subjectId" element={<FlashcardPage />} />
         <Route path="/deliverables" element={<DeliverablesPage />} />
+        <Route path="/sessions" element={<SessionHistoryPage />} />
         <Route path="/stats" element={<GlobalStatsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

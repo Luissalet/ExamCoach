@@ -64,6 +64,16 @@ export function ResultsPage() {
     navigate(`/practice/${newSession.id}`);
   };
 
+  const handleRepeatExact = async () => {
+    if (!session) return;
+    const newSession = await sessionRepo.create({
+      subjectId: session.subjectId,
+      mode: session.mode,
+      questionIds: [...session.questionIds],
+    });
+    navigate(`/practice/${newSession.id}`);
+  };
+
   const selectedQuestion = questions.find((q) => q.id === selectedQ);
   const selectedAnswer = answers.find((a) => a.questionId === selectedQ);
 
@@ -153,6 +163,9 @@ export function ResultsPage() {
               🔴 Repetir falladas ({wrong})
             </Button>
           )}
+          <Button variant="secondary" onClick={handleRepeatExact}>
+            🔄 Repetir sesión
+          </Button>
           <Button variant="secondary" onClick={() => navigate(`/subject/${session.subjectId}`)}>
             Nueva sesión
           </Button>

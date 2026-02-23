@@ -412,6 +412,9 @@ export function Dashboard() {
               </span>
             </label>
 
+            <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')}>
+              📋 Historial
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>
               📊 Estadísticas
             </Button>

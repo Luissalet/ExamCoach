@@ -497,7 +497,28 @@ export function SubjectView() {
                         </span>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-ink-100">{t.title}</p>
-                          <p className="text-xs text-ink-500 mt-0.5">{qs.length} pregunta{qs.length !== 1 ? 's' : ''}</p>
+                          <div className="mt-0.5">
+                            <div className="flex items-center justify-between text-xs text-ink-500">
+                              <span>{qs.length} preguntas</span>
+                              <span className={`font-medium ${(() => { const seen = qs.filter(q => q.stats.seen > 0).length; const seenPct = qs.length === 0 ? 0 : Math.round((seen / qs.length) * 100); return seenPct === 100 ? 'text-sage-400' : seenPct > 0 ? 'text-amber-400' : 'text-ink-600'; })()}`}>
+                                {qs.filter(q => q.stats.seen > 0).length}/{qs.length} vistas
+                              </span>
+                            </div>
+                            {qs.length > 0 && (() => {
+                              const seen = qs.filter(q => q.stats.seen > 0).length;
+                              const seenPct = Math.round((seen / qs.length) * 100);
+                              return (
+                                <div className="h-1.5 bg-ink-700 rounded-full overflow-hidden mt-1">
+                                  <div
+                                    className={`h-full rounded-full transition-all duration-500 ${
+                                      seenPct === 100 ? 'bg-sage-500' : 'bg-amber-500'
+                                    }`}
+                                    style={{ width: `${seenPct}%` }}
+                                  />
+                                </div>
+                              );
+                            })()}
+                          </div>
 
                           {/* PDF adjunto */}
                           {isUploading ? (

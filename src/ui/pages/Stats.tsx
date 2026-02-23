@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '@/data/db';
 import { subjectRepo, questionRepo } from '@/data/repos';
 import { Button, Card, Badge, Difficulty, Progress } from '@/ui/components';
+import { LeitnerBoxes } from '@/ui/components/LeitnerBoxes';
+import { KnowledgeMap } from '@/ui/components/KnowledgeMap';
+import { generateStudyGuide, downloadMarkdown } from '@/data/exportStudyGuide';
 import type { Subject, Topic, Question, PracticeSession } from '@/domain/models';
 
 export function StatsPage() {
@@ -113,9 +116,19 @@ export function StatsPage() {
           >
             ← Volver
           </button>
-          <div className="flex items-center gap-4">
-            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
-            <h1 className="font-display text-2xl text-ink-100">Estadísticas — {subject.name}</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
+              <h1 className="font-display text-2xl text-ink-100">Estadísticas — {subject.name}</h1>
+            </div>
+            <Button size="sm" variant="secondary" onClick={async () => {
+              const md = await generateStudyGuide(subjectId!);
+              if (!md) return;
+              const name = subject.name.replace(/\s+/g, '_');
+              downloadMarkdown(md, `Resumen_${name}_${new Date().toISOString().split('T')[0]}.md`);
+            }}>
+              📥 Exportar resumen
+            </Button>
           </div>
         </div>
       </header>
@@ -148,6 +161,20 @@ export function StatsPage() {
             </div>
           </div>
         </Card>
+
+        {/* Leitner Boxes */}
+        {questions.length > 0 && (
+          <Card>
+            <LeitnerBoxes subjectId={subjectId!} questions={questions} />
+          </Card>
+        )}
+
+        {/* Knowledge Map */}
+        {topics.length > 0 && questions.length > 0 && (
+          <Card>
+            <KnowledgeMap subjectId={subjectId!} topics={topics} questions={questions} />
+          </Card>
+        )}
 
         {/* Por tema */}
         {topicStats.length > 0 && (

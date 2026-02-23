@@ -306,23 +306,23 @@ export function PracticeSessionPage() {
                   ⏱ {formatTime(examTimeLeft)}
                 </span>
               )}
+              <span className="text-sm text-ink-400 font-body">
+                {currentIndex + 1} / {questions.length}
+              </span>
               {/* Conceptos clave toggle */}
               {keyConcepts.length > 0 && (
                 <button
                   onClick={() => setSidebarOpen((v) => !v)}
-                  className={`text-sm px-2 py-1 rounded-lg transition-colors ${
+                  className={`text-sm px-2.5 py-1 rounded-lg transition-colors ${
                     sidebarOpen
                       ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                       : 'text-ink-500 hover:text-ink-300 hover:bg-ink-800'
                   }`}
                   title="Conceptos clave"
                 >
-                  📚 {keyConcepts.length}
+                  Conceptos clave ({keyConcepts.length})
                 </button>
               )}
-              <span className="text-sm text-ink-400 font-body">
-                {currentIndex + 1} / {questions.length}
-              </span>
             </div>
           </div>
           <Progress value={currentIndex} max={questions.length} color="amber" />
