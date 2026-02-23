@@ -64,7 +64,8 @@ export function Dashboard() {
     });
     loadSubjects();
     deliverableRepo.getAll().then(all => {
-      const today = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const upcoming = all
         .filter(d => d.dueDate && d.dueDate >= today && !d.status.includes('done'))
         .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
@@ -765,11 +766,10 @@ export function Dashboard() {
                 <div className="flex flex-col gap-2">
                   {upcomingDeliverables.map(d => {
                     const subject = subjects.find(s => s.id === d.subjectId);
-                    const dueDateObj = d.dueDate ? new Date(d.dueDate + 'T12:00:00') : null;
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const daysLeft = dueDateObj
-                      ? Math.ceil((dueDateObj.getTime() - today.getTime()) / 86400000)
+                    const _now = new Date();
+                    const _todayLocal = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, '0')}-${String(_now.getDate()).padStart(2, '0')}`;
+                    const daysLeft = d.dueDate
+                      ? Math.round((new Date(d.dueDate + 'T00:00:00').getTime() - new Date(_todayLocal + 'T00:00:00').getTime()) / 86400000)
                       : null;
                     return (
                       <div
@@ -790,7 +790,7 @@ export function Dashboard() {
                             daysLeft <= 3 ? 'text-rose-400' :
                             daysLeft <= 7 ? 'text-amber-400' : 'text-ink-500'
                           }`}>
-                            {daysLeft <= 0 ? '¡Hoy!' : daysLeft === 1 ? 'Mañana' : `${daysLeft}d`}
+                            {daysLeft < 0 ? 'Pasado' : daysLeft === 0 ? '¡Hoy!' : daysLeft === 1 ? 'Mañana' : `${daysLeft}d`}
                           </span>
                         )}
                       </div>
