@@ -5,6 +5,7 @@ import { db } from '@/data/db';
 import { Button, TypeBadge, Badge, Modal } from '@/ui/components';
 import type { PracticeSession, Question, UserAnswer, Topic } from '@/domain/models';
 import { QuestionForm } from '@/ui/components/QuestionForm';
+import { renderMd } from '@/utils/renderMd';
 
 export function ResultsPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -35,6 +36,13 @@ export function ResultsPage() {
     })();
   }, [sessionId]);
 
+  // All hooks MUST be called before any early return (Rules of Hooks)
+  const correct = useMemo(() => answers.filter((a) => a.result === 'CORRECT').length, [answers]);
+  const wrong = useMemo(() => answers.filter((a) => a.result === 'WRONG').length, [answers]);
+  const pending = useMemo(() => answers.filter((a) => a.result === null || a.result === undefined).length, [answers]);
+  const total = session?.questionIds.length ?? 0;
+  const pct = useMemo(() => total === 0 ? 0 : Math.round((correct / total) * 100), [correct, total]);
+
   if (loading || !session) {
     return (
       <div className="min-h-screen bg-ink-950 flex items-center justify-center">
@@ -42,12 +50,6 @@ export function ResultsPage() {
       </div>
     );
   }
-
-  const correct = useMemo(() => answers.filter((a) => a.result === 'CORRECT').length, [answers]);
-  const wrong = useMemo(() => answers.filter((a) => a.result === 'WRONG').length, [answers]);
-  const pending = useMemo(() => answers.filter((a) => a.result === null || a.result === undefined).length, [answers]);
-  const total = session.questionIds.length;
-  const pct = useMemo(() => total === 0 ? 0 : Math.round((correct / total) * 100), [correct, total]);
 
   const handleRepeatFailed = async () => {
     const failedIds = answers
@@ -220,14 +222,58 @@ export function ResultsPage() {
                 </div>
               )}
                 <div className="flex flex-col gap-3">
-                  <div>
-                    <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Tu respuesta</p>
-                    <UserAnswerSummary question={selectedQuestion} answer={selectedAnswer} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Respuesta correcta</p>
-                    <CorrectAnswerSummary question={selectedQuestion} />
-                  </div>
+                  {/* TEST: unified options list showing selected + correct */}
+                  {selectedQuestion.type === 'TEST' && selectedQuestion.options && selectedQuestion.options.length > 0 ? (
+                    <div>
+                      <p className="text-xs text-ink-500 uppercase tracking-widest mb-2">Opciones</p>
+                      <div className="flex flex-col gap-1.5">
+                        {selectedQuestion.options.map((opt, i) => {
+                          const isCorrectOpt = (selectedQuestion.correctOptionIds ?? []).includes(opt.id);
+                          const isSelected = (selectedAnswer.selectedOptionIds ?? []).includes(opt.id);
+                          return (
+                            <div
+                              key={opt.id}
+                              className={`flex items-start gap-2 rounded-xl px-3 py-2 border text-sm ${
+                                isCorrectOpt && isSelected
+                                  ? 'bg-sage-600/15 border-sage-500/40 text-sage-200'
+                                  : isCorrectOpt
+                                  ? 'bg-sage-600/10 border-sage-500/30 text-sage-300'
+                                  : isSelected
+                                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                                  : 'bg-ink-800/50 border-ink-700 text-ink-500'
+                              }`}
+                            >
+                              <span className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                                isCorrectOpt ? 'bg-sage-600/30 text-sage-300' :
+                                isSelected ? 'bg-rose-500/30 text-rose-300' :
+                                'bg-ink-800 border border-ink-600 text-ink-500'
+                              }`}>
+                                {isCorrectOpt ? '✓' : isSelected ? '✗' : String.fromCharCode(65 + i)}
+                              </span>
+                              <span
+                                className="prose prose-invert prose-sm max-w-none flex-1"
+                                dangerouslySetInnerHTML={{ __html: renderMd(opt.text) }}
+                              />
+                              {isSelected && !isCorrectOpt && (
+                                <span className="text-xs text-rose-400 flex-shrink-0 mt-0.5">tu respuesta</span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Tu respuesta</p>
+                        <UserAnswerSummary question={selectedQuestion} answer={selectedAnswer} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-ink-500 uppercase tracking-widest mb-1">Respuesta correcta</p>
+                        <CorrectAnswerSummary question={selectedQuestion} />
+                      </div>
+                    </>
+                  )}
 
                   {/* Display modelAnswer and keywords for DESARROLLO/PRACTICO before correction */}
                   {(selectedQuestion.type === 'DESARROLLO' || selectedQuestion.type === 'PRACTICO') && selectedAnswer.result === null && (

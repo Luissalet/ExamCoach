@@ -509,7 +509,10 @@ function AnswerInput({
             }`}>
               {String.fromCharCode(65 + (question.options ?? []).indexOf(opt))}
             </span>
-            {opt.text}
+            <span
+              className="prose prose-invert prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: renderMd(opt.text) }}
+            />
           </button>
         ))}
       </div>
@@ -610,19 +613,54 @@ function AnswerResult({ question, answer, result, onManualResult, onNoteChange }
       )}
 
       {/* Comparison */}
-      <div className="grid grid-cols-1 gap-3">
-        {/* User answer */}
-        <div className="bg-ink-800 border border-ink-700 rounded-xl p-4">
-          <p className="text-xs text-ink-500 uppercase tracking-widest mb-2">Tu respuesta</p>
-          <UserAnswerDisplay question={question} answer={answer} />
+      {question.type === 'TEST' && question.options && question.options.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {question.options.map((opt, i) => {
+            const isCorrectOpt = (question.correctOptionIds ?? []).includes(opt.id);
+            const isSelected = (answer.selectedOptionIds ?? []).includes(opt.id);
+            return (
+              <div
+                key={opt.id}
+                className={`flex items-start gap-3 rounded-xl px-4 py-3 border text-sm transition-all ${
+                  isCorrectOpt && isSelected
+                    ? 'bg-sage-600/15 border-sage-500/40 text-sage-200'
+                    : isCorrectOpt
+                    ? 'bg-sage-600/10 border-sage-500/30 text-sage-300'
+                    : isSelected
+                    ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                    : 'bg-ink-800/50 border-ink-700 text-ink-500'
+                }`}
+              >
+                <span className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mt-0.5 ${
+                  isCorrectOpt ? 'bg-sage-600/30 text-sage-300' :
+                  isSelected ? 'bg-rose-500/30 text-rose-300' :
+                  'bg-ink-800 border border-ink-600 text-ink-500'
+                }`}>
+                  {isCorrectOpt ? '✓' : isSelected ? '✗' : String.fromCharCode(65 + i)}
+                </span>
+                <span
+                  className="prose prose-invert prose-sm max-w-none flex-1"
+                  dangerouslySetInnerHTML={{ __html: renderMd(opt.text) }}
+                />
+                {isSelected && !isCorrectOpt && (
+                  <span className="text-xs text-rose-400 flex-shrink-0 mt-1">tu respuesta</span>
+                )}
+              </div>
+            );
+          })}
         </div>
-
-        {/* Correct answer */}
-        <div className={`border rounded-xl p-4 ${isCorrect ? 'bg-sage-600/5 border-sage-600/20' : 'bg-ink-800 border-ink-700'}`}>
-          <p className="text-xs text-ink-500 uppercase tracking-widest mb-2">Respuesta correcta</p>
-          <CorrectAnswerDisplay question={question} />
+      ) : (
+        <div className="grid grid-cols-1 gap-3">
+          <div className="bg-ink-800 border border-ink-700 rounded-xl p-4">
+            <p className="text-xs text-ink-500 uppercase tracking-widest mb-2">Tu respuesta</p>
+            <UserAnswerDisplay question={question} answer={answer} />
+          </div>
+          <div className={`border rounded-xl p-4 ${isCorrect ? 'bg-sage-600/5 border-sage-600/20' : 'bg-ink-800 border-ink-700'}`}>
+            <p className="text-xs text-ink-500 uppercase tracking-widest mb-2">Respuesta correcta</p>
+            <CorrectAnswerDisplay question={question} />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* DESARROLLO/PRACTICO manual correction */}
       {(question.type === 'DESARROLLO' || question.type === 'PRACTICO') && isPending && !manualSet && (
@@ -725,7 +763,7 @@ function UserAnswerDisplay({ question, answer }: { question: Question; answer: U
         {(question.options ?? [])
           .filter((o) => selected.includes(o.id))
           .map((o) => (
-            <p key={o.id} className="text-sm text-ink-200">{o.text}</p>
+            <div key={o.id} className="text-sm text-ink-200 prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: renderMd(o.text) }} />
           ))}
       </div>
     );
@@ -754,7 +792,7 @@ function CorrectAnswerDisplay({ question }: { question: Question }) {
         {(question.options ?? [])
           .filter((o) => correctIds.has(o.id))
           .map((o) => (
-            <p key={o.id} className="text-sm text-sage-400">{o.text}</p>
+            <div key={o.id} className="text-sm text-sage-400 prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: renderMd(o.text) }} />
           ))}
       </div>
     );
