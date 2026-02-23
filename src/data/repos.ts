@@ -7,9 +7,11 @@ import type {
   PracticeSession,
   UserAnswer,
   QuestionStats,
+  KeyConcept,
+  KeyConceptCategory,
 } from '@/domain/models';
 import { computeContentHash } from '@/domain/hashing';
-import { slugify } from '@/domain/normalize';
+import { slugify, normalizeText } from '@/domain/normalize';
 
 const now = () => new Date().toISOString();
 
@@ -45,6 +47,7 @@ export const subjectRepo = {
     await db.sessions.where('subjectId').equals(id).delete();
     await db.pdfAnchors.where('subjectId').equals(id).delete();
     await db.pdfResources.where('subjectId').equals(id).delete();
+    await db.keyConcepts.where('subjectId').equals(id).delete();
     await db.subjects.delete(id);
   },
 };
@@ -209,5 +212,87 @@ export const sessionRepo = {
       a.questionId === questionId ? { ...a, ...patch } : a
     );
     await db.sessions.update(sessionId, { answers });
+  },
+};
+
+// ─── Key Concepts ────────────────────────────────────────────────────────────
+
+/** Hash ligero para deduplicar conceptos clave (no usa el hash de preguntas). */
+async function computeConceptHash(
+  category: string,
+  title: string,
+  content: string,
+): Promise<string> {
+  const raw = [category, normalizeText(title), normalizeText(content)].join('::');
+  const data = new TextEncoder().encode(raw);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  const arr = Array.from(new Uint8Array(buf));
+  return 'sha256:' + arr.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+export const keyConceptRepo = {
+  async getBySubject(subjectId: string): Promise<KeyConcept[]> {
+    return db.keyConcepts.where('subjectId').equals(subjectId).sortBy('order');
+  },
+
+  async getById(id: string): Promise<KeyConcept | undefined> {
+    return db.keyConcepts.get(id);
+  },
+
+  async create(
+    data: Omit<KeyConcept, 'id' | 'createdAt' | 'updatedAt' | 'contentHash'>,
+    alias?: string,
+  ): Promise<KeyConcept> {
+    const contentHash = await computeConceptHash(data.category, data.title, data.content);
+    const concept: KeyConcept = {
+      ...data,
+      id: uuidv4(),
+      contentHash,
+      createdBy: alias ?? data.createdBy,
+      createdAt: now(),
+      updatedAt: now(),
+    };
+    await db.keyConcepts.add(concept);
+    return concept;
+  },
+
+  async update(id: string, data: Partial<KeyConcept>): Promise<void> {
+    // Recalcular hash si cambia el contenido
+    if (data.title !== undefined || data.content !== undefined || data.category !== undefined) {
+      const existing = await db.keyConcepts.get(id);
+      if (existing) {
+        const title = data.title ?? existing.title;
+        const content = data.content ?? existing.content;
+        const category = data.category ?? existing.category;
+        data.contentHash = await computeConceptHash(category, title, content);
+      }
+    }
+    await db.keyConcepts.update(id, { ...data, updatedAt: now() });
+  },
+
+  async delete(id: string): Promise<void> {
+    await db.keyConcepts.delete(id);
+  },
+
+  async deleteBySubject(subjectId: string): Promise<void> {
+    await db.keyConcepts.where('subjectId').equals(subjectId).delete();
+  },
+
+  async existsByHash(contentHash: string, subjectId: string): Promise<boolean> {
+    const count = await db.keyConcepts
+      .where('contentHash')
+      .equals(contentHash)
+      .and((c) => c.subjectId === subjectId)
+      .count();
+    return count > 0;
+  },
+
+  async getNextOrder(subjectId: string, category: KeyConceptCategory): Promise<number> {
+    const concepts = await db.keyConcepts
+      .where('subjectId')
+      .equals(subjectId)
+      .filter((c) => c.category === category)
+      .toArray();
+    return concepts.length === 0 ? 0 : Math.max(...concepts.map((c) => c.order)) + 1;
   },
 };

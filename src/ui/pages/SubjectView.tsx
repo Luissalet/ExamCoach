@@ -10,13 +10,14 @@ import { PdfViewer, type PdfViewerHandle } from '@/ui/components/PdfViewer';
 import { MdContent } from '@/ui/components/MdContent';
 import { renderMd } from '@/utils/renderMd';
 import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
+import { KeyConceptsTab } from '@/ui/components/KeyConceptsTab';
 
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
 import type { Topic, Question, QuestionOrigin, QuestionType } from '@/domain/models';
 import { slugify } from '@/domain/normalize';
 import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
 import { loadPdfMapping, getPdfUrl, resourcesUrl } from '@/data/resourceLoader';
-type TabId = 'topics' | 'questions' | 'practice' | 'resources';
+type TabId = 'topics' | 'questions' | 'practice' | 'resources' | 'concepts';
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   test: 'Test',
@@ -61,10 +62,11 @@ export function SubjectView() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const {
-    subjects, topics, questions, settings,
-    loadSubjects, loadTopics, loadQuestions,
+    subjects, topics, questions, settings, keyConcepts,
+    loadSubjects, loadTopics, loadQuestions, loadKeyConcepts,
     createTopic, updateTopic, deleteTopic,
     createQuestion, updateQuestion, deleteQuestion, duplicateQuestion,
+    createKeyConcept, updateKeyConcept, deleteKeyConcept,
   } = useStore();
 
   const subject = subjects.find((s) => s.id === subjectId);
@@ -119,6 +121,7 @@ export function SubjectView() {
     if (subjectId) {
       loadTopics(subjectId);
       loadQuestions(subjectId);
+      loadKeyConcepts(subjectId);
     }
   }, [subjectId]);
 
@@ -378,6 +381,7 @@ export function SubjectView() {
     { id: 'questions', label: `Preguntas (${subjectQuestions.length})` },
     { id: 'practice', label: 'Practicar' },
     { id: 'resources', label: 'Otros recursos' },
+    { id: 'concepts', label: 'Conceptos clave' },
   ];
 
   // B2: Reorder topics via drag & drop
@@ -759,6 +763,20 @@ export function SubjectView() {
             subject={subject}
             resources={resources}
             loading={resourcesLoading}
+          />
+        )}
+
+        {tab === 'concepts' && (
+          <KeyConceptsTab
+            subjectId={subjectId!}
+            concepts={keyConcepts}
+            topics={subjectTopics}
+            onCreate={async (data) => {
+              await createKeyConcept({ subjectId: subjectId!, ...data });
+            }}
+            onUpdate={updateKeyConcept}
+            onDelete={deleteKeyConcept}
+            onReload={async () => { await loadKeyConcepts(subjectId!); }}
           />
         )}
       </main>

@@ -10,6 +10,7 @@ import type {
   QuestionImageRecord,
   Deliverable,
   SubjectGradingConfig,
+  KeyConcept,
 } from '@/domain/models';
 
 export class StudyDB extends Dexie {
@@ -23,6 +24,7 @@ export class StudyDB extends Dexie {
   questionImages!: Table<QuestionImageRecord, string>;
   deliverables!: Table<Deliverable, string>;
   gradingConfigs!: Table<SubjectGradingConfig, string>;
+  keyConcepts!: Table<KeyConcept, string>;
 
   constructor() {
     super('StudyAppDB');
@@ -101,6 +103,22 @@ export class StudyDB extends Dexie {
             delete (d as { completed?: boolean }).completed;
           });
       });
+
+    // v5: key concepts (formulas, definitions, remarks)
+    this.version(5).stores({
+      subjects: 'id, name, examDate, createdAt',
+      topics: 'id, subjectId, order, createdAt',
+      questions:
+        'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+      sessions: 'id, subjectId, mode, createdAt',
+      pdfResources: 'id, subjectId, createdAt',
+      pdfAnchors: 'id, subjectId, pdfId',
+      settings: 'id',
+      questionImages: 'id, filename, createdAt',
+      deliverables: 'id, subjectId, type, dueDate, status, createdAt',
+      gradingConfigs: 'id',
+      keyConcepts: 'id, subjectId, category, order, contentHash, createdAt',
+    });
   }
 }
 

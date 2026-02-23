@@ -40,6 +40,59 @@ export interface Topic {
   updatedAt: string;
 }
 
+// ─── Key Concepts ────────────────────────────────────────────────────────────
+
+export type KeyConceptCategory = 'formula' | 'definition' | 'remark';
+
+/**
+ * Concepto clave de una asignatura: fórmula, definición u observación.
+ * Se almacena en IndexedDB y se puede exportar/importar como JSON pack.
+ */
+export interface KeyConcept {
+  id: string;
+  subjectId: string;
+  /** Enlace opcional al tema al que pertenece este concepto. */
+  topicId?: string;
+  category: KeyConceptCategory;
+  title: string;
+  /** Contenido en Markdown con soporte LaTeX (KaTeX). */
+  content: string;
+  tags?: string[];
+  /** Orden dentro de su categoría para la asignatura. */
+  order: number;
+  createdBy?: string;
+  sourcePackId?: string;
+  contentHash?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Formato portable de un concepto para export/import (usa topicKey en vez de topicId). */
+export interface KeyConceptExport {
+  id: string;
+  topicKey?: string;
+  category: KeyConceptCategory;
+  title: string;
+  content: string;
+  tags?: string[];
+  order: number;
+  createdBy?: string;
+  contentHash?: string;
+}
+
+/** Pack de conceptos clave para compartir en GitHub / generar con ChatGPT. */
+export interface KeyConceptsPack {
+  version: 1;
+  kind: 'keyconcepts';
+  packId: string;
+  createdBy: string;
+  exportedAt: string;
+  subjectKey: string;
+  subjectName: string;
+  topics?: { topicKey: string; topicTitle: string }[];
+  concepts: KeyConceptExport[];
+}
+
 export interface QuestionOption {
   id: string;
   text: string;

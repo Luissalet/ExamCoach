@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { Subject, Topic, Question, PracticeSession, AppSettings } from '@/domain/models';
-import { subjectRepo, topicRepo, questionRepo, sessionRepo } from '@/data/repos';
+import type { Subject, Topic, Question, PracticeSession, AppSettings, KeyConcept } from '@/domain/models';
+import { subjectRepo, topicRepo, questionRepo, sessionRepo, keyConceptRepo } from '@/data/repos';
 import { getSettings, saveSettings } from '@/data/db';
 import { syncWithGlobalBank, type GlobalBankSyncResult } from '@/data/globalBank';
 
@@ -10,6 +10,7 @@ interface AppStore {
   topics: Topic[];
   questions: Question[];
   currentSession: PracticeSession | null;
+  keyConcepts: KeyConcept[];
   settings: AppSettings;
 
   // Loading state
@@ -39,6 +40,12 @@ interface AppStore {
   deleteQuestion: (id: string) => Promise<void>;
   duplicateQuestion: (id: string) => Promise<void>;
 
+  // Actions - Key Concepts
+  loadKeyConcepts: (subjectId: string) => Promise<void>;
+  createKeyConcept: (data: Omit<KeyConcept, 'id' | 'createdAt' | 'updatedAt' | 'contentHash'>) => Promise<KeyConcept>;
+  updateKeyConcept: (id: string, data: Partial<KeyConcept>) => Promise<void>;
+  deleteKeyConcept: (id: string) => Promise<void>;
+
   // Actions - Sessions
   setCurrentSession: (session: PracticeSession | null) => void;
   loadSession: (id: string) => Promise<void>;
@@ -62,6 +69,7 @@ export const useStore = create<AppStore>((set, get) => ({
   topics: [],
   questions: [],
   currentSession: null,
+  keyConcepts: [],
   settings: { alias: '', importedPackIds: [] },
   loading: false,
   error: null,
@@ -149,6 +157,31 @@ export const useStore = create<AppStore>((set, get) => ({
   duplicateQuestion: async (id) => {
     const copy = await questionRepo.duplicate(id);
     set((s) => ({ questions: [...s.questions, copy] }));
+  },
+
+  // ─── Key Concepts ──────────────────────────────────────────────────────────
+  loadKeyConcepts: async (subjectId) => {
+    const keyConcepts = await keyConceptRepo.getBySubject(subjectId);
+    set({ keyConcepts });
+  },
+
+  createKeyConcept: async (data) => {
+    const { settings } = get();
+    const concept = await keyConceptRepo.create(data, settings.alias);
+    set((s) => ({ keyConcepts: [...s.keyConcepts, concept] }));
+    return concept;
+  },
+
+  updateKeyConcept: async (id, data) => {
+    await keyConceptRepo.update(id, data);
+    set((s) => ({
+      keyConcepts: s.keyConcepts.map((c) => (c.id === id ? { ...c, ...data } : c)),
+    }));
+  },
+
+  deleteKeyConcept: async (id) => {
+    await keyConceptRepo.delete(id);
+    set((s) => ({ keyConcepts: s.keyConcepts.filter((c) => c.id !== id) }));
   },
 
   setCurrentSession: (session) => set({ currentSession: session }),
