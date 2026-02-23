@@ -288,6 +288,8 @@ export interface BankExport {
   topics: Topic[];
   questions: Question[];
   pdfAnchors: PdfAnchor[];
+  /** Conceptos clave incluidos en el banco global (opcional para retrocompatibilidad). */
+  keyConcepts?: KeyConcept[];
 }
 
 export interface ContributionQuestion {

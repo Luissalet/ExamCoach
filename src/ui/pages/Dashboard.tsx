@@ -224,9 +224,9 @@ export function Dashboard() {
     try {
       const result = await commitAndCleanContributions();
       if (result.wroteToFile) {
-        setCommitMsg(`✓ global-bank.json actualizado (${result.questionsInBank} preguntas) · ${result.committedFromPacks} packs integrados · historial reseteado`);
+        setCommitMsg(`✓ global-bank.json actualizado (${result.questionsInBank} preguntas, ${result.conceptsInBank} conceptos clave) · ${result.committedFromPacks} preguntas y ${result.committedConceptsFromPacks} conceptos integrados · historial reseteado`);
       } else {
-        setCommitMsg(`⚠ No se pudo escribir en disco (solo funciona en dev). ${result.committedFromPacks} preguntas de packs marcadas como globales.`);
+        setCommitMsg(`⚠ No se pudo escribir en disco (solo funciona en dev). ${result.committedFromPacks} preguntas y ${result.committedConceptsFromPacks} conceptos de packs marcados como globales.`);
       }
       await loadSubjects();
     } catch (err) {

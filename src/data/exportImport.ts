@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { db, getSettings, saveSettings } from './db';
 import { subjectRepo, topicRepo, questionRepo } from './repos';
-import type { BankExport, Subject, Topic, Question, PdfAnchor } from '@/domain/models';
+import type { BankExport, Subject, Topic, Question, PdfAnchor, KeyConcept } from '@/domain/models';
 
 // ─── Zod schemas for validation ───────────────────────────────────────────────
 
@@ -79,6 +79,22 @@ const PdfAnchorSchema = z.object({
   label: z.string().optional(),
 });
 
+const KeyConceptSchema = z.object({
+  id: z.string(),
+  subjectId: z.string(),
+  topicId: z.string().optional(),
+  category: z.enum(['formula', 'definition', 'remark']),
+  title: z.string(),
+  content: z.string(),
+  tags: z.array(z.string()).optional(),
+  order: z.number(),
+  createdBy: z.string().optional(),
+  sourcePackId: z.string().optional(),
+  contentHash: z.string().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 const BankExportSchema = z.object({
   version: z.literal(1),
   kind: z.literal('bank'),
@@ -87,6 +103,7 @@ const BankExportSchema = z.object({
   topics: z.array(TopicSchema),
   questions: z.array(QuestionSchema),
   pdfAnchors: z.array(PdfAnchorSchema),
+  keyConcepts: z.array(KeyConceptSchema).optional(),
 });
 
 // ─── Export ───────────────────────────────────────────────────────────────────
@@ -97,22 +114,26 @@ export async function exportBank(subjectIds?: string[]): Promise<BankExport> {
   let topics: Topic[];
   let questions: Question[];
   let pdfAnchors: PdfAnchor[];
+  let keyConcepts: KeyConcept[];
 
   if (subjectIds && subjectIds.length > 0) {
     subjects = await db.subjects.where('id').anyOf(subjectIds).toArray();
     topics = [];
     questions = [];
     pdfAnchors = [];
+    keyConcepts = [];
     for (const sid of subjectIds) {
       topics.push(...(await topicRepo.getBySubject(sid)));
       questions.push(...(await questionRepo.getBySubject(sid)));
       pdfAnchors.push(...(await db.pdfAnchors.where('subjectId').equals(sid).toArray()));
+      keyConcepts.push(...(await db.keyConcepts.where('subjectId').equals(sid).toArray()));
     }
   } else {
     subjects = await db.subjects.toArray();
     topics = await db.topics.toArray();
     questions = await db.questions.toArray();
     pdfAnchors = await db.pdfAnchors.toArray();
+    keyConcepts = await db.keyConcepts.toArray();
   }
 
   return {
@@ -123,6 +144,7 @@ export async function exportBank(subjectIds?: string[]): Promise<BankExport> {
     topics,
     questions,
     pdfAnchors,
+    keyConcepts,
   };
 }
 
@@ -144,6 +166,7 @@ export async function exportGlobalBank(subjectIds?: string[]): Promise<BankExpor
       ...q,
       stats: { seen: 0, correct: 0, wrong: 0 },
     })),
+    keyConcepts: (bank.keyConcepts ?? []).map(({ sourcePackId: _sp, ...kc }) => kc as KeyConcept),
   };
 }
 
@@ -267,7 +290,9 @@ export async function parseImportFile(file: File): Promise<unknown> {
 
 export interface CommitCleanResult {
   questionsInBank: number;
+  conceptsInBank: number;
   committedFromPacks: number;   // preguntas de packs marcadas como comprometidas
+  committedConceptsFromPacks: number;
   clearedPackIds: number;
   wroteToFile: boolean;
 }
@@ -303,6 +328,19 @@ export async function commitAndCleanContributions(): Promise<CommitCleanResult> 
       .modify({ sourcePackId: undefined });
   }
 
+  // Limpiar sourcePackId de conceptos clave también
+  const allConcepts = await db.keyConcepts.toArray();
+  const packConceptIds = allConcepts
+    .filter((kc) => !!kc.sourcePackId)
+    .map((kc) => kc.id);
+
+  if (packConceptIds.length > 0) {
+    await db.keyConcepts
+      .where('id')
+      .anyOf(packConceptIds)
+      .modify({ sourcePackId: undefined });
+  }
+
   // Resetear historial de packs importados
   const settings = await getSettings();
   const clearedPackIds = settings.importedPackIds.length;
@@ -310,7 +348,9 @@ export async function commitAndCleanContributions(): Promise<CommitCleanResult> 
 
   return {
     questionsInBank: bank.questions.length,
+    conceptsInBank: (bank.keyConcepts ?? []).length,
     committedFromPacks: packQuestionIds.length,
+    committedConceptsFromPacks: packConceptIds.length,
     clearedPackIds,
     wroteToFile,
   };

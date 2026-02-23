@@ -1,14 +1,15 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { db } from '@/data/db';
-import { questionRepo, sessionRepo } from '@/data/repos';
+import { questionRepo, sessionRepo, keyConceptRepo } from '@/data/repos';
 import { scoreAnswer } from '@/domain/scoring';
 import { Button, Progress, TypeBadge, Modal } from '@/ui/components';
-import type { Question, PracticeSession, UserAnswer, Topic } from '@/domain/models';
+import type { Question, PracticeSession, UserAnswer, Topic, KeyConcept } from '@/domain/models';
 import { v4 as uuidv4 } from 'uuid';
 import { renderMd } from '@/utils/renderMd';
 import { MdContent } from '@/ui/components/MdContent';
 import { QuestionForm } from '@/ui/components/QuestionForm';
+import { KeyConceptsSidebar } from '@/ui/components/KeyConceptsSidebar';
 
 
 export function PracticeSessionPage() {
@@ -29,6 +30,10 @@ export function PracticeSessionPage() {
   const [loading, setLoading] = useState(true);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
 
+  // Key concepts sidebar
+  const [keyConcepts, setKeyConcepts] = useState<KeyConcept[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   // Per-question answer state
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [freeText, setFreeText] = useState('');
@@ -43,9 +48,11 @@ export function PracticeSessionPage() {
       // Keep original order
       const ordered = s.questionIds.map((id) => qs.find((q) => q.id === id)).filter(Boolean) as Question[];
       const ts = await db.topics.where('subjectId').equals(s.subjectId).toArray();
+      const kcs = await keyConceptRepo.getBySubject(s.subjectId);
       setSession(s);
       setQuestions(ordered);
       setTopics(ts);
+      setKeyConcepts(kcs);
       // Resume: figure out where we left off
       const answeredIds = new Set(s.answers.map((a) => a.questionId));
       const nextIdx = ordered.findIndex((q) => !answeredIds.has(q.id));
@@ -299,6 +306,20 @@ export function PracticeSessionPage() {
                   ⏱ {formatTime(examTimeLeft)}
                 </span>
               )}
+              {/* Conceptos clave toggle */}
+              {keyConcepts.length > 0 && (
+                <button
+                  onClick={() => setSidebarOpen((v) => !v)}
+                  className={`text-sm px-2 py-1 rounded-lg transition-colors ${
+                    sidebarOpen
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      : 'text-ink-500 hover:text-ink-300 hover:bg-ink-800'
+                  }`}
+                  title="Conceptos clave"
+                >
+                  📚 {keyConcepts.length}
+                </button>
+              )}
               <span className="text-sm text-ink-400 font-body">
                 {currentIndex + 1} / {questions.length}
               </span>
@@ -467,6 +488,14 @@ export function PracticeSessionPage() {
           />
         </Modal>
       )}
+
+      {/* Sidebar de conceptos clave */}
+      <KeyConceptsSidebar
+        concepts={keyConcepts}
+        topics={topics}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
     </div>
   );
 }

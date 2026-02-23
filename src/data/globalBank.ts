@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { db, getSettings, saveSettings } from './db';
 import { slugify } from '@/domain/normalize';
-import type { Subject, Topic, Question, PdfAnchor, BankExport } from '@/domain/models';
+import type { Subject, Topic, Question, PdfAnchor, KeyConcept, BankExport } from '@/domain/models';
 import bankJson from './global-bank.json';
 // ─── Zod validation (reutiliza estructura BankExport) ────────────────────────
 
@@ -86,6 +86,22 @@ const PdfAnchorSchema = z.object({
   label: z.string().optional(),
 });
 
+const KeyConceptSchema = z.object({
+  id: z.string(),
+  subjectId: z.string(),
+  topicId: z.string().optional(),
+  category: z.enum(['formula', 'definition', 'remark']),
+  title: z.string(),
+  content: z.string(),
+  tags: z.array(z.string()).optional(),
+  order: z.number(),
+  createdBy: z.string().optional(),
+  sourcePackId: z.string().optional(),
+  contentHash: z.string().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 const BankExportSchema = z.object({
   version: z.literal(1),
   kind: z.literal('bank'),
@@ -94,6 +110,7 @@ const BankExportSchema = z.object({
   topics: z.array(TopicSchema),
   questions: z.array(QuestionSchema),
   pdfAnchors: z.array(PdfAnchorSchema),
+  keyConcepts: z.array(KeyConceptSchema).optional(),
 });
 
 // ─── Result ────────────────────────────────────────────────────────────────────
@@ -102,6 +119,8 @@ export interface GlobalBankSyncResult {
   subjectsAdded: number;
   topicsAdded: number;
   questionsAdded: number;
+  conceptsAdded: number;
+  conceptsSkipped: number;
   errors: string[];
   skipped: number; // preguntas ya existentes (deduplicadas)
 }
@@ -127,6 +146,8 @@ export async function mergeGlobalBank(raw: unknown): Promise<GlobalBankSyncResul
     subjectsAdded: 0,
     topicsAdded: 0,
     questionsAdded: 0,
+    conceptsAdded: 0,
+    conceptsSkipped: 0,
     skipped: 0,
     errors: [],
   };
@@ -287,7 +308,48 @@ export async function mergeGlobalBank(raw: unknown): Promise<GlobalBankSyncResul
     result.questionsAdded++;
   }
 
-  // ── 7. Guardar timestamp de última sincronización ───────────────────────────
+  // ── 7. Procesar conceptos clave ──────────────────────────────────────────────
+  if (bank.keyConcepts && bank.keyConcepts.length > 0) {
+    // Índice de contentHashes existentes para deduplicar
+    const existingConceptHashes = new Set<string>();
+    const allConcepts = await db.keyConcepts.toArray();
+    for (const kc of allConcepts) {
+      if (kc.contentHash) existingConceptHashes.add(kc.contentHash);
+    }
+
+    for (const kc of bank.keyConcepts) {
+      const localSubjectId = subjectIdMap.get(kc.subjectId);
+      if (!localSubjectId) continue;
+
+      // Deduplicar por contentHash
+      if (kc.contentHash && existingConceptHashes.has(kc.contentHash)) {
+        result.conceptsSkipped++;
+        continue;
+      }
+
+      // Mapear topicId si existe
+      let localTopicId: string | undefined;
+      if (kc.topicId) {
+        localTopicId = topicIdMap.get(kc.topicId);
+      }
+
+      const newConcept: KeyConcept = {
+        ...kc,
+        id: uuidv4(),
+        subjectId: localSubjectId,
+        topicId: localTopicId,
+        sourcePackId: undefined,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      await db.keyConcepts.add(newConcept);
+      if (kc.contentHash) existingConceptHashes.add(kc.contentHash);
+      result.conceptsAdded++;
+    }
+  }
+
+  // ── 8. Guardar timestamp de última sincronización ───────────────────────────
   await saveSettings({ globalBankSyncedAt: now } as never);
 
   return result;

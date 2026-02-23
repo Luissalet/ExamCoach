@@ -1,6 +1,11 @@
 {
   "files": [
     {
+      "name": "Guia_Rapida_IGP.md",
+      "path": "Guia_Rapida_IGP.md",
+      "type": "md"
+    },
+    {
       "name": "Resumen_IGP.docx",
       "path": "Resumen_IGP.docx",
       "type": "docx"
