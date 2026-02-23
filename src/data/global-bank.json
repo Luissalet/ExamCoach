@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "bank",
-  "exportedAt": "2026-02-23T00:19:56.901Z",
+  "exportedAt": "2026-02-23T00:38:35.163Z",
   "subjects": [
     {
       "id": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
@@ -1757,6 +1757,37 @@
       },
       "createdAt": "2026-02-21T22:34:51.487Z",
       "updatedAt": "2026-02-21T22:34:51.487Z"
+    },
+    {
+      "id": "0a630f19-d240-457a-8fe8-ad7f0bca5d8a",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "PRACTICO",
+      "prompt": "Se quiere desambiguar la palabra 'dog' en el siguiente texto:\n\n  \"She ate a hot dog on buttered bread with tomato and onion\"\n\nEl diccionario recoge dos acepciones para 'dog':\n  dog¹: a member of the genus Canis (probably descended from the common wolf) that has been domesticated by man since prehistoric times\n  dog²: a smooth-textured sausage of minced beef or pork usually smoked; often served on a bread roll\n\nSe pide:\n(1) Suponiendo el contexto [bread, tomato, onion], define y construye la firma de cada sentido de 'dog'.\n(2) Indica cómo se usarían el contexto y las firmas en el algoritmo de Lesk simplificado para elegir el sentido correcto. Muestra los cálculos y justifica la decisión.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "modelAnswer": "**Nota:** Este problema usa el algoritmo de **Lesk simplificado**, en el que se compara la firma de cada sentido de la palabra ambigua directamente con las palabras del contexto (no con las firmas de los sentidos de las palabras del contexto, como haría el Lesk original).\n\n**Contexto relevante (stopwords eliminadas):** {bread, tomato, onion}\n\n**1. Firmas de los sentidos de 'dog':**\n\n  firma(dog¹) ← definición: 'a member of the genus Canis (probably descended from the common wolf) that has been domesticated by man since prehistoric times'\n  firma(dog¹) = {member, genus, Canis, wolf, domesticate, man, prehistoric, time}\n\n  firma(dog²) ← definición: 'a smooth-textured sausage of minced beef or pork usually smoked; often served on a bread roll'\n  firma(dog²) = {sausage, beef, pork, smoke, serve, bread, roll}\n\n**2. Algoritmo de Lesk simplificado — cálculo de coincidencias:**\n\n  Para cada sentido, se cuentan las palabras del contexto que aparecen en la firma:\n\n  | Palabra contexto | firma(dog¹) | firma(dog²) |\n  |------------------|-------------|-------------|\n  | bread            | 0           | 1 (✓ bread) |\n  | tomato           | 0           | 0           |\n  | onion            | 0           | 0           |\n  | **TOTAL**        | **0**       | **1**       |\n\n  - score(dog¹) = |firma(dog¹) ∩ {bread, tomato, onion}| = 0\n  - score(dog²) = |firma(dog²) ∩ {bread, tomato, onion}| = 1\n\n**Decisión:** dog² > dog¹ → Se selecciona **dog²** (salchicha).\n\nEn el contexto 'She ate a hot dog on buttered bread with tomato and onion', 'hot dog' hace referencia a la salchicha (embutido), no al animal. La palabra 'bread' en la firma de dog² (procedente de 'often served on a bread roll') produce la única coincidencia con el contexto y es suficiente para desambiguar correctamente.\n\n**Limitación del Lesk simplificado vs. original:**\nEl Lesk simplificado es más rápido pero menos preciso que el original, ya que compara la firma de la palabra ambigua directamente con tokens del contexto en lugar de con las firmas de los sentidos de esas palabras. Si 'bread' no apareciese en la definición de dog², el algoritmo no podría desambiguar (0-0 empate).",
+      "keywords": [
+        "Lesk simplificado",
+        "WSD",
+        "desambiguación léxica",
+        "firma",
+        "sentido",
+        "contexto",
+        "dog",
+        "hot dog",
+        "bread",
+        "Lesk simplificado vs original"
+      ],
+      "contentHash": "sha256:c6371265f56fcae507043e4318ee010bd39d6995a6e20cc8115c788b371df3cc",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:20:50.122Z",
+      "updatedAt": "2026-02-23T00:20:50.122Z"
     },
     {
       "id": "0a96cf19-fba7-4267-ae2d-b9807e2b8cc8",
@@ -13249,6 +13280,37 @@
       "updatedAt": "2026-02-21T22:10:27.106Z"
     },
     {
+      "id": "63474069-2a37-4209-bb75-9a839db35af6",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "3e455905-4b03-4822-be94-a82ef4467f8c",
+      "type": "PRACTICO",
+      "prompt": "Se dispone de las siguientes oraciones (ya preprocesadas, stopwords eliminadas y lematizadas):\n\n- O1: [gato, pequeño, subir, tejado, mirar, pájaro] (6 tokens)\n- O2: [niño, ver, gato, pequeño, jugar, jardín, soleado] (7 tokens)\n- O3: [gato, negro, dormir, cama, negro, comer] (6 tokens — 'negro' aparece 2 veces)\n\nEl vocabulario resultante (15 términos) es: {cama, comer, dormir, gato, jardín, jugar, mirar, negro, niño, pájaro, pequeño, soleado, subir, tejado, ver}.\n\nSe pide:\na) Construye los vectores para los métodos TF y TF-IDF, según las definiciones de éstos dadas en los materiales de la asignatura. Explica el procedimiento que has seguido. Para los cálculos del TF-IDF usa el logaritmo en base 10.\nb) Considerando que dos oraciones son más similares entre sí cuanto menor es su distancia euclídea, indica qué par de oraciones son más similares entre sí. Haz el cálculo para el caso TF. Explica el procedimiento que has seguido.\nc) Explica qué significa el valor obtenido para 'gato' en el criterio TF-IDF.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "modelAnswer": "**a) Vectores TF y TF-IDF:**\n\n**TF = count / total_tokens_doc:**\n  O1 (6 tokens): gato=1/6≈0.167, pequeño=1/6≈0.167, subir=1/6≈0.167, tejado=1/6≈0.167, mirar=1/6≈0.167, pájaro=1/6≈0.167; resto=0\n  O2 (7 tokens): niño=1/7≈0.143, ver=1/7≈0.143, gato=1/7≈0.143, pequeño=1/7≈0.143, jugar=1/7≈0.143, jardín=1/7≈0.143, soleado=1/7≈0.143; resto=0\n  O3 (6 tokens): gato=1/6≈0.167, negro=2/6=0.333, dormir=1/6≈0.167, cama=1/6≈0.167, comer=1/6≈0.167; resto=0\n\n**IDF = log₁₀(N/df), N=3:**\n  - gato (df=3): IDF = log₁₀(3/3) = 0\n  - pequeño (df=2): IDF = log₁₀(3/2) = log₁₀(1.5) ≈ 0.176\n  - resto (df=1): IDF = log₁₀(3) ≈ 0.477\n\n**TF-IDF = TF × IDF:**\n  O1: gato=0, pequeño≈0.029, subir≈0.080, tejado≈0.080, mirar≈0.080, pájaro≈0.080; resto=0\n  O2: gato=0, pequeño≈0.025, niño≈0.068, ver≈0.068, jugar≈0.068, jardín≈0.068, soleado≈0.068; resto=0\n  O3: gato=0, negro=0.333×0.477≈0.159, dormir≈0.080, cama≈0.080, comer≈0.080; resto=0\n\n**b) Distancias euclídeas (TF):**\n\n  **dist(O1, O2):**\n  - Diferencias: gato (1/6−1/7)²=1/1764; pequeño (1/6−1/7)²=1/1764\n  - O1 only: subir, tejado, mirar, pájaro → 4×(1/6)²=4/36\n  - O2 only: niño, ver, jugar, jardín, soleado → 5×(1/7)²=5/49\n  - dist²=2/1764+4/36+5/49≈0.001+0.111+0.102=**0.214** → dist≈**0.463**\n\n  **dist(O1, O3):**\n  - gato idéntico → diff=0\n  - O1 only: pequeño, subir, tejado, mirar, pájaro → 5×(1/6)²=5/36\n  - O3 only negro: (1/3)²=1/9; dormir, cama, comer: 3×(1/6)²=3/36\n  - dist²=5/36+4/36+3/36=12/36=1/3≈**0.333** → dist≈**0.577**\n\n  **dist(O2, O3):**\n  - gato (1/7−1/6)²=1/1764\n  - O2 only: niño, ver, pequeño, jugar, jardín, soleado → 6×(1/7)²=6/49\n  - O3 only negro: 1/9; dormir, cama, comer: 3/36\n  - dist²≈0.001+0.122+0.111+0.083=**0.317** → dist≈**0.563**\n\n  **→ Más similares con TF: O1 y O2 (dist≈0.463)**\n\n**c) TF-IDF de 'gato' = 0 en todos los documentos:**\n  'gato' aparece en los 3 documentos (df=3=N), por lo que IDF = log₁₀(3/3) = 0.\n  TF-IDF = TF × 0 = 0 independientemente del TF.\n  Esto significa que 'gato' no aporta información discriminante entre los documentos: al estar en todos, TF-IDF la penaliza con peso 0 para evitar que influya en la similitud entre textos.",
+      "keywords": [
+        "BoW",
+        "TF",
+        "IDF",
+        "TF-IDF",
+        "distancia euclídea",
+        "similitud documentos",
+        "gato",
+        "negro",
+        "bag of words",
+        "representación vectorial"
+      ],
+      "contentHash": "sha256:1cd67cd61b62faecc218b30cc1aa4a8b366f2c7fd3846209b69c5c7c882fce30",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:38:21.549Z",
+      "updatedAt": "2026-02-23T00:38:21.549Z"
+    },
+    {
       "id": "63967b61-94de-4b41-b9a7-c136ccc43a0b",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
@@ -13579,6 +13641,38 @@
       },
       "createdAt": "2026-02-22T23:42:26.619Z",
       "updatedAt": "2026-02-22T23:42:26.619Z"
+    },
+    {
+      "id": "64e020d2-41ce-4c71-9914-84c3ddec6390",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
+      "type": "PRACTICO",
+      "prompt": "Se construye un etiquetador morfosintáctico para el español mediante un HMM Bigrama. Las etiquetas disponibles son: NOUN, ADJ, VERB, ADV, DET, OTHER. A partir de un corpus anotado se han calculado las tablas de probabilidades de transición y de emisión (adjuntas). Se aplica el algoritmo de Viterbi para determinar la secuencia de categorías más probable de:\n\n\"Su casa es enorme\"\n\nDatos del corpus:\n- 5.000.000 palabras etiquetadas como VERB\n- 10.000.000 palabras etiquetadas como DET\n- 500.000 ocasiones en que la etiqueta VERB va seguida de una palabra DET\n- P(su|DET) = 0.01; P(casa|NOUN) = 0.005; P(es|VERB) = 0.01; P(enorme|ADJ) = 0.01\n- P(NOUN|DET) = 0.5; P(VERB|NOUN) = 0.2; P(ADJ|VERB) = 0.1\n- En la tabla Viterbi, la celda DET[\"su\"] = 1.0 (convención de inicio); la celda marcada con ¿? es NOUN[\"casa\"]\n- La celda de transición marcada con ¿? corresponde a P(DET|VERB)\n\nSe pide:\n1. ¿Cuál es el valor en la tabla de transición para la celda marcada con ¿? Razone su respuesta. ¿Qué representan y cómo se calculan los valores de la tabla de probabilidades de transición?\n2. ¿Cómo se calcula el valor de Viterbi de una celda? ¿Cuál es el valor de Viterbi para la celda NOUN[\"casa\"] marcada con ¿? Razone su respuesta.\n3. Muestre el etiquetado resultante para la frase dada.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "modelAnswer": "**1. Valor de la tabla de transición ¿? = P(DET|VERB):**\n\n  P(DET|VERB) = C(VERB→DET) / C(VERB) = 500.000 / 5.000.000 = **0.1**\n\n  Las probabilidades de transición representan la probabilidad de pasar de una etiqueta a la siguiente: P(t_i | t_{i-1}) = C(t_{i-1}, t_i) / C(t_{i-1}). Se estiman por máxima verosimilitud dividiendo el número de veces que la etiqueta t_{i-1} es seguida de t_i entre el total de ocurrencias de t_{i-1} en el corpus.\n\n**2. Cálculo del valor de Viterbi y celda NOUN[\"casa\"] ¿?:**\n\n  Viterbi[t][w_i] = max_{t'} ( Viterbi[t'][w_{i-1}] × P(t | t') × P(w_i | t) )\n\n  NOUN[\"casa\"] = max_{t'} ( Viterbi[t'][\"su\"] × P(NOUN|t') × P(casa|NOUN) )\n\n  Solo DET[\"su\"] = 1.0 tiene valor no nulo (las demás categorías no emiten \"su\" o tienen prob 0 desde <S>):\n\n  NOUN[\"casa\"] = DET[\"su\"] × P(NOUN|DET) × P(casa|NOUN) = 1.0 × 0.5 × 0.005 = **0.0025**\n\n  Celdas sucesivas:\n  - VERB[\"es\"] = NOUN[\"casa\"](0.0025) × P(VERB|NOUN)(0.2) × P(es|VERB)(0.01) = **5×10⁻⁶**\n  - ADJ[\"enorme\"] = VERB[\"es\"](5×10⁻⁶) × P(ADJ|VERB)(0.1) × P(enorme|ADJ)(0.01) = **5×10⁻⁹**\n\n**3. Etiquetado resultante:**\n\n  Backtracking desde </S> da la secuencia de mayor probabilidad acumulada:\n\n  | Palabra | Etiqueta |\n  |---------|----------|\n  | Su      | DET      |\n  | casa    | NOUN     |\n  | es      | VERB     |\n  | enorme  | ADJ      |\n\n  Interpretación: 'Su' es determinante, 'casa' sustantivo, 'es' verbo copulativo, 'enorme' adjetivo. El HMM elige la secuencia cuyo producto de probabilidades de transición y emisión es máximo.",
+      "keywords": [
+        "HMM",
+        "Viterbi",
+        "POS-tagging",
+        "transición",
+        "emisión",
+        "máxima verosimilitud",
+        "Su casa es enorme",
+        "DET",
+        "NOUN",
+        "VERB",
+        "ADJ"
+      ],
+      "contentHash": "sha256:dc2c2ccee961554e7e5741bc16efdda8750b58eac169065552605f772fd2d8e0",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:38:15.966Z",
+      "updatedAt": "2026-02-23T00:38:15.966Z"
     },
     {
       "id": "64f340df-beb2-41e1-85c0-712e64afbc9d",
@@ -14298,6 +14392,39 @@
       },
       "createdAt": "2026-02-22T17:16:57.406Z",
       "updatedAt": "2026-02-22T17:16:57.406Z"
+    },
+    {
+      "id": "6bef5e76-61ea-4366-a9e0-778b4536823f",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "PRACTICO",
+      "prompt": "Se utiliza la base de datos de relaciones léxicas WordNet para un sistema de procesamiento del lenguaje natural. A continuación se muestra la jerarquía IS-A de WordNet para los conceptos 'table' (mesa) y 'chair' (silla):\n\n  entity\n  └── physical entity\n      └── object, physical object\n          └── whole, unit\n              └── artifact, artefact\n                  └── instrumentality, instrumentation\n                      └── furnishing\n                          └── furniture, piece of furniture, article of furniture\n                              ├── seat\n                              │   └── chair\n                              └── table\n\nLa similitud basada en la longitud del camino se define como:\n\n  pathlen(c1, c2) = número de aristas en el camino más corto entre c1 y c2, más 1\n  sim(c1, c2) = 1 / pathlen(c1, c2)\n\nSe pide:\n1. Define synset e indica los elementos del synset de 'table' y la relación que existe entre ellos (puedes basarte en los datos de WordNet 3.1).\n2. Calcula el valor de similitud sim(table, chair) basada en la longitud del camino. Explica el proceso usando la jerarquía anterior.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "modelAnswer": "**1. Synset de 'table':**\n\n  Un **synset** (synonym set) es un conjunto de palabras o expresiones que son sinónimas, es decir, que expresan el mismo concepto en WordNet. Los elementos de un synset comparten la misma definición y están relacionados entre sí por la relación de **sinonimia**.\n\n  El synset de 'table' (acepción como mueble) incluye:\n  - table (mesa, pieza de mobiliario con superficie plana)\n  - (En WordNet 3.1 el synset tiene múltiples lemas: table, tabular array para la acepción de datos; para el mueble: table únicamente como núcleo del synset de furniture)\n\n  Los elementos del synset tienen entre sí la relación de **sinonimia**: todos designan el mismo concepto (la mesa como mueble de superficie horizontal) y son intercambiables en contextos apropiados.\n\n**2. Cálculo de sim(table, chair):**\n\n  Identificamos el camino más corto entre 'table' y 'chair' en la jerarquía IS-A:\n\n  table ──(1)── furniture ──(2)── seat ──(3)── chair\n\n  Número de aristas del camino más corto: **3**\n\n  pathlen(table, chair) = 3 + 1 = **4**\n\n  sim(table, chair) = 1 / pathlen(table, chair) = 1/4 = **0.25**\n\n  Interpretación: table y chair comparten como ancestro común más próximo el nodo 'furniture'. Para llegar de table a chair hay que subir 1 nodo hasta furniture y bajar 2 nodos (furniture→seat→chair), totalizando 3 aristas. Una similitud de 0.25 indica que son conceptualmente relacionados (ambos son muebles) pero no idénticos ni directamente relacionados por IS-A.",
+      "keywords": [
+        "WordNet",
+        "path similarity",
+        "similitud de camino",
+        "synset",
+        "sinonimia",
+        "jerarquía IS-A",
+        "pathlen",
+        "table",
+        "chair",
+        "furniture",
+        "mueble",
+        "hiperónimo"
+      ],
+      "contentHash": "sha256:771424a7505f82a1a9fc0045413d0a33904f0cf3b612894f8c4149364dd873d5",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:20:50.122Z",
+      "updatedAt": "2026-02-23T00:20:50.122Z"
     },
     {
       "id": "6c36a4bb-cdac-45b4-b10d-b344c3f72868",
@@ -21182,6 +21309,38 @@
       "updatedAt": "2026-02-21T22:10:27.177Z"
     },
     {
+      "id": "9daa4f23-6425-47f3-84bc-8f4699ce2985",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "DESARROLLO",
+      "prompt": "Caso de uso: detector de situaciones de ansiedad.\n\nSe propone el diseño de un sistema detector de situaciones de ansiedad, contextualizado en un caso clínico de investigación en una clínica de salud mental española. El sistema clasificará entre pacientes con y sin ansiedad. Datos disponibles:\n\n- 3.000 mensajes de redes sociales escritos por 200 usuarios diferentes. Mensajes en español, <50 palabras, recogidos durante 2024.\n- Metadatos por mensaje: identificador del usuario, fecha y hora, ubicación (veraces, sin manipulación).\n- Para TODOS los usuarios: diagnóstico médico que identifica la presencia o ausencia de ansiedad. Fecha de diagnóstico: diciembre 2024.\n\nCon estos datos de contexto, se pide:\n1. Diseña un sistema de diagnóstico que determine la probabilidad de situación de ansiedad de un paciente según sus mensajes en redes sociales. Escoge la tecnología más adecuada, justifícala y aporta un esquema del sistema.\n2. Diseña un sistema capaz de caracterizar el uso del lenguaje de un mensaje. Escoge métricas adecuadas y explica cómo usarlas para reconocer patrones de uso del lenguaje en los diferentes segmentos (por diagnóstico, por ubicación, por fecha).\n3. Propón al menos una mejora metodológica, justificando su utilidad.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "modelAnswer": "**1. Sistema clasificador de ansiedad:**\n\n  **Ventajas del conjunto de datos:** 100% de los usuarios están etiquetados (a diferencia de casos semi-supervisados), lo que permite aprendizaje supervisado puro. Sin embargo, el corpus es pequeño (3.000 mensajes, 200 usuarios) → riesgo de overfitting.\n\n  **Representación:** A nivel de usuario, agregar todos sus mensajes en un único vector. Opciones:\n  - TF-IDF sobre el vocabulario del corpus (simple, interpretable, buena baseline).\n  - Embeddings de BERT/RoBERTa en español (BETO, RoBERTa-es): representación contextual, mejor para textos cortos con lenguaje informal.\n\n  **Clasificador:** Para el tamaño del corpus, preferir modelos que funcionen bien con pocos datos:\n  - SVM con TF-IDF: robusto, eficiente, buena generalización en espacios de alta dimensión.\n  - Fine-tuning de BETO sobre el corpus: captura mejor el lenguaje coloquial de redes sociales.\n\n  **Esquema:** Mensajes → Preprocesado (tokenización, stopwords, lematización) → Agregación por usuario → Vector de usuario → Clasificador (SVM/BETO) → Diagnóstico (ansiedad/no ansiedad).\n\n  **Evaluación:** División usuario-stratificada 70/15/15 (train/dev/test). Métricas: F1-macro (balance entre clases), precisión y recall. Validación cruzada dado el tamaño reducido.\n\n  **Consideración temporal:** El diagnóstico es de diciembre 2024 pero los mensajes se recogen a lo largo de 2024 → explorar si los mensajes cercanos al diagnóstico son más predictivos.\n\n**2. Caracterización del lenguaje por segmento:**\n\n  **Por diagnóstico (ansiedad vs no ansiedad):** TF-IDF por clase para identificar vocabulario discriminativo (palabras más características de usuarios con ansiedad vs sin ella). Complementar con análisis de sentimiento (léxicos afectivos como NRC Emotion Lexicon en español) para detectar emociones negativas frecuentes. Log-Likelihood Ratio (G²) para encontrar términos estadísticamente sobrerrepresentados en cada clase.\n\n  **Por ubicación:** Mapas de distribución temática; detectar si hay patrones regionales en el uso del lenguaje asociado a ansiedad (por ejemplo, diferencias urbanas/rurales o entre comunidades autónomas).\n\n  **Por fecha:** Análisis de tendencias temporales (TF-IDF semanal/mensual); detectar picos de vocabulario de ansiedad cercanos al diagnóstico; explorar si los patrones lingüísticos cambian a lo largo del año 2024.\n\n**3. Mejoras metodológicas:**\n\n  a) **Análisis de emociones y patrones lingüísticos de ansiedad:** Incorporar léxicos de emociones (NRC, SentiWordNet) y características lingüísticas de ansiedad (hedging, catastrofismo, hipervigilancia léxica) como features adicionales al clasificador. Esto enriquece la representación más allá de la frecuencia de términos.\n\n  b) **Aumento de datos con paráfrasis automáticas:** Dado el corpus pequeño, aplicar técnicas de data augmentation (paráfrasis con backtranslation ES→EN→ES, o sinónimos) para enriquecer el conjunto de entrenamiento y reducir el riesgo de overfitting, especialmente para la clase minoritaria.",
+      "keywords": [
+        "clasificación",
+        "ansiedad",
+        "salud mental",
+        "redes sociales",
+        "TF-IDF",
+        "SVM",
+        "BERT",
+        "BETO",
+        "caracterización del lenguaje",
+        "diagnóstico médico",
+        "aprendizaje supervisado"
+      ],
+      "contentHash": "sha256:a36d49f8d7a2d3ce8a60ef87a07f10e73ac7e886461a84a2320056a9777a501d",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:38:21.549Z",
+      "updatedAt": "2026-02-23T00:38:21.549Z"
+    },
+    {
       "id": "9db58ba3-8215-4b10-8bc9-5ac165111ce2",
       "subjectId": "befc803a-db6a-49f5-a451-941ee8738c59",
       "topicId": "3db70205-fc8e-43aa-8f36-67eefa0d682c",
@@ -25016,6 +25175,39 @@
       "updatedAt": "2026-02-22T01:01:21.474Z"
     },
     {
+      "id": "b6cef357-5844-48d6-b1fe-d73af8f56d18",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "bbfe4558-ddbf-408a-8c5f-1f4880b45091",
+      "type": "DESARROLLO",
+      "prompt": "Caso de uso: estimador de orientación política.\n\nSe propone el diseño de un sistema estimador de la orientación política de un ciudadano (izquierda, derecha, indeciso). Datos disponibles:\n\n- 5.000 textos de aproximadamente 200 palabras, recopilados a través de un concurso online de relatos cortos. Todos gramaticalmente correctos, en español, autores residentes en España.\n- Metadatos por texto: identificador del autor, edad del autor, comunidad autónoma de residencia.\n- Para un subconjunto del 20% de los usuarios: orientación política declarada a través de encuestas (izquierda, derecha, indeciso). Se asume que los usuarios han sido honestos.\n\nCon estos datos de contexto, se pide:\n1. Diseña un sistema clasificador para los textos según la orientación política que se pueda inferir a través de su contenido. Escoge la tecnología más adecuada, justifícala y aporta un esquema del sistema.\n2. Diseña un sistema capaz de caracterizar el uso del lenguaje de un texto y reconocer patrones en los diferentes segmentos (por orientación política, por edad, por comunidad autónoma).\n3. Propón al menos una mejora metodológica, justificando su utilidad.",
+      "difficulty": 3,
+      "origin": "examen_anterior",
+      "modelAnswer": "**1. Clasificador de orientación política:**\n\n  **Desafíos específicos:**\n  - Solo el 20% de usuarios tiene etiqueta → aprendizaje semi-supervisado o supervisado limitado.\n  - Textos son relatos creativos (no discursos políticos) → señal política más implícita.\n  - Metadatos demográficos disponibles (edad, comunidad autónoma) → pueden enriquecer el clasificador.\n\n  **Representación:** TF-IDF sobre el vocabulario del corpus (baseline sólida) o embeddings de RoBERTa-es para capturar semántica contextual. Los metadatos (edad del autor, comunidad autónoma) pueden añadirse como features categóricas/numéricas.\n\n  **Clasificador con 20% etiquetado:**\n  - **Self-training semi-supervisado:** entrenar un clasificador inicial con el 20% etiquetado, aplicarlo al 80% restante con alta confianza, añadir las predicciones más seguras al conjunto de entrenamiento, y repetir.\n  - **Label Propagation:** construir un grafo de similitud entre textos (similitud TF-IDF o coseno de embeddings) y propagar etiquetas del 20% al 80% restante.\n  - Alternativamente: **fine-tuning de RoBERTa-es** con el 20% etiquetado aplicando técnicas de regularización (dropout, data augmentation con paráfrasis) para evitar overfitting.\n\n  **Esquema:** Textos + metadatos → Preprocesado → TF-IDF/Embeddings + features demográficas → Semi-supervisado (self-training/label propagation) → Clasificador → Orientación política (izquierda/derecha/indeciso).\n\n  **Evaluación:** Stratified k-fold sobre el 20% etiquetado. Métricas: F1-macro (clases posiblemente desbalanceadas), precisión, recall por clase.\n\n**2. Caracterización del lenguaje por segmento:**\n\n  **Por orientación política:** TF-IDF por clase (tratando todos los textos de cada orientación como un único corpus) para identificar vocabulario discriminativo. Log-Likelihood Ratio (G²) para términos estadísticamente sobrerrepresentados. Topic modeling LDA por orientación para identificar temas recurrentes (¿los textos de orientación izquierda hablan más de justicia social? ¿Los de derecha de tradición o economía?)\n\n  **Por edad del autor:** Agrupar autores por franjas etarias (jóvenes <30, adultos 30-60, mayores >60) y comparar vocabulario y temas usando TF-IDF relativo. ¿Existen diferencias generacionales en el lenguaje político implícito?\n\n  **Por comunidad autónoma:** Detectar vocabulario regional diferencial; explorar si la orientación política se correlaciona con la comunidad de residencia. Mapas de distribución temática por región.\n\n**3. Mejora metodológica:**\n\n  **Fine-tuning de RoBERTa-es con datos externos anotados:** Los 5.000 textos con solo 20% etiquetados son insuficientes para entrenar un modelo robusto. Complementar con corpora políticos externos en español (tuits políticos, declaraciones de partidos, artículos de opinión) que sí estén anotados ideológicamente, para pre-entrenar o fine-tunear el modelo antes de aplicarlo al corpus de relatos. Esto transfiere conocimiento de dominio político al corpus creativo, mejorando la capacidad del modelo para inferir orientación implícita.",
+      "keywords": [
+        "clasificación de textos",
+        "orientación política",
+        "self-training",
+        "aprendizaje semi-supervisado",
+        "label propagation",
+        "TF-IDF",
+        "RoBERTa",
+        "relatos cortos",
+        "metadatos demográficos",
+        "caracterización del lenguaje",
+        "LDA",
+        "topic modeling"
+      ],
+      "contentHash": "sha256:210892c76b802f134ed17f103cfdae7b9a64569bb0c656efd506a66032eb5d96",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:38:21.549Z",
+      "updatedAt": "2026-02-23T00:38:21.549Z"
+    },
+    {
       "id": "b708c935-320c-46c6-a5dc-ae3120aeed2e",
       "subjectId": "56b8ad06-ccf5-4b02-8a3f-f504446f5aca",
       "topicId": "a1245be8-e251-419a-bcdc-c822fd0e4750",
@@ -27054,6 +27246,39 @@
       "updatedAt": "2026-02-20T14:48:47.946Z"
     },
     {
+      "id": "c6375002-d166-46a9-b104-35880b15c9f0",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "46b19090-981b-4a21-bc18-ab81be325271",
+      "type": "PRACTICO",
+      "prompt": "Se está construyendo un analizador sintáctico para el español. El corpus se ha etiquetado conforme a la siguiente gramática PCFG en CNF:\n\nT = {yo, veo, un, hombre, con, telescopio}\nN = {O, SN, SV, D, V, N, P, SP, Pron}\nR = {\n  1. O   → Pron SV (1.0)\n  2. SN  → D N   (1.0)\n  3. N   → N SP  (0.2)\n  4. SP  → P SN  (0.1)\n  5. SV  → V SN  (0.7)\n  6. SV  → SV SP (0.3)\n  a. Pron → yo          (1.0)\n  b. V    → veo         (1.0)\n  c. D    → un          (1.0)\n  d. N    → hombre      (0.4)\n  e. N    → telescopio  (0.4)\n  f. P    → con         (1.0)\n}\nI = O\n\nSe aplica el algoritmo CKY probabilístico para analizar la oración:\n\"Yo veo un hombre con un telescopio\"\n\nIndexación: yo[0,1], veo[1,2], un[2,3], hombre[3,4], con[4,5], un[5,6], telescopio[6,7]\n\nSe adjunta la siguiente tabla CKY construida con el algoritmo (no probabilístico), en la que se incluyen los probabilísticos de algunas celdas como ayuda:\n\nCeldas precalculadas:\n  [0,1]=Pron(1.0), [1,2]=V(1.0), [2,3]=D(1.0), [3,4]=N(0.4),\n  [4,5]=P(1.0), [5,6]=D(1.0), [6,7]=N(0.4)\n  [2,4]=SN(0.4), [5,7]=SN(0.4)\n  [4,7]=SP(0.04), [1,4]=SV(0.28)\n  [3,7]=N(0.0032), [2,7]=SN(0.0032)\n\nSe pide:\na) ¿Cuántas lecturas o análisis tiene la oración? Indica y dibuja los dos árboles sintácticos posibles explicando en qué se diferencian.\nb) Calcula la celda [1,7] para ambas interpretaciones y determina cuál es la preferida por la gramática.\nc) Calcula [0,7] y selecciona el análisis final.\nd) En el corpus utilizado para estimar las probabilidades de la gramática, el sintagma verbal (SV) aparece 900.000 veces. La regla 'SV → V SN' se aplica 650.000 veces. ¿Cuál es la estimación por máxima verosimilitud de P(SV → V SN)?",
+      "difficulty": 4,
+      "origin": "examen_anterior",
+      "modelAnswer": "Indexación: yo[0,1], veo[1,2], un[2,3], hombre[3,4], con[4,5], un[5,6], telescopio[6,7]\n\n**Verificación de celdas precalculadas:**\n  [2,4]=SN: SN→D[2,3] N[3,4] = 1.0×1.0×0.4 = SN(0.4) ✓\n  [5,7]=SN: SN→D[5,6] N[6,7] = 1.0×1.0×0.4 = SN(0.4) ✓\n  [4,7]=SP: SP→P[4,5] SN[5,7] = 0.1×1.0×0.4 = SP(0.04) ✓\n  [3,7]=N: N→N[3,4] SP[4,7] = 0.2×0.4×0.04 = N(0.0032) ✓\n  [2,7]=SN: SN→D[2,3] N[3,7] = 1.0×1.0×0.0032 = SN(0.0032) ✓\n  [1,4]=SV: SV→V[1,2] SN[2,4] = 0.7×1.0×0.4 = SV(0.28) ✓\n\n**a) Dos lecturas y sus árboles:**\n\n  La oración 'Yo veo un hombre con un telescopio' es ambigua por la adjunción del SP 'con un telescopio'. Hay dos interpretaciones:\n\n  **Árbol 1 — N-attachment** (SP adjunto al SN 'un hombre'):\n  Lectura: 'Yo veo [un hombre [con un telescopio]]'\n  Significado: el hombre lleva/tiene un telescopio.\n\n  O\n  ├── Pron: Yo\n  └── SV\n      ├── V: veo\n      └── SN\n          ├── D: un\n          └── N\n              ├── N: hombre\n              └── SP\n                  ├── P: con\n                  └── SN\n                      ├── D: un\n                      └── N: telescopio\n\n  **Árbol 2 — SV-attachment** (SP adjunto al SV 'veo un hombre'):\n  Lectura: 'Yo [veo un hombre] [con un telescopio]'\n  Significado: yo uso el telescopio para ver al hombre.\n\n  O\n  ├── Pron: Yo\n  └── SV\n      ├── SV\n      │   ├── V: veo\n      │   └── SN\n      │       ├── D: un\n      │       └── N: hombre\n      └── SP\n          ├── P: con\n          └── SN\n              ├── D: un\n              └── N: telescopio\n\n**b) Celda [1,7] — dos adjunciones:**\n\n  - **N-attachment**: SV→V[1,2] SN[2,7] = 0.7×1.0×0.0032 = **SV(0.00224)**\n  - **SV-attachment**: SV→SV[1,4] SP[4,7] = 0.3×0.28×0.04 = **SV(0.00336)**\n\n  → **Gana SV-attachment: SV(0.00336) > SV(0.00224)**\n  [1,7] = **SV(0.00336)**\n\n  Aunque semánticamente 'un hombre con telescopio' es más natural, la gramática prefiere la adjunción al SV porque SV→SV SP(0.3) aplicada sobre SV(0.28) supera a SV→V SN(0.7) aplicada sobre SN(0.0032).\n\n**c) Celda [0,7] y análisis final:**\n\n  O→Pron[0,1] SV[1,7] = 1.0×1.0×0.00336 = **O(0.00336)**\n\n  Análisis final preferido: **Árbol 2 (SV-attachment)**, O = 0.00336.\n  Lectura preferida: 'Yo veo un hombre, con un telescopio' — el yo usa el telescopio.\n\n**d) Estimación P(SV → V SN) por máxima verosimilitud:**\n\n  P(SV→V SN) = C(SV→V SN) / C(SV) = 650.000 / 900.000 = **0.7222... ≈ 0.72**\n\n  Este valor es aproximadamente consistente con la probabilidad 0.7 asignada en la gramática (la diferencia se debe a que la gramática puede haber sido redondeada o ajustada).",
+      "keywords": [
+        "CKY probabilístico",
+        "PCFG",
+        "PP-attachment",
+        "SV-attachment",
+        "N-attachment",
+        "ambigüedad sintáctica",
+        "telescopio",
+        "hombre",
+        "SP→P SN",
+        "máxima verosimilitud",
+        "SP adjunción",
+        "árbol sintáctico"
+      ],
+      "contentHash": "sha256:78daae1ca50ad3710d472723493393917b700a60eec5e8c162c1a85e3fdfa41d",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:20:50.122Z",
+      "updatedAt": "2026-02-23T00:20:50.122Z"
+    },
+    {
       "id": "c6544c7a-2e91-40ec-a1de-d82da867b712",
       "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
       "topicId": "38ec3285-bd93-4931-a6d4-32fc2c741d20",
@@ -28443,6 +28668,37 @@
       },
       "createdAt": "2026-02-22T02:25:56.435Z",
       "updatedAt": "2026-02-22T02:25:56.435Z"
+    },
+    {
+      "id": "d1ba8cce-5c85-44e1-bed2-b3a2d6d660e0",
+      "subjectId": "05db8dab-ae22-4e1e-8ab6-2b0fb70f0133",
+      "topicId": "06bde5dd-1a90-4cec-83e5-0a03f0aa1379",
+      "type": "PRACTICO",
+      "prompt": "Se quiere desambiguar la palabra 'pata' en la siguiente frase:\n\n\"Usé pintura blanca para las patas de la mesa\"\n\nEl diccionario recoge los siguientes sentidos:\n  pata1: Pie y pierna de los animales.\n  pata2: Pie de un mueble\n  mesa1: Mueble compuesto de un tablero horizontal liso y sostenido a la altura conveniente, generalmente por una o varias patas\n  pintura1: Color preparado para pintar\n  pintura2: Tabla, lámina o lienzo en que está pintado algo\n\nSe pide:\nAplica el algoritmo de Lesk original para seleccionar el significado de la palabra 'pata', mostrando la tabla de coincidencias con cada una de las firmas de los sentidos. Indica qué sentido será el elegido, razonando la respuesta.",
+      "difficulty": 2,
+      "origin": "examen_anterior",
+      "modelAnswer": "**Algoritmo de Lesk ORIGINAL:**\n\nEn el Lesk original se compara la firma de cada sentido de la palabra ambigua con las firmas de cada sentido de las palabras del contexto (no directamente con las palabras del contexto).\n\n**Palabras del contexto** (stopwords eliminadas): {pintura, blanca, mesa}\n\n**Firmas de 'pata':**\n  - firma(pata¹) = {pie, pierna, animal}\n  - firma(pata²) = {pie, mueble}\n\n**Firmas de las palabras del contexto:**\n  - firma(pintura¹) = {color, preparar, pintar}\n  - firma(pintura²) = {tabla, lámina, lienzo, pintar}\n  - firma(mesa¹) = {mueble, tablero, horizontal, liso, sostener, altura, pata}\n  - blanca: adjetivo sin sentidos léxicos múltiples relevantes en el diccionario dado → firma = {}\n\n**Tabla de coincidencias:**\n\n  | Sentido pata | vs pintura¹ | vs pintura² | vs mesa¹ | **TOTAL** |\n  |--------------|-------------|-------------|----------|-----------|\n  | pata¹        | 0           | 0           | 0        | **0**     |\n  | pata²        | 0           | 0           | 1 (mueble) | **1**   |\n\n  **Detalle de la coincidencia pata² ∩ mesa¹:**\n  firma(pata²) = {pie, mueble}; firma(mesa¹) = {mueble, tablero, horizontal, liso, sostener, altura, pata}\n  Intersección = {**mueble**} → 1 coincidencia ✓\n\n**Decisión:** score(pata²) = 1 > score(pata¹) = 0 → Se selecciona **pata²** (pie de un mueble).\n\nEn el contexto 'Usé pintura blanca para las patas de la mesa', 'pata' hace referencia a la pata de la mesa (mueble), no a la extremidad de un animal. La palabra 'mueble' aparece en la definición de mesa¹ y en la firma de pata², generando la única coincidencia que permite desambiguar correctamente.",
+      "keywords": [
+        "Lesk original",
+        "WSD",
+        "desambiguación léxica",
+        "firma",
+        "sentido",
+        "contexto",
+        "pata",
+        "mesa",
+        "mueble",
+        "pie de mueble"
+      ],
+      "contentHash": "sha256:a8f6051e5af0e3468b7be649aee7e25937cef32ac8998bef9a7850760fe6b737",
+      "createdBy": "claude-sonnet-4-6",
+      "stats": {
+        "seen": 0,
+        "correct": 0,
+        "wrong": 0
+      },
+      "createdAt": "2026-02-23T00:38:15.966Z",
+      "updatedAt": "2026-02-23T00:38:15.966Z"
     },
     {
       "id": "d1c9fea8-e945-474e-957a-0a7d4ee0bd0d",
