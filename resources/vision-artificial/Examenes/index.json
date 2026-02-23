@@ -86,5 +86,56 @@
       "type": "docx"
     }
   ],
-  "subcategories": []
+  "subcategories": [
+    {
+      "name": "pdfs",
+      "files": [
+        {
+          "name": "examen 13 julio modelo A en blanco (terminado).pdf",
+          "path": "examen 13 julio modelo A en blanco (terminado).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 14 julio modelo B en blanco (teminado).pdf",
+          "path": "examen 14 julio modelo B en blanco (teminado).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 15 julio - modelo C.pdf",
+          "path": "examen 15 julio - modelo C.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "EXAMEN VA 2025 Modelo D.pdf",
+          "path": "EXAMEN VA 2025 Modelo D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "EXAMEN VA 2025 Modelo E.pdf",
+          "path": "EXAMEN VA 2025 Modelo E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_4.pdf",
+          "path": "examen_4.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_pc.pdf",
+          "path": "examen_pc.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PC_examen_4.pdf",
+          "path": "PC_examen_4.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PC_modelo_D_8.25.pdf",
+          "path": "PC_modelo_D_8.25.pdf",
+          "type": "pdf"
+        }
+      ]
+    }
+  ]
 }

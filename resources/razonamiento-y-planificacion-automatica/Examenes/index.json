@@ -11,16 +11,6 @@
       "type": "docx"
     },
     {
-      "name": "Ejemplo pregunta de ex+Ýmen RPA .jpeg",
-      "path": "Ejemplo pregunta de ex+Ýmen RPA .jpeg",
-      "type": "jpeg"
-    },
-    {
-      "name": "Ejemplo pregunta de ex+Ýmen.jpeg",
-      "path": "Ejemplo pregunta de ex+Ýmen.jpeg",
-      "type": "jpeg"
-    },
-    {
       "name": "examen 12 julio modelo A en blanco.docx",
       "path": "examen 12 julio modelo A en blanco.docx",
       "type": "docx"
@@ -71,11 +61,6 @@
       "type": "docx"
     },
     {
-      "name": "Robert - pregunta 1.png",
-      "path": "Robert - pregunta 1.png",
-      "type": "png"
-    },
-    {
       "name": "RPA examen - ModeloF.docx",
       "path": "RPA examen - ModeloF.docx",
       "type": "docx"
@@ -96,36 +81,6 @@
       "type": "docx"
     },
     {
-      "name": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent (1).png",
-      "path": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent (1).png",
-      "type": "png"
-    },
-    {
-      "name": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent.png",
-      "path": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent.png",
-      "type": "png"
-    },
-    {
-      "name": "RPA.EX.Q&A.00.Shared230523 - Tesauros.png",
-      "path": "RPA.EX.Q&A.00.Shared230523 - Tesauros.png",
-      "type": "png"
-    },
-    {
-      "name": "RPA.EX.Q&A.00.Shared230905 EstimaCoste.png",
-      "path": "RPA.EX.Q&A.00.Shared230905 EstimaCoste.png",
-      "type": "png"
-    },
-    {
-      "name": "RPA.PREP.Formalizacion.Sh230301 - Ejercicios_de_formalizacion_resueltos.pdf",
-      "path": "RPA.PREP.Formalizacion.Sh230301 - Ejercicios_de_formalizacion_resueltos.pdf",
-      "type": "pdf"
-    },
-    {
-      "name": "RPA.PREP.Formalizacion.Sh230301 - _Ejercicios_de_formalizacion_resueltos_SOLUCION.pdf",
-      "path": "RPA.PREP.Formalizacion.Sh230301 - _Ejercicios_de_formalizacion_resueltos_SOLUCION.pdf",
-      "type": "pdf"
-    },
-    {
       "name": "RPA_examen_modelo_C_extraordinaria.docx",
       "path": "RPA_examen_modelo_C_extraordinaria.docx",
       "type": "docx"
@@ -136,5 +91,146 @@
       "type": "docx"
     }
   ],
-  "subcategories": []
+  "subcategories": [
+    {
+      "name": "pdf",
+      "files": [
+        {
+          "name": "2023examen_RPA_modelo_B.pdf",
+          "path": "2023examen_RPA_modelo_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Copia de Examen RPA 07 03 2025 Modelo A Resuelto.pdf",
+          "path": "Copia de Examen RPA 07 03 2025 Modelo A Resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Ejemplo pregunta de ex+Ýmen RPA .jpeg",
+          "path": "Ejemplo pregunta de ex+Ýmen RPA .jpeg",
+          "type": "jpeg"
+        },
+        {
+          "name": "Ejemplo pregunta de ex+Ýmen.jpeg",
+          "path": "Ejemplo pregunta de ex+Ýmen.jpeg",
+          "type": "jpeg"
+        },
+        {
+          "name": "examen 12 julio modelo A en blanco.pdf",
+          "path": "examen 12 julio modelo A en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo B resuelto Bruno Mayo.pdf",
+          "path": "examen 13 julio modelo B resuelto Bruno Mayo.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 17 julio modelo C en blanco.pdf",
+          "path": "examen 17 julio modelo C en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 17 julio modelo C resuelto Ang+«lica.pdf",
+          "path": "examen 17 julio modelo C resuelto Ang+«lica.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen RPA 07 03 2025 Modelo A Resuelto.pdf",
+          "path": "Examen RPA 07 03 2025 Modelo A Resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen RPA 07 03 2025 Modelo A.pdf",
+          "path": "Examen RPA 07 03 2025 Modelo A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen RPA 07 03 2025 Modelo D.pdf",
+          "path": "Examen RPA 07 03 2025 Modelo D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen RPA 07 03 2025 Modelo D_resuelto.pdf",
+          "path": "Examen RPA 07 03 2025 Modelo D_resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen RPA 07 03 2025 Modelo E.pdf",
+          "path": "Examen RPA 07 03 2025 Modelo E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_extraordinaria_B.pdf",
+          "path": "examen_extraordinaria_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Robert - pregunta 1.png",
+          "path": "Robert - pregunta 1.png",
+          "type": "png"
+        },
+        {
+          "name": "RPA examen - ModeloF.pdf",
+          "path": "RPA examen - ModeloF.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA.EX.00.Shared230523  - rpa (1).examen.a.resuelto.pdf",
+          "path": "RPA.EX.00.Shared230523  - rpa (1).examen.a.resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA.EX.00.Shared230523  - rpa (2).examen.a.resuelto.pdf",
+          "path": "RPA.EX.00.Shared230523  - rpa (2).examen.a.resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA.EX.00.Shared230523  - rpa.examen.a.resuelto.pdf",
+          "path": "RPA.EX.00.Shared230523  - rpa.examen.a.resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent (1).png",
+          "path": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent (1).png",
+          "type": "png"
+        },
+        {
+          "name": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent.png",
+          "path": "RPA.EX.Q&A.00.Shared230523 - Sistema multiagent.png",
+          "type": "png"
+        },
+        {
+          "name": "RPA.EX.Q&A.00.Shared230523 - Tesauros.png",
+          "path": "RPA.EX.Q&A.00.Shared230523 - Tesauros.png",
+          "type": "png"
+        },
+        {
+          "name": "RPA.EX.Q&A.00.Shared230905 EstimaCoste.png",
+          "path": "RPA.EX.Q&A.00.Shared230905 EstimaCoste.png",
+          "type": "png"
+        },
+        {
+          "name": "RPA.PREP.Formalizacion.Sh230301 - Ejercicios_de_formalizacion_resueltos.pdf",
+          "path": "RPA.PREP.Formalizacion.Sh230301 - Ejercicios_de_formalizacion_resueltos.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA.PREP.Formalizacion.Sh230301 - _Ejercicios_de_formalizacion_resueltos_SOLUCION.pdf",
+          "path": "RPA.PREP.Formalizacion.Sh230301 - _Ejercicios_de_formalizacion_resueltos_SOLUCION.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA_examen_modelo_C_extraordinaria.pdf",
+          "path": "RPA_examen_modelo_C_extraordinaria.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "RPA_EXTRAORDINARIA_MODELO_E.pdf",
+          "path": "RPA_EXTRAORDINARIA_MODELO_E.pdf",
+          "type": "pdf"
+        }
+      ]
+    }
+  ]
 }

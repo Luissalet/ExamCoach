@@ -351,5 +351,221 @@
       "type": "pdf"
     }
   ],
-  "subcategories": []
+  "subcategories": [
+    {
+      "name": "pdf",
+      "files": [
+        {
+          "name": "Copia de PLN_2025_03 examen_Modelo A_semi_resuelto.pdf",
+          "path": "Copia de PLN_2025_03 examen_Modelo A_semi_resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "ejemploExamen1XX.pdf",
+          "path": "ejemploExamen1XX.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 07 2024 PLN Modelo A.pdf",
+          "path": "examen 07 2024 PLN Modelo A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo A en blanco.pdf",
+          "path": "examen 13 julio modelo A en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo A resuelto Aitor Vicente.pdf",
+          "path": "examen 13 julio modelo A resuelto Aitor Vicente.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo A resuelto Ivo Tonioni.pdf",
+          "path": "examen 13 julio modelo A resuelto Ivo Tonioni.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo A resuelto Javier L+ªpez.pdf",
+          "path": "examen 13 julio modelo A resuelto Javier L+ªpez.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo A resuelto Jesus Ortiz.pdf",
+          "path": "examen 13 julio modelo A resuelto Jesus Ortiz.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo D en blanco.pdf",
+          "path": "examen 13 julio modelo D en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 14 julio modelo B en blanco.pdf",
+          "path": "examen 14 julio modelo B en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 14 julio modelo B resuelto Daniel D.pdf",
+          "path": "examen 14 julio modelo B resuelto Daniel D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 14 julio modelo B resuelto Ra+ªl Garc+ía.pdf",
+          "path": "examen 14 julio modelo B resuelto Ra+ªl Garc+ía.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 14 julio modelo E en blanco.pdf",
+          "path": "examen 14 julio modelo E en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 15 julio modelo C resuelto Ang+«lica.pdf",
+          "path": "examen 15 julio modelo C resuelto Ang+«lica.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 15 julio modelo C resuelto.pdf",
+          "path": "examen 15 julio modelo C resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 2024 PLN.pdf",
+          "path": "examen 2024 PLN.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examenpln 07 2024_Modelo D.pdf",
+          "path": "examenpln 07 2024_Modelo D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examenpln2024.pdf",
+          "path": "examenpln2024.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examenPNL.pdf",
+          "path": "examenPNL.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_modelo_A.pdf",
+          "path": "examen_modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_pln.pdf",
+          "path": "examen_pln.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_PLN_HMM 01 2024 Modelo A.pdf",
+          "path": "examen_PLN_HMM 01 2024 Modelo A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_PLN_HMM.pdf",
+          "path": "examen_PLN_HMM.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared230426 - ejemploExamen1XX.pdf",
+          "path": "PLN.Ex.00.Shared230426 - ejemploExamen1XX.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared230426 - Ejercicios_Examen_NLP_Final_1.pdf",
+          "path": "PLN.Ex.00.Shared230426 - Ejercicios_Examen_NLP_Final_1.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared240707 - examen.pdf",
+          "path": "PLN.Ex.00.Shared240707 - examen.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared240707 - examenPNL.pdf",
+          "path": "PLN.Ex.00.Shared240707 - examenPNL.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared240707 - examen_modelo_A.pdf",
+          "path": "PLN.Ex.00.Shared240707 - examen_modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared240707 - examen_pln.pdf",
+          "path": "PLN.Ex.00.Shared240707 - examen_pln.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.00.Shared240712 - examen_PLN_HMM.pdf",
+          "path": "PLN.Ex.00.Shared240712 - examen_PLN_HMM.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN.Ex.24 - Modelo_E - Shared240715.pdf",
+          "path": "PLN.Ex.24 - Modelo_E - Shared240715.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_2025_03 examen_Modelo A.pdf",
+          "path": "PLN_2025_03 examen_Modelo A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_2025_03 examen_Modelo A_semi_resuelto.pdf",
+          "path": "PLN_2025_03 examen_Modelo A_semi_resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_2025_03 examen_Modelo B(1).pdf",
+          "path": "PLN_2025_03 examen_Modelo B(1).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_2025_03 examen_Modelo B.pdf",
+          "path": "PLN_2025_03 examen_Modelo B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_2025_03 examen_Modelo D.pdf",
+          "path": "PLN_2025_03 examen_Modelo D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_2025_03 examen_Modelo E.pdf",
+          "path": "PLN_2025_03 examen_Modelo E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PLN_24_07_Modelo_E.pdf",
+          "path": "PLN_24_07_Modelo_E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PNL.EX.00.Shared23070201examen2_pln.pdf",
+          "path": "PNL.EX.00.Shared23070201examen2_pln.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PNL.Ex.00.Shared240713 - examen 2024 PLN.pdf",
+          "path": "PNL.Ex.00.Shared240713 - examen 2024 PLN.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PNL.Ex.00.Shared240713 - examenpln2024.pdf",
+          "path": "PNL.Ex.00.Shared240713 - examenpln2024.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "PNL.Prep.00.Shared230701 - pln_joel_repaso.pdf",
+          "path": "PNL.Prep.00.Shared230701 - pln_joel_repaso.pdf",
+          "type": "pdf"
+        }
+      ]
+    }
+  ]
 }

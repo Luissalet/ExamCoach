@@ -1,31 +1,6 @@
 {
   "files": [
     {
-      "name": "Examen - A.pdf",
-      "path": "Examen - A.pdf",
-      "type": "pdf"
-    },
-    {
-      "name": "Examen - B.pdf",
-      "path": "Examen - B.pdf",
-      "type": "pdf"
-    },
-    {
-      "name": "Examen - C.pdf",
-      "path": "Examen - C.pdf",
-      "type": "pdf"
-    },
-    {
-      "name": "Examen - D.pdf",
-      "path": "Examen - D.pdf",
-      "type": "pdf"
-    },
-    {
-      "name": "Examen - E.pdf",
-      "path": "Examen - E.pdf",
-      "type": "pdf"
-    },
-    {
       "name": "examen 12 julio modelo A resuelto 2.docx",
       "path": "examen 12 julio modelo A resuelto 2.docx",
       "type": "docx"
@@ -44,11 +19,6 @@
       "name": "examen 13 julio modelo B en blanco.docx",
       "path": "examen 13 julio modelo B en blanco.docx",
       "type": "docx"
-    },
-    {
-      "name": "examen 13 julio modelo D en blanco.pdf",
-      "path": "examen 13 julio modelo D en blanco.pdf",
-      "type": "pdf"
     },
     {
       "name": "examen 15 julio modelo C en blanco.docx",
@@ -141,11 +111,6 @@
       "type": "docx"
     },
     {
-      "name": "TAA_2024_07_modelo_D.pdf",
-      "path": "TAA_2024_07_modelo_D.pdf",
-      "type": "pdf"
-    },
-    {
       "name": "TAA_2024_07_Modelo_E.docx",
       "path": "TAA_2024_07_Modelo_E.docx",
       "type": "docx"
@@ -181,5 +146,186 @@
       "type": "docx"
     }
   ],
-  "subcategories": []
+  "subcategories": [
+    {
+      "name": "pdf",
+      "files": [
+        {
+          "name": "Examen - A.pdf",
+          "path": "Examen - A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen - B.pdf",
+          "path": "Examen - B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen - C.pdf",
+          "path": "Examen - C.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen - D.pdf",
+          "path": "Examen - D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen - E.pdf",
+          "path": "Examen - E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 12 julio modelo A resuelto 2.pdf",
+          "path": "examen 12 julio modelo A resuelto 2.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 12 julio modelo A resuelto Manuel Reza.pdf",
+          "path": "examen 12 julio modelo A resuelto Manuel Reza.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 12 julio modelo A resuelto.pdf",
+          "path": "examen 12 julio modelo A resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo B en blanco.pdf",
+          "path": "examen 13 julio modelo B en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo D en blanco.pdf",
+          "path": "examen 13 julio modelo D en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 15 julio modelo C en blanco.pdf",
+          "path": "examen 15 julio modelo C en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "ExamenAA_ModeloA_9.5.pdf",
+          "path": "ExamenAA_ModeloA_9.5.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_AA_Miguel_Montoya_download.pdf",
+          "path": "examen_AA_Miguel_Montoya_download.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen_TAA_2024_ModeloB.pdf",
+          "path": "Examen_TAA_2024_ModeloB.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen_TAA_2024_ModeloC.pdf",
+          "path": "Examen_TAA_2024_ModeloC.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen_TAA_2024_ModeloD.pdf",
+          "path": "Examen_TAA_2024_ModeloD.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen_TAA_2024_ModeloE.pdf",
+          "path": "Examen_TAA_2024_ModeloE.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen_TAA_2024_ModeloF.pdf",
+          "path": "Examen_TAA_2024_ModeloF.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA examen 12 julio modelo A vacio.pdf",
+          "path": "TAA examen 12 julio modelo A vacio.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_A.pdf",
+          "path": "TAA_2024_07_modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_A_resuelto.pdf",
+          "path": "TAA_2024_07_modelo_A_resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_A_resuelto_2.pdf",
+          "path": "TAA_2024_07_modelo_A_resuelto_2.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_A_resuelto_ManuelReza.pdf",
+          "path": "TAA_2024_07_modelo_A_resuelto_ManuelReza.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_B(1).pdf",
+          "path": "TAA_2024_07_modelo_B(1).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_B.pdf",
+          "path": "TAA_2024_07_modelo_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_C.pdf",
+          "path": "TAA_2024_07_modelo_C.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_C_resuelto.pdf",
+          "path": "TAA_2024_07_modelo_C_resuelto.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_modelo_D.pdf",
+          "path": "TAA_2024_07_modelo_D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_Modelo_E.pdf",
+          "path": "TAA_2024_07_Modelo_E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2024_07_Modelo_F.pdf",
+          "path": "TAA_2024_07_Modelo_F.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2025_03_examen_Modelo A.pdf",
+          "path": "TAA_2025_03_examen_Modelo A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2025_03_examen_Modelo B(1).pdf",
+          "path": "TAA_2025_03_examen_Modelo B(1).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2025_03_examen_Modelo B.pdf",
+          "path": "TAA_2025_03_examen_Modelo B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2025_03_examen_Modelo D.pdf",
+          "path": "TAA_2025_03_examen_Modelo D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "TAA_2025_03_examen_Modelo_E.pdf",
+          "path": "TAA_2025_03_examen_Modelo_E.pdf",
+          "type": "pdf"
+        }
+      ]
+    }
+  ]
 }

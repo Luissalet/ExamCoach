@@ -112,6 +112,91 @@ function initResources(root: string): void {
   }
 }
 
+// ─── Auto-sync resource indexes ───────────────────────────────────────────────
+
+/**
+ * Escanea resources/[slug]/[Categoria]/ y regenera index.json con los archivos
+ * reales del disco. Se ejecuta en cada arranque (dev y build).
+ * Categorías gestionadas: Resumenes, Examenes, Practica.
+ * Los subdirectorios dentro de una categoría se tratan como subcategorías.
+ */
+function syncResourceIndexes(root: string): void {
+  const resourcesDir = path.join(root, 'resources');
+  if (!fs.existsSync(resourcesDir)) return;
+
+  const MANAGED_CATEGORIES = ['Resumenes', 'Examenes', 'Practica'];
+  const SKIP_FILES = ['index.json', '.DS_Store', 'Thumbs.db'];
+
+  // Extensiones → tipo legible
+  const extType = (filename: string): string =>
+    filename.split('.').pop()?.toLowerCase() ?? 'file';
+
+  let updated = 0;
+
+  const subjectDirs = fs.readdirSync(resourcesDir, { withFileTypes: true })
+    .filter(e => e.isDirectory())
+    .map(e => e.name);
+
+  for (const subjectSlug of subjectDirs) {
+    for (const cat of MANAGED_CATEGORIES) {
+      const catDir = path.join(resourcesDir, subjectSlug, cat);
+      if (!fs.existsSync(catDir)) continue;
+
+      interface ResourceFile { name: string; path: string; type: string; }
+      interface SubCategory { name: string; files: ResourceFile[]; }
+      interface IndexData { files: ResourceFile[]; subcategories: SubCategory[]; }
+
+      const indexData: IndexData = { files: [], subcategories: [] };
+
+      const entries = fs.readdirSync(catDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (SKIP_FILES.includes(entry.name)) continue;
+
+        if (entry.isFile()) {
+          indexData.files.push({
+            name: entry.name,
+            path: entry.name,
+            type: extType(entry.name),
+          });
+        } else if (entry.isDirectory()) {
+          // Subdirectorio → subcategoría
+          const subDir = path.join(catDir, entry.name);
+          const subFiles: ResourceFile[] = fs.readdirSync(subDir, { withFileTypes: true })
+            .filter(f => f.isFile() && !SKIP_FILES.includes(f.name))
+            .map(f => ({
+              name: f.name,
+              path: f.name,
+              type: extType(f.name),
+            }));
+
+          if (subFiles.length > 0) {
+            indexData.subcategories.push({ name: entry.name, files: subFiles });
+          }
+        }
+      }
+
+      const indexPath = path.join(catDir, 'index.json');
+      const newContent = JSON.stringify(indexData, null, 2) + '\n';
+
+      // Solo escribir si cambió (evita recargas innecesarias en HMR)
+      const oldContent = fs.existsSync(indexPath)
+        ? fs.readFileSync(indexPath, 'utf-8')
+        : null;
+
+      if (oldContent !== newContent) {
+        fs.writeFileSync(indexPath, newContent, 'utf-8');
+        updated++;
+        console.log(`\x1b[36m[init-resources]\x1b[0m 🔄 ${subjectSlug}/${cat}/index.json (${indexData.files.length} archivos, ${indexData.subcategories.length} subcats)`);
+      }
+    }
+  }
+
+  if (updated === 0) {
+    console.log('\x1b[36m[init-resources]\x1b[0m ✓ resource indexes ya están al día');
+  }
+}
+
 // ─── PDF upload endpoint (dev only) ──────────────────────────────────────────
 
 function registerUploadEndpoint(server: import('vite').ViteDevServer, root: string): void {
@@ -405,10 +490,12 @@ export function initResourcesPlugin(): Plugin {
 
     buildStart() {
       initResources(root);
+      syncResourceIndexes(root);
     },
 
     configureServer(server) {
       initResources(server.config.root);
+      syncResourceIndexes(server.config.root);
       registerUploadEndpoint(server, server.config.root);
       registerSyncMappingEndpoint(server, server.config.root);
       registerResourceUploadEndpoint(server, server.config.root);

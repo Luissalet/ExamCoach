@@ -26,6 +26,9 @@ export function SettingsPage() {
   const [undoingPackId, setUndoingPackId] = useState<string | null>(null);
   const [packPreview, setPackPreview] = useState<ContributionPackPreview | null>(null);
   const [previewSampleQuestion, setPreviewSampleQuestion] = useState<Question | null>(null);
+  // Queue para importación múltiple
+  const [fileQueue, setFileQueue] = useState<File[]>([]);
+  const [queueTotal, setQueueTotal] = useState(0);
 
   useEffect(() => {
     loadSettings();
@@ -73,20 +76,49 @@ export function SettingsPage() {
   }
 };
 
-  const handleImportContribution = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImportMsg('');
+  // Carga el preview del siguiente archivo en la cola
+  const processNextInQueue = async (queue: File[]) => {
+    if (queue.length === 0) {
+      setFileQueue([]);
+      return;
+    }
+    const [next, ...rest] = queue;
+    setFileQueue(rest);
     try {
-      const raw = await parseImportFile(file);
+      const raw = await parseImportFile(next);
       const preview = await previewContributionPack(raw);
       if ('error' in preview) {
         setImportMsg('Error: ' + preview.error);
+        // Continuar con el siguiente
+        await processNextInQueue(rest);
       } else {
         setPackPreview(preview);
       }
     } catch (err) {
       setImportMsg('Error: ' + String(err));
+      await processNextInQueue(rest);
+    }
+  };
+
+  const handleImportContribution = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    setImportMsg('');
+    setQueueTotal(files.length);
+    const [first, ...rest] = files;
+    setFileQueue(rest);
+    try {
+      const raw = await parseImportFile(first);
+      const preview = await previewContributionPack(raw);
+      if ('error' in preview) {
+        setImportMsg('Error: ' + preview.error);
+        if (rest.length > 0) await processNextInQueue(rest);
+      } else {
+        setPackPreview(preview);
+      }
+    } catch (err) {
+      setImportMsg('Error: ' + String(err));
+      if (rest.length > 0) await processNextInQueue(rest);
     }
     e.target.value = '';
   };
@@ -108,8 +140,17 @@ export function SettingsPage() {
         await loadSubjects();
       }
       setPackPreview(null);
+      // Procesar siguiente en la cola
+      if (fileQueue.length > 0) {
+        await processNextInQueue(fileQueue);
+      } else {
+        setQueueTotal(0);
+      }
     } catch (err) {
       setImportMsg('Error: ' + String(err));
+      setPackPreview(null);
+      if (fileQueue.length > 0) await processNextInQueue(fileQueue);
+      else setQueueTotal(0);
     }
   };
 
@@ -313,9 +354,9 @@ export function SettingsPage() {
           )}
 
           <label className="cursor-pointer">
-            <input type="file" accept=".json" className="hidden" onChange={handleImportContribution} />
+            <input type="file" accept=".json" multiple className="hidden" onChange={handleImportContribution} />
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-ink-600 bg-ink-800 text-ink-300 hover:text-ink-100 hover:border-ink-500 text-sm font-medium font-body transition-all cursor-pointer">
-              ↓ Seleccionar contribution pack
+              ↓ Seleccionar contribution pack(s)
             </span>
           </label>
 
@@ -415,36 +456,11 @@ export function SettingsPage() {
         </div>
       </main>
 
-      {/* Modal preview pregunta individual (desde contribution pack) */}
-      {previewSampleQuestion && (
-        <Modal
-          open={!!previewSampleQuestion}
-          onClose={() => setPreviewSampleQuestion(null)}
-          title={previewSampleQuestion.prompt.replace(/[#*`]/g, '').trim().slice(0, 60) + (previewSampleQuestion.prompt.length > 60 ? '…' : '')}
-          size="lg"
-        >
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 flex-wrap">
-              <TypeBadge type={previewSampleQuestion.type} />
-              {previewSampleQuestion.difficulty && (
-                <span className="text-xs text-ink-500">{'★'.repeat(previewSampleQuestion.difficulty)}</span>
-              )}
-            </div>
-            <QuestionPreviewContent question={previewSampleQuestion} />
-            <div className="flex justify-end pt-2 border-t border-ink-800">
-              <Button size="sm" variant="ghost" onClick={() => setPreviewSampleQuestion(null)}>
-                Cerrar
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
       {/* Modal preview contribution pack */}
       <Modal
         open={!!packPreview}
-        onClose={() => setPackPreview(null)}
-        title="Vista previa del Contribution Pack"
+        onClose={async () => { setPackPreview(null); if (fileQueue.length > 0) await processNextInQueue(fileQueue); else setQueueTotal(0); }}
+        title={queueTotal > 1 ? `Vista previa (${queueTotal - fileQueue.length}/${queueTotal})` : 'Vista previa del Contribution Pack'}
         size="lg"
       >
         {packPreview && (
@@ -540,8 +556,8 @@ export function SettingsPage() {
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-ink-800">
-              <Button variant="ghost" onClick={() => setPackPreview(null)}>
-                Cancelar
+              <Button variant="ghost" onClick={async () => { setPackPreview(null); if (fileQueue.length > 0) await processNextInQueue(fileQueue); else setQueueTotal(0); }}>
+                {fileQueue.length > 0 ? 'Saltar' : 'Cancelar'}
               </Button>
               <Button onClick={handleConfirmImport} disabled={'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount === 0}>
                 {'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount > 0
@@ -552,6 +568,31 @@ export function SettingsPage() {
           </div>
         )}
       </Modal>
+
+      {/* Modal preview pregunta individual (desde contribution pack) — debe estar DESPUÉS del modal de pack para quedar encima */}
+      {previewSampleQuestion && (
+        <Modal
+          open={!!previewSampleQuestion}
+          onClose={() => setPreviewSampleQuestion(null)}
+          title={previewSampleQuestion.prompt.replace(/[#*`]/g, '').trim().slice(0, 60) + (previewSampleQuestion.prompt.length > 60 ? '…' : '')}
+          size="lg"
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              <TypeBadge type={previewSampleQuestion.type} />
+              {previewSampleQuestion.difficulty && (
+                <span className="text-xs text-ink-500">{'★'.repeat(previewSampleQuestion.difficulty)}</span>
+              )}
+            </div>
+            <QuestionPreviewContent question={previewSampleQuestion} />
+            <div className="flex justify-end pt-2 border-t border-ink-800">
+              <Button size="sm" variant="ghost" onClick={() => setPreviewSampleQuestion(null)}>
+                Cerrar
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

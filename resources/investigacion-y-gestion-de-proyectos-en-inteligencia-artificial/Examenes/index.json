@@ -186,5 +186,176 @@
       "type": "docx"
     }
   ],
-  "subcategories": []
+  "subcategories": [
+    {
+      "name": "pdf",
+      "files": [
+        {
+          "name": "Copia de IGPIA_2024_07_examen_Modelo_B.pdf",
+          "path": "Copia de IGPIA_2024_07_examen_Modelo_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 12 julio modelo A en blanco.pdf",
+          "path": "examen 12 julio modelo A en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen 13 julio modelo B en blanco.pdf",
+          "path": "examen 13 julio modelo B en blanco.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Examen 16 julio 2024 - modelo C.pdf",
+          "path": "Examen 16 julio 2024 - modelo C.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen.pdf",
+          "path": "examen.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "ExamenIIA-modeloA.pdf",
+          "path": "ExamenIIA-modeloA.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "ExamenIIA_ModeloB_8.1.pdf",
+          "path": "ExamenIIA_ModeloB_8.1.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_2025_F.pdf",
+          "path": "examen_2025_F.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "examen_IIA_Miguel_Montoya_Nota_8.75.pdf",
+          "path": "examen_IIA_Miguel_Montoya_Nota_8.75.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGP-2025-09_Modelo_E.pdf",
+          "path": "IGP-2025-09_Modelo_E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2022_07_examen_Modelo_A.pdf",
+          "path": "IGPIA_2022_07_examen_Modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2023_03_examen_Modelo_B_nota_de_8.1.pdf",
+          "path": "IGPIA_2023_03_examen_Modelo_B_nota_de_8.1.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2023_03_examen_Modelo_C_nota_de_8.75.pdf",
+          "path": "IGPIA_2023_03_examen_Modelo_C_nota_de_8.75.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2023_07_examen_Modelo_A.pdf",
+          "path": "IGPIA_2023_07_examen_Modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2024_07_examen_Modelo_A.pdf",
+          "path": "IGPIA_2024_07_examen_Modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2024_07_examen_Modelo_B.pdf",
+          "path": "IGPIA_2024_07_examen_Modelo_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2024_07_examen_Modelo_C.pdf",
+          "path": "IGPIA_2024_07_examen_Modelo_C.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_A(1).pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_A(1).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_A.pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_B.pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_C(1).pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_C(1).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_C.pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_C.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_D.pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IGPIA_2025_03_examen_Modelo_E.pdf",
+          "path": "IGPIA_2025_03_examen_Modelo_E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "IIA_Ex2.pdf",
+          "path": "IIA_Ex2.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Recopilatorio preguntas cortas (ACTUALIZADO 2025).pdf",
+          "path": "Recopilatorio preguntas cortas (ACTUALIZADO 2025).pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "Recopilatorio Preguntas cortas exámenes pasados.pdf",
+          "path": "Recopilatorio Preguntas cortas exámenes pasados.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_A.pdf",
+          "path": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_A.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_B.pdf",
+          "path": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_B.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_D.pdf",
+          "path": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_D.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_E.pdf",
+          "path": "SOLUCIONADO - IGPIA_2025_03_examen_Modelo_E.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "SOLUCIONADO - Recopilatorio Preguntas cortas exámenes pasados.pdf",
+          "path": "SOLUCIONADO - Recopilatorio Preguntas cortas exámenes pasados.pdf",
+          "type": "pdf"
+        },
+        {
+          "name": "SOLUCIONADO2- Recopilatorio Preguntas cortas exámenes pasados.pdf",
+          "path": "SOLUCIONADO2- Recopilatorio Preguntas cortas exámenes pasados.pdf",
+          "type": "pdf"
+        }
+      ]
+    }
+  ]
 }

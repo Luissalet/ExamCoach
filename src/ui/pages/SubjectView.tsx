@@ -182,9 +182,10 @@ export function SubjectView() {
 
   // Try to load each resource category
   for (const cat of [
+    { name: 'Resúmenes', slug: 'Resumenes' },
     { name: 'Exámenes', slug: 'Examenes' },
     { name: 'Práctica', slug: 'Practica' },
-    { name: 'Resúmenes', slug: 'Resumenes' },
+    
   ]) {
     try {
       // First, try to load from static files
