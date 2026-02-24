@@ -534,6 +534,15 @@ export function SubjectView() {
                               >
                                 👁 Ver PDF
                               </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/subject/${subjectId}/listen/${t.id}`);
+                                }}
+                                className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md"
+                              >
+                                🎧 Escuchar
+                              </button>
                               <label
                                 onClick={(e) => e.stopPropagation()}
                                 className="text-xs text-ink-500 hover:text-ink-300 hover:bg-ink-700 transition-all px-1.5 py-0.5 rounded cursor-pointer"
@@ -901,6 +910,7 @@ interface ResourcesTabProps {
 
 function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
   const slug = slugify(subject.name);
+  const navigate = useNavigate();
   // Helper para abrir archivos desde static o IndexedDB
   const handleFileClick = async (file: ResourceFile, categorySlug: string, subcategoryName?: string) => {
     // Construir la URL estática
@@ -971,14 +981,24 @@ function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
             {cat.files.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
               {cat.files.map((f) => (
-                <button
-                  key={f.path || f.name}
-                  onClick={() => handleFileClick(f, cat.slug)}
-                  className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group text-left w-full"
-                >
-                  <span className="text-lg">{getFileIcon(f.name)}</span>
-                  <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
-                </button>
+                <div key={f.path || f.name} className="flex items-center gap-2 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group">
+                  <button
+                    onClick={() => handleFileClick(f, cat.slug)}
+                    className="flex items-center gap-3 text-left flex-1 min-w-0"
+                  >
+                    <span className="text-lg">{getFileIcon(f.name)}</span>
+                    <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                  </button>
+                  {f.name.toLowerCase().endsWith('.pdf') && (
+                    <button
+                      onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${f.name}`)}`)}
+                      className="shrink-0 text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md"
+                      title="Escuchar PDF"
+                    >
+                      🎧
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           )}
@@ -989,14 +1009,24 @@ function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
               <p className="text-sm text-ink-400 font-medium mb-2">{sc.name}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {sc.files.map((f) => (
-                  <button
-                    key={f.path || f.name}
-                    onClick={() => handleFileClick(f, cat.slug, sc.name)}
-                    className="flex items-center gap-3 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group text-left w-full"
-                  >
-                    <span className="text-lg">{getFileIcon(f.name)}</span>
-                    <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
-                  </button>
+                  <div key={f.path || f.name} className="flex items-center gap-2 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group">
+                    <button
+                      onClick={() => handleFileClick(f, cat.slug, sc.name)}
+                      className="flex items-center gap-3 text-left flex-1 min-w-0"
+                    >
+                      <span className="text-lg">{getFileIcon(f.name)}</span>
+                      <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                    </button>
+                    {f.name.toLowerCase().endsWith('.pdf') && (
+                      <button
+                        onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${sc.name}/${f.name}`)}`)}
+                        className="shrink-0 text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md"
+                        title="Escuchar PDF"
+                      >
+                        🎧
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>

@@ -9,6 +9,7 @@ import { DeliverablesPage } from './pages/Deliverables';
 import { StatsPage } from './pages/Stats';
 import { GlobalStatsPage } from './pages/GlobalStats';
 import { ReadModePage } from './pages/ReadMode';
+import { PdfListenMode } from './pages/PdfListenMode';
 import { SessionHistoryPage } from './pages/SessionHistory';
 
 export function AppRouter() {
@@ -19,6 +20,8 @@ export function AppRouter() {
         <Route path="/subject/:subjectId" element={<SubjectView />} />
         <Route path="/subject/:subjectId/stats" element={<StatsPage />} />
         <Route path="/subject/:subjectId/read/:topicId" element={<ReadModePage />} />
+        <Route path="/subject/:subjectId/listen/:topicId" element={<PdfListenMode />} />
+        <Route path="/subject/:subjectId/listen-resource" element={<PdfListenMode />} />
         <Route path="/practice/:sessionId" element={<PracticeSessionPage />} />
         <Route path="/results/:sessionId" element={<ResultsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
