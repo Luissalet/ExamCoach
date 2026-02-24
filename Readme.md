@@ -425,7 +425,7 @@ Versión actual: **v5**
 
 ## Licencia
 
-Copyright (c) 2026 Luis Mascort. Todos los derechos reservados.
+Copyright (c) 2026 Luis M. Salete. Todos los derechos reservados.
 
 Este software es de uso exclusivamente personal y educativo. **Queda expresamente prohibido:**
 
