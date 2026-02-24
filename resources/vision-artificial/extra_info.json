@@ -8,6 +8,10 @@
     {
       "name": "FilterLab",
       "url": "https://github.com/Mlgpigeon/filterlab"
+    },
+    {
+      "name": "PDFTools",
+      "url": "https://github.com/Mlgpigeon/PDFTools"
     }
   ]
 }
