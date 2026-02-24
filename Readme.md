@@ -11,6 +11,7 @@ App web **local-first** para crear bancos de preguntas de examen y practicar de 
 - **Tailwind CSS** — estilos utilitarios
 - **marked + marked-katex-extension + KaTeX** — renderizado Markdown con soporte completo de LaTeX
 - **PDF.js** — visor de PDFs integrado
+- **Web Speech API** — síntesis de voz (TTS) para escuchar PDFs y preguntas
 - **JSZip** — manejo de archivos ZIP para importación de recursos
 
 ## Capacidades
@@ -47,6 +48,26 @@ App web **local-first** para crear bancos de preguntas de examen y practicar de 
 - Soporte completo de Markdown + KaTeX
 - **Sidebar de referencia** disponible durante las sesiones de práctica
 - Exportación e importación mediante packs JSON estructurados
+
+### Modo escucha de PDFs (Text-to-Speech)
+
+- **Escuchar PDFs completos** con síntesis de voz en español
+- **Dos modos de acceso**: por tema (preguntas del tema) o por recurso PDF (documento completo)
+- **Extracción inteligente de texto**: detección de columnas, filtrado de cabeceras/pies de página, agrupación en párrafos
+- **Conversión de símbolos matemáticos a voz**: más de 150 símbolos (letras griegas, operadores, relaciones, teoría de conjuntos, cálculo) convertidos a lenguaje natural en español
+- **Controles de reproducción**: play/pausa, avance/retroceso por bloque, barra de progreso clickable
+- **Velocidad ajustable**: 0.75×, 1×, 1.25×, 1.5×, 2×
+- **Selector de voz**: elige entre las voces en español disponibles en tu sistema (prioriza voces neuronales de Google/Microsoft)
+- **Atajos de teclado**: Espacio (play/pausa), ← → (bloque anterior/siguiente), +/- (velocidad), Esc (detener)
+- **Barra de controles sticky** en la parte inferior de la pantalla
+
+### Chatbots GPT personalizados
+
+- **Acceso directo a GPTs personalizados** desde la vista de cada asignatura
+- **Pestaña "Chatbots"** visible automáticamente cuando la asignatura tiene GPTs configurados
+- **Configuración por asignatura** mediante el campo `gptLinks` en `extra_info.json`
+- Cada enlace incluye nombre, URL del GPT personalizado y descripción opcional
+- Apertura en pestaña nueva con un click
 
 ### Estadísticas y seguimiento
 
@@ -323,7 +344,14 @@ El **slug** se genera normalizando el nombre: sin acentos, minúsculas, espacios
   "professor": "Juan García",
   "credits": 6,
   "description": "Descripción opcional de la asignatura.",
-  "pdfs": ["Tema1.pdf", "Tema2.pdf"]
+  "pdfs": ["Tema1.pdf", "Tema2.pdf"],
+  "gptLinks": [
+    {
+      "name": "Conversador TAA",
+      "url": "https://chatgpt.com/g/g-...-conversador-taa",
+      "description": "GPT personalizado para estudiar esta asignatura"
+    }
+  ]
 }
 ```
 
@@ -334,6 +362,7 @@ El **slug** se genera normalizando el nombre: sin acentos, minúsculas, espacios
 | `credits` | `number` | Créditos ECTS (opcional). |
 | `description` | `string` | Descripción libre (opcional). |
 | `pdfs` | `string[]` | Fallback: lista de PDFs si no existe `Temas/index.json`. |
+| `gptLinks` | `GptLink[]` | Lista de GPTs personalizados vinculados a la asignatura (opcional). Cada objeto tiene `name`, `url` y `description` (opcional). |
 
 ### Temas/index.json
 
@@ -382,12 +411,16 @@ study-app/
 │   │   └── resourceImporter.ts    # Importación de recursos ZIP
 │   ├── utils/
 │   │   ├── renderMd.ts            # Renderizado Markdown + KaTeX centralizado
+│   │   ├── pdfTextExtractor.ts    # Extracción inteligente de texto de PDFs
+│   │   ├── ttsEngine.ts           # Motor TTS (Web Speech API)
+│   │   ├── mathSymbolSpeech.ts    # Conversión de símbolos matemáticos a voz en español
 │   │   └── questionUtils.ts       # Utilidades de preguntas
 │   └── ui/
 │       ├── store/index.ts         # Zustand store
-│       ├── components/            # MdContent, QuestionForm, PdfViewer, CalendarWidget, etc.
+│       ├── components/            # MdContent, QuestionForm, PdfViewer, TtsControls, CalendarWidget, etc.
 │       └── pages/                 # Dashboard, SubjectView, PracticeSession, Results, Settings,
-│                                  # Flashcard, Deliverables, Stats, GlobalStats, SessionHistory
+│                                  # Flashcard, Deliverables, Stats, GlobalStats, SessionHistory,
+│                                  # PdfListenMode, ReadMode
 ```
 
 ---
