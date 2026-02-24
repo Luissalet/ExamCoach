@@ -11,6 +11,7 @@
 !/resources/**/Resumenes/index.json
 
 vite.config.ts.timestamp*
+/dist
 resources.zip
 
 CLAUDE.md
