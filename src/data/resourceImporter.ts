@@ -152,9 +152,15 @@ export async function importResourceZip(
           const blob = await zipFile.async('blob');
           const mime = guessMime(filename);
 
-          const storageName = fileEntry.relativePath
-            ? `${fileEntry.category}/${fileEntry.relativePath}`
-            : `${fileEntry.category}/${filename}`;
+          // Para Temas, guardar solo el nombre del archivo (sin prefijo de categoría)
+          // porque getPdfBlobUrl() busca por filename sin prefijo (ej. "Tema_1.pdf").
+          // Para el resto de categorías, mantener el prefijo (ej. "Examenes/file.pdf")
+          // porque getResourceBlobUrl() usa la ruta completa con categoría.
+          const storageName = fileEntry.category === 'Temas'
+            ? (fileEntry.relativePath || filename)
+            : fileEntry.relativePath
+              ? `${fileEntry.category}/${fileEntry.relativePath}`
+              : `${fileEntry.category}/${filename}`;
 
           // Check for existing (update instead of duplicate)
           const existing = await db.pdfResources

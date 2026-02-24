@@ -88,18 +88,39 @@ export function PdfListenMode() {
       }
 
       // 4. Resolve PDF URL
+      // Primero busca en IndexedDB (blobs importados por ZIP), luego en estáticos.
+      // Para el fallback estático, verificamos que no sea un SPA catch-all (text/html).
       let url: string | null = null;
       try {
         if (isResourceMode && resourceFile) {
           url = await getResourceBlobUrl(subjectId, resourceFile);
           if (!url) {
             const slug = slugify(s.name);
-            url = resourcesUrl(`resources/${slug}/${resourceFile}`);
+            const staticUrl = resourcesUrl(`resources/${slug}/${resourceFile}`);
+            // Verificar que sea un archivo real y no el SPA catch-all
+            try {
+              const headRes = await fetch(staticUrl, { method: 'HEAD' });
+              const ct = headRes.headers.get('Content-Type') ?? '';
+              if (headRes.ok && !ct.includes('text/html')) {
+                url = staticUrl;
+              }
+            } catch {
+              // estático no disponible
+            }
           }
         } else if (t?.pdfFilename) {
           url = await getPdfBlobUrl(subjectId, t.pdfFilename);
           if (!url) {
-            url = getPdfUrl(s.name, t.pdfFilename);
+            const staticUrl = getPdfUrl(s.name, t.pdfFilename);
+            try {
+              const headRes = await fetch(staticUrl, { method: 'HEAD' });
+              const ct = headRes.headers.get('Content-Type') ?? '';
+              if (headRes.ok && !ct.includes('text/html')) {
+                url = staticUrl;
+              }
+            } catch {
+              // estático no disponible
+            }
           }
         }
       } catch {

@@ -48,11 +48,16 @@ interface ResourceFile {
   type: string; // extension
 }
 
+interface SubCategory {
+  name: string;
+  files: ResourceFile[];
+}
+
 interface ResourceCategory {
   name: string;
   slug: string;
   files: ResourceFile[];
-  subcategories?: { name: string; files: ResourceFile[] }[];
+  subcategories?: SubCategory[];
 }
 
 // ── Preview: enunciado + respuesta resuelta ─────────────────────────────────
@@ -202,49 +207,73 @@ export function SubjectView() {
     { name: 'Práctica', slug: 'Practica' },
     
   ]) {
+    // Cargar de ambas fuentes (estática + IndexedDB) y fusionar.
+    // Solo estática no es suficiente porque el .gitignore excluye los archivos
+    // reales (solo commitea index.json). Los usuarios que importan el ZIP
+    // tienen los archivos en IndexedDB pero el index.json estático sigue presente.
+    let staticFiles: ResourceFile[] = [];
+    let staticSubcats: SubCategory[] | undefined;
+    let dbFiles: ResourceFile[] = [];
+    let dbSubcats: SubCategory[] | undefined;
+
+    // 1. Intentar cargar desde archivos estáticos
     try {
-      // First, try to load from static files
       const res = await fetch(resourcesUrl(`resources/${slug}/${cat.slug}/index.json`), { cache: 'no-cache' });
       if (res.ok) {
-        const data = await res.json();
-        const hasFiles = (data.files && data.files.length > 0) || 
-                        (data.subcategories && data.subcategories.some((sc: any) => sc.files.length > 0));
-        
-        if (hasFiles) {
-          categories.push({ 
-            name: cat.name, 
-            slug: cat.slug, 
-            files: data.files ?? [], 
-            subcategories: data.subcategories 
-          });
-          continue; // Skip IndexedDB if we have static files
+        const ct = res.headers.get('Content-Type') ?? '';
+        // Asegurarse de que es un JSON real y no el SPA catch-all
+        if (ct.includes('json') || !ct.includes('text/html')) {
+          const data = await res.json();
+          staticFiles = data.files ?? [];
+          staticSubcats = data.subcategories;
         }
       }
     } catch {
-      // Static file not available, will try IndexedDB
+      // Static file not available
     }
 
-    // Fallback: try to load from IndexedDB
+    // 2. Cargar desde IndexedDB
     try {
       const dbData = await loadCategoryFromDB(subjectId, cat.slug);
-      const hasFiles = (dbData.files && dbData.files.length > 0) || 
-                      (dbData.subcategories && dbData.subcategories.length > 0);
-      
-      if (hasFiles) {
-        categories.push({
-          name: cat.name,
-          slug: cat.slug,
-          files: dbData.files,
-          subcategories: dbData.subcategories,
-        });
-      } else {
-        // Empty category
-        categories.push({ name: cat.name, slug: cat.slug, files: [] });
-      }
+      dbFiles = dbData.files ?? [];
+      dbSubcats = dbData.subcategories;
     } catch (err) {
       console.error(`Error loading ${cat.slug} from IndexedDB:`, err);
-      categories.push({ name: cat.name, slug: cat.slug, files: [] });
     }
+
+    // 3. Fusionar: usar la fuente que tenga más archivos, o combinar ambas
+    //    eliminando duplicados por nombre de archivo
+    const mergeFiles = (a: ResourceFile[], b: ResourceFile[]): ResourceFile[] => {
+      const seen = new Set(a.map(f => f.name));
+      return [...a, ...b.filter(f => !seen.has(f.name))];
+    };
+    const mergeSubcats = (a?: SubCategory[], b?: SubCategory[]): SubCategory[] | undefined => {
+      if (!a?.length && !b?.length) return undefined;
+      if (!a?.length) return b;
+      if (!b?.length) return a;
+      const map = new Map<string, ResourceFile[]>();
+      for (const sc of a) map.set(sc.name, [...sc.files]);
+      for (const sc of b) {
+        const existing = map.get(sc.name);
+        if (existing) {
+          const seen = new Set(existing.map(f => f.name));
+          existing.push(...sc.files.filter(f => !seen.has(f.name)));
+        } else {
+          map.set(sc.name, [...sc.files]);
+        }
+      }
+      return Array.from(map.entries()).map(([name, files]) => ({ name, files }));
+    };
+
+    const mergedFiles = mergeFiles(staticFiles, dbFiles);
+    const mergedSubcats = mergeSubcats(staticSubcats, dbSubcats);
+
+    categories.push({
+      name: cat.name,
+      slug: cat.slug,
+      files: mergedFiles,
+      subcategories: mergedSubcats,
+    });
   }
 
   setResources(categories);
@@ -963,12 +992,18 @@ function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
       : `${categorySlug}/${file.name}`;
     const staticUrl = resourcesUrl(`resources/${slug}/${staticPath}`);
     
-    // Intentar abrir desde archivos estáticos
+    // Intentar abrir desde archivos estáticos.
+    // Verificamos Content-Type para evitar falsos positivos cuando el SPA
+    // catch-all devuelve index.html (text/html) en lugar del archivo real.
     try {
       const res = await fetch(staticUrl, { method: 'HEAD' });
       if (res.ok) {
-        window.open(staticUrl, '_blank');
-        return;
+        const ct = res.headers.get('Content-Type') ?? '';
+        const isRealFile = !ct.includes('text/html');
+        if (isRealFile) {
+          window.open(staticUrl, '_blank');
+          return;
+        }
       }
     } catch {}
     
