@@ -105,7 +105,7 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
-      const renderContext: pdfjsLib.RenderParameters = {
+      const renderContext = {
         canvasContext: ctx,
         viewport,
       };
