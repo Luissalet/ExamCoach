@@ -4,9 +4,10 @@
  * Panel lateral de conceptos clave para consultar durante las prácticas.
  * Muestra fórmulas, definiciones y observaciones con búsqueda y filtro
  * por categoría. Renderiza contenido Markdown + LaTeX via MdContent.
+ * Borde izquierdo redimensionable arrastrando.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { MdContent } from '@/ui/components/MdContent';
 import { Badge } from '@/ui/components';
 import type { KeyConcept, KeyConceptCategory, Topic } from '@/domain/models';
@@ -42,6 +43,9 @@ const CATEGORY_CONFIG: Record<
 
 const CATEGORIES: KeyConceptCategory[] = ['formula', 'definition', 'remark'];
 
+const MIN_WIDTH = 280;
+const MAX_WIDTH_RATIO = 0.75; // max 75% of viewport
+
 // ─── Props ──────────────────────────────────────────────────────────────────
 
 interface KeyConceptsSidebarProps {
@@ -57,6 +61,45 @@ export function KeyConceptsSidebar({ concepts, topics, open, onClose }: KeyConce
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<KeyConceptCategory | 'all'>('all');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  // ─── Resize state ───────────────────────────────────────────────────────
+  const [width, setWidth] = useState(384); // default ~max-w-sm
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const startWidth = useRef(384);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    startX.current = e.clientX;
+    startWidth.current = width;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  }, [width]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      const delta = startX.current - e.clientX; // dragging left = bigger
+      const maxW = window.innerWidth * MAX_WIDTH_RATIO;
+      const newWidth = Math.min(maxW, Math.max(MIN_WIDTH, startWidth.current + delta));
+      setWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
 
   const topicMap = useMemo(() => {
     const m = new Map<string, Topic>();
@@ -107,7 +150,19 @@ export function KeyConceptsSidebar({ concepts, topics, open, onClose }: KeyConce
       />
 
       {/* Sidebar panel */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-sm bg-ink-950 border-l border-ink-700 z-50 flex flex-col shadow-xl animate-slide-in-right">
+      <div
+        className="fixed right-0 top-0 h-full bg-ink-950 border-l border-ink-700 z-50 flex flex-col shadow-xl animate-slide-in-right"
+        style={{ width }}
+      >
+        {/* Resize handle */}
+        <div
+          onMouseDown={handleMouseDown}
+          className="absolute left-0 top-0 h-full w-1.5 cursor-col-resize z-10 group hover:bg-amber-500/30 active:bg-amber-500/40 transition-colors"
+          title="Arrastra para redimensionar"
+        >
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 rounded-full bg-ink-600 group-hover:bg-amber-500 transition-colors" />
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-ink-700">
           <h2 className="text-lg font-semibold text-ink-100 flex items-center gap-2">

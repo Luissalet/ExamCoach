@@ -126,6 +126,8 @@ export function PracticeSessionPage() {
       answer.selectedOptionIds = selectedOptions;
     } else if (currentQuestion.type === 'DESARROLLO') {
       answer.freeText = freeText;
+    } else if (currentQuestion.type === 'PRACTICO') {
+      answer.freeText = freeText;
     } else if (currentQuestion.type === 'COMPLETAR') {
       answer.blankAnswers = blankAnswers;
     }
