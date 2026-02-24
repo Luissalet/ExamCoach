@@ -16,8 +16,9 @@ import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStor
 import type { Topic, Question, QuestionOrigin, QuestionType } from '@/domain/models';
 import { slugify } from '@/domain/normalize';
 import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
-import { loadPdfMapping, getPdfUrl, resourcesUrl } from '@/data/resourceLoader';
-type TabId = 'topics' | 'questions' | 'practice' | 'resources' | 'concepts';
+import { loadPdfMapping, getPdfUrl, resourcesUrl, loadSubjectExtraInfo } from '@/data/resourceLoader';
+import type { GptLink } from '@/domain/models';
+type TabId = 'topics' | 'questions' | 'practice' | 'resources' | 'concepts' | 'chatbots';
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   test: 'Test',
@@ -103,6 +104,9 @@ export function SubjectView() {
   const [reorderDragIdx, setReorderDragIdx] = useState<number | null>(null);
   const [reorderOverIdx, setReorderOverIdx] = useState<number | null>(null);
 
+  // ── GPT Links ────────────────────────────────────────────────────────────
+  const [gptLinks, setGptLinks] = useState<GptLink[]>([]);
+
   // Modal ver PDF
   const [viewPdfTopic, setViewPdfTopic] = useState<Topic | null>(null);
   const [viewPdfUrl, setViewPdfUrl] = useState<string | null>(null);
@@ -170,6 +174,14 @@ export function SubjectView() {
   useEffect(() => {
     refreshPdfList();
   }, [refreshPdfList]);
+
+  // ── Cargar GPT links desde extra_info.json ───────────────────────────────
+  useEffect(() => {
+    if (!subject) return;
+    loadSubjectExtraInfo(subject.name).then((info) => {
+      setGptLinks(info?.gptLinks ?? []);
+    });
+  }, [subject?.name]);
 
   // Load resources when tab changes to 'resources'
   useEffect(() => {
@@ -382,6 +394,7 @@ export function SubjectView() {
     { id: 'practice', label: 'Practicar' },
     { id: 'resources', label: 'Otros recursos' },
     { id: 'concepts', label: 'Conceptos clave' },
+    ...(gptLinks.length > 0 ? [{ id: 'chatbots', label: 'Chatbots' }] : []),
   ];
 
   // B2: Reorder topics via drag & drop
@@ -808,6 +821,37 @@ export function SubjectView() {
             onDelete={deleteKeyConcept}
             onReload={async () => { await loadKeyConcepts(subjectId!); }}
           />
+        )}
+
+        {tab === 'chatbots' && (
+          <div className="flex flex-col gap-6">
+            <p className="text-ink-400 text-sm">
+              Chatbots personalizados con el contenido de esta asignatura. Se abren en ChatGPT en una nueva pestaña.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {gptLinks.map((link, i) => (
+                <button
+                  key={i}
+                  onClick={() => window.open(link.url, '_blank')}
+                  className="group flex items-start gap-4 p-5 rounded-xl border border-ink-800 bg-ink-900/50 hover:border-amber-500/40 hover:bg-ink-800/60 transition-all text-left"
+                >
+                  <span className="text-3xl flex-shrink-0 mt-0.5">🤖</span>
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <span className="font-semibold text-ink-100 group-hover:text-amber-400 transition-colors">
+                      {link.name}
+                    </span>
+                    {link.description && (
+                      <span className="text-sm text-ink-400">{link.description}</span>
+                    )}
+                    <span className="text-xs text-ink-500 mt-1 truncate">{link.url}</span>
+                  </div>
+                  <span className="ml-auto text-ink-600 group-hover:text-amber-500 transition-colors flex-shrink-0 self-center">
+                    ↗
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </main>
 

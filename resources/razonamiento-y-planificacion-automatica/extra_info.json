@@ -1,7 +1,14 @@
 {
-  "allowsNotes": true,
+  "allowsNotes": false,
   "professor": "",
   "credits": 6,
   "description": "",
-  "pdfs": []
+  "pdfs": [],
+  "gptLinks": [
+    {
+      "name": "Conversador RPA",
+      "url": "https://chatgpt.com/g/g-699dbf4006c88191baa098b501773552-conversador-rpa",
+      "description": "GPT personalizado para estudiar Razonamiento y Planificación Automática"
+    }
+  ]
 }

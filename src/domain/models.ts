@@ -268,6 +268,8 @@ export interface SubjectExtraInfo {
   pdfs?: string[];
   /** ITER3 — Enlaces externos útiles (webs de consulta, apps de ayuda). */
   externalLinks?: ExternalLink[];
+  /** Enlaces a Custom GPTs para conversar sobre la asignatura. */
+  gptLinks?: GptLink[];
 }
 
 // ─── ITER3: Enlaces externos útiles ──────────────────────────────────────────
@@ -276,6 +278,22 @@ export interface ExternalLink {
   name: string;
   url: string;
   icon?: string; // URL del favicon o emoji
+}
+
+// ─── GPT Links ───────────────────────────────────────────────────────────────
+
+/**
+ * Enlace a un Custom GPT de ChatGPT configurado para la asignatura.
+ * Se define en extra_info.json de cada asignatura y se muestra como botón
+ * en el header de SubjectView.
+ */
+export interface GptLink {
+  /** Nombre visible del botón (ej: "Conversador TAA") */
+  name: string;
+  /** URL completa del Custom GPT */
+  url: string;
+  /** Descripción opcional (ej: "Basado en resúmenes Temas 1-11") */
+  description?: string;
 }
 
 // ─── Export formats ───────────────────────────────────────────────────────────

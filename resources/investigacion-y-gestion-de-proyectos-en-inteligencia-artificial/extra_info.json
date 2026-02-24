@@ -3,5 +3,12 @@
   "professor": "",
   "credits": 6,
   "description": "",
-  "pdfs": []
+  "pdfs": [],
+  "gptLinks": [
+    {
+      "name": "Conversador IGP",
+      "url": "https://chatgpt.com/g/g-699dbe0d38ec8191ae7f34d185e8ae11-conversador-igp",
+      "description": "GPT personalizado para estudiar Investigación y Gestión de Proyectos en IA"
+    }
+  ]
 }

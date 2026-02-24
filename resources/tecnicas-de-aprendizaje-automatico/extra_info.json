@@ -3,5 +3,12 @@
   "professor": "",
   "credits": 6,
   "description": "",
-  "pdfs": []
+  "pdfs": [],
+  "gptLinks": [
+    {
+      "name": "Conversador TAA",
+      "url": "https://chatgpt.com/g/g-699dbd373cac81918f72d8356654c497-conversador-taa",
+      "description": "GPT personalizado para estudiar Técnicas de Aprendizaje Automático"
+    }
+  ]
 }

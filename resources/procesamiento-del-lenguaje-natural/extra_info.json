@@ -3,5 +3,12 @@
   "professor": "",
   "credits": 6,
   "description": "",
-  "pdfs": []
+  "pdfs": [],
+  "gptLinks": [
+    {
+      "name": "Conversador PLN",
+      "url": "https://chatgpt.com/g/g-699dbea2de1c8191be02270537d26d4f-conversador-pln",
+      "description": "GPT personalizado para estudiar Procesamiento del Lenguaje Natural"
+    }
+  ]
 }
