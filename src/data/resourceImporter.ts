@@ -34,12 +34,23 @@ export interface ImportResourcesResult {
   subjects: string[];
   categories: Record<string, number>; // e.g. { Temas: 5, Examenes: 3, ... }
   errors: string[];
+  missingSubjects?: string[];
+  quotaWarning?: boolean;
 }
 
-// Store imported resource files in IndexedDB alongside the existing pdfResources
-// We use a separate store for non-PDF resources or extend pdfResources
+export type ImportProgressEvent = {
+  phase: 'reading' | 'validating' | 'processing' | 'complete';
+  filesProcessed: number;
+  totalFiles: number;
+  currentFile?: string;
+};
 
-export async function importResourceZip(file: File): Promise<ImportResourcesResult> {
+export type ProgressCallback = (event: ImportProgressEvent) => void;
+
+export async function importResourceZip(
+  file: File,
+  onProgress?: ProgressCallback,
+): Promise<ImportResourcesResult> {
   const result: ImportResourcesResult = {
     totalFiles: 0,
     subjects: [],
@@ -48,11 +59,13 @@ export async function importResourceZip(file: File): Promise<ImportResourcesResu
   };
 
   try {
+    // ── Phase 1: Read ZIP ──────────────────────────────────────────────────
+    onProgress?.({ phase: 'reading', filesProcessed: 0, totalFiles: 0 });
+
     const zip = await JSZip.loadAsync(file);
     const entries = Object.entries(zip.files);
 
     // Find the root — it might be resources/ or directly [slug]/
-    // Normalize paths
     const paths = entries
       .filter(([_, f]) => !f.dir)
       .map(([path]) => path);
@@ -69,10 +82,10 @@ export async function importResourceZip(file: File): Promise<ImportResourcesResu
     for (const path of paths) {
       const relPath = prefix ? path.replace(prefix, '') : path;
       const parts = relPath.split('/');
-      if (parts.length < 2) continue; // Need at least [slug]/[file]
+      if (parts.length < 2) continue;
 
       const subjectSlug = parts[0];
-      const category = parts[1]; // Temas, Examenes, Practica, Resumenes
+      const category = parts[1];
       const restPath = parts.slice(2).join('/');
 
       if (!subjectFiles.has(subjectSlug)) {
@@ -85,46 +98,76 @@ export async function importResourceZip(file: File): Promise<ImportResourcesResu
       });
     }
 
-    // Process each subject
+    // ── Phase 2: Validate subjects ─────────────────────────────────────────
+    onProgress?.({ phase: 'validating', filesProcessed: 0, totalFiles: 0 });
+
+    const allSubjects = await db.subjects.toArray();
+    const subjectMap = new Map(
+      allSubjects.map((s) => [slugify(s.name), s]),
+    );
+
+    const zipSlugs = Array.from(subjectFiles.keys());
+    const missingSlugs = zipSlugs.filter((slug) => !subjectMap.has(slug));
+
+    if (missingSlugs.length > 0) {
+      result.missingSubjects = missingSlugs;
+      result.errors.push(
+        `No se encontraron ${missingSlugs.length} asignatura(s) en tu banco: ${missingSlugs.join(', ')}. ` +
+        `Importa primero el banco de preguntas que contenga estas asignaturas.`,
+      );
+      return result;
+    }
+
+    // ── Phase 3: Count total processable files ─────────────────────────────
+    let totalFiles = 0;
+    for (const files of subjectFiles.values()) {
+      for (const f of files) {
+        const fname = f.path.split('/').pop() ?? '';
+        if (fname !== 'index.json' && fname !== 'extra_info.json') {
+          totalFiles++;
+        }
+      }
+    }
+
+    // ── Phase 4: Process files one by one ──────────────────────────────────
+    let processed = 0;
+
     for (const [subjectSlug, files] of subjectFiles) {
       if (!result.subjects.includes(subjectSlug)) {
         result.subjects.push(subjectSlug);
       }
 
-      // Find the matching subject in the DB
-      const allSubjects = await db.subjects.toArray();
-      const subject = allSubjects.find((s) => slugify(s.name) === subjectSlug);
-
-      if (!subject) {
-        result.errors.push(`No se encontró la asignatura para slug: "${subjectSlug}". Asegúrate de que existe en tu banco.`);
-        continue;
-      }
+      const subject = subjectMap.get(subjectSlug)!;
 
       for (const fileEntry of files) {
         try {
           const zipFile = zip.file(fileEntry.path);
           if (!zipFile) continue;
 
-          const blob = await zipFile.async('blob');
           const filename = fileEntry.path.split('/').pop() ?? '';
 
-          // Skip index.json files (metadata, not resources)
-          if (filename === 'index.json') continue;
+          // Skip metadata files
+          if (filename === 'index.json' || filename === 'extra_info.json') continue;
 
-          // Store in IndexedDB
+          const blob = await zipFile.async('blob');
           const mime = guessMime(filename);
-          const existing = await db.pdfResources
-            .where('subjectId')
-            .equals(subject.id)
-            .filter((r) => r.filename === `${fileEntry.category}/${fileEntry.relativePath || filename}`)
-            .first();
 
           const storageName = fileEntry.relativePath
             ? `${fileEntry.category}/${fileEntry.relativePath}`
             : `${fileEntry.category}/${filename}`;
 
+          // Check for existing (update instead of duplicate)
+          const existing = await db.pdfResources
+            .where('subjectId')
+            .equals(subject.id)
+            .filter((r) => r.filename === storageName)
+            .first();
+
           if (existing) {
-            await db.pdfResources.update(existing.id, { blob, createdAt: new Date().toISOString() });
+            await db.pdfResources.update(existing.id, {
+              blob,
+              createdAt: new Date().toISOString(),
+            });
           } else {
             await db.pdfResources.add({
               id: uuidv4(),
@@ -137,57 +180,46 @@ export async function importResourceZip(file: File): Promise<ImportResourcesResu
           }
 
           result.totalFiles++;
-          result.categories[fileEntry.category] = (result.categories[fileEntry.category] ?? 0) + 1;
+          result.categories[fileEntry.category] =
+            (result.categories[fileEntry.category] ?? 0) + 1;
 
-          // For Temas PDFs, also try to write via dev server
-          if (fileEntry.category === 'Temas' && mime === 'application/pdf') {
-            try {
-              const base64 = await blobToBase64(blob);
-              await fetch('/api/upload-pdf', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  slug: subjectSlug,
-                  filename,
-                  data: base64,
-                  topicTitle: '',
-                }),
-              });
-            } catch {
-              // Dev server not available, ignore
-            }
-          }
+          processed++;
+          onProgress?.({
+            phase: 'processing',
+            filesProcessed: processed,
+            totalFiles,
+            currentFile: filename,
+          });
 
-          // For non-Temas files, try to write via dev server
-          if (fileEntry.category !== 'Temas') {
-            try {
-              const base64 = await blobToBase64(blob);
-              await fetch('/api/upload-resource', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  slug: subjectSlug,
-                  category: fileEntry.category,
-                  path: fileEntry.relativePath || filename,
-                  data: base64,
-                  mime,
-                }),
-              });
-            } catch {
-              // Dev server not available, ignore
-            }
+          // Yield to UI thread every 5 files to keep progress bar responsive
+          if (processed % 5 === 0) {
+            await new Promise((r) => setTimeout(r, 0));
           }
         } catch (err) {
+          if (isQuotaExceededError(err)) {
+            result.quotaWarning = true;
+            result.errors.push(
+              `Almacenamiento lleno. Se importaron ${result.totalFiles} de ${totalFiles} archivos. ` +
+              `Intenta liberar espacio o no usar modo incógnito.`,
+            );
+            onProgress?.({ phase: 'complete', filesProcessed: processed, totalFiles });
+            return result;
+          }
           result.errors.push(`Error procesando ${fileEntry.path}: ${String(err)}`);
+          processed++;
         }
       }
     }
+
+    onProgress?.({ phase: 'complete', filesProcessed: processed, totalFiles });
   } catch (err) {
     result.errors.push(`Error leyendo ZIP: ${String(err)}`);
   }
 
   return result;
 }
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
 
 function guessMime(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase() ?? '';
@@ -207,14 +239,13 @@ function guessMime(filename: string): string {
   return mimes[ext] ?? 'application/octet-stream';
 }
 
-async function blobToBase64(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      resolve(result.split(',')[1]);
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(blob);
-  });
+function isQuotaExceededError(err: unknown): boolean {
+  if (err instanceof DOMException) {
+    return (
+      err.code === 22 ||
+      err.name === 'QuotaExceededError' ||
+      err.name === 'NS_ERROR_DOM_INDEXEDDB_QUOTA_ERR'
+    );
+  }
+  return false;
 }

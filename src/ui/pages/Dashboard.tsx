@@ -5,6 +5,7 @@ import { Button, Card, Modal, Input, Countdown, Progress, EmptyState } from '@/u
 import { exportBank, exportGlobalBank, importBank, parseImportFile, downloadJSON, removeDuplicateQuestions, commitAndCleanContributions } from '@/data/exportImport';
 import { loadSubjectExtraInfo } from '@/data/resourceLoader';
 import { importResourceZip } from '@/data/resourceImporter';
+import type { ImportProgressEvent } from '@/data/resourceImporter';
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
 import { db } from '@/data/db';
 import { CalendarWidget } from '@/ui/components/CalendarWidget';
@@ -40,6 +41,7 @@ export function Dashboard() {
   const [zipMsg, setZipMsg] = useState('');
   const [zipDragOver, setZipDragOver] = useState(false);
   const zipInputRef = useRef<HTMLInputElement>(null);
+  const [zipProgress, setZipProgress] = useState<ImportProgressEvent | null>(null);
   const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
 
   const [commitMsg, setCommitMsg] = useState('');
@@ -171,10 +173,40 @@ export function Dashboard() {
     }
     setZipImporting(true);
     setZipMsg('');
+    setZipProgress(null);
     try {
-      const result = await importResourceZip(file);
+      const result = await importResourceZip(file, (event) => {
+        setZipProgress(event);
+      });
+
+      // Missing subjects → clear actionable message
+      if (result.missingSubjects && result.missingSubjects.length > 0) {
+        setZipMsg(
+          `Error: No se encontraron estas asignaturas en tu banco:\n` +
+          result.missingSubjects.map((s) => `  · ${s}`).join('\n') +
+          `\n\nImporta primero el banco de preguntas (JSON) que contiene las asignaturas.`,
+        );
+        return;
+      }
+
+      // Quota exceeded
+      if (result.quotaWarning) {
+        setZipMsg(
+          `⚠ Almacenamiento insuficiente. Se importaron ${result.totalFiles} archivos parcialmente.\n` +
+          `Intenta liberar espacio en el navegador o no usar modo incógnito.`,
+        );
+        return;
+      }
+
+      // Errors during processing
       if (result.errors.length > 0) {
-        setZipMsg(`⚠ Importado con errores: ${result.totalFiles} archivos. Errores: ${result.errors[0]}`);
+        const shown = result.errors.slice(0, 10);
+        const extra = result.errors.length - shown.length;
+        setZipMsg(
+          `⚠ Importado con errores (${result.totalFiles} archivos):\n` +
+          shown.map((e) => `  · ${e}`).join('\n') +
+          (extra > 0 ? `\n  … y ${extra} error(es) más` : ''),
+        );
       } else {
         const cats = Object.entries(result.categories).map(([k, v]) => `${k}: ${v}`).join(', ');
         setZipMsg(`✓ Importados ${result.totalFiles} archivos de ${result.subjects.length} asignatura(s). ${cats}`);
@@ -183,6 +215,7 @@ export function Dashboard() {
       setZipMsg('Error: ' + String(err));
     } finally {
       setZipImporting(false);
+      setZipProgress(null);
       setZipDragOver(false);
     }
   };
@@ -654,9 +687,39 @@ export function Dashboard() {
               </div>
             )}
 
-            {/* ZIP drop zone */}
+            {/* ZIP progress bar */}
+            {zipProgress && zipProgress.phase !== 'complete' && (
+              <div className="mt-6 bg-ink-800 rounded-lg p-4 border border-amber-500/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-amber-400 font-medium font-body">
+                    {zipProgress.phase === 'reading' && '📖 Leyendo ZIP…'}
+                    {zipProgress.phase === 'validating' && '🔍 Validando asignaturas…'}
+                    {zipProgress.phase === 'processing' &&
+                      `⏳ Importando: ${zipProgress.filesProcessed}/${zipProgress.totalFiles}`}
+                  </span>
+                  {zipProgress.totalFiles > 0 && (
+                    <span className="text-xs text-ink-400 font-body">
+                      {Math.round((zipProgress.filesProcessed / zipProgress.totalFiles) * 100)}%
+                    </span>
+                  )}
+                </div>
+                {zipProgress.totalFiles > 0 && (
+                  <Progress value={zipProgress.filesProcessed} max={zipProgress.totalFiles} color="amber" />
+                )}
+                {zipProgress.currentFile && (
+                  <p className="text-xs text-ink-500 mt-2 truncate font-body">
+                    {zipProgress.currentFile}
+                  </p>
+                )}
+                <p className="text-xs text-ink-600 mt-1 font-body">
+                  No cierres esta pestaña. Puede tardar varios minutos con archivos grandes.
+                </p>
+              </div>
+            )}
+
+            {/* ZIP result message */}
             {zipMsg && (
-              <div className={`mt-6 px-4 py-3 rounded-lg text-sm font-body border ${
+              <div className={`mt-6 px-4 py-3 rounded-lg text-sm font-body border whitespace-pre-wrap ${
                 zipMsg.startsWith('Error') || zipMsg.startsWith('⚠')
                   ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
                   : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
@@ -664,23 +727,30 @@ export function Dashboard() {
                 {zipMsg}
               </div>
             )}
+
+            {/* ZIP drop zone */}
             <div
-              onDragOver={(e) => { e.preventDefault(); setZipDragOver(true); }}
+              onDragOver={(e) => { e.preventDefault(); if (!zipImporting) setZipDragOver(true); }}
               onDragLeave={() => setZipDragOver(false)}
               onDrop={(e) => {
                 e.preventDefault();
+                if (zipImporting) return;
                 const file = e.dataTransfer.files[0];
                 if (file) handleZipImport(file);
               }}
-              className={`mt-8 border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer ${
-                zipDragOver
-                  ? 'border-amber-500 bg-amber-500/5 text-amber-300'
-                  : 'border-ink-700 text-ink-600 hover:border-ink-500 hover:text-ink-400'
+              className={`mt-8 border-2 border-dashed rounded-xl p-6 text-center transition-all ${
+                zipImporting
+                  ? 'border-ink-700 bg-ink-800/50 text-ink-600 cursor-not-allowed opacity-50'
+                  : zipDragOver
+                  ? 'border-amber-500 bg-amber-500/5 text-amber-300 cursor-pointer'
+                  : 'border-ink-700 text-ink-600 hover:border-ink-500 hover:text-ink-400 cursor-pointer'
               }`}
-              onClick={() => zipInputRef.current?.click()}
+              onClick={() => !zipImporting && zipInputRef.current?.click()}
             >
               <p className="text-sm font-body">
-                {zipDragOver
+                {zipImporting
+                  ? '⏳ Importando recursos…'
+                  : zipDragOver
                   ? '📦 Suelta el ZIP aquí'
                   : '📦 Arrastra un ZIP de recursos aquí o haz clic para importar'}
               </p>
