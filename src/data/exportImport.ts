@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { db, getSettings, saveSettings } from './db';
 import { subjectRepo, topicRepo, questionRepo } from './repos';
+import { computeContentHash } from '@/domain/hashing';
 import type { BankExport, Subject, Topic, Question, PdfAnchor, KeyConcept } from '@/domain/models';
 
 // ─── Zod schemas for validation ───────────────────────────────────────────────
@@ -370,12 +371,22 @@ export async function removeDuplicateQuestions(): Promise<RemoveDuplicatesResult
   const allQuestions = await db.questions.toArray();
   const checked = allQuestions.length;
 
-  // Agrupar por contentHash
+  // 1. Rehash every question with the current algorithm so old hashes
+  //    (which included topicKey and raw correctOptionIds) get updated.
+  for (const q of allQuestions) {
+    const newHash = await computeContentHash(q);
+    if (newHash !== q.contentHash) {
+      await db.questions.update(q.id, { contentHash: newHash });
+      q.contentHash = newHash;   // keep in-memory copy in sync
+    }
+  }
+
+  // 2. Agrupar por contentHash
   const byHash = new Map<string, Question[]>();
   const toDelete: string[] = [];
 
   for (const q of allQuestions) {
-    if (!q.contentHash) continue; // sin hash: no podemos deduplicar de forma segura
+    if (!q.contentHash) continue;
     if (!byHash.has(q.contentHash)) byHash.set(q.contentHash, []);
     byHash.get(q.contentHash)!.push(q);
   }
@@ -396,7 +407,20 @@ export async function removeDuplicateQuestions(): Promise<RemoveDuplicatesResult
   }
 
   if (toDelete.length > 0) {
+    const deletedSet = new Set(toDelete);
+
+    // Remove duplicate questions
     await db.questions.bulkDelete(toDelete);
+
+    // Clean up sessions that reference deleted questions
+    const sessions = await db.sessions.toArray();
+    for (const s of sessions) {
+      const cleanIds = s.questionIds.filter((id) => !deletedSet.has(id));
+      const cleanAnswers = s.answers.filter((a) => !deletedSet.has(a.questionId));
+      if (cleanIds.length !== s.questionIds.length) {
+        await db.sessions.update(s.id, { questionIds: cleanIds, answers: cleanAnswers });
+      }
+    }
   }
 
   return { removed: toDelete.length, checked };
