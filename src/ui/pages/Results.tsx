@@ -19,6 +19,12 @@ export function ResultsPage() {
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
 
+  // Scroll selected question into view so detail panel aligns with it
+  useEffect(() => {
+    if (!selectedQ) return;
+    document.getElementById(`results-q-${selectedQ}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [selectedQ]);
+
   useEffect(() => {
     if (!sessionId) return;
     (async () => {
@@ -182,6 +188,7 @@ export function ResultsPage() {
               const result = a?.result;
               return (
                 <button
+                  id={`results-q-${qId}`}
                   key={qId}
                   onClick={() => setSelectedQ(selectedQ === qId ? null : qId)}
                   className={`text-left flex items-start gap-3 p-3 rounded-xl border transition-all ${
@@ -210,7 +217,7 @@ export function ResultsPage() {
 
           {/* Detail panel */}
           {selectedQuestion && selectedAnswer && (
-            <div className="lg:sticky lg:top-20 flex flex-col gap-4 animate-slide-up">
+            <div className="lg:sticky lg:top-20 lg:self-start flex flex-col gap-4 animate-slide-up">
               <h2 className="text-xs font-medium text-ink-400 uppercase tracking-widest">Detalle</h2>
               <div className={`border rounded-xl p-4 ${
                 selectedAnswer.result === 'CORRECT' ? 'border-sage-600/30 bg-sage-600/5' :

@@ -38,6 +38,7 @@ export function PracticeSessionPage() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [freeText, setFreeText] = useState('');
   const [blankAnswers, setBlankAnswers] = useState<Record<string, string>>({});
+  const [focusedOptionIdx, setFocusedOptionIdx] = useState<number>(-1);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -104,6 +105,7 @@ export function PracticeSessionPage() {
     setSelectedOptions([]);
     setFreeText('');
     setBlankAnswers({});
+    setFocusedOptionIdx(-1);
     setSubmitted(false);
   };
 
@@ -182,8 +184,34 @@ export function PracticeSessionPage() {
       if (editingQuestion) return;
       if (isFinished) return;
 
-      // Enter / Space: submit or next
-      if (e.key === 'Enter' || e.key === ' ') {
+      const opts = currentQuestion?.options ?? [];
+      const isTestNotSubmitted = currentQuestion?.type === 'TEST' && !submitted && opts.length > 0;
+
+      // ArrowUp / ArrowDown: navigate options for TEST questions
+      if (isTestNotSubmitted && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        e.preventDefault();
+        setFocusedOptionIdx((prev) => {
+          if (e.key === 'ArrowDown') return prev < opts.length - 1 ? prev + 1 : 0;
+          return prev > 0 ? prev - 1 : opts.length - 1;
+        });
+        return;
+      }
+
+      // Space: toggle focused option (if one is focused), otherwise submit/next
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (isTestNotSubmitted && focusedOptionIdx >= 0 && focusedOptionIdx < opts.length) {
+          handleToggleOption(opts[focusedOptionIdx].id);
+        } else if (!submitted && canSubmit) {
+          handleSubmitAnswer();
+        } else if (submitted) {
+          handleNext();
+        }
+        return;
+      }
+
+      // Enter: submit or next (always, regardless of focused option)
+      if (e.key === 'Enter') {
         e.preventDefault();
         if (!submitted && canSubmit) {
           handleSubmitAnswer();
@@ -194,11 +222,11 @@ export function PracticeSessionPage() {
       }
 
       // 1-4: toggle options for TEST questions
-      if (['1', '2', '3', '4'].includes(e.key) && currentQuestion?.type === 'TEST' && !submitted) {
+      if (['1', '2', '3', '4'].includes(e.key) && isTestNotSubmitted) {
         e.preventDefault();
         const idx = parseInt(e.key) - 1;
-        const opts = currentQuestion.options ?? [];
         if (idx < opts.length) {
+          setFocusedOptionIdx(idx);
           handleToggleOption(opts[idx].id);
         }
         return;
@@ -224,7 +252,7 @@ export function PracticeSessionPage() {
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [submitted, canSubmit, currentIndex, currentQuestion, editingQuestion, isFinished, answers, questions, selectedOptions, blankAnswers]);
+  }, [submitted, canSubmit, currentIndex, currentQuestion, editingQuestion, isFinished, answers, questions, selectedOptions, blankAnswers, focusedOptionIdx]);
 
   if (loading) {
     return (
@@ -330,8 +358,8 @@ export function PracticeSessionPage() {
           <Progress value={currentIndex} max={questions.length} color="amber" />
           <div className="flex gap-3 mt-1.5 text-[10px] text-ink-600">
             <span>⏎ {submitted ? 'siguiente' : 'enviar'}</span>
-            {currentQuestion?.type === 'TEST' && !submitted && <span>1-4 opciones</span>}
-            <span>← → navegar</span>
+            {currentQuestion?.type === 'TEST' && !submitted && <span>↑↓ navegar · espacio marcar · 1-4 opciones</span>}
+            <span>← → preguntas</span>
           </div>
         </div>
       </header>
@@ -400,6 +428,7 @@ export function PracticeSessionPage() {
             selectedOptions={selectedOptions}
             freeText={freeText}
             blankAnswers={blankAnswers}
+            focusedOptionIdx={focusedOptionIdx}
             onToggleOption={handleToggleOption}
             onFreeTextChange={setFreeText}
             onBlankChange={(id, val) => setBlankAnswers((prev) => ({ ...prev, [id]: val }))}
@@ -509,13 +538,14 @@ interface AnswerInputProps {
   selectedOptions: string[];
   freeText: string;
   blankAnswers: Record<string, string>;
+  focusedOptionIdx: number;
   onToggleOption: (id: string) => void;
   onFreeTextChange: (val: string) => void;
   onBlankChange: (id: string, val: string) => void;
 }
 
 function AnswerInput({
-  question, selectedOptions, freeText, blankAnswers,
+  question, selectedOptions, freeText, blankAnswers, focusedOptionIdx,
   onToggleOption, onFreeTextChange, onBlankChange,
 }: AnswerInputProps) {
   if (question.type === 'TEST') {
@@ -525,7 +555,7 @@ function AnswerInput({
         {isMulti && (
           <p className="text-xs text-ink-500">Selecciona todas las respuestas correctas</p>
         )}
-        {(question.options ?? []).map((opt) => (
+        {(question.options ?? []).map((opt, optIdx) => (
           <button
             key={opt.id}
             onClick={() => onToggleOption(opt.id)}
@@ -533,7 +563,7 @@ function AnswerInput({
               selectedOptions.includes(opt.id)
                 ? 'border-amber-500 bg-amber-500/10 text-ink-100'
                 : 'border-ink-700 bg-ink-800/50 text-ink-300 hover:border-ink-500 hover:text-ink-100'
-            }`}
+            } ${focusedOptionIdx === optIdx ? 'ring-2 ring-amber-500/60 ring-offset-1 ring-offset-ink-950' : ''}`}
           >
             <span className={`inline-flex items-center justify-center w-5 h-5 rounded mr-3 border text-xs flex-shrink-0 transition-colors ${
               selectedOptions.includes(opt.id) ? 'bg-amber-500 border-amber-500 text-ink-900' : 'border-ink-600 text-ink-500'
