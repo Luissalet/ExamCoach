@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Modal, Input, EmptyState, Badge, TypeBadge, Select } from '@/ui/components';
 import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
 import type { Exam, Question, Topic, QuestionType, QuestionOrigin } from '@/domain/models';
+import { exportExams, importExams, downloadJSON, parseImportFile } from '@/data/exportImport';
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -47,6 +48,66 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
   const [editingExam, setEditingExam] = useState<Exam | null>(null);
   const [previewExam, setPreviewExam] = useState<Exam | null>(null);
 
+  // ── Selection mode for export ──
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // ── Import state ──
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importResult, setImportResult] = useState<{ examsAdded: number; questionsMatched: number; questionsMissing: number; errors: string[] } | null>(null);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === exams.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(exams.map((e) => e.id)));
+    }
+  };
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const handleExport = async () => {
+    if (selectedIds.size === 0) return;
+    const data = await exportExams([...selectedIds]);
+    const name = selectedIds.size === 1
+      ? exams.find((e) => e.id === [...selectedIds][0])?.name ?? 'examen'
+      : `${selectedIds.size}_examenes`;
+    downloadJSON(data, `${name}.json`);
+    exitSelectMode();
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const raw = await parseImportFile(file);
+      const result = await importExams(raw, subjectId);
+      setImportResult(result);
+      // Reload exams in parent via store
+      const { useStore } = await import('@/ui/store');
+      await useStore.getState().loadExams(subjectId);
+    } catch (err) {
+      setImportResult({ examsAdded: 0, questionsMatched: 0, questionsMissing: 0, errors: [(err as Error).message] });
+    }
+    // Reset file input so the same file can be re-imported
+    e.target.value = '';
+  };
+
   const openCreate = () => {
     setEditingExam(null);
     setEditModal(true);
@@ -80,12 +141,66 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <p className="text-ink-400 text-sm">
+      {/* ── Header bar ── */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <p className="text-ink-400 text-sm flex-1 min-w-0">
           Crea exámenes personalizados seleccionando y ordenando preguntas del banco.
         </p>
-        <Button size="sm" onClick={openCreate}>+ Nuevo examen</Button>
+        <div className="flex gap-2 items-center flex-shrink-0">
+          {/* Hidden file input for import */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={handleImportFile}
+          />
+          <Button size="sm" variant="ghost" onClick={handleImportClick} title="Importar exámenes desde archivo JSON">
+            Importar
+          </Button>
+          {exams.length > 0 && !selectMode && (
+            <Button size="sm" variant="ghost" onClick={() => setSelectMode(true)} title="Seleccionar exámenes para exportar">
+              Seleccionar
+            </Button>
+          )}
+          {selectMode && (
+            <>
+              <Button size="sm" variant="ghost" onClick={toggleSelectAll} title={selectedIds.size === exams.length ? 'Deseleccionar todos' : 'Seleccionar todos'}>
+                {selectedIds.size === exams.length ? 'Ninguno' : 'Todos'}
+              </Button>
+              <Button size="sm" onClick={handleExport} disabled={selectedIds.size === 0}>
+                Exportar ({selectedIds.size})
+              </Button>
+              <Button size="sm" variant="ghost" onClick={exitSelectMode}>
+                Cancelar
+              </Button>
+            </>
+          )}
+          {!selectMode && (
+            <Button size="sm" onClick={openCreate}>+ Nuevo examen</Button>
+          )}
+        </div>
       </div>
+
+      {/* ── Import result toast ── */}
+      {importResult && (
+        <div className={`rounded-xl border p-3 text-sm ${importResult.errors.length > 0 && importResult.examsAdded === 0 ? 'border-rose-500/30 bg-rose-500/10 text-rose-300' : 'border-amber-500/30 bg-amber-500/10 text-amber-200'}`}>
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              {importResult.examsAdded > 0 && (
+                <p>{importResult.examsAdded} examen{importResult.examsAdded !== 1 ? 'es' : ''} importado{importResult.examsAdded !== 1 ? 's' : ''}. {importResult.questionsMatched} pregunta{importResult.questionsMatched !== 1 ? 's' : ''} vinculada{importResult.questionsMatched !== 1 ? 's' : ''}.</p>
+              )}
+              {importResult.questionsMissing > 0 && (
+                <p className="text-ink-400">{importResult.questionsMissing} pregunta{importResult.questionsMissing !== 1 ? 's' : ''} no encontrada{importResult.questionsMissing !== 1 ? 's' : ''} en el banco (omitida{importResult.questionsMissing !== 1 ? 's' : ''}).</p>
+              )}
+              {importResult.errors.map((err, i) => (
+                <p key={i} className="text-rose-400">{err}</p>
+              ))}
+            </div>
+            <button onClick={() => setImportResult(null)} className="text-ink-500 hover:text-ink-300 transition-colors">✕</button>
+          </div>
+        </div>
+      )}
 
       {exams.length === 0 ? (
         <EmptyState
@@ -106,9 +221,28 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
               byType[q.type] = (byType[q.type] || 0) + 1;
             }
 
+            const isSelected = selectedIds.has(exam.id);
+
             return (
-              <Card key={exam.id} className="group cursor-pointer" onClick={() => setPreviewExam(exam)}>
+              <Card
+                key={exam.id}
+                className={`group cursor-pointer ${isSelected ? 'ring-1 ring-amber-500/50' : ''}`}
+                onClick={() => selectMode ? toggleSelect(exam.id) : setPreviewExam(exam)}
+              >
                 <div className="flex items-start justify-between gap-4">
+                  {/* Checkbox in select mode */}
+                  {selectMode && (
+                    <div className="flex items-center pt-1 flex-shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelect(exam.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-4 h-4 rounded border-ink-600 bg-ink-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer accent-amber-500"
+                      />
+                    </div>
+                  )}
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-medium text-ink-100">{exam.name}</h4>
@@ -134,22 +268,24 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
                     </div>
                   </div>
 
-                  <div className="flex gap-2 items-center flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="sm"
-                      onClick={() => handlePractice(exam)}
-                      disabled={resolvedQuestions.length === 0}
-                    >
-                      Practicar
-                    </Button>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button size="sm" variant="ghost" onClick={() => openEdit(exam)} title="Editar">✎</Button>
-                      <Button size="sm" variant="ghost" onClick={() => onDuplicate(exam.id)} title="Duplicar">⧉</Button>
-                      <Button size="sm" variant="ghost" onClick={() => { if (confirm(`¿Eliminar "${exam.name}"?`)) onDelete(exam.id); }} title="Eliminar">
-                        <span className="text-rose-400">✕</span>
+                  {!selectMode && (
+                    <div className="flex gap-2 items-center flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        size="sm"
+                        onClick={() => handlePractice(exam)}
+                        disabled={resolvedQuestions.length === 0}
+                      >
+                        Practicar
                       </Button>
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button size="sm" variant="ghost" onClick={() => openEdit(exam)} title="Editar">✎</Button>
+                        <Button size="sm" variant="ghost" onClick={() => onDuplicate(exam.id)} title="Duplicar">⧉</Button>
+                        <Button size="sm" variant="ghost" onClick={() => { if (confirm(`¿Eliminar "${exam.name}"?`)) onDelete(exam.id); }} title="Eliminar">
+                          <span className="text-rose-400">✕</span>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </Card>
             );

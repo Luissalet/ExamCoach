@@ -318,6 +318,15 @@ export interface Exam {
 
 // ─── Export formats ───────────────────────────────────────────────────────────
 
+export interface ExamExport {
+  version: 1;
+  kind: 'exams';
+  exportedAt: string;
+  exams: Exam[];
+  /** Solo las preguntas referenciadas por los exámenes (para archivo autónomo). */
+  questions: Question[];
+}
+
 export interface BankExport {
   version: 1;
   kind: 'bank';

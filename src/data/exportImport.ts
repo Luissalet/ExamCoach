@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { db, getSettings, saveSettings } from './db';
 import { subjectRepo, topicRepo, questionRepo } from './repos';
 import { computeContentHash } from '@/domain/hashing';
-import type { BankExport, Subject, Topic, Question, PdfAnchor, KeyConcept } from '@/domain/models';
+import type { BankExport, ExamExport, Subject, Topic, Question, PdfAnchor, KeyConcept, Exam } from '@/domain/models';
 
 // ─── Zod schemas for validation ───────────────────────────────────────────────
 
@@ -272,6 +272,142 @@ export async function parseImportFile(file: File): Promise<unknown> {
     reader.onerror = () => reject(new Error('Error leyendo archivo'));
     reader.readAsText(file);
   });
+}
+
+// ─── Export / Import Exams ─────────────────────────────────────────────────────
+
+const ExamSchema = z.object({
+  id: z.string(),
+  subjectId: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  questionIds: z.array(z.string()),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+const ExamExportSchema = z.object({
+  version: z.literal(1),
+  kind: z.literal('exams'),
+  exportedAt: z.string(),
+  exams: z.array(ExamSchema),
+  questions: z.array(QuestionSchema),
+});
+
+/**
+ * Exporta los exámenes indicados junto con las preguntas que referencian.
+ * Produce un archivo autónomo que puede importarse en otro banco.
+ */
+export async function exportExams(examIds: string[]): Promise<ExamExport> {
+  const exams = (await db.exams.where('id').anyOf(examIds).toArray()) as Exam[];
+
+  // Recopilar IDs únicos de preguntas referenciadas
+  const qIdSet = new Set<string>();
+  for (const e of exams) {
+    for (const qid of e.questionIds) qIdSet.add(qid);
+  }
+
+  const questions = qIdSet.size > 0
+    ? await db.questions.where('id').anyOf([...qIdSet]).toArray()
+    : [];
+
+  return {
+    version: 1,
+    kind: 'exams',
+    exportedAt: new Date().toISOString(),
+    exams,
+    questions: questions as Question[],
+  };
+}
+
+export interface ImportExamsResult {
+  examsAdded: number;
+  questionsMatched: number;
+  questionsMissing: number;
+  errors: string[];
+}
+
+/**
+ * Importa exámenes desde un ExamExport.
+ *
+ * Las preguntas se matchean por contentHash contra el banco actual:
+ *  - Si la pregunta ya existe → se re-mapea el ID.
+ *  - Si no existe → se descarta del examen (con aviso).
+ *
+ * Los exámenes se crean con IDs nuevos y se asignan al subjectId dado.
+ */
+export async function importExams(raw: unknown, targetSubjectId: string): Promise<ImportExamsResult> {
+  const result: ImportExamsResult = {
+    examsAdded: 0,
+    questionsMatched: 0,
+    questionsMissing: 0,
+    errors: [],
+  };
+
+  const parsed = ExamExportSchema.safeParse(raw);
+  if (!parsed.success) {
+    result.errors.push('JSON inválido: ' + parsed.error.message);
+    return result;
+  }
+
+  const data = parsed.data;
+  const now = new Date().toISOString();
+
+  // Construir mapa: old question id → contentHash desde el archivo
+  const importedHashById = new Map<string, string>();
+  for (const q of data.questions) {
+    if (q.contentHash) {
+      importedHashById.set(q.id, q.contentHash);
+    }
+  }
+
+  // Construir mapa: contentHash → ID local del banco actual
+  const localQuestions = await db.questions.toArray();
+  const localHashToId = new Map<string, string>();
+  for (const q of localQuestions) {
+    if (q.contentHash) {
+      localHashToId.set(q.contentHash, q.id);
+    }
+  }
+
+  // Mapear IDs viejos → IDs locales
+  const idMap = new Map<string, string>();
+  for (const [oldId, hash] of importedHashById) {
+    const localId = localHashToId.get(hash);
+    if (localId) {
+      idMap.set(oldId, localId);
+      result.questionsMatched++;
+    } else {
+      result.questionsMissing++;
+    }
+  }
+
+  // Crear exámenes con IDs re-mapeados
+  for (const exam of data.exams) {
+    const mappedIds = exam.questionIds
+      .map((oldId) => idMap.get(oldId))
+      .filter(Boolean) as string[];
+
+    if (mappedIds.length === 0) {
+      result.errors.push(`"${exam.name}": ninguna pregunta encontrada en el banco — omitido.`);
+      continue;
+    }
+
+    const newExam: Exam = {
+      id: uuidv4(),
+      subjectId: targetSubjectId,
+      name: exam.name,
+      description: exam.description,
+      questionIds: mappedIds,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await db.exams.add(newExam);
+    result.examsAdded++;
+  }
+
+  return result;
 }
 
 // ─── Commit & Clean ────────────────────────────────────────────────────────────
