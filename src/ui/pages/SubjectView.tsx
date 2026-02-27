@@ -13,12 +13,13 @@ import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
 import { KeyConceptsTab } from '@/ui/components/KeyConceptsTab';
 
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
-import type { Topic, Question, QuestionOrigin, QuestionType } from '@/domain/models';
+import type { Topic, Question, QuestionOrigin, QuestionType, Exam } from '@/domain/models';
+import { ExamsTab } from '@/ui/components/ExamsTab';
 import { slugify } from '@/domain/normalize';
 import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
 import { loadPdfMapping, getPdfUrl, resourcesUrl, loadSubjectExtraInfo } from '@/data/resourceLoader';
 import type { GptLink } from '@/domain/models';
-type TabId = 'topics' | 'questions' | 'practice' | 'resources' | 'concepts' | 'chatbots';
+type TabId = 'topics' | 'questions' | 'practice' | 'exams' | 'resources' | 'concepts' | 'chatbots';
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   test: 'Test',
@@ -68,11 +69,12 @@ export function SubjectView() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const {
-    subjects, topics, questions, settings, keyConcepts,
-    loadSubjects, loadTopics, loadQuestions, loadKeyConcepts,
+    subjects, topics, questions, settings, keyConcepts, exams,
+    loadSubjects, loadTopics, loadQuestions, loadKeyConcepts, loadExams,
     createTopic, updateTopic, deleteTopic,
     createQuestion, updateQuestion, deleteQuestion, duplicateQuestion,
     createKeyConcept, updateKeyConcept, deleteKeyConcept,
+    createExam, updateExam, deleteExam, duplicateExam,
   } = useStore();
 
   const subject = subjects.find((s) => s.id === subjectId);
@@ -131,6 +133,7 @@ export function SubjectView() {
       loadTopics(subjectId);
       loadQuestions(subjectId);
       loadKeyConcepts(subjectId);
+      loadExams(subjectId);
     }
   }, [subjectId]);
 
@@ -417,10 +420,13 @@ export function SubjectView() {
     { seen: 0, correct: 0, wrong: 0 }
   );
 
+  const subjectExams = exams.filter((e) => e.subjectId === subjectId);
+
   const tabs = [
     { id: 'topics', label: 'Temas' },
     { id: 'questions', label: `Preguntas (${subjectQuestions.length})` },
     { id: 'practice', label: 'Practicar' },
+    { id: 'exams', label: `Exámenes (${subjectExams.length})` },
     { id: 'resources', label: 'Otros recursos' },
     { id: 'concepts', label: 'Conceptos clave' },
     ...(gptLinks.length > 0 ? [{ id: 'chatbots', label: 'Chatbots' }] : []),
@@ -827,6 +833,20 @@ export function SubjectView() {
         {/* PRACTICAR */}
         {tab === 'practice' && (
           <PracticeConfig subjectId={subjectId!} topics={subjectTopics} questions={subjectQuestions} defaultTopicId={filterTopic} autostart={autostart} />
+        )}
+
+        {/* EXÁMENES */}
+        {tab === 'exams' && subjectId && (
+          <ExamsTab
+            subjectId={subjectId}
+            exams={subjectExams}
+            questions={subjectQuestions}
+            topics={subjectTopics}
+            onCreate={createExam}
+            onUpdate={updateExam}
+            onDelete={deleteExam}
+            onDuplicate={duplicateExam}
+          />
         )}
 
         {/* OTROS RECURSOS */}

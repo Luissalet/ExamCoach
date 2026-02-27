@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { db, getSettings, saveSettings } from './db';
 import { slugify } from '@/domain/normalize';
+import { computeContentHash } from '@/domain/hashing';
 import type { Subject, Topic, Question, PdfAnchor, KeyConcept, BankExport } from '@/domain/models';
 import bankJson from './global-bank.json';
 // ─── Zod validation (reutiliza estructura BankExport) ────────────────────────
@@ -283,8 +284,13 @@ export async function mergeGlobalBank(raw: unknown): Promise<GlobalBankSyncResul
     const localTopicId = topicIdMap.get(q.topicId);
     if (!localSubjectId || !localTopicId) continue;
 
+    // SIEMPRE recomputar el hash con el algoritmo actual para deduplicar correctamente.
+    // No confiar en el hash almacenado en el JSON: puede haber sido generado
+    // con una versión anterior del algoritmo (ej. incluía topicKey, IDs crudos, etc.)
+    const hash = await computeContentHash(q);
+
     // Deduplicar por contentHash
-    if (q.contentHash && existingHashes.has(q.contentHash)) {
+    if (existingHashes.has(hash)) {
       result.skipped++;
       continue;
     }
@@ -297,6 +303,7 @@ export async function mergeGlobalBank(raw: unknown): Promise<GlobalBankSyncResul
       subjectId: localSubjectId,
       topicId: localTopicId,
       pdfAnchorId: newAnchorId,
+      contentHash: hash,
       // Stats siempre a 0 — cada usuario empieza desde cero
       stats: { seen: 0, correct: 0, wrong: 0 },
       createdAt: now,
@@ -304,7 +311,7 @@ export async function mergeGlobalBank(raw: unknown): Promise<GlobalBankSyncResul
     };
 
     await db.questions.add(newQuestion);
-    if (q.contentHash) existingHashes.add(q.contentHash);
+    existingHashes.add(hash);
     result.questionsAdded++;
   }
 

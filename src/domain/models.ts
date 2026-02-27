@@ -296,6 +296,26 @@ export interface GptLink {
   description?: string;
 }
 
+// ─── Exams (curated question sets) ────────────────────────────────────────────
+
+/**
+ * Examen personalizado: un conjunto ordenado de preguntas del banco.
+ * El usuario selecciona preguntas y las ordena para practicar
+ * como si fuera un examen real o un set de flashcards curado.
+ */
+export interface Exam {
+  id: string;
+  subjectId: string;
+  /** Nombre visible del examen (ej: "Parcial Temas 1-5") */
+  name: string;
+  /** Descripción opcional */
+  description?: string;
+  /** IDs de preguntas en el orden deseado */
+  questionIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 // ─── Export formats ───────────────────────────────────────────────────────────
 
 export interface BankExport {

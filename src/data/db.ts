@@ -11,6 +11,7 @@ import type {
   Deliverable,
   SubjectGradingConfig,
   KeyConcept,
+  Exam,
 } from '@/domain/models';
 
 export class StudyDB extends Dexie {
@@ -25,6 +26,7 @@ export class StudyDB extends Dexie {
   deliverables!: Table<Deliverable, string>;
   gradingConfigs!: Table<SubjectGradingConfig, string>;
   keyConcepts!: Table<KeyConcept, string>;
+  exams!: Table<Exam, string>;
 
   constructor() {
     super('StudyAppDB');
@@ -118,6 +120,23 @@ export class StudyDB extends Dexie {
       deliverables: 'id, subjectId, type, dueDate, status, createdAt',
       gradingConfigs: 'id',
       keyConcepts: 'id, subjectId, category, order, contentHash, createdAt',
+    });
+
+    // v6: exams (curated question sets)
+    this.version(6).stores({
+      subjects: 'id, name, examDate, createdAt',
+      topics: 'id, subjectId, order, createdAt',
+      questions:
+        'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+      sessions: 'id, subjectId, mode, createdAt',
+      pdfResources: 'id, subjectId, createdAt',
+      pdfAnchors: 'id, subjectId, pdfId',
+      settings: 'id',
+      questionImages: 'id, filename, createdAt',
+      deliverables: 'id, subjectId, type, dueDate, status, createdAt',
+      gradingConfigs: 'id',
+      keyConcepts: 'id, subjectId, category, order, contentHash, createdAt',
+      exams: 'id, subjectId, createdAt',
     });
   }
 }

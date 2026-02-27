@@ -408,6 +408,7 @@ export function PdfListenMode() {
                     : 'border-transparent hover:border-ink-700 hover:bg-ink-900/50'
                   }
                   ${block.type === 'math' ? 'bg-blue-500/5' : ''}
+                  ${block.type === 'table' ? 'bg-emerald-500/5' : ''}
                 `}
               >
                 {/* Block type indicator */}
@@ -421,6 +422,9 @@ export function PdfListenMode() {
                   {block.type === 'list' && (
                     <span className="text-xs text-sage-400 mt-0.5 shrink-0" title="Lista">☰</span>
                   )}
+                  {block.type === 'table' && (
+                    <span className="text-xs text-emerald-400 mt-0.5 shrink-0" title="Tabla">⊞</span>
+                  )}
 
                   <p
                     className={`
@@ -429,7 +433,9 @@ export function PdfListenMode() {
                         ? 'font-display text-lg text-ink-100 font-semibold'
                         : block.type === 'math'
                           ? 'text-ink-200 font-mono text-xs'
-                          : 'text-ink-300'
+                          : block.type === 'table'
+                            ? 'text-ink-200 text-xs whitespace-pre-line'
+                            : 'text-ink-300'
                       }
                     `}
                   >

@@ -9,6 +9,7 @@ import type {
   QuestionStats,
   KeyConcept,
   KeyConceptCategory,
+  Exam,
 } from '@/domain/models';
 import { computeContentHash } from '@/domain/hashing';
 import { slugify, normalizeText } from '@/domain/normalize';
@@ -294,5 +295,50 @@ export const keyConceptRepo = {
       .filter((c) => c.category === category)
       .toArray();
     return concepts.length === 0 ? 0 : Math.max(...concepts.map((c) => c.order)) + 1;
+  },
+};
+
+// ─── Exams ────────────────────────────────────────────────────────────────────
+
+export const examRepo = {
+  async getBySubject(subjectId: string): Promise<Exam[]> {
+    return db.exams.where('subjectId').equals(subjectId).sortBy('createdAt');
+  },
+
+  async getById(id: string): Promise<Exam | undefined> {
+    return db.exams.get(id);
+  },
+
+  async create(data: Omit<Exam, 'id' | 'createdAt' | 'updatedAt'>): Promise<Exam> {
+    const exam: Exam = {
+      ...data,
+      id: uuidv4(),
+      createdAt: now(),
+      updatedAt: now(),
+    };
+    await db.exams.add(exam);
+    return exam;
+  },
+
+  async update(id: string, data: Partial<Exam>): Promise<void> {
+    await db.exams.update(id, { ...data, updatedAt: now() });
+  },
+
+  async delete(id: string): Promise<void> {
+    await db.exams.delete(id);
+  },
+
+  async duplicate(id: string): Promise<Exam> {
+    const exam = await db.exams.get(id);
+    if (!exam) throw new Error('Exam not found');
+    const copy: Exam = {
+      ...exam,
+      id: uuidv4(),
+      name: `${exam.name} (copia)`,
+      createdAt: now(),
+      updatedAt: now(),
+    };
+    await db.exams.add(copy);
+    return copy;
   },
 };

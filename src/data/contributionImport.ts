@@ -66,7 +66,18 @@ export interface ContributionImportResult {
 
 // ─── Main merge function ───────────────────────────────────────────────────────
 
+let _importInProgress = false;
+
 export async function importContributionPack(raw: unknown): Promise<ContributionImportResult> {
+  // Guard against concurrent calls (prevents duplicates from double-clicks / re-entry)
+  if (_importInProgress) {
+    return {
+      packId: '', createdBy: '', newQuestions: 0, duplicates: 0,
+      newTopicsCreated: 0, newSubjectsCreated: 0, alreadyImported: true, errors: [],
+    };
+  }
+  _importInProgress = true;
+
   const result: ContributionImportResult = {
     packId: '',
     createdBy: '',
@@ -78,6 +89,7 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
     errors: [],
   };
 
+  try {
   // Validate
   const parsed = ContributionPackSchema.safeParse(raw);
   if (!parsed.success) {
@@ -276,6 +288,9 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
   });
 
   return result;
+  } finally {
+    _importInProgress = false;
+  }
 }
 
 // ─── Export contribution pack ──────────────────────────────────────────────────

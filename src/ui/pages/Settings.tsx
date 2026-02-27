@@ -29,6 +29,7 @@ export function SettingsPage() {
   // Queue para importación múltiple
   const [fileQueue, setFileQueue] = useState<File[]>([]);
   const [queueTotal, setQueueTotal] = useState(0);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -124,7 +125,8 @@ export function SettingsPage() {
   };
 
   const handleConfirmImport = async () => {
-    if (!packPreview) return;
+    if (!packPreview || importing) return;
+    setImporting(true);
     try {
       const result = await importContributionPack(packPreview.rawPack);
       if (result.alreadyImported) {
@@ -151,6 +153,8 @@ export function SettingsPage() {
       setPackPreview(null);
       if (fileQueue.length > 0) await processNextInQueue(fileQueue);
       else setQueueTotal(0);
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -559,8 +563,8 @@ export function SettingsPage() {
               <Button variant="ghost" onClick={async () => { setPackPreview(null); if (fileQueue.length > 0) await processNextInQueue(fileQueue); else setQueueTotal(0); }}>
                 {fileQueue.length > 0 ? 'Saltar' : 'Cancelar'}
               </Button>
-              <Button onClick={handleConfirmImport} disabled={'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount === 0}>
-                {'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount > 0
+              <Button onClick={handleConfirmImport} disabled={importing || ('newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount === 0)}>
+                {importing ? '⏳ Importando…' : 'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount > 0
                   ? `Importar ${(packPreview as any).newQuestionsCount} preguntas nuevas`
                   : 'Sin preguntas nuevas'}
               </Button>

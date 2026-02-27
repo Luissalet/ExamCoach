@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { Subject, Topic, Question, PracticeSession, AppSettings, KeyConcept } from '@/domain/models';
-import { subjectRepo, topicRepo, questionRepo, sessionRepo, keyConceptRepo } from '@/data/repos';
+import type { Subject, Topic, Question, PracticeSession, AppSettings, KeyConcept, Exam } from '@/domain/models';
+import { subjectRepo, topicRepo, questionRepo, sessionRepo, keyConceptRepo, examRepo } from '@/data/repos';
 import { getSettings, saveSettings } from '@/data/db';
 import { syncWithGlobalBank, type GlobalBankSyncResult } from '@/data/globalBank';
 
@@ -11,6 +11,7 @@ interface AppStore {
   questions: Question[];
   currentSession: PracticeSession | null;
   keyConcepts: KeyConcept[];
+  exams: Exam[];
   settings: AppSettings;
 
   // Loading state
@@ -46,6 +47,13 @@ interface AppStore {
   updateKeyConcept: (id: string, data: Partial<KeyConcept>) => Promise<void>;
   deleteKeyConcept: (id: string) => Promise<void>;
 
+  // Actions - Exams
+  loadExams: (subjectId: string) => Promise<void>;
+  createExam: (data: Omit<Exam, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Exam>;
+  updateExam: (id: string, data: Partial<Exam>) => Promise<void>;
+  deleteExam: (id: string) => Promise<void>;
+  duplicateExam: (id: string) => Promise<void>;
+
   // Actions - Sessions
   setCurrentSession: (session: PracticeSession | null) => void;
   loadSession: (id: string) => Promise<void>;
@@ -70,6 +78,7 @@ export const useStore = create<AppStore>((set, get) => ({
   questions: [],
   currentSession: null,
   keyConcepts: [],
+  exams: [],
   settings: { alias: '', importedPackIds: [] },
   loading: false,
   error: null,
@@ -184,6 +193,35 @@ export const useStore = create<AppStore>((set, get) => ({
     set((s) => ({ keyConcepts: s.keyConcepts.filter((c) => c.id !== id) }));
   },
 
+  // ─── Exams ────────────────────────────────────────────────────────────────
+  loadExams: async (subjectId) => {
+    const exams = await examRepo.getBySubject(subjectId);
+    set({ exams });
+  },
+
+  createExam: async (data) => {
+    const exam = await examRepo.create(data);
+    set((s) => ({ exams: [...s.exams, exam] }));
+    return exam;
+  },
+
+  updateExam: async (id, data) => {
+    await examRepo.update(id, data);
+    set((s) => ({
+      exams: s.exams.map((e) => (e.id === id ? { ...e, ...data } : e)),
+    }));
+  },
+
+  deleteExam: async (id) => {
+    await examRepo.delete(id);
+    set((s) => ({ exams: s.exams.filter((e) => e.id !== id) }));
+  },
+
+  duplicateExam: async (id) => {
+    const copy = await examRepo.duplicate(id);
+    set((s) => ({ exams: [...s.exams, copy] }));
+  },
+
   setCurrentSession: (session) => set({ currentSession: session }),
 
   loadSession: async (id) => {
@@ -202,8 +240,13 @@ export const useStore = create<AppStore>((set, get) => ({
   },
 
   syncGlobalBank: async (force = false) => {
-  const { syncing } = get();
+  const { syncing, settings } = get();
   if (syncing) return null;
+
+  // Si ya se sincronizó antes y no es forzado, no repetir
+  if (!force && settings.globalBankSyncedAt) {
+    return null;
+  }
 
   set({ syncing: true });
   try {
