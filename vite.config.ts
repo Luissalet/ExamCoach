@@ -59,8 +59,8 @@ export default defineConfig({
         background_color: '#0a0907',
         display: 'standalone',
         orientation: 'any',
-        scope: '/study-app/',
-        start_url: '/study-app/',
+        scope: '/ExamCoach/',
+        start_url: '/ExamCoach/',
         lang: 'es',
         categories: ['education'],
         icons: [
@@ -84,7 +84,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/study-app/',
+  base: '/ExamCoach/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

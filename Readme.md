@@ -469,3 +469,5 @@ Este software es de uso exclusivamente personal y educativo. **Queda expresament
 Se permite el uso personal, la modificación para uso propio y la contribución al proyecto original bajo las mismas condiciones de esta licencia. Cualquier redistribución debe mantener este aviso de copyright y las mismas restricciones.
 
 Para cualquier uso fuera de los términos aquí descritos, se requiere autorización expresa por escrito del autor.
+
+Disponible para uso en github pages
