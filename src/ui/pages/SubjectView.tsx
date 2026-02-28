@@ -107,6 +107,9 @@ export function SubjectView() {
   const [draggingOver, setDraggingOver] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null); // topicId uploading
 
+  // Resources tab: set of prefixed filenames stored in IndexedDB (e.g. "Examenes/file.pdf")
+  const [resourceDbFiles, setResourceDbFiles] = useState<Set<string>>(new Set());
+
   // B2: Drag & drop reorder state
   const [reorderDragIdx, setReorderDragIdx] = useState<number | null>(null);
   const [reorderOverIdx, setReorderOverIdx] = useState<number | null>(null);
@@ -279,8 +282,31 @@ export function SubjectView() {
     });
   }
 
+  // Compute the set of resource files stored in IndexedDB (for delete buttons)
+  const RESOURCE_SLUGS = ['Examenes', 'Resumenes', 'Practica'];
+  const allStored = await listStoredPdfs(subjectId);
+  const dbSet = new Set(allStored.filter(f => RESOURCE_SLUGS.some(slug => f.startsWith(`${slug}/`))));
+  setResourceDbFiles(dbSet);
+
   setResources(categories);
   setResourcesLoading(false);
+};
+
+// ── Upload resources to IndexedDB ────────────────────────────────────────
+const handleResourceUpload = async (categorySlug: string, files: FileList) => {
+  if (!subjectId) return;
+  for (const file of Array.from(files)) {
+    const prefixedFilename = `${categorySlug}/${file.name}`;
+    await savePdfBlob(subjectId, prefixedFilename, file);
+  }
+  await loadResources();
+};
+
+const handleResourceDelete = async (categorySlug: string, filename: string) => {
+  if (!subjectId) return;
+  const prefixedFilename = `${categorySlug}/${filename}`;
+  await deleteStoredPdf(subjectId, prefixedFilename);
+  await loadResources();
 };
 
   // Limpiar blob URL al cerrar el modal
@@ -853,8 +879,12 @@ export function SubjectView() {
         {tab === 'resources' && (
           <ResourcesTab
             subject={subject}
+            subjectId={subjectId!}
             resources={resources}
             loading={resourcesLoading}
+            dbFiles={resourceDbFiles}
+            onUpload={handleResourceUpload}
+            onDelete={handleResourceDelete}
           />
         )}
 
@@ -997,49 +1027,94 @@ export function SubjectView() {
 
 interface ResourcesTabProps {
   subject: import('@/domain/models').Subject;
+  subjectId: string;
   resources: ResourceCategory[];
   loading: boolean;
+  /** Prefixed filenames stored in IndexedDB, e.g. "Examenes/file.pdf" */
+  dbFiles: Set<string>;
+  onUpload: (categorySlug: string, files: FileList) => Promise<void>;
+  onDelete: (categorySlug: string, filename: string) => Promise<void>;
 }
 
-function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
+const CATEGORY_ICONS: Record<string, string> = {
+  'Exámenes': '📝',
+  'Resúmenes': '📋',
+  'Práctica': '💻',
+};
+
+function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUpload, onDelete }: ResourcesTabProps) {
   const slug = slugify(subject.name);
   const navigate = useNavigate();
-  // Helper para abrir archivos desde static o IndexedDB
+
+  const [dragOverCat, setDragOverCat] = useState<string | null>(null);
+  const [uploadingCat, setUploadingCat] = useState<string | null>(null);
+
+  // Open a file: try static URL first, then IndexedDB blob
   const handleFileClick = async (file: ResourceFile, categorySlug: string, subcategoryName?: string) => {
-    // Construir la URL estática
-    const staticPath = subcategoryName 
+    const staticPath = subcategoryName
       ? `${categorySlug}/${subcategoryName}/${file.name}`
       : `${categorySlug}/${file.name}`;
     const staticUrl = resourcesUrl(`resources/${slug}/${staticPath}`);
-    
-    // Intentar abrir desde archivos estáticos.
-    // Verificamos Content-Type para evitar falsos positivos cuando el SPA
-    // catch-all devuelve index.html (text/html) en lugar del archivo real.
+
     try {
       const res = await fetch(staticUrl, { method: 'HEAD' });
       if (res.ok) {
         const ct = res.headers.get('Content-Type') ?? '';
-        const isRealFile = !ct.includes('text/html');
-        if (isRealFile) {
+        if (!ct.includes('text/html')) {
           window.open(staticUrl, '_blank');
           return;
         }
       }
     } catch {}
-    
-    // Fallback a IndexedDB
-    const dbPath = subcategoryName 
+
+    const dbPath = subcategoryName
       ? `${categorySlug}/${subcategoryName}/${file.name}`
       : `${categorySlug}/${file.name}`;
     const blobUrl = await getResourceBlobUrl(subject.id, dbPath);
-    
+
     if (blobUrl) {
       window.open(blobUrl, '_blank');
-      // Liberar memoria después de 1 minuto
       setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
     } else {
       alert('Archivo no encontrado');
     }
+  };
+
+  const handleDrop = async (categorySlug: string, e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverCat(null);
+    const files = e.dataTransfer.files;
+    if (!files.length) return;
+    setUploadingCat(categorySlug);
+    try {
+      await onUpload(categorySlug, files);
+    } finally {
+      setUploadingCat(null);
+    }
+  };
+
+  const handleFileInput = async (categorySlug: string, files: FileList | null) => {
+    if (!files?.length) return;
+    setUploadingCat(categorySlug);
+    try {
+      await onUpload(categorySlug, files);
+    } finally {
+      setUploadingCat(null);
+    }
+  };
+
+  const handleDelete = async (categorySlug: string, filename: string, subcategoryName?: string) => {
+    if (!confirm(`¿Eliminar "${filename}"?`)) return;
+    const prefixed = subcategoryName ? `${filename}` : filename;
+    await onDelete(categorySlug, subcategoryName ? `${subcategoryName}/${prefixed}` : prefixed);
+  };
+
+  const isDbFile = (categorySlug: string, filename: string, subcategoryName?: string) => {
+    const key = subcategoryName
+      ? `${categorySlug}/${subcategoryName}/${filename}`
+      : `${categorySlug}/${filename}`;
+    return dbFiles.has(key);
   };
 
   if (loading) {
@@ -1050,86 +1125,158 @@ function ResourcesTab({ subject, resources, loading }: ResourcesTabProps) {
     );
   }
 
-  const hasAnyFiles = resources.some((cat) => cat.files.length > 0 || (cat.subcategories && cat.subcategories.some((sc) => sc.files.length > 0)));
-
-  if (!hasAnyFiles) {
-    return (
-      <EmptyState
-        icon={<span>📁</span>}
-        title="Sin recursos adicionales"
-        description="Los recursos se cargan al importar un ZIP con la estructura resources/[asignatura]/Examenes|Practica|Resumenes."
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col gap-6">
+      {/* Global drop hint */}
+      <p className="text-xs text-ink-500">
+        Arrastra cualquier archivo (PDF, DOCX, imágenes…) sobre una categoría para guardarlo localmente en tu navegador.
+      </p>
+
       {resources.map((cat) => {
         const totalFiles = cat.files.length + (cat.subcategories?.reduce((acc, sc) => acc + sc.files.length, 0) ?? 0);
-        if (totalFiles === 0) return null;
+        const isDragOver = dragOverCat === cat.slug;
+        const isUploading = uploadingCat === cat.slug;
 
         return (
-          <div key={cat.slug}>
-            <h3 className="font-display text-lg text-ink-200 mb-3 flex items-center gap-2">
-              {cat.name === 'Exámenes' ? '📝' : cat.name === 'Práctica' ? '💻' : '📋'}
-              {cat.name}
-              <span className="text-xs text-ink-500 font-body">({totalFiles} archivo{totalFiles !== 1 ? 's' : ''})</span>
-            </h3>
+          <div
+            key={cat.slug}
+            onDragOver={(e) => { e.preventDefault(); setDragOverCat(cat.slug); }}
+            onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOverCat(null); }}
+            onDrop={(e) => handleDrop(cat.slug, e)}
+            className={`rounded-xl transition-all ${isDragOver ? 'ring-2 ring-amber-500/40 bg-amber-500/5' : ''}`}
+          >
+            {/* Category header */}
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="font-display text-lg text-ink-200 flex items-center gap-2 flex-1">
+                {CATEGORY_ICONS[cat.name] ?? '📁'}
+                {cat.name}
+                {totalFiles > 0 && (
+                  <span className="text-xs text-ink-500 font-body">({totalFiles} archivo{totalFiles !== 1 ? 's' : ''})</span>
+                )}
+              </h3>
+              {/* Upload button */}
+              <label
+                className={`cursor-pointer text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+                  isUploading
+                    ? 'bg-amber-500/20 text-amber-400 animate-pulse'
+                    : 'bg-ink-700 hover:bg-ink-600 text-ink-300 hover:text-ink-100'
+                }`}
+                title={`Subir archivos a ${cat.name}`}
+              >
+                {isUploading ? '⏳ Subiendo…' : '↑ Subir archivos'}
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleFileInput(cat.slug, e.target.files)}
+                />
+              </label>
+            </div>
+
+            {/* Drag overlay */}
+            {isDragOver && (
+              <div className="border-2 border-dashed border-amber-500/60 rounded-xl p-8 text-center text-amber-400 text-sm mb-3 pointer-events-none">
+                📂 Suelta los archivos aquí para añadirlos a <strong>{cat.name}</strong>
+              </div>
+            )}
+
+            {/* Empty state with upload zone */}
+            {totalFiles === 0 && !isDragOver && (
+              <label className="flex flex-col items-center gap-2 border-2 border-dashed border-ink-700 hover:border-amber-500/40 hover:bg-amber-500/5 rounded-xl p-8 text-center text-ink-500 hover:text-ink-300 cursor-pointer transition-all">
+                <span className="text-2xl">📁</span>
+                <span className="text-sm font-medium">Arrastra archivos o haz clic para subir</span>
+                <span className="text-xs">PDF, DOCX, imágenes… se guardan en tu navegador</span>
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleFileInput(cat.slug, e.target.files)}
+                />
+              </label>
+            )}
 
             {/* Direct files */}
             {cat.files.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
-              {cat.files.map((f) => (
-                <div key={f.path || f.name} className="flex items-center gap-2 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group">
-                  <button
-                    onClick={() => handleFileClick(f, cat.slug)}
-                    className="flex items-center gap-3 text-left flex-1 min-w-0"
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
+                {cat.files.map((f) => (
+                  <div
+                    key={f.path || f.name}
+                    className="flex items-center gap-2 bg-ink-800 border border-ink-700 rounded-lg px-3 py-2.5 hover:border-ink-500 transition-all group"
                   >
-                    <span className="text-lg">{getFileIcon(f.name)}</span>
-                    <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
-                  </button>
-                  {f.name.toLowerCase().endsWith('.pdf') && (
                     <button
-                      onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${f.name}`)}`)}
-                      className="shrink-0 text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md"
-                      title="Escuchar PDF"
+                      onClick={() => handleFileClick(f, cat.slug)}
+                      className="flex items-center gap-2 text-left flex-1 min-w-0"
                     >
-                      🎧
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-            {/* Subcategories */}
-            {cat.subcategories && cat.subcategories.filter((sc) => sc.files.length > 0).map((sc) => (
-            <div key={sc.name} className="ml-4 mb-3">
-              <p className="text-sm text-ink-400 font-medium mb-2">{sc.name}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {sc.files.map((f) => (
-                  <div key={f.path || f.name} className="flex items-center gap-2 bg-ink-800 border border-ink-700 rounded-lg px-4 py-3 hover:border-ink-500 hover:bg-ink-750 transition-all group">
-                    <button
-                      onClick={() => handleFileClick(f, cat.slug, sc.name)}
-                      className="flex items-center gap-3 text-left flex-1 min-w-0"
-                    >
-                      <span className="text-lg">{getFileIcon(f.name)}</span>
+                      <span className="text-base flex-shrink-0">{getFileIcon(f.name)}</span>
                       <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
                     </button>
-                    {f.name.toLowerCase().endsWith('.pdf') && (
-                      <button
-                        onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${sc.name}/${f.name}`)}`)}
-                        className="shrink-0 text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md"
-                        title="Escuchar PDF"
-                      >
-                        🎧
-                      </button>
-                    )}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {f.name.toLowerCase().endsWith('.pdf') && (
+                        <button
+                          onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${f.name}`)}`)}
+                          className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded"
+                          title="Escuchar PDF"
+                        >
+                          🎧
+                        </button>
+                      )}
+                      {isDbFile(cat.slug, f.name) && (
+                        <button
+                          onClick={() => handleDelete(cat.slug, f.name)}
+                          className="text-xs text-rose-500/50 hover:text-rose-400 hover:bg-ink-700 px-1.5 py-0.5 rounded transition-all opacity-0 group-hover:opacity-100"
+                          title="Eliminar archivo"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
+            )}
+
+            {/* Subcategories */}
+            {cat.subcategories && cat.subcategories.filter((sc) => sc.files.length > 0).map((sc) => (
+              <div key={sc.name} className="ml-4 mb-3">
+                <p className="text-sm text-ink-400 font-medium mb-2">{sc.name}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {sc.files.map((f) => (
+                    <div
+                      key={f.path || f.name}
+                      className="flex items-center gap-2 bg-ink-800 border border-ink-700 rounded-lg px-3 py-2.5 hover:border-ink-500 transition-all group"
+                    >
+                      <button
+                        onClick={() => handleFileClick(f, cat.slug, sc.name)}
+                        className="flex items-center gap-2 text-left flex-1 min-w-0"
+                      >
+                        <span className="text-base flex-shrink-0">{getFileIcon(f.name)}</span>
+                        <span className="text-sm text-ink-200 truncate group-hover:text-amber-300 transition-colors">{f.name}</span>
+                      </button>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {f.name.toLowerCase().endsWith('.pdf') && (
+                          <button
+                            onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${sc.name}/${f.name}`)}`)}
+                            className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded"
+                            title="Escuchar PDF"
+                          >
+                            🎧
+                          </button>
+                        )}
+                        {isDbFile(cat.slug, f.name, sc.name) && (
+                          <button
+                            onClick={() => handleDelete(cat.slug, f.name, sc.name)}
+                            className="text-xs text-rose-500/50 hover:text-rose-400 hover:bg-ink-700 px-1.5 py-0.5 rounded transition-all opacity-0 group-hover:opacity-100"
+                            title="Eliminar archivo"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         );
       })}
