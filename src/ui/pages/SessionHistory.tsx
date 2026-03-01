@@ -49,7 +49,10 @@ export function SessionHistoryPage() {
   const subjectMap = Object.fromEntries(subjects.map(s => [s.id, s]));
 
   const filtered = sessions.filter(s => {
-    if (filterSubject && s.subjectId !== filterSubject) return false;
+    if (filterSubject) {
+      const ids = s.subjectIds ?? [s.subjectId];
+      if (!ids.includes(filterSubject)) return false;
+    }
     if (filterMode && s.mode !== filterMode) return false;
     return true;
   });
@@ -125,12 +128,28 @@ export function SessionHistoryPage() {
                           {new Date(s.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </td>
                         <td className="py-2.5">
-                          <div className="flex items-center gap-2">
-                            {sub?.color && (
-                              <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: sub.color }} />
-                            )}
-                            <span className="text-ink-200">{sub?.name ?? 'Desconocida'}</span>
-                          </div>
+                          {s.subjectIds && s.subjectIds.length > 1 ? (
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex -space-x-1">
+                                {s.subjectIds.slice(0, 3).map((id) => (
+                                  <div
+                                    key={id}
+                                    className="w-2.5 h-2.5 rounded-full border border-ink-800"
+                                    style={{ backgroundColor: subjectMap[id]?.color ?? '#888' }}
+                                    title={subjectMap[id]?.name}
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-ink-200 text-xs">Mixta ({s.subjectIds.length})</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              {sub?.color && (
+                                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: sub.color }} />
+                              )}
+                              <span className="text-ink-200">{sub?.name ?? 'Desconocida'}</span>
+                            </div>
+                          )}
                         </td>
                         <td className="py-2.5">
                           <span className="text-xs bg-ink-800 text-ink-400 px-2 py-0.5 rounded">

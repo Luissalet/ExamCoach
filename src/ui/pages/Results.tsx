@@ -30,9 +30,11 @@ export function ResultsPage() {
     (async () => {
       const s = await sessionRepo.getById(sessionId);
       if (!s) { navigate('/'); return; }
+      // Support multi-subject (global) sessions
+      const subjectIds = s.subjectIds ?? [s.subjectId];
       const [qs, ts] = await Promise.all([
         questionRepo.getManyByIds(s.questionIds),
-        db.topics.where('subjectId').equals(s.subjectId).toArray(),
+        db.topics.where('subjectId').anyOf(subjectIds).toArray(),
       ]);
       setSession(s);
       setQuestions(qs);

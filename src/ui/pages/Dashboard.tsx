@@ -492,13 +492,23 @@ export function Dashboard() {
           <div className="max-w-5xl mx-auto px-6 py-10">
 
             {/* Título */}
-            <div className="mb-8">
-              <h1 className="font-display text-3xl text-ink-100 mb-1">Mis asignaturas</h1>
-              <p className="text-ink-500 text-sm">
-                {subjects.length === 0
-                  ? 'Crea tu primera asignatura para empezar'
-                  : `${subjects.length} asignatura${subjects.length !== 1 ? 's' : ''} · ${Object.values(stats).reduce((k, b) => k + b.total, 0)} preguntas`}
-              </p>
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <h1 className="font-display text-3xl text-ink-100 mb-1">Mis asignaturas</h1>
+                <p className="text-ink-500 text-sm">
+                  {subjects.length === 0
+                    ? 'Crea tu primera asignatura para empezar'
+                    : `${subjects.length} asignatura${subjects.length !== 1 ? 's' : ''} · ${Object.values(stats).reduce((k, b) => k + b.total, 0)} preguntas`}
+                </p>
+              </div>
+              {subjects.length >= 2 && (
+                <button
+                  onClick={() => navigate('/global-practice')}
+                  className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-300 hover:text-amber-200 hover:border-amber-400/40 rounded-xl text-sm font-medium transition-all"
+                >
+                  <span>🔀</span> Práctica mixta
+                </button>
+              )}
             </div>
 
             {/* Mensajes de estado */}

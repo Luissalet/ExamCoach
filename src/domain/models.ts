@@ -218,6 +218,8 @@ export interface UserAnswer {
 export interface PracticeSession {
   id: string;
   subjectId: string;
+  /** When set, this is a multi-subject (global) session */
+  subjectIds?: string[];
   mode: SessionMode;
   topicId?: string; // if mode === 'topic'
   createdAt: string;

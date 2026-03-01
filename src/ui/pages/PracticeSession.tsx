@@ -48,8 +48,11 @@ export function PracticeSessionPage() {
       const qs = await questionRepo.getManyByIds(s.questionIds);
       // Keep original order
       const ordered = s.questionIds.map((id) => qs.find((q) => q.id === id)).filter(Boolean) as Question[];
-      const ts = await db.topics.where('subjectId').equals(s.subjectId).toArray();
-      const kcs = await keyConceptRepo.getBySubject(s.subjectId);
+      // Support multi-subject (global) sessions
+      const subjectIds = s.subjectIds ?? [s.subjectId];
+      const ts = await db.topics.where('subjectId').anyOf(subjectIds).toArray();
+      const kcsArrays = await Promise.all(subjectIds.map((id) => keyConceptRepo.getBySubject(id)));
+      const kcs = kcsArrays.flat();
       setSession(s);
       setQuestions(ordered);
       setTopics(ts);
