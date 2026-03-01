@@ -11,6 +11,17 @@ import type { TtsState, TtsVoiceInfo } from '@/utils/ttsEngine';
 
 const RATE_STEPS = [0.75, 1.0, 1.25, 1.5, 2.0];
 
+/** Format seconds into a human-readable string like "~3 min" or "~1 h 12 min" */
+function formatRemaining(secs: number): string {
+  if (secs <= 0) return '';
+  if (secs < 60) return `~${secs}s`;
+  const mins = Math.round(secs / 60);
+  if (mins < 60) return `~${mins} min`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `~${h} h ${m} min` : `~${h} h`;
+}
+
 function nextRate(current: number): number {
   const idx = RATE_STEPS.indexOf(current);
   if (idx === -1 || idx === RATE_STEPS.length - 1) return RATE_STEPS[0];
@@ -26,6 +37,8 @@ interface TtsControlsProps {
   rate: number;
   voiceName: string;
   voices: TtsVoiceInfo[];
+  /** Estimated seconds remaining (null = not yet available) */
+  estimatedRemaining?: number | null;
   onPlay: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -53,6 +66,7 @@ export function TtsControls({
   onRateChange,
   onVoiceChange,
   onSkipTo,
+  estimatedRemaining,
 }: TtsControlsProps) {
   const progress = totalBlocks > 0 ? ((currentBlock + 1) / totalBlocks) * 100 : 0;
   const isPlaying = state === 'playing';
@@ -156,10 +170,17 @@ export function TtsControls({
           </div>
         </div>
 
-        {/* Block counter */}
-        <span className="text-xs text-ink-400 font-mono min-w-[4rem] text-center">
-          {currentBlock + 1}/{totalBlocks}
-        </span>
+        {/* Block counter + time estimate */}
+        <div className="flex flex-col items-center min-w-[4rem]">
+          <span className="text-xs text-ink-400 font-mono">
+            {currentBlock + 1}/{totalBlocks}
+          </span>
+          {estimatedRemaining != null && estimatedRemaining > 0 && !isIdle && (
+            <span className="text-[10px] text-ink-500 font-mono leading-tight">
+              {formatRemaining(estimatedRemaining)}
+            </span>
+          )}
+        </div>
 
         {/* Speed control */}
         <button

@@ -49,6 +49,10 @@ export function PdfListenMode() {
   const [voices, setVoices] = useState<TtsVoiceInfo[]>([]);
   const [selectedVoice, setSelectedVoice] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [estimatedRemaining, setEstimatedRemaining] = useState<number | null>(null);
+
+  // Timing accumulator: normalized to rate 1.0 so speed changes don't invalidate data
+  const timingRef = useRef({ totalBaseMs: 0, totalChars: 0 });
 
   const ttsRef = useRef<TtsEngine | null>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -193,21 +197,44 @@ export function PdfListenMode() {
     () => ({
       onBlockStart: (idx: number) => setCurrentBlock(idx),
       onBlockEnd: (_idx: number) => {},
+      onBlockTiming: (idx: number, durationMs: number, charCount: number) => {
+        if (charCount <= 0) return;
+        // Normalize duration to rate 1.0 so speed changes don't invalidate old data
+        const currentRate = ttsRef.current?.getRate() ?? 1.0;
+        const baseMs = durationMs * currentRate;
+        const t = timingRef.current;
+        t.totalBaseMs += baseMs;
+        t.totalChars += charCount;
+
+        // Compute remaining chars (blocks after idx)
+        const remaining = processedTexts.slice(idx + 1).reduce((sum, txt) => sum + txt.length, 0);
+        if (t.totalChars > 0 && remaining > 0) {
+          const baseMsPerChar = t.totalBaseMs / t.totalChars;
+          const remainingSecs = (remaining * baseMsPerChar) / (currentRate * 1000);
+          setEstimatedRemaining(Math.round(remainingSecs));
+        } else {
+          setEstimatedRemaining(0);
+        }
+      },
       onFinish: () => {
         setTtsState('idle');
         setCurrentBlock(0);
+        setEstimatedRemaining(null);
+        timingRef.current = { totalBaseMs: 0, totalChars: 0 };
       },
       onError: (err: string) => {
         console.warn('[TTS]', err);
       },
       onStateChange: (s: TtsState) => setTtsState(s),
     }),
-    [],
+    [processedTexts],
   );
 
   // ── Controls ───────────────────────────────────────────────────────────────
   const handlePlay = useCallback(() => {
     if (!ttsRef.current || processedTexts.length === 0) return;
+    timingRef.current = { totalBaseMs: 0, totalChars: 0 };
+    setEstimatedRemaining(null);
     ttsRef.current.speak(processedTexts, ttsCallbacks());
   }, [processedTexts, ttsCallbacks]);
 
@@ -216,6 +243,8 @@ export function PdfListenMode() {
   const handleStop = useCallback(() => {
     ttsRef.current?.stop();
     setCurrentBlock(0);
+    setEstimatedRemaining(null);
+    timingRef.current = { totalBaseMs: 0, totalChars: 0 };
   }, []);
   const handleNext = useCallback(() => ttsRef.current?.next(), []);
   const handlePrevious = useCallback(() => ttsRef.current?.previous(), []);
@@ -477,6 +506,7 @@ export function PdfListenMode() {
           rate={rate}
           voiceName={selectedVoice}
           voices={voices}
+          estimatedRemaining={estimatedRemaining}
           onPlay={handlePlay}
           onPause={handlePause}
           onResume={handleResume}

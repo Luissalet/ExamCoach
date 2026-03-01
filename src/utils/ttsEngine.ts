@@ -19,6 +19,8 @@ export interface TtsVoiceInfo {
 export interface TtsCallbacks {
   onBlockStart?: (blockIndex: number) => void;
   onBlockEnd?: (blockIndex: number) => void;
+  /** Fired after each block finishes with its real duration and character count */
+  onBlockTiming?: (blockIndex: number, durationMs: number, charCount: number) => void;
   onFinish?: () => void;
   onError?: (error: string) => void;
   onStateChange?: (state: TtsState) => void;
@@ -74,6 +76,7 @@ export function createTtsEngine(): TtsEngine {
   let currentBlockIndex = 0;
   let callbacks: TtsCallbacks = {};
   let destroyed = false;
+  let blockStartTime = 0;
 
   // ── Load voices ────────────────────────────────────────────────────────────
   function loadVoices() {
@@ -99,6 +102,7 @@ export function createTtsEngine(): TtsEngine {
     }
 
     currentBlockIndex = index;
+    blockStartTime = performance.now();
     callbacks.onBlockStart?.(index);
 
     const text = blocks[index];
@@ -119,6 +123,9 @@ export function createTtsEngine(): TtsEngine {
 
     utterance.onend = () => {
       if (destroyed) return;
+      // Report timing for estimation
+      const elapsed = performance.now() - blockStartTime;
+      callbacks.onBlockTiming?.(index, elapsed, text.length);
       callbacks.onBlockEnd?.(index);
       // Encadenar inmediatamente al siguiente bloque — la separación natural
       // entre utterances ya produce una micro-pausa suficiente.
