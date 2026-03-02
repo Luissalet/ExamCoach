@@ -109,17 +109,17 @@ export function StatsPage() {
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       {/* Header */}
       <header className="border-b border-ink-800 bg-ink-900/50">
-        <div className="max-w-5xl mx-auto px-6 py-4">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <button
             onClick={() => navigate(`/subject/${subjectId}`)}
             className="text-ink-400 hover:text-ink-200 text-sm transition-colors mb-4"
           >
             ← Volver
           </button>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
-              <h1 className="font-display text-2xl text-ink-100">Estadísticas — {subject.name}</h1>
+              <h1 className="font-display text-xl sm:text-2xl text-ink-100 truncate">Estadísticas — {subject.name}</h1>
             </div>
             <Button size="sm" variant="secondary" onClick={async () => {
               const md = await generateStudyGuide(subjectId!);
@@ -133,7 +133,7 @@ export function StatsPage() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-8 flex flex-col gap-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
         {/* Resumen global */}
         <Card>
           <div className="flex flex-col gap-4">

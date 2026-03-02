@@ -62,6 +62,7 @@ export function Dashboard() {
   const [sidebarRefresh, setSidebarRefresh] = useState(0);
   const [dedupMsg, setDedupMsg] = useState('');
   const [deduping, setDeduping] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
   // nextExamDates: subjectId → next upcoming exam dueDate (from exam deliverables)
   const [nextExamDates, setNextExamDates] = useState<Record<string, string>>({});
@@ -421,14 +422,34 @@ export function Dashboard() {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="border-b border-ink-800 bg-ink-900/50 backdrop-blur-sm flex-shrink-0 z-10">
-        <div className="px-6 py-4 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
               <span className="text-ink-900 font-display font-bold text-sm">S</span>
             </div>
             <span className="font-display text-xl text-ink-100">ExamCoach</span>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+
+          {/* Mobile: nav icons + hamburger */}
+          <div className="flex items-center gap-1 lg:hidden">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')}>📋</Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>📊</Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>⚙</Button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-ink-400 hover:text-ink-200 hover:bg-ink-800 rounded-lg transition-colors ml-1"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                {mobileMenuOpen
+                  ? <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  : <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                }
+              </svg>
+            </button>
+          </div>
+
+          {/* Desktop: all buttons inline */}
+          <div className="hidden lg:flex items-center gap-2 flex-wrap">
             <Button
               variant="ghost"
               size="sm"
@@ -513,11 +534,79 @@ export function Dashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-ink-800 bg-ink-900/95 backdrop-blur-sm px-4 py-3 flex flex-col gap-2 animate-slide-up">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { handleSyncManual(); setMobileMenuOpen(false); }}
+              disabled={syncing}
+              className="justify-start w-full"
+            >
+              {syncing ? '⟳ Sincronizando…' : '⟳ Sincronizar banco'}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => { handleExportGlobal(); setMobileMenuOpen(false); }} className="justify-start w-full">
+              ↑ Exportar banco global
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { handleCommitAndClean(); setMobileMenuOpen(false); }}
+              disabled={committing}
+              className="justify-start w-full"
+            >
+              {committing ? '⏳…' : '🔄 Integrar & limpiar'}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { handleRemoveDuplicates(); setMobileMenuOpen(false); }}
+              disabled={deduping}
+              className="justify-start w-full"
+            >
+              {deduping ? '⏳…' : '🔧 Eliminar duplicadas'}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => { handleExportPersonal(); setMobileMenuOpen(false); }} className="justify-start w-full">
+              ↑ Backup personal
+            </Button>
+            <label className="cursor-pointer w-full">
+              <input type="file" accept=".json" className="hidden" onChange={(e) => { handleImport(e); setMobileMenuOpen(false); }} disabled={importLoading} />
+              <span className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all w-full ${
+                importLoading ? 'text-ink-500 bg-ink-800' : 'text-ink-300 hover:text-ink-100 hover:bg-ink-800'
+              }`}>
+                ↓ Importar backup
+              </span>
+            </label>
+            <label className="cursor-pointer w-full">
+              <input
+                type="file"
+                accept=".zip"
+                className="hidden"
+                disabled={zipImporting}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleZipImport(f);
+                  if (e.target) e.target.value = '';
+                  setMobileMenuOpen(false);
+                }}
+              />
+              <span className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all w-full ${
+                zipImporting
+                  ? 'text-ink-500 bg-ink-800 animate-pulse'
+                  : 'text-amber-400 hover:text-amber-300 hover:bg-ink-800 border border-amber-500/30'
+              }`}>
+                {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
+              </span>
+            </label>
+          </div>
+        )}
       </header>
 
       {/* C3: Stale sync banner */}
       {syncStale && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-2 flex items-center justify-between flex-shrink-0">
+        <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 sm:px-6 py-2 flex items-center justify-between flex-shrink-0">
           <span className="text-xs text-amber-400">
             {syncStaleDays != null
               ? `El banco global no se ha sincronizado en ${syncStaleDays} días.`
@@ -548,12 +637,12 @@ export function Dashboard() {
 
         {/* ── Main (scrollable) ──────────────────────────────────────────── */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-5xl mx-auto px-6 py-10">
+          <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
 
             {/* Título */}
-            <div className="mb-8 flex items-end justify-between gap-4">
+            <div className="mb-6 sm:mb-8 flex items-end justify-between gap-4">
               <div>
-                <h1 className="font-display text-3xl text-ink-100 mb-1">Mis asignaturas</h1>
+                <h1 className="font-display text-2xl sm:text-3xl text-ink-100 mb-1">Mis asignaturas</h1>
                 <p className="text-ink-500 text-sm">
                   {subjects.length === 0
                     ? 'Crea tu primera asignatura para empezar'
@@ -929,11 +1018,83 @@ export function Dashboard() {
                 </div>
               </div>
             )}
+            {/* ── Mobile: Calendario + Entregas inline ─────────────────── */}
+            <div className="lg:hidden mt-10 pb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Calendario */}
+                <div>
+                  <h2 className="text-xs font-medium text-ink-500 uppercase tracking-widest mb-3">
+                    Calendario
+                  </h2>
+                  <CalendarWidget subjects={subjects} />
+                </div>
+
+                {/* Próximas entregas */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-xs font-medium text-ink-500 uppercase tracking-widest">
+                      Próximas entregas
+                    </h2>
+                    <button
+                      onClick={() => navigate('/deliverables')}
+                      className="text-xs text-amber-500 hover:text-amber-300 transition-colors"
+                    >
+                      Ver todas →
+                    </button>
+                  </div>
+                  {upcomingDeliverables.length === 0 ? (
+                    <div className="bg-ink-900 border border-ink-700 rounded-xl p-4 text-center">
+                      <p className="text-sm text-ink-600">Sin entregas pendientes</p>
+                      <button
+                        onClick={() => navigate('/deliverables')}
+                        className="text-xs text-amber-500 hover:text-amber-300 mt-2 transition-colors block mx-auto"
+                      >
+                        Gestionar actividades →
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {upcomingDeliverables.slice(0, 5).map(d => {
+                        const subj = subjects.find(s => s.id === d.subjectId);
+                        const _n = new Date();
+                        const _tl = `${_n.getFullYear()}-${String(_n.getMonth() + 1).padStart(2, '0')}-${String(_n.getDate()).padStart(2, '0')}`;
+                        const dl = d.dueDate
+                          ? Math.round((new Date(d.dueDate + 'T00:00:00').getTime() - new Date(_tl + 'T00:00:00').getTime()) / 86400000)
+                          : null;
+                        return (
+                          <div
+                            key={d.id}
+                            onClick={() => navigate('/deliverables')}
+                            className="flex items-center gap-3 p-3 bg-ink-900 border border-ink-700 rounded-xl hover:border-ink-600 cursor-pointer transition-colors"
+                          >
+                            {subj?.color && (
+                              <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: subj.color }} />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-ink-200 truncate">{d.name}</p>
+                              <p className="text-xs text-ink-500 truncate">{subj?.name}</p>
+                            </div>
+                            {dl !== null && (
+                              <span className={`text-xs flex-shrink-0 font-medium ${
+                                dl <= 3 ? 'text-rose-400' : dl <= 7 ? 'text-amber-400' : 'text-ink-500'
+                              }`}>
+                                {dl < 0 ? 'Pasado' : dl === 0 ? '¡Hoy!' : dl === 1 ? 'Mañana' : `${dl}d`}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
           </div>
         </main>
 
-        {/* ── Sidebar derecho: Calendario + Próximas entregas ────────────── */}
-        <aside className="w-72 flex-shrink-0 border-l border-ink-800 overflow-y-auto bg-ink-950/50">
+        {/* ── Sidebar derecho: Calendario + Próximas entregas (desktop only) */}
+        <aside className="hidden lg:block w-72 flex-shrink-0 border-l border-ink-800 overflow-y-auto bg-ink-950/50">
           <div className="p-4 flex flex-col gap-6 pt-6">
 
             {/* Calendario */}

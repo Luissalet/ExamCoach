@@ -53,6 +53,7 @@ export default {
         'slide-up': 'slideUp 0.3s ease-out',
         'pulse-soft': 'pulseSoft 2s infinite',
         'slide-in-right': 'slideInRight 0.25s ease-out',
+        'slide-in-left': 'slideInLeft 0.25s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -69,6 +70,10 @@ export default {
         },
         slideInRight: {
           '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        slideInLeft: {
+          '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0)' },
         },
       }

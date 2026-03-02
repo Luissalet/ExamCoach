@@ -605,19 +605,20 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       <header className="border-b border-ink-800 bg-ink-900/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 transition-colors text-sm">
-                ← Inicio
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 transition-colors text-sm flex-shrink-0">
+                ←
               </button>
               <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
-              <h1 className="font-display text-xl text-ink-100">{subject.name}</h1>
+              <h1 className="font-display text-lg sm:text-xl text-ink-100 truncate">{subject.name}</h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <CopyLinkButton subjectId={subjectId} tab={tab} />
               <Button size="sm" variant="ghost" onClick={handleStatsClick}>
-                📊 Estadísticas
+                <span className="sm:hidden">📊</span>
+                <span className="hidden sm:inline">📊 Estadísticas</span>
               </Button>
             </div>
           </div>
@@ -627,7 +628,7 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-6 py-6 gap-4">
+      <main className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 gap-4">
 
         {/* TEMAS */}
         {tab === 'topics' && (

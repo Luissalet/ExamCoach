@@ -324,7 +324,7 @@ export function PracticeSessionPage() {
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       {/* Progress header */}
       <header className="border-b border-ink-800 bg-ink-900/50 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-6 py-3">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => { if (confirm('¿Abandonar la sesión?')) navigate(`/subject/${session.subjectId}`); }}
@@ -368,7 +368,7 @@ export function PracticeSessionPage() {
       </header>
 
       {/* Question content */}
-      <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
+      <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 flex flex-col gap-4 sm:gap-6">
         {/* Question header */}
         <div className="flex items-center gap-2 flex-wrap">
           <TypeBadge type={currentQuestion.type} />

@@ -318,21 +318,23 @@ interface TabsProps {
 
 export function Tabs({ tabs, active, onChange }: TabsProps) {
   return (
-    <div className="flex gap-1 bg-ink-850 border border-ink-700 p-1 rounded-xl">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium font-body transition-all duration-150 ${
-            active === tab.id
-              ? 'bg-amber-500 text-ink-900 shadow-sm'
-              : 'text-ink-400 hover:text-ink-200 hover:bg-ink-700'
-          }`}
-        >
-          {tab.icon}
-          {tab.label}
-        </button>
-      ))}
+    <div className="overflow-x-auto scrollbar-hide -mx-1">
+      <div className="flex gap-1 bg-ink-850 border border-ink-700 p-1 rounded-xl w-max min-w-full">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium font-body transition-all duration-150 whitespace-nowrap ${
+              active === tab.id
+                ? 'bg-amber-500 text-ink-900 shadow-sm'
+                : 'text-ink-400 hover:text-ink-200 hover:bg-ink-700'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

@@ -74,7 +74,7 @@ export function ReadModePage() {
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       {/* Header */}
       <header className="border-b border-ink-800 bg-ink-900/50 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-6 py-3">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate(`/subject/${subjectId}`)}
@@ -98,7 +98,7 @@ export function ReadModePage() {
       </header>
 
       {/* Questions list */}
-      <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-6">
+      <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6">
         {questions.length === 0 ? (
           <div className="text-center text-ink-500 py-12">
             No hay preguntas en este tema.

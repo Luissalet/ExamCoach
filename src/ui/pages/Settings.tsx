@@ -452,7 +452,7 @@ export function SettingsPage() {
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100">
       <header className="border-b border-ink-800 bg-ink-900/50">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center gap-4">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-4">
           <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 text-sm transition-colors">
             ← Inicio
           </button>
@@ -460,7 +460,7 @@ export function SettingsPage() {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-6">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6">
         {/* Identity */}
         <Card>
           <h2 className="font-display text-base text-ink-200 mb-4">Identidad</h2>

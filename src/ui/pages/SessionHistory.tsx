@@ -60,18 +60,18 @@ export function SessionHistoryPage() {
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       <header className="border-b border-ink-800 bg-ink-900/50 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 text-sm transition-colors">
-              ← Dashboard
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 text-sm transition-colors flex-shrink-0">
+              ←
             </button>
-            <h1 className="font-display text-xl text-ink-100">Historial de sesiones</h1>
+            <h1 className="font-display text-lg sm:text-xl text-ink-100 truncate">Historial de sesiones</h1>
           </div>
-          <span className="text-sm text-ink-500">{filtered.length} sesiones</span>
+          <span className="text-sm text-ink-500 flex-shrink-0">{filtered.length} sesiones</span>
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8">
         {/* Filters */}
         <div className="flex gap-3 mb-6 flex-wrap">
           <Select value={filterSubject} onChange={e => setFilterSubject(e.target.value)} className="text-xs py-1.5">

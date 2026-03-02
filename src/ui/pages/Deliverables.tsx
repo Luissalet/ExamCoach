@@ -875,7 +875,7 @@ export function DeliverablesPage() {
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-ink-950/95 backdrop-blur border-b border-ink-800 px-6 py-3 flex items-center gap-4">
+      <header className="sticky top-0 z-10 bg-ink-950/95 backdrop-blur border-b border-ink-800 px-4 sm:px-6 py-3 flex items-center gap-4">
         <button
           onClick={() => navigate('/')}
           className="text-ink-500 hover:text-ink-200 transition-colors text-sm"
@@ -889,7 +889,7 @@ export function DeliverablesPage() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── Sidebar izquierdo: lista de asignaturas ──────────────────────── */}
-        <aside className="w-52 flex-shrink-0 border-r border-ink-800 overflow-y-auto bg-ink-950/30">
+        <aside className="hidden sm:block w-52 flex-shrink-0 border-r border-ink-800 overflow-y-auto bg-ink-950/30">
           <div className="p-3 pt-5 flex flex-col gap-0.5">
             <p className="text-xs font-medium text-ink-600 uppercase tracking-widest px-2 mb-2">
               Asignaturas
@@ -916,7 +916,19 @@ export function DeliverablesPage() {
 
         {/* ── Contenido principal ──────────────────────────────────────────── */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-6 py-8 flex flex-col gap-6">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-4 sm:gap-6">
+            {/* Mobile subject selector (replaces sidebar) */}
+            <div className="sm:hidden">
+              <select
+                value={selectedSubjectId}
+                onChange={(e) => setSelectedSubjectId(e.target.value)}
+                className="w-full bg-ink-800 border border-ink-600 text-ink-100 rounded-lg px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-500"
+              >
+                {subjects.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            </div>
             {/* Grade calculator */}
             <GradeCalculator
               config={config}

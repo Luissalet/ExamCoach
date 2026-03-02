@@ -106,7 +106,7 @@ export function GlobalStatsPage() {
   return (
     <div className="min-h-screen bg-ink-950 text-ink-100">
       <header className="border-b border-ink-800 bg-ink-900/50 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-4">
           <button onClick={() => navigate('/')} className="text-ink-400 hover:text-ink-200 text-sm transition-colors">
             ← Dashboard
           </button>
@@ -114,7 +114,7 @@ export function GlobalStatsPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
 
         {/* Resumen global */}
         <section>

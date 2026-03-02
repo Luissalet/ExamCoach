@@ -109,20 +109,20 @@ export function ResultsPage() {
     <div className="min-h-screen bg-ink-950 text-ink-100">
       {/* Header */}
       <header className="border-b border-ink-800 bg-ink-900/50">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2">
           <button
             onClick={() => navigate(`/subject/${session.subjectId}`)}
-            className="text-ink-400 hover:text-ink-200 text-sm transition-colors"
+            className="text-ink-400 hover:text-ink-200 text-sm transition-colors flex-shrink-0"
           >
-            ← Volver a la asignatura
+            ← Volver
           </button>
-          <span className="text-sm text-ink-500">
+          <span className="text-sm text-ink-500 flex-shrink-0">
             {new Date(session.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
           </span>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Summary */}
         <div className="mb-8">
           <h1 className="font-display text-2xl text-ink-100 mb-6">Resultados</h1>
