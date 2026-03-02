@@ -61,6 +61,7 @@ export function Dashboard() {
 
   const [commitMsg, setCommitMsg] = useState('');
   const [committing, setCommitting] = useState(false);
+  const [showDonateMenu, setShowDonateMenu] = useState(false);
   const [sidebarRefresh, setSidebarRefresh] = useState(0);
   const [dedupMsg, setDedupMsg] = useState('');
   const [deduping, setDeduping] = useState(false);
@@ -484,19 +485,55 @@ export function Dashboard() {
                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
               </svg>
             </Button>
-            {/* Botón de donación PayPal */}
-            <a
-              href="https://www.paypal.com/donate/?business=luismasc16%40gmail.com&currency_code=EUR"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Apoya el proyecto con una donación"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium font-body bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 hover:text-amber-300 border border-amber-500/30 hover:border-amber-400/50 transition-all duration-150"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-              <span className="hidden sm:inline">Donar</span>
-            </a>
+            {/* Botón de donación con menú desplegable */}
+            <div className="relative">
+              <button
+                onClick={() => setShowDonateMenu(v => !v)}
+                title="Apoya el proyecto con una donación"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium font-body bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 hover:text-amber-300 border border-amber-500/30 hover:border-amber-400/50 transition-all duration-150"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span className="hidden sm:inline">Donar</span>
+              </button>
+
+              {showDonateMenu && (
+                <>
+                  {/* Overlay para cerrar al hacer clic fuera */}
+                  <div className="fixed inset-0 z-40" onClick={() => setShowDonateMenu(false)} />
+                  <div className="absolute right-0 top-full mt-2 z-50 bg-ink-800 border border-ink-600 rounded-xl shadow-xl overflow-hidden min-w-[180px]">
+                    <p className="text-[10px] font-medium text-ink-500 uppercase tracking-widest px-3 pt-2.5 pb-1">Apoya el proyecto</p>
+                    <a
+                      href="https://www.paypal.com/donate/?business=luismasc16%40gmail.com&currency_code=EUR"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowDonateMenu(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-ink-200 hover:bg-ink-700 hover:text-white transition-colors font-body"
+                    >
+                      {/* PayPal icon */}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-blue-400">
+                        <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.26-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.477z"/>
+                      </svg>
+                      PayPal
+                    </a>
+                    <a
+                      href="https://buymeacoffee.com/luissalet"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowDonateMenu(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-ink-200 hover:bg-ink-700 hover:text-white transition-colors font-body border-t border-ink-700"
+                    >
+                      {/* Coffee icon */}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-yellow-400">
+                        <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/>
+                      </svg>
+                      Buy Me a Coffee
+                    </a>
+                  </div>
+                </>
+              )}
+            </div>
 
             <Button variant="ghost" size="sm" onClick={() => navigate('/settings')} title="Ajustes">
               <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
