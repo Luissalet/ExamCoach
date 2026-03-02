@@ -54,16 +54,25 @@ export function PwaInstallBanner() {
 
   const handleInstall = async () => {
     if (!promptEvent) return;
+    const evt = promptEvent;
+    // Hide the banner immediately and persist dismiss so a page-reload (which
+    // Chrome Android does mid-install) doesn't bring it back.
+    setPromptEvent(null);
+    localStorage.setItem(DISMISS_KEY, '1');
     setInstalling(true);
     try {
-      await promptEvent.prompt();
-      const choice = await promptEvent.userChoice;
-      if (choice.outcome === 'accepted') {
-        localStorage.setItem(DISMISS_KEY, '1');
+      await evt.prompt();
+      // On Android Chrome the page often reloads before userChoice resolves.
+      // That's fine — we already dismissed. On desktop we can check the outcome.
+      const choice = await evt.userChoice;
+      if (choice.outcome === 'dismissed') {
+        // User cancelled the system dialog on desktop — let them see the banner again later
+        localStorage.removeItem(DISMISS_KEY);
       }
+    } catch {
+      // Swallow errors (e.g. page reload interrupting the promise on Android)
     } finally {
       setInstalling(false);
-      setPromptEvent(null);
     }
   };
 

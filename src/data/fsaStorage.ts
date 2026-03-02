@@ -27,7 +27,7 @@ const HANDLE_KEY = 'pdf-root';
 
 // ─── Soporte del navegador ────────────────────────────────────────────────────
 
-/** Devuelve true si el navegador soporta File System Access API. */
+/** Devuelve true si el navegador soporta File System Access API (desktop). */
 export function isFsaSupported(): boolean {
   return (
     typeof window !== 'undefined' &&
@@ -36,11 +36,25 @@ export function isFsaSupported(): boolean {
   );
 }
 
+/**
+ * Devuelve true si el navegador soporta Origin Private File System (OPFS).
+ * Compatible con Chrome/Edge Android 86+, desktop, Safari 15.2+.
+ * OPFS usa almacenamiento privado del navegador — sin picker, sin límite de quota.
+ */
+export function isOpfsSupported(): boolean {
+  return (
+    typeof navigator !== 'undefined' &&
+    'storage' in navigator &&
+    typeof (navigator.storage as any).getDirectory === 'function'
+  );
+}
+
 // ─── Gestión del handle raíz ──────────────────────────────────────────────────
 
 /**
  * Solicita al usuario que elija una carpeta y la guarda en Dexie.
  * Devuelve el handle o null si el usuario cancela.
+ * Solo disponible en escritorio (Chrome/Edge 86+).
  */
 export async function selectPdfFolder(): Promise<FileSystemDirectoryHandle | null> {
   if (!isFsaSupported()) return null;
@@ -55,6 +69,7 @@ export async function selectPdfFolder(): Promise<FileSystemDirectoryHandle | nul
       key: HANDLE_KEY,
       handle,
       name: handle.name,
+      type: 'fsa',
       savedAt: new Date().toISOString(),
     });
 
@@ -68,14 +83,43 @@ export async function selectPdfFolder(): Promise<FileSystemDirectoryHandle | nul
 }
 
 /**
+ * Activa el Origin Private File System (OPFS) como almacenamiento de PDFs.
+ * No requiere ningún picker ni permiso del usuario.
+ * Compatible con Chrome/Edge Android 86+, iOS Safari 15.2+.
+ * Los archivos se guardan en el almacenamiento privado de la app (no accesibles
+ * desde el explorador de archivos del sistema operativo).
+ */
+export async function selectOpfsFolder(): Promise<FileSystemDirectoryHandle | null> {
+  if (!isOpfsSupported()) return null;
+  try {
+    const handle = await (navigator.storage as any).getDirectory() as FileSystemDirectoryHandle;
+    await db.fsaHandles.put({
+      key: HANDLE_KEY,
+      handle,
+      name: 'Almacenamiento interno (OPFS)',
+      type: 'opfs',
+      savedAt: new Date().toISOString(),
+    });
+    return handle;
+  } catch (err) {
+    console.error('[fsaStorage] Error activando OPFS:', err);
+    return null;
+  }
+}
+
+/**
  * Devuelve el handle guardado, o null si no hay ninguno configurado.
  * No muestra ningún diálogo al usuario.
  */
-export async function getStoredFolderRecord(): Promise<{ handle: FileSystemDirectoryHandle; name: string } | null> {
+export async function getStoredFolderRecord(): Promise<{
+  handle: FileSystemDirectoryHandle;
+  name: string;
+  type?: 'fsa' | 'opfs';
+} | null> {
   try {
     const record = await db.fsaHandles.get(HANDLE_KEY);
     if (!record) return null;
-    return { handle: record.handle, name: record.name };
+    return { handle: record.handle, name: record.name, type: record.type };
   } catch {
     return null;
   }
@@ -112,10 +156,24 @@ export async function verifyPermission(
 /**
  * Obtiene el handle raíz con permisos verificados.
  * Devuelve null si no hay carpeta configurada o el usuario deniega el permiso.
+ *
+ * OPFS no requiere verificación de permisos — siempre accesible.
+ * Para OPFS se obtiene el handle fresco cada vez vía navigator.storage.getDirectory().
  */
 async function getRootHandle(): Promise<FileSystemDirectoryHandle | null> {
   const record = await getStoredFolderRecord();
   if (!record) return null;
+
+  if (record.type === 'opfs') {
+    // OPFS: always accessible, no permission dialog needed
+    try {
+      return await (navigator.storage as any).getDirectory() as FileSystemDirectoryHandle;
+    } catch {
+      return null;
+    }
+  }
+
+  // FSA: verify (and re-request if needed) read/write permission
   const ok = await verifyPermission(record.handle);
   if (!ok) return null;
   return record.handle;

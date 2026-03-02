@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { MdContent } from '@/ui/components/MdContent';
 import { renderMd } from '@/utils/renderMd';
+import { generateExplanation } from '@/services/aiEngine';
+import { questionRepo } from '@/data/repos';
 import type { Question } from '@/domain/models';
 
 // ── Cloze renderer (para preview) ──────────────────────────────────────────
@@ -13,8 +16,16 @@ export function renderClozePreview(clozeText: string, blanks: { id: string; acce
 }
 
 // ── Preview: enunciado + respuesta resuelta ─────────────────────────────────
-export function QuestionPreviewContent({ question }: { question: Question }) {
+export function QuestionPreviewContent({
+  question,
+  onExplanationGenerated,
+}: {
+  question: Question;
+  onExplanationGenerated?: (explanation: string) => void;
+}) {
   const correctIds = new Set(question.correctOptionIds ?? []);
+  const [generatingExpl, setGeneratingExpl] = useState(false);
+  const [explError, setExplError] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col gap-6">
@@ -142,7 +153,7 @@ export function QuestionPreviewContent({ question }: { question: Question }) {
       </div>
 
       {/* ── Explicación / Feedback ── */}
-      {question.explanation && (
+      {question.explanation ? (
         <>
           <div className="border-t border-ink-700" />
           <div className="flex flex-col gap-3">
@@ -151,6 +162,39 @@ export function QuestionPreviewContent({ question }: { question: Question }) {
               className="text-sm text-ink-300 leading-relaxed prose prose-invert prose-sm max-w-none bg-amber-500/5 border border-amber-500/20 rounded-xl p-4"
               dangerouslySetInnerHTML={{ __html: renderMd(question.explanation) }}
             />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="border-t border-ink-700" />
+          <div className="flex flex-col gap-3">
+            <p className="text-xs text-ink-500 uppercase tracking-widest">Explicación</p>
+            <div className="flex items-center gap-2 mt-2">
+              <button
+                onClick={async () => {
+                  setGeneratingExpl(true);
+                  setExplError(null);
+                  try {
+                    const explanation = await generateExplanation(question);
+                    await questionRepo.update(question.id, { explanation });
+                    onExplanationGenerated?.(explanation);
+                  } catch (e) {
+                    setExplError(String(e));
+                  } finally {
+                    setGeneratingExpl(false);
+                  }
+                }}
+                disabled={generatingExpl}
+                className="text-xs bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {generatingExpl ? (
+                  <>⏳ Generando...</>
+                ) : (
+                  <>✨ Generar explicación con IA</>
+                )}
+              </button>
+              {explError && <p className="text-xs text-rose-400">{explError}</p>}
+            </div>
           </div>
         </>
       )}

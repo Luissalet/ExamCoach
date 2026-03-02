@@ -439,6 +439,20 @@ export interface AppSettings {
    * Scope mínimo requerido: gist (create/read gists).
    */
   githubToken?: string;
+  /**
+   * Contador de días consecutivos con actividad de estudio.
+   * Se actualiza cuando el usuario completa una sesión de práctica.
+   */
+  studyStreak?: number;
+  /**
+   * Fecha ISO (YYYY-MM-DD) del último día con actividad de estudio.
+   */
+  lastStudyDate?: string;
+  /**
+   * Objetivos de % de acierto por asignatura. subjectId → porcentaje objetivo (0-100).
+   * LOCAL — nunca se exporta.
+   */
+  subjectGoals?: Record<string, number>;
 }
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────

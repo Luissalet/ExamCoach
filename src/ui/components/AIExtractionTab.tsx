@@ -40,6 +40,8 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
   // State
   const [mode, setMode] = useState<ExtractionMode>('extract');
   const [file, setFile] = useState<File | null>(null);
+  const [inputMode, setInputMode] = useState<'file' | 'text'>('file');
+  const [freeText, setFreeText] = useState('');
   const [selectedTopicId, setSelectedTopicId] = useState<string>(topics[0]?.id ?? '');
   const [maxQuestions, setMaxQuestions] = useState(20);
   const [extracting, setExtracting] = useState(false);
@@ -106,21 +108,40 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
   // ── Extract questions ──
 
   const handleExtract = async () => {
-    if (!file) return;
+    let documentText = '';
+    let imageBase64: string | undefined;
 
     setExtracting(true);
     setError(null);
     setProgress(0);
-    setProgressLabel('Extrayendo texto del archivo...');
 
     try {
-      // Step 1: Extract text from file
-      const { text, imageBase64, fileType } = await extractFileContent(file, (p) => {
-        setProgress(p * 0.3); // 0-30% for file extraction
-      });
+      // Step 1: Get text (either from file or free text)
+      if (inputMode === 'text') {
+        if (!freeText.trim()) {
+          setError('Por favor escribe o pega algún texto primero.');
+          setExtracting(false);
+          return;
+        }
+        documentText = freeText;
+        setProgressLabel('Generando guía de referencia...');
+        setProgress(0.3);
+      } else {
+        if (!file) {
+          setError('Por favor selecciona un archivo primero.');
+          setExtracting(false);
+          return;
+        }
+        setProgressLabel('Extrayendo texto del archivo...');
+        const extracted = await extractFileContent(file, (p) => {
+          setProgress(p * 0.3); // 0-30% for file extraction
+        });
+        documentText = extracted.text;
+        imageBase64 = extracted.imageBase64;
+      }
 
-      if (!text.trim() && !imageBase64) {
-        throw new Error('No se pudo extraer texto del archivo. ¿Está vacío o es un PDF escaneado sin OCR?');
+      if (!documentText.trim() && !imageBase64) {
+        throw new Error('No se pudo extraer texto. ¿Está vacío o es un PDF escaneado sin OCR?');
       }
 
       setProgress(0.3);
@@ -150,7 +171,7 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
 
       // Step 5: Call AI with contribution guide embedded
       const extracted = await provider.extractQuestions({
-        documentText: text,
+        documentText,
         subjectKey: slugify(subject.name),
         subjectName: subject.name,
         topics: topicList,
@@ -168,7 +189,7 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
         return;
       }
 
-      // Step 5: Show review modal
+      // Step 6: Show review modal
       setExtractedQuestions(extracted);
       setShowReview(true);
     } catch (err) {
@@ -217,6 +238,7 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
 
     setShowReview(false);
     setFile(null);
+    setFreeText('');
     setExtractedQuestions([]);
     setError(null);
     setProgressLabel(`${imported} preguntas importadas correctamente`);
@@ -277,7 +299,24 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
         </button>
       </div>
 
+      {/* ── Input mode selector (file vs text) ── */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setInputMode('file')}
+          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${inputMode === 'file' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'text-ink-400 hover:text-ink-200 border border-ink-700'}`}
+        >
+          📄 Subir archivo
+        </button>
+        <button
+          onClick={() => setInputMode('text')}
+          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${inputMode === 'text' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'text-ink-400 hover:text-ink-200 border border-ink-700'}`}
+        >
+          ✏️ Texto directo
+        </button>
+      </div>
+
       {/* ── File upload zone ── */}
+      {inputMode === 'file' && (
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -321,6 +360,21 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
           className="hidden"
         />
       </div>
+      )}
+
+      {/* ── Text input zone ── */}
+      {inputMode === 'text' && (
+        <div className="flex flex-col gap-3">
+          <textarea
+            value={freeText}
+            onChange={(e) => setFreeText(e.target.value)}
+            placeholder="Pega aquí el texto del que quieres generar preguntas (apuntes, resúmenes, fragmentos de libro...)"
+            rows={10}
+            className="w-full bg-ink-800 border border-ink-700 text-ink-100 rounded-xl px-4 py-3 text-sm font-body placeholder:text-ink-600 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-vertical"
+          />
+          <p className="text-xs text-ink-500">El texto se enviará directamente al modelo de IA para extraer o generar preguntas.</p>
+        </div>
+      )}
 
       {/* ── Options row ── */}
       <div className="grid grid-cols-2 gap-4">
@@ -401,7 +455,12 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
       {/* ── Extract button ── */}
       <Button
         onClick={handleExtract}
-        disabled={!file || hasApiKey === false || extracting}
+        disabled={
+          (inputMode === 'file' && !file) ||
+          (inputMode === 'text' && !freeText.trim()) ||
+          hasApiKey === false ||
+          extracting
+        }
         loading={extracting}
       >
         {extracting

@@ -22,6 +22,11 @@ export interface FsaHandleRecord {
   name: string;
   /** ISO timestamp de cuándo se configuró */
   savedAt: string;
+  /**
+   * 'fsa' = File System Access API (desktop, showDirectoryPicker)
+   * 'opfs' = Origin Private File System (Android Chrome compatible)
+   */
+  type?: 'fsa' | 'opfs';
 }
 
 export class StudyDB extends Dexie {

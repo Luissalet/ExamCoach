@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db } from '@/data/db';
+import { db, getSettings, saveSettings } from '@/data/db';
 import { subjectRepo, questionRepo } from '@/data/repos';
 import { Button, Card, Badge, Difficulty, Progress } from '@/ui/components';
 import { LeitnerBoxes } from '@/ui/components/LeitnerBoxes';
@@ -17,6 +17,7 @@ export function StatsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [sessions, setSessions] = useState<PracticeSession[]>([]);
   const [loading, setLoading] = useState(true);
+  const [goal, setGoal] = useState<number>(0);
 
   useEffect(() => {
     if (!subjectId) return;
@@ -39,6 +40,11 @@ export function StatsPage() {
       setSessions(finished);
       setLoading(false);
     })();
+  }, [subjectId]);
+
+  useEffect(() => {
+    if (!subjectId) return;
+    getSettings().then(s => setGoal(s.subjectGoals?.[subjectId] ?? 0));
   }, [subjectId]);
 
   const globalStats = useMemo(() => {
@@ -162,6 +168,46 @@ export function StatsPage() {
           </div>
         </Card>
 
+        {/* Objetivo de acierto */}
+        <Card className="bg-amber-500/5 border border-amber-500/20">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-lg text-amber-400">🎯 Objetivo de acierto</h2>
+              <span className="text-xs text-ink-500">Actual: {correctPct}%</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                type="range"
+                min="50"
+                max="100"
+                step="5"
+                value={goal || 80}
+                onChange={async (e) => {
+                  const v = parseInt(e.target.value);
+                  setGoal(v);
+                  const s = await getSettings();
+                  await saveSettings({ subjectGoals: { ...(s.subjectGoals ?? {}), [subjectId!]: v } });
+                }}
+                className="flex-1 accent-amber-500"
+              />
+              <span className="text-amber-400 font-bold text-sm w-10">{goal || 80}%</span>
+            </div>
+            {goal > 0 && (
+              <div className="mt-2">
+                <div className="h-2 bg-ink-700 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${correctPct >= goal ? 'bg-sage-500' : 'bg-amber-500'}`}
+                    style={{ width: `${Math.min(correctPct / goal * 100, 100)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-ink-500 mt-1">
+                  {correctPct >= goal ? '✓ Objetivo alcanzado' : `Faltan ${goal - correctPct}pp para el objetivo`}
+                </p>
+              </div>
+            )}
+          </div>
+        </Card>
+
         {/* Leitner Boxes */}
         {questions.length > 0 && (
           <Card>
@@ -217,6 +263,31 @@ export function StatsPage() {
             </div>
           </Card>
         )}
+
+        {/* Puntos débiles */}
+        {(() => {
+          const weak = topicStats.filter(ts => ts.count >= 3 && ts.seen >= 3 && ts.correctPct < 50);
+          if (weak.length === 0) return null;
+          return (
+            <Card className="bg-rose-500/5 border border-rose-500/20">
+              <div className="flex flex-col gap-4">
+                <h2 className="font-display text-lg text-rose-400">⚠️ Puntos débiles</h2>
+                <div className="flex flex-col gap-2">
+                  {weak.map(ts => (
+                    <div key={ts.topic.id} className="flex items-center justify-between">
+                      <span className="text-sm text-ink-200">{ts.topic.title}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-ink-500">{ts.seen}/{ts.count} vistas</span>
+                        <span className="text-sm font-bold text-rose-400">{ts.correctPct}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-ink-500">Temas con menos del 50% de acierto (mín. 3 vistas)</p>
+              </div>
+            </Card>
+          );
+        })()}
 
         {/* Preguntas problemáticas */}
         {problematicQuestions.length > 0 && (

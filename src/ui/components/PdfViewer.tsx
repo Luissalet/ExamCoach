@@ -33,13 +33,16 @@ interface PdfViewerProps {
   /** PDF y página inicial. */
   initialFilename?: string;
   initialPage?: number;
+  /** Callback when user selects text in the PDF. */
+  onTextSelected?: (text: string) => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(
-  ({ pdfList, getPdfUrl, initialFilename, initialPage = 1 }, ref) => {
+  ({ pdfList, getPdfUrl, initialFilename, initialPage = 1, onTextSelected }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const renderTaskRef = useRef<pdfjsLib.RenderTask | null>(null);
 
     const [selectedFile, setSelectedFile] = useState<string>(
@@ -142,6 +145,17 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(
       if (e.key === 'Enter') handlePageInputBlur();
     };
 
+    // ── Text selection handler ─────────────────────────────────────────────────
+    const handleMouseUp = useCallback(() => {
+      if (!onTextSelected) return;
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) return;
+      const text = selection.toString().trim();
+      if (text.length > 10) {
+        onTextSelected(text);
+      }
+    }, [onTextSelected]);
+
     // ── Render ────────────────────────────────────────────────────────────────
     return (
       <div className="flex flex-col gap-0 h-full">
@@ -240,7 +254,11 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(
         </div>
 
         {/* ── Canvas area ── */}
-        <div className="flex-1 overflow-auto bg-ink-950 flex justify-center items-start p-4">
+        <div
+          ref={containerRef}
+          onMouseUp={handleMouseUp}
+          className="flex-1 overflow-auto bg-ink-950 flex justify-center items-start p-4"
+        >
           {loading && (
             <div className="text-ink-500 text-sm mt-8 flex items-center gap-2">
               <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">

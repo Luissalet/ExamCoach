@@ -7,11 +7,12 @@ import { loadSubjectExtraInfo } from '@/data/resourceLoader';
 import { importResourceZip } from '@/data/resourceImporter';
 import type { ImportProgressEvent } from '@/data/resourceImporter';
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
-import { db } from '@/data/db';
+import { db, getSettings } from '@/data/db';
 import { CalendarWidget } from '@/ui/components/CalendarWidget';
 import { ActiveSessionsSidebar } from '@/ui/components/ActiveSessionsSidebar';
 import { deliverableRepo } from '@/data/deliverableRepo';
 import type { Deliverable } from '@/domain/models';
+import { useTheme } from '@/ui/context/ThemeContext';
 
 const SUBJECT_COLORS = [
   '#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6', '#f97316', '#06b6d4', '#ec4899',
@@ -19,6 +20,7 @@ const SUBJECT_COLORS = [
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const {
     subjects, loadSubjects, createSubject, deleteSubject,
     settings, loadSettings,
@@ -69,6 +71,7 @@ export function Dashboard() {
   const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
   // nextExamDates: subjectId → next upcoming exam dueDate (from exam deliverables)
   const [nextExamDates, setNextExamDates] = useState<Record<string, string>>({});
+  const [streak, setStreak] = useState(0);
 
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -83,6 +86,7 @@ export function Dashboard() {
       });
     });
     loadSubjects();
+    getSettings().then(s => setStreak(s.studyStreak ?? 0));
     deliverableRepo.getAll().then(all => {
       const now = new Date();
       const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -462,6 +466,15 @@ export function Dashboard() {
             <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>📊</Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>⚙</Button>
 
+            {/* Botón tema */}
+            <button
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              className="text-ink-400 hover:text-ink-200 transition-colors text-lg px-2 py-1 rounded-lg hover:bg-ink-800"
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+
             {/* Botón info */}
             <button
               onClick={() => setInfoOpen(true)}
@@ -638,6 +651,17 @@ export function Dashboard() {
                 </button>
               )}
             </div>
+
+            {/* Study streak */}
+            {streak > 0 && (
+              <div className="mb-6 flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+                <span className="text-2xl">🔥</span>
+                <div>
+                  <p className="font-bold text-amber-400 text-sm">{streak} día{streak !== 1 ? 's' : ''} de racha</p>
+                  <p className="text-xs text-ink-500">Sigue practicando para mantener la racha</p>
+                </div>
+              </div>
+            )}
 
             {/* Global search */}
             <div className="relative mb-6">

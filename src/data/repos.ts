@@ -202,6 +202,30 @@ export const sessionRepo = {
   },
   async finish(sessionId: string): Promise<void> {
     await db.sessions.update(sessionId, { finishedAt: now() });
+
+    // Update study streak
+    try {
+      const { getSettings, saveSettings } = await import('./db');
+      const settings = await getSettings();
+      const todayStr = new Date().toISOString().split('T')[0];
+      const lastStudy = settings.lastStudyDate;
+      let streak = settings.studyStreak ?? 0;
+      if (lastStudy === todayStr) {
+        // Already studied today, streak unchanged
+      } else {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        if (lastStudy === yesterdayStr) {
+          streak += 1; // Extend streak
+        } else {
+          streak = 1; // Reset streak (missed a day)
+        }
+      }
+      await saveSettings({ studyStreak: streak, lastStudyDate: todayStr });
+    } catch {
+      /* non-critical */
+    }
   },
   async delete(id: string): Promise<void> {
     await db.sessions.delete(id);

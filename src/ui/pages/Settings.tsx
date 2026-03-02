@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db, getSettings } from '@/data/db';
 import { Button, Input, Card, Select, Modal, TypeBadge } from '@/ui/components';
+import { parseAnkiTsv } from '@/utils/ankiImport';
 import { exportContributionPack, importContributionPack, undoContributionImport, previewContributionPack, type ContributionPackPreview, type UnmatchedTopic, type TopicMappings } from '@/data/contributionImport';
 import { downloadContributionGuide } from '@/data/generateContributionGuide';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
@@ -12,7 +13,9 @@ import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
 import type { ImportHistoryEntry, Question } from '@/domain/models';
 import {
   isFsaSupported,
+  isOpfsSupported,
   selectPdfFolder,
+  selectOpfsFolder,
   getStoredFolderRecord,
   clearPdfFolder,
   migrateAllPdfsToFolder,
@@ -41,7 +44,7 @@ function formatBytes(bytes: number): string {
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const { settings, loadSettings, updateSettings, subjects, loadSubjects } = useStore();
+  const { settings, loadSettings, updateSettings, subjects, loadSubjects, createQuestion } = useStore();
   const [alias, setAlias] = useState('');
   const [importMsg, setImportMsg] = useState('');
   const [exportSubjectId, setExportSubjectId] = useState('');
@@ -78,13 +81,19 @@ export function SettingsPage() {
   const [isPersistent, setIsPersistent] = useState<boolean | null>(null);
   const [requestingPersistence, setRequestingPersistence] = useState(false);
 
-  // ── File System Access API ──────────────────────────────────────────────────
+  // ── File System Access API / OPFS ────────────────────────────────────────────
   const fsaSupported = isFsaSupported();
+  const opfsSupported = isOpfsSupported();
   const [fsaFolderName, setFsaFolderName] = useState<string | null>(null);
+  const [activeFolderType, setActiveFolderType] = useState<'fsa' | 'opfs' | null>(null);
   const [fsaMsg, setFsaMsg] = useState('');
   const [selectingFolder, setSelectingFolder] = useState(false);
+  const [activatingOpfs, setActivatingOpfs] = useState(false);
   const [migrating, setMigrating] = useState(false);
   const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(null);
+
+  // ── Anki Import ──────────────────────────────────────────────────────────────
+  const [ankiImportMsg, setAnkiImportMsg] = useState('');
 
   const refreshStorageStatus = useCallback(async () => {
     // Quota de IndexedDB
@@ -96,9 +105,10 @@ export function SettingsPage() {
     if ('storage' in navigator && 'persisted' in navigator.storage) {
       setIsPersistent(await navigator.storage.persisted());
     }
-    // FSA folder configurada
+    // FSA / OPFS folder configurada
     const rec = await getStoredFolderRecord();
     setFsaFolderName(rec?.name ?? null);
+    setActiveFolderType(rec?.type ?? null);
   }, []);
 
   useEffect(() => {
@@ -400,11 +410,30 @@ export function SettingsPage() {
       const handle = await selectPdfFolder();
       if (handle) {
         setFsaFolderName(handle.name);
+        setActiveFolderType('fsa');
         setFsaMsg('✓ Carpeta configurada. Los nuevos PDFs se guardarán aquí.');
         await refreshStorageStatus();
       }
     } finally {
       setSelectingFolder(false);
+    }
+  };
+
+  const handleActivateOpfs = async () => {
+    setActivatingOpfs(true);
+    setFsaMsg('');
+    try {
+      const handle = await selectOpfsFolder();
+      if (handle) {
+        setFsaFolderName('Almacenamiento interno (OPFS)');
+        setActiveFolderType('opfs');
+        setFsaMsg('✓ Almacenamiento interno activado. Los nuevos PDFs se guardarán aquí sin límite de quota.');
+        await refreshStorageStatus();
+      }
+    } catch {
+      setFsaMsg('Error activando el almacenamiento interno. Prueba con Chrome 86+.');
+    } finally {
+      setActivatingOpfs(false);
     }
   };
 
@@ -808,6 +837,73 @@ export function SettingsPage() {
           )}
         </Card>
 
+        {/* Anki Import */}
+        <Card>
+          <h2 className="font-display text-base text-ink-200 mb-2">Importar desde Anki</h2>
+          <p className="text-xs text-ink-500 mb-3">
+            Importa tarjetas desde un archivo .tsv exportado de Anki. Las tarjetas se crearán como preguntas de tipo Desarrollo en la asignatura que elijas.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Select
+              value={exportSubjectId}
+              onChange={(e) => setExportSubjectId(e.target.value)}
+            >
+              <option value="">Selecciona una asignatura...</option>
+              {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </Select>
+            <label className={`cursor-pointer inline-flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors ${exportSubjectId ? 'border-amber-500/40 text-amber-400 hover:bg-amber-500/10' : 'border-ink-700 text-ink-600 cursor-not-allowed'}`}>
+              <input
+                type="file"
+                accept=".tsv,.txt"
+                disabled={!exportSubjectId}
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file || !exportSubjectId) return;
+                  e.target.value = '';
+                  try {
+                    const text = await file.text();
+                    const cards = parseAnkiTsv(text);
+                    if (cards.length === 0) {
+                      setAnkiImportMsg('No se encontraron tarjetas válidas en el archivo.');
+                      return;
+                    }
+                    // Get first topic of subject to assign
+                    const topics = await db.topics.where('subjectId').equals(exportSubjectId).toArray();
+                    const topicId = topics[0]?.id;
+                    if (!topicId) {
+                      setAnkiImportMsg('La asignatura debe tener al menos un tema para importar.');
+                      return;
+                    }
+                    let count = 0;
+                    for (const card of cards) {
+                      // Use the store's createQuestion function
+                      await createQuestion({
+                        subjectId: exportSubjectId,
+                        topicId,
+                        type: 'DESARROLLO',
+                        prompt: card.front,
+                        modelAnswer: card.back,
+                        tags: card.tags.length > 0 ? card.tags : undefined,
+                      });
+                      count++;
+                    }
+                    setAnkiImportMsg(`✓ ${count} tarjetas importadas como preguntas de Desarrollo.`);
+                  } catch (err) {
+                    setAnkiImportMsg('Error: ' + String(err));
+                  }
+                }}
+              />
+              📥 Seleccionar archivo .tsv de Anki
+            </label>
+            {ankiImportMsg && (
+              <p className={`text-xs ${ankiImportMsg.startsWith('✓') ? 'text-sage-400' : 'text-rose-400'}`}>
+                {ankiImportMsg}
+              </p>
+            )}
+          </div>
+        </Card>
+
         {importHistory.length > 0 && (
   <Card>
     <h2 className="font-display text-base text-ink-200 mb-1">Historial de importaciones</h2>
@@ -935,43 +1031,33 @@ export function SettingsPage() {
             )}
           </div>
 
-          {/* File System Access API */}
+          {/* File System Access API / OPFS */}
           <div className="flex flex-col gap-3">
             <div>
-              <p className="text-sm text-ink-300 font-medium">Carpeta de disco para archivos</p>
+              <p className="text-sm text-ink-300 font-medium">Almacenamiento externo para archivos</p>
               <p className="text-xs text-ink-500 mt-0.5">
-                Guarda PDFs y recursos directamente en una carpeta de tu ordenador.
-                Sin límite de quota. Requiere Chrome, Edge o Brave 86+.
+                Guarda PDFs fuera de IndexedDB para evitar el límite de quota del navegador.
+                En escritorio elige una carpeta del disco; en móvil se usa el almacenamiento interno de la app.
               </p>
             </div>
 
-            {!fsaSupported ? (
-              <div className="px-3 py-2 bg-ink-800 border border-ink-700 rounded-lg flex flex-col gap-1.5">
-                <p className="text-xs text-ink-400 font-medium">
-                  File System Access API no disponible en este navegador
-                </p>
-                <p className="text-xs text-ink-500">
-                  Si usas <strong className="text-ink-400">Brave</strong>, la protección anti-huella digital bloquea esta API.
-                  Para activarla: haz clic en el icono de Brave Shields (🦁) en la barra de direcciones →
-                  cambia <em>Fingerprinting</em> a <strong className="text-ink-400">"Allow all fingerprinting"</strong> para esta página → recarga.
-                </p>
-                <p className="text-xs text-ink-500">
-                  En otros navegadores, usa Chrome o Edge 86+.
-                </p>
-              </div>
-            ) : fsaFolderName ? (
+            {fsaFolderName ? (
+              /* ── Carpeta / OPFS activo ──────────────────────────────────── */
               <div className="flex flex-col gap-3">
-                {/* Carpeta activa */}
                 <div className="flex items-center gap-3 px-3 py-2.5 bg-sage-600/10 border border-sage-600/20 rounded-lg">
-                  <span className="text-sage-400 text-base">📁</span>
+                  <span className="text-sage-400 text-base">{activeFolderType === 'opfs' ? '📱' : '📁'}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-sage-300 font-medium truncate">{fsaFolderName}</p>
-                    <p className="text-xs text-ink-500">Los nuevos archivos se guardan en esta carpeta</p>
+                    <p className="text-xs text-ink-500">
+                      {activeFolderType === 'opfs'
+                        ? 'Almacenamiento privado de la app — sin límite de quota del navegador'
+                        : 'Los nuevos archivos se guardan en esta carpeta del disco'}
+                    </p>
                   </div>
                   <button
                     onClick={handleClearFolder}
                     className="text-xs text-ink-500 hover:text-rose-400 transition-colors flex-shrink-0"
-                    title="Desconectar carpeta"
+                    title="Desconectar"
                   >
                     Desconectar
                   </button>
@@ -980,7 +1066,7 @@ export function SettingsPage() {
                 {/* Migración */}
                 <div className="flex flex-col gap-2">
                   <p className="text-xs text-ink-500">
-                    ¿Tienes PDFs en IndexedDB? Muévelos al disco para liberar quota.
+                    ¿Tienes PDFs en IndexedDB? Muévelos para liberar quota.
                   </p>
                   <Button
                     size="sm"
@@ -989,7 +1075,7 @@ export function SettingsPage() {
                     loading={migrating}
                     disabled={migrating}
                   >
-                    📦 Migrar archivos de IndexedDB al disco
+                    📦 Migrar archivos de IndexedDB
                   </Button>
                   {migrationResult && (
                     <p className="text-xs text-ink-400">
@@ -1000,7 +1086,8 @@ export function SettingsPage() {
                   )}
                 </div>
               </div>
-            ) : (
+            ) : fsaSupported ? (
+              /* ── FSA disponible (escritorio) ────────────────────────────── */
               <div className="flex flex-col gap-2">
                 <Button
                   size="sm"
@@ -1014,6 +1101,39 @@ export function SettingsPage() {
                 <p className="text-xs text-ink-600">
                   Se pedirá permiso de lectura/escritura. El permiso se renueva automáticamente
                   en Chrome cada vez que abres la app.
+                </p>
+              </div>
+            ) : opfsSupported ? (
+              /* ── Solo OPFS disponible (Android / Firefox / Safari) ─────── */
+              <div className="flex flex-col gap-3">
+                <div className="px-3 py-2.5 bg-sky-500/10 border border-sky-500/20 rounded-lg">
+                  <p className="text-xs text-sky-300 font-medium mb-1">📱 Almacenamiento interno disponible</p>
+                  <p className="text-xs text-ink-400">
+                    En Android Chrome no es posible elegir una carpeta del sistema, pero puedes activar
+                    el <strong className="text-sky-300">almacenamiento interno de la app</strong> (OPFS).
+                    Los PDFs se guardarán en el almacenamiento privado del navegador, sin límite de quota
+                    y sin necesidad de permisos extra. Los archivos no son visibles en el explorador de archivos del sistema.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleActivateOpfs}
+                  loading={activatingOpfs}
+                  disabled={activatingOpfs}
+                >
+                  📱 Activar almacenamiento interno
+                </Button>
+              </div>
+            ) : (
+              /* ── Ninguna API disponible ──────────────────────────────────── */
+              <div className="px-3 py-2 bg-ink-800 border border-ink-700 rounded-lg flex flex-col gap-1.5">
+                <p className="text-xs text-ink-400 font-medium">
+                  Almacenamiento externo no disponible en este navegador
+                </p>
+                <p className="text-xs text-ink-500">
+                  Si usas <strong className="text-ink-400">Brave</strong>, desactiva temporalmente Shields para esta página.
+                  En otros navegadores usa Chrome o Edge 86+.
                 </p>
               </div>
             )}

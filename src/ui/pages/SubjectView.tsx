@@ -161,6 +161,8 @@ export function SubjectView() {
   // C2: Selection mode for selective export
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // Question list view mode (card vs compact list)
+  const [questionView, setQuestionView] = useState<'card' | 'list'>('card');
   // PDF export modal
   const [pdfExportOpen, setPdfExportOpen] = useState(false);
   // Contribution pack export modal
@@ -205,6 +207,10 @@ export function SubjectView() {
   const [viewPdfUrl, setViewPdfUrl] = useState<string | null>(null);
   const topicPdfViewerRef = useRef<PdfViewerHandle>(null);
   const activeObjectUrlRef = useRef<string | null>(null);
+
+  // PDF text selection → create question
+  const [pdfSelectedText, setPdfSelectedText] = useState<string>('');
+  const [createFromPdf, setCreateFromPdf] = useState(false);
 
   // Resources tab state
   const [resources, setResources] = useState<ResourceCategory[]>([]);
@@ -807,7 +813,11 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <StatsSummary seen={totalStats.seen} correct={totalStats.correct} wrong={totalStats.wrong} />
-              <Button size="sm" onClick={() => { setEditingQuestion(null); setQuestionModal(true); }}>+ Nueva pregunta</Button>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant={questionView === 'card' ? 'primary' : 'ghost'} onClick={() => setQuestionView('card')} title="Vista tarjeta">⊟</Button>
+                <Button size="sm" variant={questionView === 'list' ? 'primary' : 'ghost'} onClick={() => setQuestionView('list')} title="Vista lista densa">≡</Button>
+                <Button size="sm" onClick={() => { setEditingQuestion(null); setQuestionModal(true); }}>+ Nueva pregunta</Button>
+              </div>
             </div>
             {subjectQuestions.length > 0 && (
               <div className="flex flex-col gap-3">
@@ -940,6 +950,35 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               <EmptyState icon={<span>❓</span>} title="Sin preguntas" description="Añade preguntas para empezar a practicar" />
             ) : filteredQuestions.length === 0 ? (
               <EmptyState icon={<span>🔍</span>} title="Sin resultados" description="Prueba otros filtros" />
+            ) : questionView === 'list' ? (
+              <div className="flex flex-col gap-0.5">
+                {filteredQuestions.map((q) => {
+                  const topic = subjectTopics.find((t) => t.id === q.topicId);
+                  return (
+                    <div
+                      key={q.id}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-ink-700 hover:bg-ink-800/40 cursor-pointer transition-all text-sm group ${selectMode && selectedIds.has(q.id) ? 'bg-amber-500/10 border-amber-500/30' : ''}`}
+                      onClick={() => selectMode ? setSelectedIds((prev) => { const next = new Set(prev); next.has(q.id) ? next.delete(q.id) : next.add(q.id); return next; }) : setPreviewQuestion(q)}
+                    >
+                      {selectMode && (
+                        <input type="checkbox" checked={selectedIds.has(q.id)} onChange={() => {}} className="accent-amber-500 flex-shrink-0" onClick={(e) => e.stopPropagation()} />
+                      )}
+                      <TypeBadge type={q.type} />
+                      {topic && <span className="text-xs text-ink-500 flex-shrink-0 hidden sm:inline">{topic.title}</span>}
+                      <p className="flex-1 truncate text-ink-200">{q.prompt}</p>
+                      {q.starred && <span className="text-amber-400 text-xs flex-shrink-0">★</span>}
+                      {q.notes && <span className="text-xs text-ink-600 flex-shrink-0">📝</span>}
+                      <span className="text-xs text-ink-600 flex-shrink-0 hidden sm:inline">
+                        {q.stats.seen > 0 ? `${Math.round(q.stats.correct / q.stats.seen * 100)}%` : '–'}
+                      </span>
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 flex-shrink-0">
+                        <button onClick={(e) => { e.stopPropagation(); setEditingQuestion(q); setQuestionModal(true); }} className="text-xs text-ink-600 hover:text-amber-400 px-1">✎</button>
+                        <button onClick={(e) => { e.stopPropagation(); if (confirm('¿Eliminar?')) deleteQuestion(q.id); }} className="text-xs text-rose-600 hover:text-rose-400 px-1">✕</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
               <div className="flex flex-col gap-2">
                 {filteredQuestions.map((q) => {
@@ -1376,6 +1415,10 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               pdfList={[viewPdfTopic?.pdfFilename ?? '']}
               getPdfUrl={() => viewPdfUrl}
               initialPage={1}
+              onTextSelected={(text) => {
+                setPdfSelectedText(text);
+                setCreateFromPdf(true);
+              }}
             />
           </div>
         )}
@@ -1426,7 +1469,14 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                 <span className="text-xs text-ink-500">{'★'.repeat(previewQuestion.difficulty)}</span>
               )}
             </div>
-            <QuestionPreviewContent question={previewQuestion} />
+            <QuestionPreviewContent
+              question={previewQuestion}
+              onExplanationGenerated={(explanation) => {
+                setPreviewQuestion((q) =>
+                  q ? { ...q, explanation } : null
+                );
+              }}
+            />
             <div className="flex justify-end gap-2 pt-2 border-t border-ink-800">
               <Button
                 size="sm"
@@ -1445,6 +1495,33 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               
             </div>
           </div>
+        </Modal>
+      )}
+
+      {/* Modal crear pregunta desde texto seleccionado en PDF */}
+      {createFromPdf && pdfSelectedText && (
+        <Modal open onClose={() => { setCreateFromPdf(false); setPdfSelectedText(''); }} title="Crear pregunta desde texto seleccionado">
+          <div className="mb-3 p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+            <p className="text-xs text-amber-600 mb-1">Texto seleccionado:</p>
+            <p className="text-sm text-ink-300 line-clamp-3">{pdfSelectedText}</p>
+          </div>
+          <QuestionForm
+            subjectId={subjectId!}
+            topics={topics.filter((t) => t.subjectId === subjectId)}
+            initial={{
+              subjectId: subjectId!,
+              topicId: viewPdfTopic?.id ?? topics.find((t) => t.subjectId === subjectId)?.id ?? '',
+              type: 'DESARROLLO',
+              prompt: pdfSelectedText,
+              stats: { seen: 0, correct: 0, wrong: 0 },
+            } as any}
+            onSave={async (data) => {
+              await createQuestion(data);
+              setCreateFromPdf(false);
+              setPdfSelectedText('');
+            }}
+            onCancel={() => { setCreateFromPdf(false); setPdfSelectedText(''); }}
+          />
         </Modal>
       )}
 

@@ -145,3 +145,79 @@ export async function extractFileContent(
 
   throw new Error(`Formato de archivo no soportado: .${ext} (${mime})`);
 }
+
+// ─── Explanation generation ──────────────────────────────────────────────────
+
+/**
+ * Genera una explicación para una pregunta de tipo TEST usando el proveedor de IA activo.
+ * Devuelve el texto de la explicación, o lanza un error si falla.
+ */
+export async function generateExplanation(question: {
+  prompt: string;
+  options?: QuestionOption[];
+  correctOptionIds?: string[];
+  modelAnswer?: string;
+  type: string;
+}): Promise<string> {
+  const settings = await getSettings();
+  const ai = settings.aiSettings;
+  if (!ai) throw new Error('No hay configuración de IA configurada.');
+
+  let questionContext = `Pregunta: ${question.prompt}\n`;
+
+  if (question.type === 'TEST' && question.options && question.options.length > 0) {
+    questionContext += '\nOpciones:\n';
+    question.options.forEach((opt, i) => {
+      const isCorrect = (question.correctOptionIds ?? []).includes(opt.id);
+      questionContext += `${String.fromCharCode(65 + i)}) ${opt.text}${isCorrect ? ' ✓ (correcta)' : ''}\n`;
+    });
+  }
+
+  if (question.modelAnswer) {
+    questionContext += `\nRespuesta modelo: ${question.modelAnswer}`;
+  }
+
+  const prompt = `Eres un profesor experto. Genera una explicación concisa (2-4 frases) para la siguiente pregunta de estudio. La explicación debe aclarar POR QUÉ la respuesta correcta es correcta y, si aplica, por qué las otras opciones son incorrectas. Responde SOLO con el texto de la explicación, sin preámbulos ni formato extra.
+
+${questionContext}
+
+Explicación:`;
+
+  if (ai.provider === 'openai' && ai.openaiApiKey) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ai.openaiApiKey}` },
+      body: JSON.stringify({
+        model: ai.openaiModel ?? 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 300,
+        temperature: 0.3,
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message ?? 'Error de OpenAI');
+    return data.choices[0].message.content.trim();
+  }
+
+  if (ai.provider === 'anthropic' && ai.anthropicApiKey) {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ai.anthropicApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: ai.anthropicModel ?? 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message ?? 'Error de Anthropic');
+    return data.content[0].text.trim();
+  }
+
+  throw new Error('Proveedor de IA no compatible con esta función. Usa OpenAI o Anthropic.');
+}
