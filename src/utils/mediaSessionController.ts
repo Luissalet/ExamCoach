@@ -58,6 +58,13 @@ function isMediaSessionSupported(): boolean {
 export function createMediaSessionController(): MediaSessionController {
   const supported = isMediaSessionSupported();
 
+  // Construir URLs absolutas para artwork — las relativas pueden no resolver
+  // correctamente en Android cuando la app está en segundo plano o en la
+  // pantalla de bloqueo, causando que la notificación no muestre la imagen.
+  const base = document.baseURI || window.location.origin + '/';
+  const artwork192 = new URL('pwa-192x192.png', base).href;
+  const artwork512 = new URL('pwa-512x512.png', base).href;
+
   return {
     updateMetadata(info: MediaSessionMetadata) {
       if (!supported) return;
@@ -67,8 +74,8 @@ export function createMediaSessionController(): MediaSessionController {
           artist: info.artist ?? 'ExamCoach',
           album: info.album ?? '',
           artwork: [
-            { src: './pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-            { src: './pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+            { src: artwork192, sizes: '192x192', type: 'image/png' },
+            { src: artwork512, sizes: '512x512', type: 'image/png' },
           ],
         });
       } catch {

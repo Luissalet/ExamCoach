@@ -29,6 +29,8 @@ export interface TtsCallbacks {
   onFinish?: () => void;
   onError?: (error: string) => void;
   onStateChange?: (state: TtsState) => void;
+  /** Progreso de síntesis (para motores que pre-sintetizan todo el audio) */
+  onSynthesisProgress?: (current: number, total: number) => void;
 }
 
 export type TtsState = 'idle' | 'playing' | 'paused' | 'loading';

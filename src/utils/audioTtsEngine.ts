@@ -2,28 +2,36 @@
  * audioTtsEngine.ts
  *
  * Motor TTS basado en Piper (VITS neural) ejecutado 100% en el navegador.
- * Genera audio WAV de alta calidad y lo reproduce a través de un <audio> element.
  *
- * Esto permite:
- *   - Reproducción en segundo plano en Android (tab se mantiene vivo)
- *   - Notificación de media con controles play/pause/next/prev
- *   - Voces naturales (no robóticas)
- *   - Funciona offline tras la primera carga del modelo
+ * ARQUITECTURA: SINGLE-TRACK (como Spotify)
  *
- * Estrategia:
- *   - Cada bloque de texto se sintetiza con Piper → WAV Blob
- *   - El WAV se reproduce vía blob URL → <audio>.src → audio.play()
- *   - PRE-BUFFERING: Mientras bloque N suena, bloque N+1 se sintetiza en paralelo
- *   - Cuando termina bloque N, bloque N+1 se reproduce INMEDIATAMENTE (sin gap)
- *   - Esto es CRÍTICO en Android: si el <audio> deja de sonar entre bloques,
- *     Android mata el tab en segundo plano y la notificación desaparece
- *   - La velocidad se controla con audio.playbackRate
+ * Problema resuelto:
+ *   Android 16 (Pixel, Chrome) mata tabs en segundo plano de forma MUY agresiva.
+ *   Cualquier micro-gap entre bloques de audio (incluso microsegundos) causa que
+ *   Android considere que "no hay audio" y mate el tab. Esto pasa con:
+ *     - Un solo <audio> cambiando src entre bloques
+ *     - Dos <audio> alternando (double-buffer)
+ *     - Early transition con overlap
+ *     - Keepalive con AudioContext/WAV silencioso
+ *
+ * Solución:
+ *   1. Pre-sintetizar TODOS los bloques de texto a WAV (con barra de progreso)
+ *   2. Concatenar todos los WAV en UN SOLO archivo WAV continuo
+ *   3. Reproducir con UN SOLO <audio> element — exactamente como Spotify
+ *   4. Rastrear el bloque actual via timestamps (blockBoundaries)
+ *
+ * Resultado:
+ *   - Cero gaps → Android nunca ve "sin audio" → no mata el tab
+ *   - Un solo <audio> → MediaSession funciona perfecto (notificación + controles)
+ *   - Seeking nativo → skip/next/prev via audio.currentTime
+ *   - Rate nativo → audio.playbackRate
+ *   - Sin hacks → no keepalive, no double-buffer, no early transition
  */
 
 import {
   initPiperTts,
   isPiperReady,
-  synthesizeToBlobUrl,
+  synthesizeToBlob,
   DEFAULT_VOICE_ID,
   SPANISH_VOICES,
 } from './piperTts';
@@ -36,22 +44,244 @@ import type { TtsCallbacks, TtsEngine, TtsState, TtsVoiceInfo } from './ttsEngin
 
 export interface AudioTtsEngineOptions {
   keepalive?: AudioKeepaliveManager;
-  /**
-   * Callback invocado si Piper TTS no funciona (WASM no carga, modelo falla, etc.)
-   * Permite hacer fallback a speechSynthesis.
-   */
   onSynthesisFailed?: (errorDetail?: string) => void;
-  /**
-   * Callback de progreso de descarga del modelo.
-   * Se invoca durante la primera carga (o al cambiar de voz).
-   */
   onModelProgress?: ProgressCallback;
-  /**
-   * Metadata para la notificación de media (Android).
-   */
   mediaTitle?: string;
   mediaArtist?: string;
+  /**
+   * Función que devuelve la clave de caché actual para el WAV concatenado.
+   * Se llama en cada speak() para obtener la clave dinámica.
+   * Si devuelve null/undefined, no se cachea.
+   * Típicamente: `${pdfHash}:${voiceId}`.
+   */
+  getCacheKey?: () => string | null | undefined;
 }
+
+// ─── WAV Cache (IndexedDB) ───────────────────────────────────────────────────────
+
+const WAV_CACHE_DB = 'audio-tts-wav-cache';
+const WAV_CACHE_STORE = 'wavs';
+const WAV_CACHE_VERSION = 1;
+
+interface CachedWavEntry {
+  wav: Blob;
+  blockBoundaries: number[];
+  blockCount: number;
+  voiceId: string;
+  createdAt: number;
+}
+
+function openWavCacheDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(WAV_CACHE_DB, WAV_CACHE_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(WAV_CACHE_STORE)) {
+        db.createObjectStore(WAV_CACHE_STORE);
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function wavCacheGet(key: string): Promise<CachedWavEntry | undefined> {
+  try {
+    const db = await openWavCacheDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(WAV_CACHE_STORE, 'readonly');
+      const store = tx.objectStore(WAV_CACHE_STORE);
+      const req = store.get(key);
+      req.onsuccess = () => resolve(req.result ?? undefined);
+      req.onerror = () => resolve(undefined);
+    });
+  } catch {
+    return undefined;
+  }
+}
+
+async function wavCachePut(key: string, entry: CachedWavEntry): Promise<void> {
+  try {
+    const db = await openWavCacheDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(WAV_CACHE_STORE, 'readwrite');
+      const store = tx.objectStore(WAV_CACHE_STORE);
+      const req = store.put(entry, key);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {
+    console.warn('[AudioTTS] WAV cache write failed:', e);
+  }
+}
+
+/** Genera un hash simple de los textos para usar como clave de caché */
+export async function hashBlockTexts(texts: string[]): Promise<string> {
+  const combined = texts.join('\n');
+  const encoded = new TextEncoder().encode(combined);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+}
+
+// ─── WAV utilities ──────────────────────────────────────────────────────────────
+
+/** Información extraída del header WAV */
+interface WavInfo {
+  sampleRate: number;
+  numChannels: number;
+  bitsPerSample: number;
+  /** Offset donde empiezan los datos PCM */
+  dataOffset: number;
+  /** Tamaño de los datos PCM en bytes */
+  dataSize: number;
+  /** Duración en segundos */
+  duration: number;
+}
+
+/** Lee el header de un WAV y extrae metadata + ubicación de datos PCM */
+function parseWavHeader(buffer: ArrayBuffer): WavInfo | null {
+  if (buffer.byteLength < 44) return null;
+  const view = new DataView(buffer);
+
+  // Verificar RIFF header
+  const riff =
+    String.fromCharCode(view.getUint8(0)) +
+    String.fromCharCode(view.getUint8(1)) +
+    String.fromCharCode(view.getUint8(2)) +
+    String.fromCharCode(view.getUint8(3));
+  if (riff !== 'RIFF') return null;
+
+  const numChannels = view.getUint16(22, true);
+  const sampleRate = view.getUint32(24, true);
+  const bitsPerSample = view.getUint16(34, true);
+
+  // Buscar el chunk "data" (puede no estar en offset 36 si hay chunks extra)
+  let offset = 12; // después de "RIFF" + size + "WAVE"
+  while (offset < buffer.byteLength - 8) {
+    const chunkId =
+      String.fromCharCode(view.getUint8(offset)) +
+      String.fromCharCode(view.getUint8(offset + 1)) +
+      String.fromCharCode(view.getUint8(offset + 2)) +
+      String.fromCharCode(view.getUint8(offset + 3));
+    const chunkSize = view.getUint32(offset + 4, true);
+
+    if (chunkId === 'data') {
+      const bytesPerSample = bitsPerSample / 8;
+      const duration = chunkSize / (sampleRate * numChannels * bytesPerSample);
+      return {
+        sampleRate,
+        numChannels,
+        bitsPerSample,
+        dataOffset: offset + 8,
+        dataSize: chunkSize,
+        duration,
+      };
+    }
+
+    // Siguiente chunk (alineado a 2 bytes)
+    offset += 8 + chunkSize;
+    if (chunkSize % 2 !== 0) offset++;
+  }
+
+  return null;
+}
+
+/**
+ * Concatena múltiples WAV blobs en UN SOLO WAV continuo.
+ * Devuelve el WAV concatenado y las duraciones individuales de cada bloque.
+ *
+ * REQUISITO: Todos los WAV deben tener el mismo sampleRate, channels, bitsPerSample.
+ * (Piper siempre genera con el mismo formato para una voz dada.)
+ */
+async function concatWavBlobs(
+  blobs: Blob[],
+): Promise<{ wav: Blob; durations: number[] } | null> {
+  if (blobs.length === 0) return null;
+
+  const buffers: ArrayBuffer[] = [];
+  for (const blob of blobs) {
+    buffers.push(await blob.arrayBuffer());
+  }
+
+  // Parsear headers para obtener metadata y PCM data
+  const infos: WavInfo[] = [];
+  for (const buf of buffers) {
+    const info = parseWavHeader(buf);
+    if (!info) return null;
+    infos.push(info);
+  }
+
+  // Usar formato del primer bloque como referencia
+  const ref = infos[0];
+  const { sampleRate, numChannels, bitsPerSample } = ref;
+
+  // Calcular tamaño total de PCM
+  let totalPcmSize = 0;
+  const durations: number[] = [];
+  for (const info of infos) {
+    totalPcmSize += info.dataSize;
+    durations.push(info.duration);
+  }
+
+  // Crear WAV concatenado
+  const headerSize = 44;
+  const totalSize = headerSize + totalPcmSize;
+  const output = new ArrayBuffer(totalSize);
+  const view = new DataView(output);
+
+  // Escribir header WAV
+  const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+  const blockAlign = numChannels * (bitsPerSample / 8);
+
+  // RIFF header
+  writeStr(view, 0, 'RIFF');
+  view.setUint32(4, totalSize - 8, true);
+  writeStr(view, 8, 'WAVE');
+
+  // fmt chunk
+  writeStr(view, 12, 'fmt ');
+  view.setUint32(16, 16, true); // chunk size
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+
+  // data chunk
+  writeStr(view, 36, 'data');
+  view.setUint32(40, totalPcmSize, true);
+
+  // Copiar PCM de cada bloque
+  const outputBytes = new Uint8Array(output);
+  let writeOffset = headerSize;
+  for (let i = 0; i < buffers.length; i++) {
+    const srcBytes = new Uint8Array(buffers[i]);
+    const info = infos[i];
+    outputBytes.set(
+      srcBytes.subarray(info.dataOffset, info.dataOffset + info.dataSize),
+      writeOffset,
+    );
+    writeOffset += info.dataSize;
+  }
+
+  return {
+    wav: new Blob([output], { type: 'audio/wav' }),
+    durations,
+  };
+}
+
+function writeStr(view: DataView, offset: number, str: string) {
+  for (let i = 0; i < str.length; i++) {
+    view.setUint8(offset + i, str.charCodeAt(i));
+  }
+}
+
+// ─── Hidden audio element ───────────────────────────────────────────────────────
+
+const HIDDEN_STYLE =
+  'position:fixed;top:-9999px;left:-9999px;width:0;height:0;opacity:0;pointer-events:none';
 
 // ─── Implementation ─────────────────────────────────────────────────────────────
 
@@ -69,258 +299,288 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
   let synthFailReported = false;
   let voiceId: VoiceId = DEFAULT_VOICE_ID;
 
-  // Audio element para reproducción
-  const audio = new Audio();
+  // Un solo <audio> element — como Spotify
+  const audio = document.createElement('audio');
   audio.setAttribute('playsinline', '');
   audio.volume = 1.0;
+  audio.style.cssText = HIDDEN_STYLE;
+  document.body.appendChild(audio);
 
-  // URL del blob actual (para revocar cuando cambie)
-  let currentBlobUrl: string | null = null;
+  // URL del blob del WAV concatenado (para revocar)
+  let concatBlobUrl: string | null = null;
 
-  // ── Pre-buffer: sintetizar bloque N+1 mientras N suena ──────────────────
-  // Esto elimina el gap entre bloques que causa que Android mate el tab
-  let prefetchedBlobUrl: string | null = null;
-  let prefetchedBlockIdx: number = -1;
-  let prefetchPromise: Promise<void> | null = null;
+  // Boundaries: timestamps acumulados en segundos [0, 3.2, 7.5, ...]
+  let blockBoundaries: number[] = [];
 
-  function clearPrefetch() {
-    if (prefetchedBlobUrl) {
-      URL.revokeObjectURL(prefetchedBlobUrl);
-      prefetchedBlobUrl = null;
-    }
-    prefetchedBlockIdx = -1;
-    prefetchPromise = null;
-  }
+  // Control de síntesis (para poder cancelar)
+  let synthAborted = false;
 
-  /** Inicia la síntesis del siguiente bloque en background (fire-and-forget) */
-  function startPrefetch(nextIdx: number) {
-    if (destroyed) return;
-    if (nextIdx >= blocks.length) return;
-
-    const text = blocks[nextIdx];
-    if (!text || !text.trim()) return; // bloque vacío, no pre-fetch
-
-    // Si ya tenemos este bloque pre-fetched, no hacer nada
-    if (prefetchedBlockIdx === nextIdx && prefetchedBlobUrl) return;
-
-    // Limpiar prefetch anterior
-    if (prefetchedBlobUrl) {
-      URL.revokeObjectURL(prefetchedBlobUrl);
-      prefetchedBlobUrl = null;
-    }
-    prefetchedBlockIdx = nextIdx;
-
-    prefetchPromise = (async () => {
-      try {
-        const url = await synthesizeToBlobUrl(text);
-        if (destroyed || prefetchedBlockIdx !== nextIdx) {
-          // Estado cambió mientras sintetizábamos → descartar
-          if (url) URL.revokeObjectURL(url);
-          return;
-        }
-        prefetchedBlobUrl = url;
-        console.log(`[AudioTTS] Pre-buffered block ${nextIdx + 1}`);
-      } catch {
-        // No es fatal — playBlock sintetizará bajo demanda
-        console.warn(`[AudioTTS] Pre-buffer failed for block ${nextIdx + 1}`);
-      }
-    })();
-  }
-
-  // Timing
-  let blockStartTime = 0;
-
-  // ── Media Session (notificación de Android) ──────────────────────────────
-  // NOTA: NO creamos MediaMetadata aquí. La metadata (con artwork, etc.) la
-  // maneja mediaSessionController desde PdfListenMode. Aquí solo actualizamos
-  // el playbackState para que Android sepa si estamos playing/paused/none.
+  // ── Media Session ──────────────────────────────────────────────────────
 
   function updateMediaSession(playing: boolean) {
     if (!('mediaSession' in navigator)) return;
     try {
       navigator.mediaSession.playbackState = playing
         ? 'playing'
-        : (state === 'paused' ? 'paused' : 'none');
-    } catch { /* ignore */ }
-  }
-
-  // ── Helpers ──────────────────────────────────────────────────────────────
-
-  function revokePreviousBlob() {
-    if (currentBlobUrl) {
-      URL.revokeObjectURL(currentBlobUrl);
-      currentBlobUrl = null;
+        : state === 'paused'
+          ? 'paused'
+          : 'none';
+    } catch {
+      /* ignore */
     }
   }
 
-  // ── Playback ──────────────────────────────────────────────────────────────
+  // ── Block tracking via timeupdate ──────────────────────────────────────
 
-  async function playBlock(blockIdx: number) {
+  function findBlockAtTime(time: number): number {
+    // Búsqueda binaria en blockBoundaries
+    let lo = 0;
+    let hi = blockBoundaries.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (blockBoundaries[mid] <= time) {
+        lo = mid;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    return lo;
+  }
+
+  function onTimeUpdate() {
+    if (destroyed || state !== 'playing') return;
+    const newBlock = findBlockAtTime(audio.currentTime);
+    if (newBlock !== currentBlockIndex) {
+      // Reportar fin del bloque anterior
+      callbacks.onBlockEnd?.(currentBlockIndex);
+      // Reportar timing del bloque anterior
+      if (currentBlockIndex < blockBoundaries.length) {
+        const blockDuration =
+          currentBlockIndex < blockBoundaries.length - 1
+            ? blockBoundaries[currentBlockIndex + 1] - blockBoundaries[currentBlockIndex]
+            : audio.duration - blockBoundaries[currentBlockIndex];
+        const blockText = blocks[currentBlockIndex] || '';
+        callbacks.onBlockTiming?.(
+          currentBlockIndex,
+          blockDuration * 1000 / rate,
+          blockText.length,
+        );
+      }
+      currentBlockIndex = newBlock;
+      callbacks.onBlockStart?.(currentBlockIndex);
+    }
+  }
+
+  audio.addEventListener('timeupdate', onTimeUpdate);
+
+  audio.addEventListener('ended', () => {
     if (destroyed) return;
-
-    // ¿Ya terminamos todos los bloques?
-    if (blockIdx >= blocks.length) {
-      clearPrefetch();
-      finishPlayback();
-      return;
+    // Reportar fin del último bloque
+    callbacks.onBlockEnd?.(currentBlockIndex);
+    if (currentBlockIndex < blockBoundaries.length) {
+      const blockDuration =
+        currentBlockIndex < blockBoundaries.length - 1
+          ? blockBoundaries[currentBlockIndex + 1] - blockBoundaries[currentBlockIndex]
+          : audio.duration - blockBoundaries[currentBlockIndex];
+      const blockText = blocks[currentBlockIndex] || '';
+      callbacks.onBlockTiming?.(
+        currentBlockIndex,
+        blockDuration * 1000 / rate,
+        blockText.length,
+      );
     }
-
-    const text = blocks[blockIdx];
-
-    // Bloque vacío → saltar
-    if (!text || !text.trim()) {
-      callbacks.onBlockStart?.(blockIdx);
-      callbacks.onBlockEnd?.(blockIdx);
-      currentBlockIndex = blockIdx;
-      if ((state === 'playing' || state === 'loading') && !destroyed) {
-        playBlock(blockIdx + 1);
-      }
-      return;
-    }
-
-    // Notificar inicio del bloque
-    currentBlockIndex = blockIdx;
-    blockStartTime = performance.now();
-    callbacks.onBlockStart?.(blockIdx);
-
-    // ── Intentar usar el pre-buffer primero ──────────────────────────────
-    let blobUrl: string | null = null;
-
-    if (prefetchedBlockIdx === blockIdx && prefetchedBlobUrl) {
-      // Pre-buffer listo → usar inmediatamente (0 gap!)
-      blobUrl = prefetchedBlobUrl;
-      prefetchedBlobUrl = null; // transferir ownership
-      prefetchedBlockIdx = -1;
-      console.log(`[AudioTTS] Using pre-buffered block ${blockIdx + 1} (zero gap)`);
-    } else if (prefetchedBlockIdx === blockIdx && prefetchPromise) {
-      // Pre-buffer en progreso → esperar a que termine
-      console.log(`[AudioTTS] Waiting for pre-buffer of block ${blockIdx + 1}...`);
-      await prefetchPromise;
-      if (destroyed) return;
-      if (prefetchedBlockIdx === blockIdx && prefetchedBlobUrl) {
-        blobUrl = prefetchedBlobUrl;
-        prefetchedBlobUrl = null;
-        prefetchedBlockIdx = -1;
-      }
-    }
-
-    // Si no hay pre-buffer, sintetizar bajo demanda
-    if (!blobUrl) {
-      console.log(`[AudioTTS] Synthesizing block ${blockIdx + 1} on demand (no pre-buffer)`);
-      blobUrl = await synthesizeToBlobUrl(text);
-    }
-
-    if (destroyed) return;
-
-    if (!blobUrl) {
-      // Síntesis falló
-      if (!synthFailReported && blockIdx === 0 && onSynthesisFailed) {
-        synthFailReported = true;
-        state = 'idle';
-        keepalive?.stop();
-        callbacks.onStateChange?.('idle');
-        onSynthesisFailed();
-        return;
-      }
-
-      // Saltar bloque fallido
-      callbacks.onError?.(`Error sintetizando bloque ${blockIdx + 1}`);
-      callbacks.onBlockEnd?.(blockIdx);
-      playBlock(blockIdx + 1);
-      return;
-    }
-
-    // Revocar blob anterior y reproducir el nuevo
-    revokePreviousBlob();
-    currentBlobUrl = blobUrl;
-    audio.src = blobUrl;
-    audio.playbackRate = rate;
-
-    try {
-      await audio.play();
-      if (destroyed) return;
-      if (state === 'loading') {
-        state = 'playing';
-        callbacks.onStateChange?.('playing');
-      }
-      // Activar notificación de media (Android)
-      updateMediaSession(true);
-
-      // ── CLAVE: iniciar pre-buffer del SIGUIENTE bloque AHORA ──────
-      // Mientras este bloque suena, sintetizamos el siguiente en paralelo.
-      // Cuando audio.onended dispare, el siguiente ya estará listo → 0 gap.
-      startPrefetch(blockIdx + 1);
-
-    } catch (err) {
-      if (destroyed) return;
-      console.warn('[AudioTTS] Error playing block:', err);
-
-      if (!synthFailReported && blockIdx === 0 && onSynthesisFailed) {
-        synthFailReported = true;
-        audio.pause();
-        revokePreviousBlob();
-        state = 'idle';
-        keepalive?.stop();
-        callbacks.onStateChange?.('idle');
-        onSynthesisFailed();
-        return;
-      }
-
-      callbacks.onError?.(`Error reproduciendo bloque ${blockIdx + 1}`);
-      callbacks.onBlockEnd?.(blockIdx);
-      playBlock(blockIdx + 1);
-    }
-  }
-
-  function finishPlayback() {
-    revokePreviousBlob();
+    // Finished
     state = 'idle';
     currentBlockIndex = 0;
     keepalive?.stop();
     updateMediaSession(false);
     callbacks.onFinish?.();
     callbacks.onStateChange?.('idle');
-  }
+  });
 
-  // ── Audio element events ──────────────────────────────────────────────────
+  // ── Synthesis + concatenation + playback ───────────────────────────────
 
-  audio.onended = () => {
-    if (destroyed) return;
-    if (state !== 'playing') return;
-
-    // Bloque terminado → reportar timing y avanzar
-    const elapsed = performance.now() - blockStartTime;
-    const text = blocks[currentBlockIndex] || '';
-    callbacks.onBlockTiming?.(currentBlockIndex, elapsed, text.length);
-    callbacks.onBlockEnd?.(currentBlockIndex);
-
-    // Siguiente bloque — si pre-buffer está listo, será instantáneo
-    playBlock(currentBlockIndex + 1);
-  };
-
-  audio.onerror = () => {
+  async function synthesizeAndPlay() {
     if (destroyed) return;
 
-    if (!synthFailReported && currentBlockIndex === 0 && onSynthesisFailed) {
-      synthFailReported = true;
-      audio.pause();
-      revokePreviousBlob();
-      state = 'idle';
-      keepalive?.stop();
-      callbacks.onStateChange?.('idle');
-      onSynthesisFailed();
+    // ── Intentar cargar desde caché ──────────────────────────────────────
+    const cacheKey = options?.getCacheKey?.() ?? null;
+    if (cacheKey) {
+      try {
+        const cached = await wavCacheGet(cacheKey);
+        if (cached && cached.blockCount === blocks.length && cached.voiceId === voiceId) {
+          console.log('[AudioTTS] WAV loaded from cache:', cacheKey);
+          if (synthAborted || destroyed) return;
+
+          // Usar datos cacheados directamente
+          blockBoundaries = cached.blockBoundaries;
+
+          if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
+          concatBlobUrl = URL.createObjectURL(cached.wav);
+
+          // Reportar progreso completo inmediatamente
+          callbacks.onSynthesisProgress?.(blocks.length, blocks.length);
+
+          return await startPlayback();
+        }
+      } catch (err) {
+        console.warn('[AudioTTS] Cache read failed, synthesizing fresh:', err);
+      }
+    }
+
+    // ── Sintetizar TODOS los bloques ─────────────────────────────────────
+    const wavBlobs: Blob[] = [];
+
+    for (let i = 0; i < blocks.length; i++) {
+      if (synthAborted || destroyed) return;
+
+      const text = blocks[i];
+      if (!text || !text.trim()) {
+        // Bloque vacío — generar 200ms de silencio para mantener el mapeo
+        const silenceBlob = createSilenceWav(0.2);
+        wavBlobs.push(silenceBlob);
+        callbacks.onSynthesisProgress?.(i + 1, blocks.length);
+        continue;
+      }
+
+      try {
+        const blob = await synthesizeToBlob(text);
+        if (synthAborted || destroyed) return;
+
+        if (!blob) {
+          if (i === 0 && !synthFailReported && onSynthesisFailed) {
+            synthFailReported = true;
+            state = 'idle';
+            keepalive?.stop();
+            callbacks.onStateChange?.('idle');
+            onSynthesisFailed('First block synthesis returned null');
+            return;
+          }
+          wavBlobs.push(createSilenceWav(0.5));
+          callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
+        } else {
+          wavBlobs.push(blob);
+        }
+      } catch (err) {
+        if (synthAborted || destroyed) return;
+        if (i === 0 && !synthFailReported && onSynthesisFailed) {
+          synthFailReported = true;
+          state = 'idle';
+          keepalive?.stop();
+          callbacks.onStateChange?.('idle');
+          onSynthesisFailed(
+            `Synthesis error: ${err instanceof Error ? err.message : String(err)}`,
+          );
+          return;
+        }
+        wavBlobs.push(createSilenceWav(0.5));
+        callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
+      }
+
+      callbacks.onSynthesisProgress?.(i + 1, blocks.length);
+    }
+
+    if (synthAborted || destroyed) return;
+
+    // ── Concatenar en un solo WAV ────────────────────────────────────────
+    const result = await concatWavBlobs(wavBlobs);
+    if (!result || synthAborted || destroyed) {
+      if (!synthFailReported && onSynthesisFailed) {
+        synthFailReported = true;
+        state = 'idle';
+        keepalive?.stop();
+        callbacks.onStateChange?.('idle');
+        onSynthesisFailed('WAV concatenation failed');
+      }
       return;
     }
 
-    callbacks.onError?.(`Error de audio en bloque ${currentBlockIndex + 1}`);
-    callbacks.onBlockEnd?.(currentBlockIndex);
-
-    if (currentBlockIndex < blocks.length - 1) {
-      playBlock(currentBlockIndex + 1);
-    } else {
-      finishPlayback();
+    // ── Calcular boundaries ──────────────────────────────────────────────
+    blockBoundaries = [];
+    let cumulative = 0;
+    for (const dur of result.durations) {
+      blockBoundaries.push(cumulative);
+      cumulative += dur;
     }
-  };
+
+    // ── Guardar en caché ─────────────────────────────────────────────────
+    if (cacheKey) {
+      wavCachePut(cacheKey, {
+        wav: result.wav,
+        blockBoundaries: [...blockBoundaries],
+        blockCount: blocks.length,
+        voiceId,
+        createdAt: Date.now(),
+      }).catch((err) => console.warn('[AudioTTS] Cache write failed:', err));
+    }
+
+    // ── Preparar para reproducir ─────────────────────────────────────────
+    if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
+    concatBlobUrl = URL.createObjectURL(result.wav);
+
+    await startPlayback();
+  }
+
+  /** Inicia la reproducción del WAV concatenado (ya preparado en concatBlobUrl) */
+  async function startPlayback() {
+    if (destroyed || synthAborted || !concatBlobUrl) return;
+
+    audio.src = concatBlobUrl;
+    audio.playbackRate = rate;
+    currentBlockIndex = 0;
+
+    try {
+      await audio.play();
+      if (destroyed || synthAborted) return;
+      state = 'playing';
+      callbacks.onStateChange?.('playing');
+      callbacks.onBlockStart?.(0);
+      updateMediaSession(true);
+    } catch (err) {
+      if (destroyed) return;
+      console.warn('[AudioTTS] Play failed:', err);
+      if (!synthFailReported && onSynthesisFailed) {
+        synthFailReported = true;
+        state = 'idle';
+        keepalive?.stop();
+        callbacks.onStateChange?.('idle');
+        onSynthesisFailed(`Play failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+  }
+
+  // ── Silence generator ──────────────────────────────────────────────────
+
+  /** Genera un WAV de silencio de la duración especificada (22050Hz, mono, 16-bit) */
+  function createSilenceWav(durationSec: number): Blob {
+    const sampleRate = 22050;
+    const numSamples = Math.round(sampleRate * durationSec);
+    const numChannels = 1;
+    const bitsPerSample = 16;
+    const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+    const blockAlign = numChannels * (bitsPerSample / 8);
+    const dataSize = numSamples * numChannels * (bitsPerSample / 8);
+    const headerSize = 44;
+    const buffer = new ArrayBuffer(headerSize + dataSize);
+    const view = new DataView(buffer);
+
+    writeStr(view, 0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeStr(view, 8, 'WAVE');
+    writeStr(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
+    writeStr(view, 36, 'data');
+    view.setUint32(40, dataSize, true);
+    // PCM data ya es 0 (silencio) por defecto en ArrayBuffer
+
+    return new Blob([buffer], { type: 'audio/wav' });
+  }
 
   // ── Public API ────────────────────────────────────────────────────────────
 
@@ -329,7 +589,10 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       return SPANISH_VOICES.map((v: PiperVoiceOption) => ({
         name: v.id,
         lang: v.id.startsWith('es_MX') ? 'es-MX' : 'es-ES',
-        quality: (v.quality === 'alta' || v.quality === 'media') ? 'enhanced' as const : 'standard' as const,
+        quality:
+          v.quality === 'alta' || v.quality === 'media'
+            ? ('enhanced' as const)
+            : ('standard' as const),
       }));
     },
 
@@ -337,7 +600,6 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       const found = SPANISH_VOICES.find((v) => v.id === voiceName);
       if (found) {
         voiceId = found.id;
-        // Re-init con la nueva voz si ya estaba inicializado
         if (isPiperReady()) {
           initPiperTts(voiceId, onModelProgress).catch(() => {});
         }
@@ -355,7 +617,6 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
     setRate(r: number) {
       rate = Math.max(0.5, Math.min(2.0, r));
-      // Aplicar inmediatamente al audio que está sonando
       audio.playbackRate = rate;
     },
 
@@ -364,51 +625,56 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     },
 
     speak(newBlocks: string[], cbs?: TtsCallbacks) {
+      // Cancelar síntesis anterior
+      synthAborted = true;
       audio.pause();
-      revokePreviousBlob();
-      clearPrefetch();
+      if (concatBlobUrl) {
+        URL.revokeObjectURL(concatBlobUrl);
+        concatBlobUrl = null;
+      }
 
       blocks = newBlocks;
       callbacks = cbs ?? {};
       currentBlockIndex = 0;
+      blockBoundaries = [];
       destroyed = false;
       synthFailReported = false;
+      synthAborted = false;
 
       state = 'loading';
       callbacks.onStateChange?.('loading');
 
       keepalive?.start();
 
-      // Inicializar Piper si no está listo, luego empezar reproducción
-      const startPlayback = () => {
-        if (destroyed) return;
-        playBlock(0);
-      };
-
+      // Inicializar Piper si no está listo, luego sintetizar
       if (isPiperReady()) {
-        startPlayback();
+        synthesizeAndPlay();
       } else {
         initPiperTts(voiceId, onModelProgress)
           .then((ok) => {
+            if (synthAborted || destroyed) return;
             if (!ok) {
               if (!synthFailReported && onSynthesisFailed) {
                 synthFailReported = true;
                 state = 'idle';
                 keepalive?.stop();
                 callbacks.onStateChange?.('idle');
-                onSynthesisFailed('initPiperTts returned false (session not ready)');
+                onSynthesisFailed('initPiperTts returned false');
               }
               return;
             }
-            startPlayback();
+            synthesizeAndPlay();
           })
           .catch((err) => {
+            if (synthAborted || destroyed) return;
             if (!synthFailReported && onSynthesisFailed) {
               synthFailReported = true;
               state = 'idle';
               keepalive?.stop();
               callbacks.onStateChange?.('idle');
-              onSynthesisFailed(`initPiperTts threw: ${err?.message ?? err}`);
+              onSynthesisFailed(
+                `initPiperTts threw: ${err?.message ?? err}`,
+              );
             }
           });
       }
@@ -425,7 +691,9 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
     resume() {
       if (state === 'paused') {
-        audio.play().catch(() => { /* ignore */ });
+        audio.play().catch(() => {
+          /* ignore */
+        });
         state = 'playing';
         updateMediaSession(true);
         callbacks.onStateChange?.('playing');
@@ -433,41 +701,49 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     },
 
     stop() {
+      synthAborted = true;
       audio.pause();
-      revokePreviousBlob();
-      clearPrefetch();
+      audio.currentTime = 0;
+      if (concatBlobUrl) {
+        URL.revokeObjectURL(concatBlobUrl);
+        concatBlobUrl = null;
+      }
       state = 'idle';
       currentBlockIndex = 0;
+      blockBoundaries = [];
       keepalive?.stop();
       updateMediaSession(false);
       callbacks.onStateChange?.('idle');
     },
 
     skipTo(blockIndex: number) {
-      if (blockIndex < 0 || blockIndex >= blocks.length) return;
-      audio.pause();
-      revokePreviousBlob();
-      clearPrefetch();
-      state = 'loading';
-      callbacks.onStateChange?.('loading');
-      playBlock(blockIndex);
+      if (blockIndex < 0 || blockIndex >= blockBoundaries.length) return;
+      if (state !== 'playing' && state !== 'paused') return;
+
+      // Reportar fin del bloque actual
+      callbacks.onBlockEnd?.(currentBlockIndex);
+
+      currentBlockIndex = blockIndex;
+      audio.currentTime = blockBoundaries[blockIndex];
+      callbacks.onBlockStart?.(blockIndex);
+
+      if (state === 'paused') {
+        audio.play().catch(() => {});
+        state = 'playing';
+        updateMediaSession(true);
+        callbacks.onStateChange?.('playing');
+      }
     },
 
     next() {
       if (currentBlockIndex < blocks.length - 1) {
-        audio.pause();
-        revokePreviousBlob();
-        clearPrefetch();
-        playBlock(currentBlockIndex + 1);
+        this.skipTo(currentBlockIndex + 1);
       }
     },
 
     previous() {
       if (currentBlockIndex > 0) {
-        audio.pause();
-        revokePreviousBlob();
-        clearPrefetch();
-        playBlock(currentBlockIndex - 1);
+        this.skipTo(currentBlockIndex - 1);
       }
     },
 
@@ -481,17 +757,21 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
     destroy() {
       destroyed = true;
+      synthAborted = true;
       audio.pause();
-      revokePreviousBlob();
-      clearPrefetch();
+      audio.removeEventListener('timeupdate', onTimeUpdate);
+      if (concatBlobUrl) {
+        URL.revokeObjectURL(concatBlobUrl);
+        concatBlobUrl = null;
+      }
       audio.removeAttribute('src');
-      audio.onended = null;
-      audio.onerror = null;
+      audio.remove();
       state = 'idle';
       keepalive?.stop();
       updateMediaSession(false);
       blocks = [];
       callbacks = {};
+      blockBoundaries = [];
     },
   };
 }

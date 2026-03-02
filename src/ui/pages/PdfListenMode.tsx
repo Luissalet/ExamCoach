@@ -18,7 +18,7 @@ import { TtsControls } from '@/ui/components/TtsControls';
 import { extractPdfText, type TextBlock } from '@/utils/pdfTextExtractor';
 import { mathToSpeech } from '@/utils/mathSymbolSpeech';
 import { createTtsEngine, type TtsEngine, type TtsState, type TtsVoiceInfo } from '@/utils/ttsEngine';
-import { createAudioTtsEngine } from '@/utils/audioTtsEngine';
+import { createAudioTtsEngine, hashBlockTexts } from '@/utils/audioTtsEngine';
 import { createAudioKeepalive, type AudioKeepaliveManager } from '@/utils/audioKeepalive';
 import { createMediaSessionController, type MediaSessionController } from '@/utils/mediaSessionController';
 import { getPdfBlobUrl } from '@/data/pdfStorage';
@@ -53,6 +53,8 @@ export function PdfListenMode() {
   const [selectedVoice, setSelectedVoice] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [estimatedRemaining, setEstimatedRemaining] = useState<number | null>(null);
+  /** Progreso de síntesis del audio concatenado: { current, total } */
+  const [synthProgress, setSynthProgress] = useState<{ current: number; total: number } | null>(null);
 
   // Timing accumulator: normalized to rate 1.0 so speed changes don't invalidate data
   const timingRef = useRef({ totalBaseMs: 0, totalChars: 0 });
@@ -62,6 +64,8 @@ export function PdfListenMode() {
   const mediaSessionRef = useRef<MediaSessionController | null>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  /** Clave de caché WAV para el PDF actual (hash de textos + voiceId) */
+  const wavCacheKeyRef = useRef<string | null>(null);
 
   // ── Title for display ──────────────────────────────────────────────────────
   const displayTitle = isResourceMode
@@ -164,6 +168,17 @@ export function PdfListenMode() {
 
     return () => { cancelled = true; };
   }, [subjectId, topicId, isResourceMode, resourceFile]);
+
+  // ── Compute WAV cache key when texts change ──────────────────────────────
+  useEffect(() => {
+    if (processedTexts.length === 0) {
+      wavCacheKeyRef.current = null;
+      return;
+    }
+    hashBlockTexts(processedTexts).then((hash) => {
+      wavCacheKeyRef.current = hash;
+    });
+  }, [processedTexts]);
 
   // ── Initialize TTS engine + audio keepalive + media session ───────────────
   //
@@ -276,6 +291,7 @@ export function PdfListenMode() {
         const ratio = progress.total > 0 ? progress.loaded / progress.total : 0;
         setModelProgress(ratio);
       },
+      getCacheKey: () => wavCacheKeyRef.current,
     });
     setTtsMode('audio');
     setupEngine(engine);
@@ -358,12 +374,20 @@ export function PdfListenMode() {
         setTtsState('idle');
         setCurrentBlock(0);
         setEstimatedRemaining(null);
+        setSynthProgress(null);
         timingRef.current = { totalBaseMs: 0, totalChars: 0 };
       },
       onError: (err: string) => {
         console.warn('[TTS]', err);
       },
-      onStateChange: (s: TtsState) => setTtsState(s),
+      onStateChange: (s: TtsState) => {
+        setTtsState(s);
+        // Limpiar progreso de síntesis cuando empieza a reproducir
+        if (s === 'playing') setSynthProgress(null);
+      },
+      onSynthesisProgress: (current: number, total: number) => {
+        setSynthProgress({ current, total });
+      },
     }),
     [processedTexts],
   );
@@ -597,6 +621,28 @@ export function PdfListenMode() {
             </div>
           )}
 
+          {/* Synthesis progress (pre-generating concatenated audio) */}
+          {synthProgress && synthProgress.current < synthProgress.total && (
+            <div className="mb-4 p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-sm text-purple-300 animate-pulse">Preparando audio…</span>
+                <span className="text-xs text-purple-400 font-mono">
+                  Bloque {synthProgress.current} de {synthProgress.total}
+                </span>
+              </div>
+              <div className="h-1.5 bg-ink-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-purple-500 rounded-full transition-all duration-300"
+                  style={{ width: `${(synthProgress.current / synthProgress.total) * 100}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-purple-400/60 mt-1">
+                Generando audio continuo para reproducción en segundo plano.
+                {wavCacheKeyRef.current ? ' Se cacheará para uso futuro.' : ''}
+              </p>
+            </div>
+          )}
+
           {/* Piper TTS error detail (for debugging) */}
           {piperError && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
@@ -614,16 +660,59 @@ export function PdfListenMode() {
             </div>
           )}
 
-          {/* TTS mode indicator */}
+          {/* TTS mode toggle */}
           {!extracting && blocks.length > 0 && (
-            <div className="mb-4 flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                ttsMode === 'audio'
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-              }`}>
+            <div className="mb-4 flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => {
+                  if (ttsState !== 'idle') return; // No cambiar durante reproducción
+                  if (ttsMode === 'audio') {
+                    // Cambiar a bloques (speechSynthesis)
+                    ttsRef.current?.destroy();
+                    const keepalive = keepaliveRef.current;
+                    const fallback = createTtsEngine({ keepalive: keepalive ?? undefined });
+                    setupEngine(fallback);
+                    setTtsMode('speech');
+                    setTimeout(() => {
+                      const v = fallback.getSpanishVoices();
+                      if (v.length > 0) {
+                        setVoices(v);
+                        const cur = fallback.getVoice();
+                        if (cur) setSelectedVoice(cur.name);
+                      }
+                    }, 300);
+                  } else {
+                    // Cambiar a concatenado (Piper TTS)
+                    ttsRef.current?.destroy();
+                    const keepalive = keepaliveRef.current;
+                    const engine = createAudioTtsEngine({
+                      keepalive: keepalive ?? undefined,
+                      onSynthesisFailed: handleEdgeTtsFailed,
+                      mediaTitle: displayTitle.replace(/\.pdf$/i, ''),
+                      mediaArtist: subject?.name ?? 'ExamCoach',
+                      onModelProgress: (progress) => {
+                        const ratio = progress.total > 0 ? progress.loaded / progress.total : 0;
+                        setModelProgress(ratio);
+                      },
+                      getCacheKey: () => wavCacheKeyRef.current,
+                    });
+                    setupEngine(engine);
+                    setTtsMode('audio');
+                  }
+                }}
+                disabled={ttsState !== 'idle'}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
+                  ttsMode === 'audio'
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                } ${ttsState !== 'idle' ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80 cursor-pointer'}`}
+                title={ttsState !== 'idle' ? 'Detén la reproducción para cambiar de modo' : 'Cambiar modo de reproducción'}
+              >
                 <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                {ttsMode === 'audio' ? 'Piper TTS · Segundo plano activo' : 'Voz del sistema · Solo primer plano'}
+                {ttsMode === 'audio' ? 'Audio continuo · 2º plano' : 'Por bloques · 1er plano'}
+              </button>
+              <span className="text-[9px] text-ink-600">
+                {ttsState === 'idle' ? 'Toca para cambiar' : ''}
               </span>
             </div>
           )}

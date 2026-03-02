@@ -1,18 +1,35 @@
 /**
  * audioKeepalive.ts
  *
- * Mantiene la sesión de audio del navegador activa en segundo plano
- * para que speechSynthesis NO se congele al minimizar el navegador en Android.
+ * Mantiene la sesión de audio del navegador activa en segundo plano en Android.
  *
- * Estrategia triple:
- *   1. AudioContext con oscilador silencioso → mantiene el proceso de audio vivo
- *   2. <audio> element reproduciendo una pista generada desde el AudioContext
- *      → activa la Media Session (notificación de reproducción en Android)
- *   3. Screen Wake Lock (opcional) → evita que la pantalla se apague
+ * PROBLEMA en Android 16 (Pixel):
+ *   Chrome es MUY agresivo matando tabs en segundo plano. Incluso con
+ *   AudioContext + MediaStream, Android puede matar el tab si detecta
+ *   que no hay "audio real" reproduciéndose.
  *
- * El truco clave es que Android Chrome mantiene vivo un tab que tiene un
- * AudioContext activo con un MediaStream conectado a un <audio> element.
- * Esto es lo que usan internamente sitios como YouTube/Rumble.
+ * SOLUCIÓN — Triple capa:
+ *
+ *   1. <audio> element con WAV REAL en loop (NO silencio, NO MediaStream)
+ *      → Un archivo WAV con un tono de 150Hz a -70dBFS (completamente inaudible
+ *        pero con samples NO CERO). Android detecta que hay audio real y
+ *        NO mata el tab. Esto es lo que diferencia nuestra app de YouTube/Rumble:
+ *        ellos siempre tienen un stream de audio real, nunca silencio.
+ *      → El WAV dura 5 segundos y se reproduce en loop infinito.
+ *      → El elemento DEBE estar en el DOM para que Android lo reconozca.
+ *
+ *   2. AudioContext con oscilador como refuerzo
+ *      → Mantiene el proceso de audio del navegador activo.
+ *      → Si el WAV falla, el AudioContext es la red de seguridad.
+ *
+ *   3. Screen Wake Lock + monitoreo periódico en background
+ *      → Wake Lock evita que la pantalla se apague.
+ *      → Cada 5s verifica que el audio siga activo y lo re-resume si Android
+ *        lo suspendió.
+ *
+ *   CLAVE: Usamos un WAV con contenido REAL (no Blob de silencio ni MediaStream)
+ *   porque Android 16 detecta audio "falso" y lo ignora para decidir si
+ *   mata el tab.
  */
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -30,15 +47,31 @@ export interface AudioKeepaliveManager {
   destroy(): void;
 }
 
-// ─── Silent WAV Generator (fallback) ────────────────────────────────────────
+// ─── WAV Generator — tono inaudible pero con datos reales ────────────────────
 
 /**
- * Genera un WAV de 2 segundos de silencio a 22050Hz, mono, 16-bit.
- * Más sustancial que 1s@8kHz para que Android lo reconozca como media.
+ * Genera un WAV de 5 segundos con un tono de 150Hz a amplitud MUY baja.
+ *
+ * ¿Por qué NO silencio?
+ *   Android 16 detecta WAVs de silencio (todos los samples = 0) y NO los
+ *   cuenta como "audio activo". El tab se mata igual.
+ *
+ * ¿Por qué 150Hz?
+ *   - Está en el rango audible (20Hz-20kHz) así que Android lo reconoce
+ *   - Pero a -70dBFS (amplitude ~10/32767) es completamente inaudible
+ *   - Incluso en auriculares a volumen máximo, está por debajo del piso de ruido
+ *
+ * ¿Por qué 5 segundos?
+ *   - Loop más largo = menos overhead de loop processing
+ *   - Android tiene más tiempo para "ver" el audio antes de que el loop reinicie
  */
-function createSilentWavBlob(): Blob {
+function createKeepaliveToneWav(): Blob {
   const sampleRate = 22050;
-  const duration = 2;
+  const duration = 5;
+  const frequency = 150;
+  // Amplitude ~10/32767 = -70dBFS — completamente inaudible
+  // pero con samples NO CERO para que Android lo reconozca
+  const amplitude = 0.0003;
   const numSamples = sampleRate * duration;
   const numChannels = 1;
   const bitsPerSample = 16;
@@ -49,12 +82,13 @@ function createSilentWavBlob(): Blob {
   const buffer = new ArrayBuffer(headerSize + dataSize);
   const view = new DataView(buffer);
 
+  // WAV header
   writeString(view, 0, 'RIFF');
   view.setUint32(4, 36 + dataSize, true);
   writeString(view, 8, 'WAVE');
   writeString(view, 12, 'fmt ');
   view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
+  view.setUint16(20, 1, true); // PCM
   view.setUint16(22, numChannels, true);
   view.setUint32(24, sampleRate, true);
   view.setUint32(28, byteRate, true);
@@ -62,6 +96,14 @@ function createSilentWavBlob(): Blob {
   view.setUint16(34, bitsPerSample, true);
   writeString(view, 36, 'data');
   view.setUint32(40, dataSize, true);
+
+  // Generar tono sinusoidal a amplitud mínima
+  for (let i = 0; i < numSamples; i++) {
+    const sample = Math.round(
+      amplitude * 32767 * Math.sin(2 * Math.PI * frequency * i / sampleRate),
+    );
+    view.setInt16(headerSize + i * 2, sample, true);
+  }
 
   return new Blob([buffer], { type: 'audio/wav' });
 }
@@ -72,77 +114,144 @@ function writeString(view: DataView, offset: number, str: string) {
   }
 }
 
+// ─── CSS ────────────────────────────────────────────────────────────────────────
+
+const HIDDEN_STYLE =
+  'position:fixed;top:-9999px;left:-9999px;width:0;height:0;opacity:0;pointer-events:none';
+
 // ─── Implementation ────────────────────────────────────────────────────────────
 
 export function createAudioKeepalive(): AudioKeepaliveManager {
+  // Capa 1: <audio> element con WAV real
+  let audio: HTMLAudioElement | null = null;
+  let wavUrl: string | null = null;
+
+  // Capa 2: AudioContext como refuerzo
   let audioCtx: AudioContext | null = null;
   let oscillator: OscillatorNode | null = null;
   let gainNode: GainNode | null = null;
-  let audio: HTMLAudioElement | null = null;
-  let wavUrl: string | null = null;
+
+  // Capa 3: Wake Lock + monitoreo
   let wakeLock: WakeLockSentinel | null = null;
+  let bgInterval: ReturnType<typeof setInterval> | null = null;
   let active = false;
 
-  // ── Visibility change handler (closure) ─────────────────────────────────
+  // ── Limpieza ────────────────────────────────────────────────────────────
+
+  function teardown() {
+    // Limpiar audio element
+    if (audio) {
+      try { audio.pause(); } catch { /* ignore */ }
+      audio.removeAttribute('src');
+      audio.srcObject = null;
+      if (audio.parentNode) audio.remove();
+      audio = null;
+    }
+    if (wavUrl) {
+      URL.revokeObjectURL(wavUrl);
+      wavUrl = null;
+    }
+
+    // Limpiar AudioContext
+    if (oscillator) {
+      try { oscillator.stop(); } catch { /* ignore */ }
+      try { oscillator.disconnect(); } catch { /* ignore */ }
+      oscillator = null;
+    }
+    if (gainNode) {
+      try { gainNode.disconnect(); } catch { /* ignore */ }
+      gainNode = null;
+    }
+    if (audioCtx && audioCtx.state !== 'closed') {
+      try { audioCtx.close(); } catch { /* ignore */ }
+    }
+    audioCtx = null;
+
+    // Limpiar intervalo
+    if (bgInterval) {
+      clearInterval(bgInterval);
+      bgInterval = null;
+    }
+  }
+
+  // ── Visibility handler ──────────────────────────────────────────────────
+
   function onVisibilityChange() {
-    if (document.visibilityState === 'visible' && active) {
-      // Re-resumir AudioContext al volver al foreground
+    if (!active) return;
+
+    if (document.visibilityState === 'visible') {
+      // Volvimos al foreground — re-resumir todo
       if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume().catch(() => { /* ignore */ });
       }
-      // Re-play audio element si se pausó
       if (audio && audio.paused) {
         audio.play().catch(() => { /* ignore */ });
+      }
+      // Limpiar intervalo de background
+      if (bgInterval) { clearInterval(bgInterval); bgInterval = null; }
+    } else if (document.visibilityState === 'hidden') {
+      // Background — monitoreo periódico cada 5s
+      if (!bgInterval) {
+        bgInterval = setInterval(() => {
+          if (!active) {
+            if (bgInterval) { clearInterval(bgInterval); bgInterval = null; }
+            return;
+          }
+          if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => { /* ignore */ });
+          }
+          if (audio && audio.paused) {
+            audio.play().catch(() => { /* ignore */ });
+          }
+        }, 5000);
       }
     }
   }
 
-  // ── Setup helpers ───────────────────────────────────────────────────────
-  function setupAudioContext(): boolean {
+  // ── Setup ───────────────────────────────────────────────────────────────
+
+  /** Capa 1: Audio element con WAV real (método principal) */
+  function setupRealWavAudio() {
+    const blob = createKeepaliveToneWav();
+    wavUrl = URL.createObjectURL(blob);
+
+    audio = document.createElement('audio');
+    audio.src = wavUrl;
+    audio.loop = true;
+    audio.volume = 1.0; // Volume 1.0 — el contenido del WAV ya es inaudible (-70dBFS)
+    audio.setAttribute('playsinline', '');
+    // CLAVE: en el DOM para que Android lo reconozca
+    audio.style.cssText = HIDDEN_STYLE;
+    document.body.appendChild(audio);
+  }
+
+  /** Capa 2: AudioContext como refuerzo */
+  function setupAudioContextReinforcement() {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return false;
+      if (!AudioCtx) return;
 
       audioCtx = new AudioCtx();
 
-      // Oscilador a frecuencia muy baja (1 Hz) — inaudible
       oscillator = audioCtx.createOscillator();
-      oscillator.frequency.setValueAtTime(1, audioCtx.currentTime);
+      oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
       oscillator.type = 'sine';
 
-      // Gain a nivel mínimo — esencialmente silencioso pero activo
       gainNode = audioCtx.createGain();
       gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
 
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
 
-      // Crear un MediaStream → <audio> para activar Media Session en Android
+      // También conectar a MediaStreamDestination → refuerza la sesión de media
       if (audioCtx.createMediaStreamDestination) {
         const streamDest = audioCtx.createMediaStreamDestination();
         gainNode.connect(streamDest);
-
-        audio = new Audio();
-        audio.srcObject = streamDest.stream;
-        audio.loop = true;
-        audio.setAttribute('playsinline', '');
-        audio.volume = 0.01;
+        // No necesitamos otro <audio> element — el WAV ya cubre eso
       }
-
-      return true;
     } catch {
-      return false;
+      // AudioContext no disponible — el WAV sigue funcionando
     }
-  }
-
-  function setupFallbackAudio() {
-    if (audio) return;
-    const blob = createSilentWavBlob();
-    wavUrl = URL.createObjectURL(blob);
-    audio = new Audio(wavUrl);
-    audio.loop = true;
-    audio.volume = 0.01;
-    audio.setAttribute('playsinline', '');
   }
 
   async function requestWakeLock() {
@@ -160,17 +269,21 @@ export function createAudioKeepalive(): AudioKeepaliveManager {
   }
 
   // ── Public API ──────────────────────────────────────────────────────────
+
   return {
     async start() {
       if (active) return;
 
-      // 1. Intentar AudioContext (preferida)
-      setupAudioContext();
+      // Limpiar recursos anteriores
+      teardown();
 
-      // 2. Fallback a WAV si no se creó audio element
-      if (!audio) setupFallbackAudio();
+      // Capa 1: WAV real con tono (método principal)
+      setupRealWavAudio();
 
-      // 3. Iniciar oscilador
+      // Capa 2: AudioContext como refuerzo
+      setupAudioContextReinforcement();
+
+      // Iniciar oscilador
       if (oscillator && audioCtx) {
         try { oscillator.start(0); } catch { /* ya iniciado */ }
         if (audioCtx.state === 'suspended') {
@@ -178,7 +291,7 @@ export function createAudioKeepalive(): AudioKeepaliveManager {
         }
       }
 
-      // 4. Play <audio> — activa Media Session en Android
+      // Play WAV — esto es lo que mantiene el tab vivo en Android
       if (audio) {
         try { await audio.play(); } catch { /* autoplay blocked */ }
       }
@@ -190,23 +303,11 @@ export function createAudioKeepalive(): AudioKeepaliveManager {
 
     stop() {
       if (!active) return;
+      active = false;
 
-      if (audio) {
-        audio.pause();
-        if (!audio.srcObject && audio.src) audio.currentTime = 0;
-      }
-
-      if (oscillator) {
-        try { oscillator.stop(); } catch { /* ignore */ }
-      }
-
-      if (audioCtx && audioCtx.state !== 'closed') {
-        try { audioCtx.suspend(); } catch { /* ignore */ }
-      }
-
+      teardown();
       releaseWakeLock();
       document.removeEventListener('visibilitychange', onVisibilityChange);
-      active = false;
     },
 
     isActive() {
@@ -219,23 +320,6 @@ export function createAudioKeepalive(): AudioKeepaliveManager {
 
     destroy() {
       this.stop();
-
-      if (audioCtx && audioCtx.state !== 'closed') {
-        try { audioCtx.close(); } catch { /* ignore */ }
-      }
-      audioCtx = null;
-      oscillator = null;
-      gainNode = null;
-
-      if (audio) {
-        audio.srcObject = null;
-        audio.src = '';
-        audio = null;
-      }
-      if (wavUrl) {
-        URL.revokeObjectURL(wavUrl);
-        wavUrl = null;
-      }
     },
   };
 }
