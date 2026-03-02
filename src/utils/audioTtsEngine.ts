@@ -188,14 +188,16 @@ function parseWavHeader(buffer: ArrayBuffer): WavInfo | null {
 }
 
 /**
- * Concatena múltiples WAV blobs en UN SOLO WAV continuo.
- * Devuelve el WAV concatenado y las duraciones individuales de cada bloque.
+ * Concatena múltiples WAV blobs en UN SOLO WAV continuo con downsampling opcional.
  *
- * REQUISITO: Todos los WAV deben tener el mismo sampleRate, channels, bitsPerSample.
- * (Piper siempre genera con el mismo formato para una voz dada.)
+ * Si targetSampleRate < sampleRate fuente, se hace downsample tomando 1 de cada N muestras.
+ * Para voz hablada esto es perfectamente aceptable (la energía está bajo 4kHz).
+ *
+ * Resultado: WAVs ~50% más pequeños con 11025Hz vs 22050Hz original de Piper.
  */
 async function concatWavBlobs(
   blobs: Blob[],
+  targetSampleRate: number = TARGET_SAMPLE_RATE,
 ): Promise<{ wav: Blob; durations: number[] } | null> {
   if (blobs.length === 0) return null;
 
@@ -204,7 +206,6 @@ async function concatWavBlobs(
     buffers.push(await blob.arrayBuffer());
   }
 
-  // Parsear headers para obtener metadata y PCM data
   const infos: WavInfo[] = [];
   for (const buf of buffers) {
     const info = parseWavHeader(buf);
@@ -212,27 +213,41 @@ async function concatWavBlobs(
     infos.push(info);
   }
 
-  // Usar formato del primer bloque como referencia
   const ref = infos[0];
-  const { sampleRate, numChannels, bitsPerSample } = ref;
+  const srcRate = ref.sampleRate;
+  const { numChannels, bitsPerSample } = ref;
+  const bytesPerSample = bitsPerSample / 8;
+  const frameSize = numChannels * bytesPerSample; // bytes por frame (1 frame = 1 muestra × canales)
 
-  // Calcular tamaño total de PCM
-  let totalPcmSize = 0;
+  // Calcular ratio de downsample (e.g., 22050/11025 = 2 → tomar 1 de cada 2)
+  const dsRatio = (targetSampleRate > 0 && targetSampleRate < srcRate)
+    ? Math.round(srcRate / targetSampleRate)
+    : 1;
+  const outRate = dsRatio > 1 ? Math.round(srcRate / dsRatio) : srcRate;
+
+  // Calcular tamaño total de PCM de salida y duraciones
+  let totalOutPcmSize = 0;
   const durations: number[] = [];
+  const blockOutSizes: number[] = [];
+
   for (const info of infos) {
-    totalPcmSize += info.dataSize;
+    const srcFrames = info.dataSize / frameSize;
+    const outFrames = Math.ceil(srcFrames / dsRatio);
+    const outBytes = outFrames * frameSize;
+    totalOutPcmSize += outBytes;
+    blockOutSizes.push(outBytes);
+    // Duración = frames originales / sample rate original (no cambia con downsample)
     durations.push(info.duration);
   }
 
   // Crear WAV concatenado
   const headerSize = 44;
-  const totalSize = headerSize + totalPcmSize;
+  const totalSize = headerSize + totalOutPcmSize;
   const output = new ArrayBuffer(totalSize);
   const view = new DataView(output);
 
-  // Escribir header WAV
-  const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
-  const blockAlign = numChannels * (bitsPerSample / 8);
+  const outByteRate = outRate * numChannels * bytesPerSample;
+  const blockAlign = numChannels * bytesPerSample;
 
   // RIFF header
   writeStr(view, 0, 'RIFF');
@@ -241,29 +256,45 @@ async function concatWavBlobs(
 
   // fmt chunk
   writeStr(view, 12, 'fmt ');
-  view.setUint32(16, 16, true); // chunk size
+  view.setUint32(16, 16, true);
   view.setUint16(20, 1, true); // PCM
   view.setUint16(22, numChannels, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, byteRate, true);
+  view.setUint32(24, outRate, true);
+  view.setUint32(28, outByteRate, true);
   view.setUint16(32, blockAlign, true);
   view.setUint16(34, bitsPerSample, true);
 
   // data chunk
   writeStr(view, 36, 'data');
-  view.setUint32(40, totalPcmSize, true);
+  view.setUint32(40, totalOutPcmSize, true);
 
-  // Copiar PCM de cada bloque
+  // Copiar PCM con downsample
   const outputBytes = new Uint8Array(output);
   let writeOffset = headerSize;
+
   for (let i = 0; i < buffers.length; i++) {
     const srcBytes = new Uint8Array(buffers[i]);
     const info = infos[i];
-    outputBytes.set(
-      srcBytes.subarray(info.dataOffset, info.dataOffset + info.dataSize),
-      writeOffset,
-    );
-    writeOffset += info.dataSize;
+    const srcFrames = info.dataSize / frameSize;
+
+    if (dsRatio <= 1) {
+      // Sin downsample — copia directa
+      outputBytes.set(
+        srcBytes.subarray(info.dataOffset, info.dataOffset + info.dataSize),
+        writeOffset,
+      );
+      writeOffset += info.dataSize;
+    } else {
+      // Downsample: tomar 1 de cada dsRatio frames
+      for (let f = 0; f < srcFrames; f += dsRatio) {
+        const srcOff = info.dataOffset + f * frameSize;
+        outputBytes.set(
+          srcBytes.subarray(srcOff, srcOff + frameSize),
+          writeOffset,
+        );
+        writeOffset += frameSize;
+      }
+    }
   }
 
   return {
@@ -277,6 +308,17 @@ function writeStr(view: DataView, offset: number, str: string) {
     view.setUint8(offset + i, str.charCodeAt(i));
   }
 }
+
+// ─── Constants ───────────────────────────────────────────────────────────────────
+
+/** Sample rate de salida. Piper genera a 22050Hz, nosotros downsamplamos a 11025Hz.
+ *  Para voz hablada 11kHz es más que suficiente (Nyquist = 5512Hz, voz humana < 4kHz).
+ *  Resultado: WAVs con la mitad de tamaño (~1.3 MB/min vs ~2.6 MB/min). */
+const TARGET_SAMPLE_RATE = 11025;
+
+/** Número de bloques tras los cuales empezamos a reproducir sin esperar al resto.
+ *  El usuario escucha audio inmediatamente mientras el resto se sintetiza en background. */
+const EARLY_PLAY_BLOCKS = 10;
 
 // ─── Hidden audio element ───────────────────────────────────────────────────────
 
@@ -315,6 +357,16 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
   // Control de síntesis (para poder cancelar)
   let synthAborted = false;
 
+  // ── Progressive playback state ─────────────────────────────────────────
+  /** true si estamos reproduciendo un WAV parcial (no todos los bloques) */
+  let partialMode = false;
+  /** WAV completo listo para swap (null si aún sintetizando) */
+  let fullWavPending: { wav: Blob; boundaries: number[] } | null = null;
+  /** Blobs sintetizados hasta ahora (para extender WAV parcial si se agota) */
+  let synthBlobsSoFar: Blob[] = [];
+  /** Número de bloques incluidos en el WAV parcial actual */
+  let partialBlobCount = 0;
+
   // ── Media Session ──────────────────────────────────────────────────────
 
   function updateMediaSession(playing: boolean) {
@@ -349,11 +401,28 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
   function onTimeUpdate() {
     if (destroyed || state !== 'playing') return;
+
+    // ── Hot-swap: si el WAV completo está listo, reemplazar el parcial ───
+    if (partialMode && fullWavPending) {
+      doHotSwap(fullWavPending.wav, fullWavPending.boundaries);
+      fullWavPending = null;
+      return; // skip block tracking this tick, next tick will be accurate
+    }
+
+    // ── Extender WAV parcial si nos acercamos al final ──────────────────
+    if (partialMode && !fullWavPending && audio.duration > 0) {
+      const remaining = audio.duration - audio.currentTime;
+      if (remaining < 2 && synthBlobsSoFar.length > partialBlobCount) {
+        // Hay más blobs disponibles, extender el WAV parcial
+        extendPartialWav();
+        return;
+      }
+    }
+
+    // ── Block tracking normal ───────────────────────────────────────────
     const newBlock = findBlockAtTime(audio.currentTime);
     if (newBlock !== currentBlockIndex) {
-      // Reportar fin del bloque anterior
       callbacks.onBlockEnd?.(currentBlockIndex);
-      // Reportar timing del bloque anterior
       if (currentBlockIndex < blockBoundaries.length) {
         const blockDuration =
           currentBlockIndex < blockBoundaries.length - 1
@@ -371,11 +440,78 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     }
   }
 
+  /** Hot-swap: reemplaza el WAV actual sin interrumpir la experiencia */
+  function doHotSwap(newWav: Blob, newBoundaries: number[]) {
+    const savedTime = audio.currentTime;
+    const wasPlaying = !audio.paused;
+
+    if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
+    concatBlobUrl = URL.createObjectURL(newWav);
+    blockBoundaries = newBoundaries;
+    partialMode = false;
+
+    audio.src = concatBlobUrl;
+    audio.playbackRate = rate;
+    audio.currentTime = savedTime;
+    if (wasPlaying) {
+      audio.play().catch(() => {});
+    }
+  }
+
+  /** Extiende el WAV parcial con los blobs nuevos sintetizados */
+  async function extendPartialWav() {
+    if (synthBlobsSoFar.length <= partialBlobCount) return;
+
+    const blobsToUse = synthBlobsSoFar.slice(); // snapshot
+    const result = await concatWavBlobs(blobsToUse);
+    if (!result || destroyed || synthAborted) return;
+
+    const newBoundaries: number[] = [];
+    let cum = 0;
+    for (const d of result.durations) {
+      newBoundaries.push(cum);
+      cum += d;
+    }
+
+    partialBlobCount = blobsToUse.length;
+    doHotSwap(result.wav, newBoundaries);
+  }
+
   audio.addEventListener('timeupdate', onTimeUpdate);
 
   audio.addEventListener('ended', () => {
     if (destroyed) return;
-    // Reportar fin del último bloque
+
+    // ── Si estamos en modo parcial, intentar extender ────────────────────
+    if (partialMode) {
+      if (fullWavPending) {
+        // El WAV completo está listo, swap inmediato
+        doHotSwap(fullWavPending.wav, fullWavPending.boundaries);
+        fullWavPending = null;
+        return;
+      }
+      if (synthBlobsSoFar.length > partialBlobCount) {
+        // Hay más blobs, extender
+        extendPartialWav();
+        return;
+      }
+      // No hay más blobs disponibles pero la síntesis sigue...
+      // Esperar un poco y reintentar (rare case)
+      if (!synthAborted) {
+        setTimeout(() => {
+          if (destroyed || synthAborted) return;
+          if (fullWavPending) {
+            doHotSwap(fullWavPending.wav, fullWavPending.boundaries);
+            fullWavPending = null;
+          } else if (synthBlobsSoFar.length > partialBlobCount) {
+            extendPartialWav();
+          }
+        }, 500);
+        return;
+      }
+    }
+
+    // ── Fin normal ──────────────────────────────────────────────────────
     callbacks.onBlockEnd?.(currentBlockIndex);
     if (currentBlockIndex < blockBoundaries.length) {
       const blockDuration =
@@ -389,7 +525,6 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
         blockText.length,
       );
     }
-    // Finished
     state = 'idle';
     currentBlockIndex = 0;
     keepalive?.stop();
@@ -403,6 +538,12 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
   async function synthesizeAndPlay() {
     if (destroyed) return;
 
+    // Reset progressive state
+    partialMode = false;
+    fullWavPending = null;
+    synthBlobsSoFar = [];
+    partialBlobCount = 0;
+
     // ── Intentar cargar desde caché ──────────────────────────────────────
     const cacheKey = options?.getCacheKey?.() ?? null;
     if (cacheKey) {
@@ -412,15 +553,11 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
           console.log('[AudioTTS] WAV loaded from cache:', cacheKey);
           if (synthAborted || destroyed) return;
 
-          // Usar datos cacheados directamente
           blockBoundaries = cached.blockBoundaries;
-
           if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
           concatBlobUrl = URL.createObjectURL(cached.wav);
 
-          // Reportar progreso completo inmediatamente
           callbacks.onSynthesisProgress?.(blocks.length, blocks.length);
-
           return await startPlayback();
         }
       } catch (err) {
@@ -428,70 +565,92 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       }
     }
 
-    // ── Sintetizar TODOS los bloques ─────────────────────────────────────
-    const wavBlobs: Blob[] = [];
+    // ── Sintetizar bloques con reproducción progresiva ────────────────────
     let accumulatedBytes = 0;
+    let earlyPlayStarted = false;
+    const earlyThreshold = Math.min(EARLY_PLAY_BLOCKS, blocks.length);
 
     for (let i = 0; i < blocks.length; i++) {
       if (synthAborted || destroyed) return;
 
       const text = blocks[i];
       if (!text || !text.trim()) {
-        // Bloque vacío — generar 200ms de silencio para mantener el mapeo
         const silenceBlob = createSilenceWav(0.2);
-        wavBlobs.push(silenceBlob);
+        synthBlobsSoFar.push(silenceBlob);
         accumulatedBytes += silenceBlob.size;
         callbacks.onSynthesisProgress?.(i + 1, blocks.length, accumulatedBytes);
-        continue;
-      }
+      } else {
+        try {
+          const blob = await synthesizeToBlob(text);
+          if (synthAborted || destroyed) return;
 
-      try {
-        const blob = await synthesizeToBlob(text);
-        if (synthAborted || destroyed) return;
-
-        if (!blob) {
+          if (!blob) {
+            if (i === 0 && !synthFailReported && onSynthesisFailed) {
+              synthFailReported = true;
+              state = 'idle';
+              keepalive?.stop();
+              callbacks.onStateChange?.('idle');
+              onSynthesisFailed('First block synthesis returned null');
+              return;
+            }
+            const silence = createSilenceWav(0.5);
+            synthBlobsSoFar.push(silence);
+            accumulatedBytes += silence.size;
+            callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
+          } else {
+            synthBlobsSoFar.push(blob);
+            accumulatedBytes += blob.size;
+          }
+        } catch (err) {
+          if (synthAborted || destroyed) return;
           if (i === 0 && !synthFailReported && onSynthesisFailed) {
             synthFailReported = true;
             state = 'idle';
             keepalive?.stop();
             callbacks.onStateChange?.('idle');
-            onSynthesisFailed('First block synthesis returned null');
+            onSynthesisFailed(
+              `Synthesis error: ${err instanceof Error ? err.message : String(err)}`,
+            );
             return;
           }
           const silence = createSilenceWav(0.5);
-          wavBlobs.push(silence);
+          synthBlobsSoFar.push(silence);
           accumulatedBytes += silence.size;
           callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
-        } else {
-          wavBlobs.push(blob);
-          accumulatedBytes += blob.size;
         }
-      } catch (err) {
-        if (synthAborted || destroyed) return;
-        if (i === 0 && !synthFailReported && onSynthesisFailed) {
-          synthFailReported = true;
-          state = 'idle';
-          keepalive?.stop();
-          callbacks.onStateChange?.('idle');
-          onSynthesisFailed(
-            `Synthesis error: ${err instanceof Error ? err.message : String(err)}`,
-          );
-          return;
-        }
-        const silence = createSilenceWav(0.5);
-        wavBlobs.push(silence);
-        accumulatedBytes += silence.size;
-        callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
+
+        callbacks.onSynthesisProgress?.(i + 1, blocks.length, accumulatedBytes);
       }
 
-      callbacks.onSynthesisProgress?.(i + 1, blocks.length, accumulatedBytes);
+      // ── Early play: reproducir tras primeros N bloques ─────────────────
+      if (!earlyPlayStarted && synthBlobsSoFar.length >= earlyThreshold) {
+        earlyPlayStarted = true;
+        const partialResult = await concatWavBlobs(synthBlobsSoFar.slice());
+        if (!partialResult || synthAborted || destroyed) continue;
+
+        blockBoundaries = [];
+        let cum = 0;
+        for (const d of partialResult.durations) {
+          blockBoundaries.push(cum);
+          cum += d;
+        }
+
+        partialBlobCount = synthBlobsSoFar.length;
+        partialMode = blocks.length > earlyThreshold; // solo partial si hay más bloques
+
+        if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
+        concatBlobUrl = URL.createObjectURL(partialResult.wav);
+
+        // No await — fire and forget para no bloquear la síntesis
+        startPlayback().catch(() => {});
+      }
     }
 
     if (synthAborted || destroyed) return;
 
-    // ── Concatenar en un solo WAV ────────────────────────────────────────
-    const result = await concatWavBlobs(wavBlobs);
-    if (!result || synthAborted || destroyed) {
+    // ── Todos los bloques sintetizados — concatenar WAV final ─────────────
+    const fullResult = await concatWavBlobs(synthBlobsSoFar);
+    if (!fullResult || synthAborted || destroyed) {
       if (!synthFailReported && onSynthesisFailed) {
         synthFailReported = true;
         state = 'idle';
@@ -502,33 +661,39 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       return;
     }
 
-    // ── Calcular boundaries ──────────────────────────────────────────────
-    blockBoundaries = [];
+    const finalBoundaries: number[] = [];
     let cumulative = 0;
-    for (const dur of result.durations) {
-      blockBoundaries.push(cumulative);
-      cumulative += dur;
+    for (const d of fullResult.durations) {
+      finalBoundaries.push(cumulative);
+      cumulative += d;
     }
 
     // ── Guardar en caché ─────────────────────────────────────────────────
     if (cacheKey) {
       wavCachePut(cacheKey, {
-        wav: result.wav,
-        blockBoundaries: [...blockBoundaries],
+        wav: fullResult.wav,
+        blockBoundaries: [...finalBoundaries],
         blockCount: blocks.length,
         voiceId,
         createdAt: Date.now(),
       }).catch((err) => console.warn('[AudioTTS] Cache write failed:', err));
     }
 
-    // ── Preparar para reproducir ─────────────────────────────────────────
-    if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
-    concatBlobUrl = URL.createObjectURL(result.wav);
-
-    await startPlayback();
+    // ── Si ya estamos reproduciendo (early play), hacer hot-swap ─────────
+    if (earlyPlayStarted && (state === 'playing' || state === 'paused')) {
+      fullWavPending = { wav: fullResult.wav, boundaries: finalBoundaries };
+      // El hot-swap se ejecutará en el próximo timeupdate o ended
+    } else {
+      // No se hizo early play (PDF muy corto, ≤ EARLY_PLAY_BLOCKS bloques)
+      blockBoundaries = finalBoundaries;
+      if (concatBlobUrl) URL.revokeObjectURL(concatBlobUrl);
+      concatBlobUrl = URL.createObjectURL(fullResult.wav);
+      partialMode = false;
+      await startPlayback();
+    }
   }
 
-  /** Inicia la reproducción del WAV concatenado (ya preparado en concatBlobUrl) */
+  /** Inicia la reproducción del WAV (parcial o completo) ya preparado en concatBlobUrl */
   async function startPlayback() {
     if (destroyed || synthAborted || !concatBlobUrl) return;
 
@@ -558,9 +723,9 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
   // ── Silence generator ──────────────────────────────────────────────────
 
-  /** Genera un WAV de silencio de la duración especificada (22050Hz, mono, 16-bit) */
+  /** Genera un WAV de silencio de la duración especificada (TARGET_SAMPLE_RATE, mono, 16-bit) */
   function createSilenceWav(durationSec: number): Blob {
-    const sampleRate = 22050;
+    const sampleRate = TARGET_SAMPLE_RATE;
     const numSamples = Math.round(sampleRate * durationSec);
     const numChannels = 1;
     const bitsPerSample = 16;
@@ -718,6 +883,10 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       state = 'idle';
       currentBlockIndex = 0;
       blockBoundaries = [];
+      partialMode = false;
+      fullWavPending = null;
+      synthBlobsSoFar = [];
+      partialBlobCount = 0;
       keepalive?.stop();
       updateMediaSession(false);
       callbacks.onStateChange?.('idle');
@@ -779,6 +948,10 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       blocks = [];
       callbacks = {};
       blockBoundaries = [];
+      partialMode = false;
+      fullWavPending = null;
+      synthBlobsSoFar = [];
+      partialBlobCount = 0;
     },
   };
 }
