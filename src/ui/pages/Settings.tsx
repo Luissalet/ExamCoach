@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db, getSettings } from '@/data/db';
@@ -97,6 +97,15 @@ export function SettingsPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState('');
   const [syncGistId, setSyncGistId] = useState('');
+  const [syncLog, setSyncLog] = useState<{ ts: string; msg: string; ok: boolean }[]>([]);
+  const syncLogEndRef = useRef<HTMLDivElement>(null);
+  const addLog = (msg: string, ok = true) => {
+    const ts = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setSyncLog((prev) => [...prev.slice(-49), { ts, msg, ok }]);
+  };
+  useEffect(() => {
+    syncLogEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [syncLog]);
 
   // ── Anki Import ──────────────────────────────────────────────────────────────
   const [ankiImportMsg, setAnkiImportMsg] = useState('');
@@ -522,41 +531,7 @@ export function SettingsPage() {
             usando un GitHub Gist privado. Solo se descargan los cambios nuevos (como git).
           </p>
 
-          {!githubToken ? (
-            /* ── Token no configurado — mostrar input directamente ── */
-            <div className="flex flex-col gap-3">
-              <p className="text-xs text-ink-400">
-                Necesitas un{' '}
-                <a
-                  href="https://github.com/settings/tokens/new?scopes=gist&description=ExamCoach"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
-                >
-                  Personal Access Token
-                </a>{' '}
-                de GitHub con scope <code className="text-amber-400 bg-ink-900 px-1 rounded text-xs">gist</code>.
-                Se guarda solo en tu IndexedDB local, nunca se exporta.
-              </p>
-              <div className="flex gap-2">
-                <input
-                  type="password"
-                  value={githubToken}
-                  onChange={(e) => setGithubToken(e.target.value)}
-                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                  className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
-                  autoComplete="off"
-                />
-                <Button size="sm" onClick={handleSaveGithubToken}>Guardar</Button>
-              </div>
-              {gistExportMsg && (
-                <p className={`text-xs ${gistExportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
-                  {gistExportMsg}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
               {/* Status */}
               {settings.lastSyncAt && (
                 <div className="flex items-center gap-2 text-xs text-ink-500">
@@ -572,14 +547,29 @@ export function SettingsPage() {
                   onClick={async () => {
                     setSyncing(true);
                     setSyncMsg('');
-                    // Pull primero para no sobreescribir datos remotos que no tenemos
-                    await pullFromGist(githubToken);
+                    // Si el Gist ID del input difiere del guardado, guardarlo antes de sync
+                    if (syncGistId.trim() && syncGistId.trim() !== settings.syncGistId) {
+                      await updateSettings({ syncGistId: syncGistId.trim() });
+                      addLog(`Gist ID actualizado: ${syncGistId.trim().slice(0, 12)}…`);
+                    }
+                    addLog('Descargando cambios remotos antes de subir…');
+                    const pullResult = await pullFromGist(githubToken);
+                    if (pullResult.success && pullResult.direction !== 'skip') {
+                      addLog(`Merge: +${pullResult.added ?? 0} nuevos, ~${pullResult.updated ?? 0} actualizados`);
+                    } else if (!pullResult.success) {
+                      addLog(`Pull previo: ${pullResult.error ?? 'error'}`, false);
+                    } else {
+                      addLog('Sin cambios remotos nuevos');
+                    }
+                    addLog('Subiendo datos al Gist…');
                     const result = await pushToGist(githubToken);
                     if (result.success) {
+                      addLog('✓ Datos subidos correctamente');
                       setSyncMsg('✓ Datos subidos al Gist');
                       await loadSettings();
                       await loadSubjects();
                     } else {
+                      addLog(`✗ Error al subir: ${result.error ?? 'desconocido'}`, false);
                       setSyncMsg('Error: ' + (result.error ?? 'desconocido'));
                     }
                     setSyncing(false);
@@ -596,16 +586,25 @@ export function SettingsPage() {
                   onClick={async () => {
                     setSyncing(true);
                     setSyncMsg('');
+                    // Si el Gist ID del input difiere del guardado, guardarlo antes de sync
+                    if (syncGistId.trim() && syncGistId.trim() !== settings.syncGistId) {
+                      await updateSettings({ syncGistId: syncGistId.trim() });
+                      addLog(`Gist ID actualizado: ${syncGistId.trim().slice(0, 12)}…`);
+                    }
+                    addLog('Conectando con GitHub…');
                     const result = await pullFromGist(githubToken);
                     if (result.success) {
                       if (result.direction === 'skip') {
+                        addLog('✓ Ya estás al día, sin cambios remotos');
                         setSyncMsg('✓ Ya estás al día, sin cambios remotos');
                       } else {
-                        setSyncMsg(`✓ Sincronizado: ${result.added ?? 0} nuevos, ${result.updated ?? 0} actualizados, ${result.skipped ?? 0} sin cambios`);
+                        addLog(`✓ Merge completo: +${result.added ?? 0} nuevos, ~${result.updated ?? 0} actualizados, ${result.skipped ?? 0} sin cambios`);
+                        setSyncMsg(`✓ Sincronizado: ${result.added ?? 0} nuevos, ${result.updated ?? 0} actualizados`);
                         await loadSettings();
                         await loadSubjects();
                       }
                     } else {
+                      addLog(`✗ Error: ${result.error ?? 'desconocido'}`, false);
                       setSyncMsg('Error: ' + (result.error ?? 'desconocido'));
                     }
                     setSyncing(false);
@@ -624,97 +623,67 @@ export function SettingsPage() {
                 </p>
               )}
 
-              {/* Gist ID — para vincular otro dispositivo */}
-              <details className="group">
-                <summary className="cursor-pointer text-xs text-ink-500 hover:text-ink-300 transition-colors select-none">
-                  ⚙ Vincular otro dispositivo
-                </summary>
-                <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
-                  <p className="text-xs text-ink-500">
-                    Para sincronizar un segundo dispositivo: haz <strong className="text-ink-300">↑ Subir cambios</strong> aquí primero,
-                    luego en el otro dispositivo configura el mismo token de GitHub y pega el Gist ID de abajo.
-                  </p>
-                  {settings.syncGistId ? (
-                    <div className="flex items-center gap-2">
-                      <code className="flex-1 text-xs text-ink-300 bg-ink-800 px-2 py-1 rounded font-mono break-all">
-                        {settings.syncGistId}
-                      </code>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(settings.syncGistId ?? '')}
-                        className="flex-shrink-0 text-xs text-ink-400 hover:text-ink-200 border border-ink-600 hover:border-ink-500 px-2 py-1 rounded transition-colors"
-                      >
-                        Copiar
-                      </button>
+              {/* Log de sync */}
+              {syncLog.length > 0 && (
+                <div className="bg-ink-900 border border-ink-700 rounded-lg p-2 max-h-32 overflow-y-auto font-mono">
+                  {syncLog.map((entry, i) => (
+                    <div key={i} className="flex gap-2 text-[11px] leading-5">
+                      <span className="text-ink-600 flex-shrink-0">{entry.ts}</span>
+                      <span className={entry.ok ? 'text-ink-300' : 'text-rose-400'}>{entry.msg}</span>
                     </div>
-                  ) : (
-                    <p className="text-xs text-ink-600">Aún no hay Gist. Pulsa "↑ Subir cambios" para crear uno.</p>
-                  )}
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs text-ink-500 font-medium">¿Tienes un Gist ID de otro dispositivo?</p>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={syncGistId}
-                        onChange={(e) => setSyncGistId(e.target.value)}
-                        placeholder="Pega el Gist ID aquí..."
-                        className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
-                      />
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={async () => {
-                          if (!syncGistId.trim()) return;
-                          await updateSettings({ syncGistId: syncGistId.trim() });
-                          setSyncMsg('✓ Gist ID guardado. Pulsa "↓ Descargar cambios" para sincronizar.');
-                          setTimeout(() => setSyncMsg(''), 5000);
-                        }}
-                      >
-                        Guardar
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="bg-sky-500/10 border border-sky-500/20 rounded-lg p-3">
-                    <p className="text-xs text-sky-300 font-medium mb-1">Auto-sync activado</p>
-                    <p className="text-xs text-ink-400">
-                      La app sincroniza automáticamente cada 5 minutos y al cambiar de pestaña/app.
-                      Solo descarga datos si hay cambios en el Gist (como <code className="text-sky-300">git fetch</code>).
-                    </p>
-                  </div>
+                  ))}
+                  <div ref={syncLogEndRef} />
                 </div>
-              </details>
+              )}
 
-              {/* Cambiar token — collapsible */}
-              <details className="group">
-                <summary className="cursor-pointer text-xs text-ink-500 hover:text-ink-300 transition-colors select-none">
-                  ⚙ Cambiar token de GitHub
-                </summary>
-                <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
-                  <p className="text-xs text-ink-500">
-                    Token actual activo. Pega uno nuevo para reemplazarlo.
+              {/* Configuración — Gist ID + token, todo visible */}
+              <div className="flex flex-col gap-3 border-t border-ink-800 pt-4">
+
+                {/* Token */}
+                <p className="text-xs text-ink-500 font-medium">Token de GitHub</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={githubToken}
+                    onChange={(e) => setGithubToken(e.target.value)}
+                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                    className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
+                    autoComplete="off"
+                  />
+                  <Button size="sm" variant="secondary" onClick={handleSaveGithubToken}>Guardar</Button>
+                </div>
+
+                {/* Gist ID */}
+                <p className="text-xs text-ink-500 font-medium">Gist ID</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={syncGistId}
+                    onChange={(e) => setSyncGistId(e.target.value)}
+                    placeholder="Se crea al subir por primera vez..."
+                    className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
+                  />
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={async () => {
+                      if (!syncGistId.trim()) return;
+                      await updateSettings({ syncGistId: syncGistId.trim() });
+                      setSyncMsg('✓ Gist ID guardado.');
+                      setTimeout(() => setSyncMsg(''), 4000);
+                    }}
+                  >
+                    Guardar
+                  </Button>
+                </div>
+
+                {gistExportMsg && (
+                  <p className={`text-xs ${gistExportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+                    {gistExportMsg}
                   </p>
-                  <div className="flex gap-2">
-                    <input
-                      type="password"
-                      value={githubToken}
-                      onChange={(e) => setGithubToken(e.target.value)}
-                      placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                      className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
-                      autoComplete="off"
-                    />
-                    <Button size="sm" variant="secondary" onClick={handleSaveGithubToken}>
-                      Guardar
-                    </Button>
-                  </div>
-                  {gistExportMsg && (
-                    <p className={`text-xs ${gistExportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
-                      {gistExportMsg}
-                    </p>
-                  )}
-                </div>
-              </details>
+                )}
+              </div>
             </div>
-          )}
         </Card>
 
         {/* Export contribution */}
