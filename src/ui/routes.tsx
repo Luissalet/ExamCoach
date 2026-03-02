@@ -12,12 +12,14 @@ import { ReadModePage } from './pages/ReadMode';
 import { PdfListenMode } from './pages/PdfListenMode';
 import { SessionHistoryPage } from './pages/SessionHistory';
 import { GlobalPracticePage } from './pages/GlobalPracticePage';
+import { PdfToolsPage } from './pages/PdfToolsPage';
 
 export function AppRouter() {
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/pdf-tools" element={<PdfToolsPage />} />
         <Route path="/global-practice" element={<GlobalPracticePage />} />
         <Route path="/subject/:subjectId" element={<SubjectView />} />
         <Route path="/subject/:subjectId/stats" element={<StatsPage />} />

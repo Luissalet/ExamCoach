@@ -22,7 +22,7 @@ const ALL_TYPES: { type: QuestionType; label: string }[] = [
   { type: 'PRACTICO', label: 'Práctico' },
 ];
 
-type GlobalMode = 'random' | 'failed' | 'smart';
+type GlobalMode = 'random' | 'all' | 'failed' | 'smart';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -204,7 +204,9 @@ export function GlobalPracticePage() {
 
     let pool = [...filteredPool];
 
-    if (mode === 'failed') {
+    if (mode === 'all') {
+      // Use all filtered questions as-is
+    } else if (mode === 'failed') {
       pool = pool.filter((q) => q.stats.lastResult === 'WRONG');
     } else if (mode === 'smart') {
       const { sortByPriority } = await import('@/domain/spacedRepetition');
@@ -404,6 +406,7 @@ export function GlobalPracticePage() {
             <div className="flex flex-col gap-4">
               <Select label="Modo" value={mode} onChange={(e) => setMode(e.target.value as GlobalMode)}>
                 <option value="random">Aleatorio</option>
+                <option value="all">Todas las preguntas</option>
                 <option value="failed">Sólo falladas ({failedCount})</option>
                 <option value="smart">Repaso inteligente ({smartCount} pendientes)</option>
               </Select>

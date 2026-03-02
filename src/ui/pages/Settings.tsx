@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db, getSettings } from '@/data/db';
 import { Button, Input, Card, Select, Modal, TypeBadge } from '@/ui/components';
-import { exportContributionPack, importContributionPack, undoContributionImport, previewContributionPack, type ContributionPackPreview } from '@/data/contributionImport';
+import { exportContributionPack, importContributionPack, undoContributionImport, previewContributionPack, type ContributionPackPreview, type UnmatchedTopic, type TopicMappings } from '@/data/contributionImport';
+import { downloadContributionGuide } from '@/data/generateContributionGuide';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
 import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
@@ -30,6 +31,10 @@ export function SettingsPage() {
   const [fileQueue, setFileQueue] = useState<File[]>([]);
   const [queueTotal, setQueueTotal] = useState(0);
   const [importing, setImporting] = useState(false);
+  // Unmatched topics from import
+  const [unmatchedTopics, setUnmatchedTopics] = useState<UnmatchedTopic[]>([]);
+  const [topicMappings, setTopicMappings] = useState<TopicMappings>({});
+  const [allTopicsForMapping, setAllTopicsForMapping] = useState<{ id: string; title: string; subjectName: string }[]>([]);
 
   useEffect(() => {
     loadSettings();
@@ -124,24 +129,44 @@ export function SettingsPage() {
     e.target.value = '';
   };
 
-  const handleConfirmImport = async () => {
+  const handleConfirmImport = async (mappings?: TopicMappings) => {
     if (!packPreview || importing) return;
     setImporting(true);
     try {
-      const result = await importContributionPack(packPreview.rawPack);
+      const result = await importContributionPack(packPreview.rawPack, mappings);
       if (result.alreadyImported) {
         setImportMsg(`ℹ️ Pack ${result.packId.slice(0, 8)}... ya fue importado anteriormente.`);
       } else if (result.errors.length > 0) {
         setImportMsg('Error: ' + result.errors[0]);
+      } else if (result.unmatchedTopics.length > 0) {
+        // Show unmatched topics for manual mapping
+        setUnmatchedTopics(result.unmatchedTopics);
+        // Load all topics for the mapping dropdowns
+        const allSubjects = await db.subjects.toArray();
+        const allTopics = await db.topics.toArray();
+        const topicsWithSubject = allTopics.map((t) => {
+          const s = allSubjects.find((s) => s.id === t.subjectId);
+          return { id: t.id, title: t.title, subjectName: s?.name ?? '' };
+        });
+        setAllTopicsForMapping(topicsWithSubject);
+        setTopicMappings({});
+        const msg = `⚠ ${result.newQuestions} preguntas importadas, pero ${result.skippedUnmatched} preguntas no se pudieron asignar porque sus temas no coinciden con los existentes. Asigna los temas manualmente abajo.`;
+        setImportMsg(msg);
+        if (result.newQuestions > 0) {
+          setImportedPacks((p) => [...p, result.packId]);
+          await loadSubjects();
+        }
+        setImporting(false);
+        return; // Don't close preview yet
       } else {
         setImportMsg(
-          `✓ Importado de ${result.createdBy}: ${result.newQuestions} preguntas nuevas, ${result.duplicates} duplicadas` +
-          (result.newTopicsCreated > 0 ? `, ${result.newTopicsCreated} temas creados` : '')
+          `✓ Importado de ${result.createdBy}: ${result.newQuestions} preguntas nuevas, ${result.duplicates} duplicadas`
         );
         setImportedPacks((p) => [...p, result.packId]);
         await loadSubjects();
       }
       setPackPreview(null);
+      setUnmatchedTopics([]);
       // Procesar siguiente en la cola
       if (fileQueue.length > 0) {
         await processNextInQueue(fileQueue);
@@ -151,11 +176,18 @@ export function SettingsPage() {
     } catch (err) {
       setImportMsg('Error: ' + String(err));
       setPackPreview(null);
+      setUnmatchedTopics([]);
       if (fileQueue.length > 0) await processNextInQueue(fileQueue);
       else setQueueTotal(0);
     } finally {
       setImporting(false);
     }
+  };
+
+  const handleRetryWithMappings = async () => {
+    // Re-import with the user-defined topic mappings
+    await handleConfirmImport(topicMappings);
+    setUnmatchedTopics([]);
   };
 
   const handleExportContribution = async () => {
@@ -340,6 +372,18 @@ export function SettingsPage() {
           </div>
         </Card>
 
+        {/* Generate contribution guide */}
+        <Card>
+          <h2 className="font-display text-base text-ink-200 mb-1">Guía de contribución personalizada</h2>
+          <p className="text-sm text-ink-500 mb-4">
+            Genera una guía <code className="text-amber-400 bg-ink-900 px-1 py-0.5 rounded text-xs">GUIA_CONTRIBUTION_PACKS.md</code> con los slugs exactos de tus asignaturas y temas.
+            Comparte esta guía con tus compañeros o con ChatGPT para que genere packs compatibles con tu banco.
+          </p>
+          <Button size="sm" variant="secondary" onClick={downloadContributionGuide}>
+            📋 Descargar guía personalizada
+          </Button>
+        </Card>
+
         {/* Import contribution (maintainer mode) */}
         <Card>
           <h2 className="font-display text-base text-ink-200 mb-1">Importar contribuciones</h2>
@@ -363,6 +407,52 @@ export function SettingsPage() {
               ↓ Seleccionar contribution pack(s)
             </span>
           </label>
+
+          {unmatchedTopics.length > 0 && (
+            <div className="mt-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <p className="text-sm text-amber-400 font-medium mb-3">
+                Temas no encontrados — asigna cada uno a un tema existente:
+              </p>
+              <div className="flex flex-col gap-3">
+                {unmatchedTopics.map((ut) => (
+                  <div key={`${ut.subjectKey}::${ut.topicKey}`} className="flex flex-col gap-1">
+                    <p className="text-xs text-ink-300">
+                      <span className="text-ink-500">{ut.subjectKey} →</span> {ut.topicTitle} <span className="text-ink-500">({ut.questionCount} preguntas)</span>
+                    </p>
+                    <select
+                      className="w-full bg-ink-800 border border-ink-600 rounded px-2 py-1.5 text-sm text-ink-200"
+                      value={topicMappings[`${ut.subjectKey}::${ut.topicKey}`] ?? ''}
+                      onChange={(e) => {
+                        setTopicMappings((prev) => ({
+                          ...prev,
+                          [`${ut.subjectKey}::${ut.topicKey}`]: e.target.value,
+                        }));
+                      }}
+                    >
+                      <option value="">— Selecciona un tema existente —</option>
+                      {allTopicsForMapping.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.subjectName} → {t.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button
+                  size="sm"
+                  onClick={handleRetryWithMappings}
+                  disabled={unmatchedTopics.some((ut) => !topicMappings[`${ut.subjectKey}::${ut.topicKey}`])}
+                >
+                  Reimportar con asignaciones
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => { setUnmatchedTopics([]); setTopicMappings({}); }}>
+                  Ignorar
+                </Button>
+              </div>
+            </div>
+          )}
 
           {importedPacks.length > 0 && (
             <div className="mt-4">
@@ -563,7 +653,7 @@ export function SettingsPage() {
               <Button variant="ghost" onClick={async () => { setPackPreview(null); if (fileQueue.length > 0) await processNextInQueue(fileQueue); else setQueueTotal(0); }}>
                 {fileQueue.length > 0 ? 'Saltar' : 'Cancelar'}
               </Button>
-              <Button onClick={handleConfirmImport} disabled={importing || ('newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount === 0)}>
+              <Button onClick={() => handleConfirmImport()} disabled={importing || ('newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount === 0)}>
                 {importing ? '⏳ Importando…' : 'newQuestionsCount' in packPreview && (packPreview as any).newQuestionsCount > 0
                   ? `Importar ${(packPreview as any).newQuestionsCount} preguntas nuevas`
                   : 'Sin preguntas nuevas'}

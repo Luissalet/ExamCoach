@@ -401,6 +401,19 @@ export interface ImportHistoryEntry {
   subjectNames: string[];
 }
 
+// ─── AI Settings ──────────────────────────────────────────────────────────────
+
+export type AIProviderType = 'openai' | 'anthropic' | 'webllm';
+
+export interface AISettings {
+  provider: AIProviderType;
+  openaiApiKey?: string;
+  openaiModel?: string;       // gpt-4o, gpt-4o-mini, etc.
+  anthropicApiKey?: string;
+  anthropicModel?: string;    // claude-sonnet-4-5-20250929, etc.
+  webllmModel?: string;       // Llama-3.1-8B-Instruct-q4f16_1-MLC, etc.
+}
+
 // ─── Settings ─────────────────────────────────────────────────────────────────
 
 export interface AppSettings {
@@ -415,6 +428,11 @@ export interface AppSettings {
    * Permite hacer undo de un import concreto eliminando sus preguntas.
    */
   importHistory?: ImportHistoryEntry[];
+  /**
+   * Configuración del motor de IA para extracción de preguntas.
+   * API keys se almacenan solo en IndexedDB local.
+   */
+  aiSettings?: AISettings;
 }
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────

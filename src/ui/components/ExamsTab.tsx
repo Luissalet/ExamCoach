@@ -4,6 +4,8 @@ import { Button, Card, Modal, Input, EmptyState, Badge, TypeBadge, Select } from
 import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
 import type { Exam, Question, Topic, QuestionType, QuestionOrigin } from '@/domain/models';
 import { exportExams, importExams, downloadJSON, parseImportFile } from '@/data/exportImport';
+import { PdfExportModal } from '@/ui/components/PdfExportModal';
+import { generateExamsPDF, downloadBlob } from '@/utils/pdfExport';
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -51,6 +53,9 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
   // ── Selection mode for export ──
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // ── PDF export modal ──
+  const [pdfExportOpen, setPdfExportOpen] = useState(false);
 
   // ── Import state ──
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -159,9 +164,14 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
             Importar
           </Button>
           {exams.length > 0 && !selectMode && (
-            <Button size="sm" variant="ghost" onClick={() => setSelectMode(true)} title="Seleccionar exámenes para exportar">
-              Seleccionar
-            </Button>
+            <>
+              <Button size="sm" variant="ghost" onClick={() => setPdfExportOpen(true)} title="Exportar exámenes como PDF">
+                PDF
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setSelectMode(true)} title="Seleccionar exámenes para exportar JSON">
+                Seleccionar
+              </Button>
+            </>
           )}
           {selectMode && (
             <>
@@ -311,6 +321,36 @@ export function ExamsTab({ subjectId, exams, questions, topics, onCreate, onUpda
           />
         </Modal>
       )}
+
+      {/* Modal exportar PDF */}
+      <PdfExportModal
+        open={pdfExportOpen}
+        onClose={() => setPdfExportOpen(false)}
+        title="Exportar exámenes como PDF"
+        items={exams}
+        getId={(e) => e.id}
+        renderItem={(exam) => {
+          const resolvedQs = exam.questionIds.map((id) => questions.find((q) => q.id === id)).filter(Boolean);
+          return (
+            <div>
+              <span className="text-sm text-ink-100 font-medium">{exam.name}</span>
+              <span className="text-xs text-ink-500 ml-2">
+                {resolvedQs.length} pregunta{resolvedQs.length !== 1 ? 's' : ''}
+              </span>
+              {exam.description && (
+                <p className="text-xs text-ink-400 mt-0.5 line-clamp-1">{exam.description}</p>
+              )}
+            </div>
+          );
+        }}
+        onExport={async (selectedIds) => {
+          const blob = await generateExamsPDF(exams, questions, topics, '', selectedIds);
+          const name = selectedIds.size === 1
+            ? exams.find((e) => selectedIds.has(e.id))?.name ?? 'examen'
+            : `${selectedIds.size}_examenes`;
+          downloadBlob(blob, `${name}.pdf`);
+        }}
+      />
 
       {/* Modal crear/editar examen */}
       <Modal

@@ -11,6 +11,9 @@ import { MdContent } from '@/ui/components/MdContent';
 import { renderMd } from '@/utils/renderMd';
 import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
 import { KeyConceptsTab } from '@/ui/components/KeyConceptsTab';
+import { AIExtractionTab } from '@/ui/components/AIExtractionTab';
+import { PdfExportModal } from '@/ui/components/PdfExportModal';
+import { generateQuestionsPDF, downloadBlob } from '@/utils/pdfExport';
 
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
 import type { Topic, Question, QuestionOrigin, QuestionType, Exam } from '@/domain/models';
@@ -19,7 +22,14 @@ import { slugify } from '@/domain/normalize';
 import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
 import { loadPdfMapping, getPdfUrl, resourcesUrl, loadSubjectExtraInfo } from '@/data/resourceLoader';
 import type { GptLink } from '@/domain/models';
-type TabId = 'topics' | 'questions' | 'practice' | 'exams' | 'resources' | 'concepts' | 'chatbots';
+type TabId = 'topics' | 'questions' | 'practice' | 'exams' | 'resources' | 'concepts' | 'chatbots' | 'ia';
+
+const TYPE_LABELS_MAP: Record<QuestionType, string> = {
+  TEST: 'Test',
+  DESARROLLO: 'Desarrollo',
+  COMPLETAR: 'Completar',
+  PRACTICO: 'Práctico',
+};
 
 const ORIGIN_LABELS: Record<QuestionOrigin, string> = {
   test: 'Test',
@@ -92,6 +102,8 @@ export function SubjectView() {
   // C2: Selection mode for selective export
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // PDF export modal
+  const [pdfExportOpen, setPdfExportOpen] = useState(false);
 
   const [topicModal, setTopicModal] = useState(false);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
@@ -456,6 +468,7 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
     { id: 'resources', label: 'Otros recursos' },
     { id: 'concepts', label: 'Conceptos clave' },
     ...(gptLinks.length > 0 ? [{ id: 'chatbots', label: 'Chatbots' }] : []),
+    { id: 'ia', label: 'IA' },
   ];
 
   // B2: Reorder topics via drag & drop
@@ -732,6 +745,12 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                     × Limpiar
                   </Button>
                 )}
+                {/* PDF Export */}
+                {filteredQuestions.length > 0 && !selectMode && (
+                  <Button size="sm" variant="ghost" onClick={() => setPdfExportOpen(true)} title="Exportar preguntas como PDF">
+                    PDF
+                  </Button>
+                )}
                 {/* C2: Selection mode toggle */}
                 <Button
                   size="sm"
@@ -856,6 +875,38 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
           </div>
         )}
 
+        {/* PDF Export modal for questions */}
+        <PdfExportModal
+          open={pdfExportOpen}
+          onClose={() => setPdfExportOpen(false)}
+          title="Exportar preguntas como PDF"
+          items={filteredQuestions}
+          getId={(q) => q.id}
+          groupBy={(q) => TYPE_LABELS_MAP[q.type] ?? q.type}
+          groupOrder={['Test', 'Desarrollo', 'Completar', 'Práctico']}
+          renderItem={(q) => {
+            const topic = subjectTopics.find((t) => t.id === q.topicId);
+            return (
+              <div>
+                <div className="flex items-center gap-2">
+                  <TypeBadge type={q.type} />
+                  {topic && <span className="text-xs text-ink-500">{topic.title}</span>}
+                </div>
+                <p className="text-xs text-ink-200 mt-0.5 line-clamp-2">{q.prompt}</p>
+              </div>
+            );
+          }}
+          onExport={async (selIds) => {
+            const blob = await generateQuestionsPDF(
+              filteredQuestions,
+              subjectTopics,
+              subject?.name ?? '',
+              selIds,
+            );
+            downloadBlob(blob, `preguntas-${subject?.name ?? 'export'}.pdf`);
+          }}
+        />
+
         {/* PRACTICAR */}
         {tab === 'practice' && (
           <PracticeConfig subjectId={subjectId!} topics={subjectTopics} questions={subjectQuestions} defaultTopicId={filterTopic} autostart={autostart} />
@@ -931,6 +982,10 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               ))}
             </div>
           </div>
+        )}
+
+        {tab === 'ia' && subject && (
+          <AIExtractionTab subject={subject} topics={subjectTopics} />
         )}
       </main>
 

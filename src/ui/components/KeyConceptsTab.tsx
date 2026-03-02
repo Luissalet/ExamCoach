@@ -13,6 +13,8 @@ import { MdContent } from '@/ui/components/MdContent';
 import type { KeyConcept, KeyConceptCategory, Topic } from '@/domain/models';
 import { importKeyConceptsPack, exportKeyConceptsPack } from '@/data/keyConceptsImport';
 import type { KeyConceptsImportResult } from '@/data/keyConceptsImport';
+import { PdfExportModal } from '@/ui/components/PdfExportModal';
+import { generateKeyConceptsPDF, downloadBlob } from '@/utils/pdfExport';
 
 // ─── Category config ─────────────────────────────────────────────────────────
 
@@ -77,6 +79,7 @@ export function KeyConceptsTab({
 }: KeyConceptsTabProps) {
   const [formModal, setFormModal] = useState(false);
   const [importModal, setImportModal] = useState(false);
+  const [pdfExportOpen, setPdfExportOpen] = useState(false);
   const [editing, setEditing] = useState<KeyConcept | null>(null);
   const [filterCategory, setFilterCategory] = useState<KeyConceptCategory | ''>('');
   const [searchText, setSearchText] = useState('');
@@ -196,6 +199,11 @@ export function KeyConceptsTab({
         <Button size="sm" variant="secondary" onClick={handleExport}>
           Exportar JSON
         </Button>
+        {concepts.length > 0 && (
+          <Button size="sm" variant="secondary" onClick={() => setPdfExportOpen(true)}>
+            PDF
+          </Button>
+        )}
 
         <div className="ml-auto flex gap-2">
           <select
@@ -281,6 +289,34 @@ export function KeyConceptsTab({
           onReload={onReload}
         />
       )}
+      <PdfExportModal
+        open={pdfExportOpen}
+        onClose={() => setPdfExportOpen(false)}
+        title="Exportar conceptos clave como PDF"
+        items={concepts}
+        getId={(c) => c.id}
+        groupBy={(c) => CATEGORY_CONFIG[c.category].plural}
+        groupOrder={CATEGORIES.map((cat) => CATEGORY_CONFIG[cat].plural)}
+        renderItem={(c) => {
+          const topic = c.topicId ? topics.find((t) => t.id === c.topicId) : undefined;
+          return (
+            <div>
+              <div className="flex items-center gap-2">
+                <Badge color={CATEGORY_CONFIG[c.category].badgeColor}>
+                  {CATEGORY_CONFIG[c.category].label}
+                </Badge>
+                <span className="text-sm text-ink-100">{c.title}</span>
+                {topic && <span className="text-[10px] text-ink-500">{topic.title}</span>}
+              </div>
+              <p className="text-xs text-ink-400 mt-0.5 line-clamp-1">{c.content}</p>
+            </div>
+          );
+        }}
+        onExport={async (selectedIds) => {
+          const blob = await generateKeyConceptsPDF(concepts, topics, '', selectedIds);
+          downloadBlob(blob, `conceptos-clave.pdf`);
+        }}
+      />
     </div>
   );
 }

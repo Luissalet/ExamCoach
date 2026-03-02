@@ -9,6 +9,7 @@ import type { ImportProgressEvent } from '@/data/resourceImporter';
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
 import { db } from '@/data/db';
 import { CalendarWidget } from '@/ui/components/CalendarWidget';
+import { ActiveSessionsSidebar } from '@/ui/components/ActiveSessionsSidebar';
 import { deliverableRepo } from '@/data/deliverableRepo';
 import type { Deliverable } from '@/domain/models';
 
@@ -46,6 +47,7 @@ export function Dashboard() {
 
   const [commitMsg, setCommitMsg] = useState('');
   const [committing, setCommitting] = useState(false);
+  const [sidebarRefresh, setSidebarRefresh] = useState(0);
   const [dedupMsg, setDedupMsg] = useState('');
   const [deduping, setDeduping] = useState(false);
   const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
@@ -115,11 +117,15 @@ export function Dashboard() {
           .toArray();
         pendingCounts[s.id] = sessions.reduce((acc, sess) => acc + sess.answers.filter(a => a.result === null).length, 0);
 
-        // Sesión incompleta más reciente (A3)
+        // Sesión incompleta más reciente (A3) — excluir mixtas (se muestran en sidebar)
         const incompleteSess = await db.sessions
           .where('subjectId')
           .equals(s.id)
-          .filter(sess => sess.finishedAt == null && sess.answers.length > 0)
+          .filter(sess =>
+            sess.finishedAt == null &&
+            sess.answers.length > 0 &&
+            !(sess.subjectIds && sess.subjectIds.length > 1) // no mixtas
+          )
           .toArray();
         if (incompleteSess.length > 0) {
           // Tomar la más reciente
@@ -484,8 +490,11 @@ export function Dashboard() {
         </div>
       )}
 
-      {/* ── Body: main + sidebar ───────────────────────────────────────────── */}
+      {/* ── Body: left sidebar + main + right sidebar ────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
+
+        {/* ── Left sidebar: Sesiones activas ──────────────────────────────── */}
+        <ActiveSessionsSidebar refreshKey={sidebarRefresh} />
 
         {/* ── Main (scrollable) ──────────────────────────────────────────── */}
         <main className="flex-1 overflow-y-auto">
@@ -696,6 +705,25 @@ export function Dashboard() {
                 </button>
               </div>
             )}
+
+            {/* PDF Tools card */}
+            <div className="mt-8">
+              <button
+                onClick={() => navigate('/pdf-tools')}
+                className="w-full flex items-center gap-4 bg-ink-800 border border-ink-700 rounded-xl p-5 hover:border-amber-500/30 hover:bg-ink-800/80 transition-all group text-left"
+              >
+                <span className="text-3xl">🛠️</span>
+                <div>
+                  <h3 className="font-display text-lg text-ink-100 group-hover:text-amber-300 transition-colors">
+                    Herramientas PDF
+                  </h3>
+                  <p className="text-sm text-ink-400 font-body">
+                    Unir, dividir, extraer, rotar, imágenes→PDF, marca de agua, metadatos
+                  </p>
+                </div>
+                <span className="ml-auto text-ink-600 group-hover:text-amber-400 transition-colors text-lg">→</span>
+              </button>
+            </div>
 
             {/* ZIP progress bar */}
             {zipProgress && zipProgress.phase !== 'complete' && (

@@ -53,6 +53,13 @@ const ContributionPackSchema = z.object({
 
 // ─── Import result ─────────────────────────────────────────────────────────────
 
+export interface UnmatchedTopic {
+  subjectKey: string;
+  topicKey: string;
+  topicTitle: string;
+  questionCount: number;
+}
+
 export interface ContributionImportResult {
   packId: string;
   createdBy: string;
@@ -62,18 +69,30 @@ export interface ContributionImportResult {
   newSubjectsCreated: number;
   alreadyImported: boolean;
   errors: string[];
+  /** Topics in the pack that couldn't be matched to existing topics */
+  unmatchedTopics: UnmatchedTopic[];
+  /** Questions skipped because their topic couldn't be matched */
+  skippedUnmatched: number;
 }
 
 // ─── Main merge function ───────────────────────────────────────────────────────
 
+/**
+ * Optional topic mappings: maps "subjectKey::topicKey" to an existing topic ID.
+ * Used when a first import attempt found unmatched topics and the user manually
+ * selected which existing topic to map them to.
+ */
+export type TopicMappings = Record<string, string>;
+
 let _importInProgress = false;
 
-export async function importContributionPack(raw: unknown): Promise<ContributionImportResult> {
+export async function importContributionPack(raw: unknown, topicMappings?: TopicMappings): Promise<ContributionImportResult> {
   // Guard against concurrent calls (prevents duplicates from double-clicks / re-entry)
   if (_importInProgress) {
     return {
       packId: '', createdBy: '', newQuestions: 0, duplicates: 0,
       newTopicsCreated: 0, newSubjectsCreated: 0, alreadyImported: true, errors: [],
+      unmatchedTopics: [], skippedUnmatched: 0,
     };
   }
   _importInProgress = true;
@@ -87,6 +106,8 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
     newSubjectsCreated: 0,
     alreadyImported: false,
     errors: [],
+    unmatchedTopics: [],
+    skippedUnmatched: 0,
   };
 
   try {
@@ -161,32 +182,37 @@ export async function importContributionPack(raw: unknown): Promise<Contribution
         result.newSubjectsCreated++;
       }
 
-      // Resolve or create topic
+      // Resolve topic — never create new topics, only match existing ones
       const topicKey = cq.topicKey;
       const topicMapKey = `${subjectKey}::${topicKey}`;
       let topic = topicByKey.get(topicMapKey);
 
+      // Check manual topic mappings if provided
+      if (!topic && topicMappings) {
+        const mappedTopicId = topicMappings[topicMapKey];
+        if (mappedTopicId) {
+          const mappedTopic = allTopics.find((t) => t.id === mappedTopicId);
+          if (mappedTopic) {
+            topic = mappedTopic;
+            topicByKey.set(topicMapKey, mappedTopic);
+          }
+        }
+      }
+
       if (!topic) {
-        // Find topic info from targets
-        const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
-        const topicInfo = targetInfo?.topics.find((t) => t.topicKey === topicKey);
-        const topicTitle = topicInfo?.topicTitle ?? topicKey;
-
-        // Get max order for subject
-        const existingTopics = await db.topics.where('subjectId').equals(subject.id).toArray();
-        const maxOrder = existingTopics.reduce((max, t) => Math.max(max, t.order), -1);
-
-        topic = {
-          id: uuidv4(),
-          subjectId: subject.id,
-          title: topicTitle,
-          order: maxOrder + 1,
-          createdAt: now,
-          updatedAt: now,
-        };
-        await db.topics.add(topic);
-        topicByKey.set(topicMapKey, topic);
-        result.newTopicsCreated++;
+        // Track the unmatched topic (avoid duplicates in the list)
+        const alreadyTracked = result.unmatchedTopics.some(
+          (ut) => ut.subjectKey === subjectKey && ut.topicKey === topicKey
+        );
+        if (!alreadyTracked) {
+          const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
+          const topicInfo = targetInfo?.topics.find((t) => t.topicKey === topicKey);
+          const topicTitle = topicInfo?.topicTitle ?? topicKey;
+          const questionCount = pack.questions.filter((q) => q.topicKey === topicKey && q.subjectKey === subjectKey).length;
+          result.unmatchedTopics.push({ subjectKey, topicKey, topicTitle, questionCount });
+        }
+        result.skippedUnmatched++;
+        continue;
       }
 
       // Compute content hash for deduplication
