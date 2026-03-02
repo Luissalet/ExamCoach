@@ -63,6 +63,8 @@ interface ResourceFile {
   name: string;
   path: string;
   type: string; // extension
+  /** ID del tema asociado (solo para categoría Temas) */
+  topicId?: string;
 }
 
 interface SubCategory {
@@ -485,6 +487,27 @@ export function SubjectView() {
   const allStored = await listStoredPdfs(subjectId);
   const dbSet = new Set(allStored.filter(f => RESOURCE_SLUGS.some(slug => f.startsWith(`${slug}/`))));
   setResourceDbFiles(dbSet);
+
+  // ── 4. Añadir categoría "Temas" con los PDFs vinculados a temas ──
+  const currentTopics = topics
+    .filter((t) => t.subjectId === subjectId && t.pdfFilename)
+    .sort((a, b) => a.title.localeCompare(b.title, 'es', { numeric: true }));
+
+  if (currentTopics.length > 0) {
+    const temaFiles: ResourceFile[] = currentTopics.map((t) => ({
+      name: t.pdfFilename!,
+      path: t.pdfFilename!,
+      type: 'pdf',
+      topicId: t.id,
+    }));
+    // Insertar al principio
+    categories.unshift({
+      name: 'Temas',
+      slug: 'Temas',
+      files: temaFiles,
+      subcategories: undefined,
+    });
+  }
 
   setResources(categories);
   setResourcesLoading(false);
@@ -1682,6 +1705,7 @@ interface ResourcesTabProps {
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
+  'Temas': '📚',
   'Exámenes': '📝',
   'Resúmenes': '📋',
   'Práctica': '💻',
@@ -1693,9 +1717,44 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
 
   const [dragOverCat, setDragOverCat] = useState<string | null>(null);
   const [uploadingCat, setUploadingCat] = useState<string | null>(null);
+  const [collapsedCats, setCollapsedCats] = useState<Set<string>>(new Set());
+
+  const toggleCat = (slug: string) => {
+    setCollapsedCats((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+  };
 
   // Open a file: try static URL first, then IndexedDB blob
   const handleFileClick = async (file: ResourceFile, categorySlug: string, subcategoryName?: string) => {
+    // Los PDFs de temas se almacenan directamente bajo el subjectId (no como recurso categorizado)
+    if (categorySlug === 'Temas') {
+      // 1. Intentar URL estática
+      const staticUrl = resourcesUrl(`resources/${slug}/Temas/${file.name}`);
+      try {
+        const res = await fetch(staticUrl, { method: 'HEAD' });
+        if (res.ok) {
+          const ct = res.headers.get('Content-Type') ?? '';
+          if (!ct.includes('text/html')) {
+            window.open(staticUrl, '_blank');
+            return;
+          }
+        }
+      } catch {}
+      // 2. Intentar desde pdfStorage (IndexedDB/FSA)
+      const blobUrl = await getPdfBlobUrl(subjectId, file.name);
+      if (blobUrl) {
+        window.open(blobUrl, '_blank');
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+      } else {
+        alert('Archivo no encontrado');
+      }
+      return;
+    }
+
     const staticPath = subcategoryName
       ? `${categorySlug}/${subcategoryName}/${file.name}`
       : `${categorySlug}/${file.name}`;
@@ -1781,43 +1840,53 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
         const totalFiles = cat.files.length + (cat.subcategories?.reduce((acc, sc) => acc + sc.files.length, 0) ?? 0);
         const isDragOver = dragOverCat === cat.slug;
         const isUploading = uploadingCat === cat.slug;
+        const isCollapsed = collapsedCats.has(cat.slug);
+        const isTemas = cat.slug === 'Temas';
 
         return (
           <div
             key={cat.slug}
-            onDragOver={(e) => { e.preventDefault(); setDragOverCat(cat.slug); }}
-            onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOverCat(null); }}
-            onDrop={(e) => handleDrop(cat.slug, e)}
+            onDragOver={isTemas ? undefined : (e) => { e.preventDefault(); setDragOverCat(cat.slug); }}
+            onDragLeave={isTemas ? undefined : (e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOverCat(null); }}
+            onDrop={isTemas ? undefined : (e) => handleDrop(cat.slug, e)}
             className={`rounded-xl transition-all ${isDragOver ? 'ring-2 ring-amber-500/40 bg-amber-500/5' : ''}`}
           >
-            {/* Category header */}
+            {/* Category header — clickable to collapse */}
             <div className="flex items-center gap-2 mb-3">
-              <h3 className="font-display text-lg text-ink-200 flex items-center gap-2 flex-1">
+              <button
+                onClick={() => toggleCat(cat.slug)}
+                className="font-display text-lg text-ink-200 flex items-center gap-2 flex-1 text-left hover:text-ink-100 transition-colors"
+              >
+                <span className={`text-xs text-ink-500 transition-transform ${isCollapsed ? '' : 'rotate-90'}`}>▶</span>
                 {CATEGORY_ICONS[cat.name] ?? '📁'}
                 {cat.name}
                 {totalFiles > 0 && (
                   <span className="text-xs text-ink-500 font-body">({totalFiles} archivo{totalFiles !== 1 ? 's' : ''})</span>
                 )}
-              </h3>
-              {/* Upload button */}
-              <label
-                className={`cursor-pointer text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
-                  isUploading
-                    ? 'bg-amber-500/20 text-amber-400 animate-pulse'
-                    : 'bg-ink-700 hover:bg-ink-600 text-ink-300 hover:text-ink-100'
-                }`}
-                title={`Subir archivos a ${cat.name}`}
-              >
-                {isUploading ? '⏳ Subiendo…' : '↑ Subir archivos'}
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => handleFileInput(cat.slug, e.target.files)}
-                />
-              </label>
+              </button>
+              {/* Upload button (no upload for Temas — those come from topics) */}
+              {!isTemas && (
+                <label
+                  className={`cursor-pointer text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+                    isUploading
+                      ? 'bg-amber-500/20 text-amber-400 animate-pulse'
+                      : 'bg-ink-700 hover:bg-ink-600 text-ink-300 hover:text-ink-100'
+                  }`}
+                  title={`Subir archivos a ${cat.name}`}
+                >
+                  {isUploading ? '⏳ Subiendo…' : '↑ Subir archivos'}
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleFileInput(cat.slug, e.target.files)}
+                  />
+                </label>
+              )}
             </div>
 
+            {/* Collapsible content */}
+            {!isCollapsed && (<>
             {/* Drag overlay */}
             {isDragOver && (
               <div className="border-2 border-dashed border-amber-500/60 rounded-xl p-8 text-center text-amber-400 text-sm mb-3 pointer-events-none">
@@ -1826,7 +1895,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
             )}
 
             {/* Empty state with upload zone */}
-            {totalFiles === 0 && !isDragOver && (
+            {totalFiles === 0 && !isDragOver && !isTemas && (
               <label className="flex flex-col items-center gap-2 border-2 border-dashed border-ink-700 hover:border-amber-500/40 hover:bg-amber-500/5 rounded-xl p-8 text-center text-ink-500 hover:text-ink-300 cursor-pointer transition-all">
                 <span className="text-2xl">📁</span>
                 <span className="text-sm font-medium">Arrastra archivos o haz clic para subir</span>
@@ -1858,15 +1927,21 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
                     <div className="flex items-center gap-1 flex-shrink-0">
                       {f.name.toLowerCase().endsWith('.pdf') && (
                         <button
-                          onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${f.name}`)}`)}
+                          onClick={() => {
+                            if (isTemas && f.topicId) {
+                              navigate(`/subject/${subject.id}/listen/${f.topicId}`);
+                            } else {
+                              navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${f.name}`)}`);
+                            }
+                          }}
                           className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded flex items-center gap-1"
                           title="Escuchar PDF"
                         >
                           🎧
-                          <ResourceWavStatusIcon resourceFile={`${cat.slug}/${f.name}`} />
+                          {!isTemas && <ResourceWavStatusIcon resourceFile={`${cat.slug}/${f.name}`} />}
                         </button>
                       )}
-                      {isDbFile(cat.slug, f.name) && (
+                      {!isTemas && isDbFile(cat.slug, f.name) && (
                         <button
                           onClick={() => handleDelete(cat.slug, f.name)}
                           className="text-xs text-rose-500/50 hover:text-rose-400 hover:bg-ink-700 px-1.5 py-0.5 rounded transition-all opacity-0 group-hover:opacity-100"
@@ -1924,6 +1999,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
                 </div>
               </div>
             ))}
+            </>)}
           </div>
         );
       })}
