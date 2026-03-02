@@ -38,6 +38,18 @@ export function Dashboard() {
   const [syncMsg, setSyncMsg] = useState('');
   const [pendingCorrectionCount, setPendingCorrectionCount] = useState<Record<string, number>>({});
 
+  // Global search state
+  const [globalSearch, setGlobalSearch] = useState('');
+  const [globalSearchResults, setGlobalSearchResults] = useState<Array<{
+    questionId: string;
+    subjectId: string;
+    subjectName: string;
+    topicName: string;
+    prompt: string;
+    type: string;
+  }>>([]);
+  const [globalSearching, setGlobalSearching] = useState(false);
+
   const [zipImporting, setZipImporting] = useState(false);
   const [zipMsg, setZipMsg] = useState('');
   const [zipDragOver, setZipDragOver] = useState(false);
@@ -170,6 +182,44 @@ export function Dashboard() {
     }
     setExternalLinks(allLinks);
   }, [extraInfo]);
+
+  // ── Global search ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!globalSearch.trim()) {
+      setGlobalSearchResults([]);
+      return;
+    }
+    setGlobalSearching(true);
+    const timer = setTimeout(async () => {
+      try {
+        const terms = globalSearch.toLowerCase().trim().split(/\s+/);
+        const allQuestions = await db.questions.toArray();
+        const allTopics = await db.topics.toArray();
+        const topicMap = new Map(allTopics.map((t) => [t.id, t.title]));
+        const results = allQuestions
+          .filter((q) => {
+            const hay = [q.prompt, q.explanation ?? '', q.modelAnswer ?? '', ...(q.tags ?? [])].join(' ').toLowerCase();
+            return terms.every((t) => hay.includes(t));
+          })
+          .slice(0, 30)
+          .map((q) => {
+            const subject = subjects.find((s) => s.id === q.subjectId);
+            return {
+              questionId: q.id,
+              subjectId: q.subjectId,
+              subjectName: subject?.name ?? '?',
+              topicName: topicMap.get(q.topicId) ?? '',
+              prompt: q.prompt,
+              type: q.type,
+            };
+          });
+        setGlobalSearchResults(results);
+      } finally {
+        setGlobalSearching(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [globalSearch, subjects]);
 
   // ── ITER3: ZIP import ──────────────────────────────────────────────────────
   const handleZipImport = async (file: File) => {
@@ -517,6 +567,54 @@ export function Dashboard() {
                 >
                   <span>🔀</span> Práctica mixta
                 </button>
+              )}
+            </div>
+
+            {/* Global search */}
+            <div className="relative mb-6">
+              <input
+                type="search"
+                value={globalSearch}
+                onChange={(e) => setGlobalSearch(e.target.value)}
+                placeholder="Buscar en todas las asignaturas…"
+                className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 pl-9 text-sm text-ink-100 placeholder:text-ink-600 focus:outline-none focus:border-amber-500/60 transition-colors"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-600 text-sm">🔍</span>
+              {globalSearch && (
+                <button
+                  onClick={() => { setGlobalSearch(''); setGlobalSearchResults([]); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-600 hover:text-ink-400 transition-colors text-xs"
+                >
+                  ✕
+                </button>
+              )}
+              {/* Search results dropdown */}
+              {globalSearch.trim() && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-ink-800 border border-ink-700 rounded-xl shadow-2xl z-50 max-h-72 overflow-y-auto">
+                  {globalSearching ? (
+                    <p className="text-ink-500 text-sm p-4 text-center animate-pulse">Buscando…</p>
+                  ) : globalSearchResults.length === 0 ? (
+                    <p className="text-ink-500 text-sm p-4 text-center">Sin resultados para "{globalSearch}"</p>
+                  ) : (
+                    <>
+                      <p className="text-xs text-ink-600 px-4 pt-3 pb-1">{globalSearchResults.length} resultado{globalSearchResults.length !== 1 ? 's' : ''}</p>
+                      {globalSearchResults.map((r) => (
+                        <button
+                          key={r.questionId}
+                          onClick={() => { navigate(`/subject/${r.subjectId}?tab=questions`); setGlobalSearch(''); }}
+                          className="w-full text-left px-4 py-3 hover:bg-ink-700 transition-colors border-b border-ink-700/50 last:border-0"
+                        >
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] bg-ink-700 text-ink-400 px-1.5 py-0.5 rounded font-mono">{r.type}</span>
+                            <span className="text-xs text-amber-400/80 font-medium truncate">{r.subjectName}</span>
+                            {r.topicName && <span className="text-xs text-ink-600 truncate">· {r.topicName}</span>}
+                          </div>
+                          <p className="text-sm text-ink-200 line-clamp-2 leading-snug">{r.prompt}</p>
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </div>
               )}
             </div>
 

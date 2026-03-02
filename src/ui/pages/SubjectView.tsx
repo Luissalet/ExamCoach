@@ -23,6 +23,9 @@ import { slugify } from '@/domain/normalize';
 import { getResourceBlobUrl,loadCategoryFromDB } from '@/data/resourceFromDB';
 import { loadPdfMapping, getPdfUrl, resourcesUrl, loadSubjectExtraInfo } from '@/data/resourceLoader';
 import type { GptLink } from '@/domain/models';
+import { exportContributionPackByIds, previewContributionPack, importContributionPack, type ContributionPackPreview } from '@/data/contributionImport';
+import { downloadJSON } from '@/data/exportImport';
+import { exportToAnkiTsv, downloadAnkiFile } from '@/utils/ankiExport';
 type TabId = 'topics' | 'questions' | 'practice' | 'exams' | 'resources' | 'concepts' | 'chatbots' | 'ia';
 
 const TYPE_LABELS_MAP: Record<QuestionType, string> = {
@@ -105,6 +108,18 @@ export function SubjectView() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   // PDF export modal
   const [pdfExportOpen, setPdfExportOpen] = useState(false);
+  // Contribution pack export modal
+  const [contribExportOpen, setContribExportOpen] = useState(false);
+  const [contribOnlyMine, setContribOnlyMine] = useState(false);
+  // Anki export modal
+  const [ankiExportOpen, setAnkiExportOpen] = useState(false);
+  // Subject-level contribution pack import
+  const [subjectPackPreview, setSubjectPackPreview] = useState<ContributionPackPreview | null>(null);
+  const [subjectImporting, setSubjectImporting] = useState(false);
+  const [subjectImportMsg, setSubjectImportMsg] = useState('');
+  // Bulk operations
+  const [bulkTopicId, setBulkTopicId] = useState('');
+  const [bulkTag, setBulkTag] = useState('');
 
   const [topicModal, setTopicModal] = useState(false);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
@@ -496,6 +511,11 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
 
   const subjectExams = exams.filter((e) => e.subjectId === subjectId);
 
+  // Items for contribution pack export (optionally filtered to current user's questions)
+  const contribItems = contribOnlyMine && settings?.alias
+    ? filteredQuestions.filter((q) => q.createdBy === settings.alias)
+    : filteredQuestions;
+
   const tabs = [
     { id: 'topics', label: 'Temas' },
     { id: 'questions', label: `Preguntas (${subjectQuestions.length})` },
@@ -787,11 +807,70 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                     PDF
                   </Button>
                 )}
+                {/* Contribution Pack export */}
+                {filteredQuestions.length > 0 && !selectMode && (
+                  <>
+                    <label className="flex items-center gap-1 cursor-pointer" title="Solo exportar mis preguntas (por alias)">
+                      <input
+                        type="checkbox"
+                        checked={contribOnlyMine}
+                        onChange={(e) => setContribOnlyMine(e.target.checked)}
+                        className="accent-amber-500 w-3 h-3"
+                      />
+                      <span className="text-xs text-ink-500">Mías</span>
+                    </label>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setContribExportOpen(true)}
+                      title="Exportar como Contribution Pack JSON para compartir"
+                    >
+                      ↑ Pack ({contribItems.length})
+                    </Button>
+                  </>
+                )}
+                {/* Anki export */}
+                {filteredQuestions.length > 0 && !selectMode && (
+                  <Button size="sm" variant="ghost" onClick={() => setAnkiExportOpen(true)} title="Exportar preguntas para importar en Anki">
+                    Anki
+                  </Button>
+                )}
+                {/* Import contribution pack */}
+                {!selectMode && (
+                  <label className="cursor-pointer" title="Importar contribution pack JSON directamente en esta asignatura">
+                    <input
+                      type="file"
+                      accept=".json"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        e.target.value = '';
+                        try {
+                          const { parseImportFile } = await import('@/data/exportImport');
+                          const raw = await parseImportFile(file);
+                          const preview = await previewContributionPack(raw);
+                          if ('error' in preview) {
+                            alert('Error al leer el pack: ' + preview.error);
+                          } else {
+                            setSubjectImportMsg('');
+                            setSubjectPackPreview(preview);
+                          }
+                        } catch (err) {
+                          alert('Error: ' + String(err));
+                        }
+                      }}
+                    />
+                    <span className="inline-flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg font-medium font-body transition-all text-ink-300 hover:text-ink-100 hover:bg-ink-800 cursor-pointer">
+                      ↓ Pack
+                    </span>
+                  </label>
+                )}
                 {/* C2: Selection mode toggle */}
                 <Button
                   size="sm"
                   variant={selectMode ? 'primary' : 'ghost'}
-                  onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
+                  onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); setBulkTopicId(''); setBulkTag(''); }}
                 >
                   {selectMode ? '✕ Cancelar selección' : '☐ Seleccionar'}
                 </Button>
@@ -880,20 +959,24 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               </div>
             )}
 
-            {/* C2: Selection action bar */}
+            {/* C2: Selection action bar (extended) */}
             {selectMode && selectedIds.size > 0 && (
-              <div className="sticky bottom-0 bg-ink-900/95 border border-amber-500/30 rounded-xl p-3 mt-4 flex items-center justify-between backdrop-blur-sm">
-                <span className="text-sm text-ink-300">{selectedIds.size} pregunta{selectedIds.size !== 1 ? 's' : ''} seleccionada{selectedIds.size !== 1 ? 's' : ''}</span>
-                <div className="flex gap-2">
+              <div className="sticky bottom-0 bg-ink-900/95 border border-amber-500/30 rounded-xl p-3 mt-4 backdrop-blur-sm flex flex-col gap-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-ink-300">
+                    {selectedIds.size} pregunta{selectedIds.size !== 1 ? 's' : ''} seleccionada{selectedIds.size !== 1 ? 's' : ''}
+                  </span>
                   <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set(filteredQuestions.map((q) => q.id)))}>
                     Seleccionar todas
                   </Button>
+                </div>
+                <div className="flex gap-2 flex-wrap items-center">
+                  {/* Export pack */}
                   <Button
                     size="sm"
+                    variant="secondary"
                     onClick={async () => {
                       try {
-                        const { exportContributionPackByIds } = await import('@/data/contributionImport');
-                        const { downloadJSON } = await import('@/data/exportImport');
                         const pack = await exportContributionPackByIds(settings.alias ?? '', [...selectedIds]);
                         downloadJSON(pack, `contribution-selection-${new Date().toISOString().slice(0, 10)}.json`);
                         setSelectMode(false);
@@ -903,8 +986,84 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                       }
                     }}
                   >
-                    ↑ Exportar selección
+                    ↑ Exportar pack
                   </Button>
+                  {/* Bulk delete */}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={async () => {
+                      if (!confirm(`¿Eliminar las ${selectedIds.size} preguntas seleccionadas? Esta acción no se puede deshacer.`)) return;
+                      for (const id of selectedIds) {
+                        await deleteQuestion(id);
+                      }
+                      setSelectMode(false);
+                      setSelectedIds(new Set());
+                    }}
+                  >
+                    <span className="text-rose-400">✕ Borrar ({selectedIds.size})</span>
+                  </Button>
+                  {/* Bulk assign topic */}
+                  <select
+                    value={bulkTopicId}
+                    onChange={(e) => setBulkTopicId(e.target.value)}
+                    className="bg-ink-800 border border-ink-600 text-ink-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-amber-500 cursor-pointer"
+                  >
+                    <option value="">Asignar tema…</option>
+                    {subjectTopics.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
+                  </select>
+                  {bulkTopicId && (
+                    <Button
+                      size="sm"
+                      onClick={async () => {
+                        for (const id of selectedIds) {
+                          await updateQuestion(id, { topicId: bulkTopicId });
+                        }
+                        setBulkTopicId('');
+                        setSelectMode(false);
+                        setSelectedIds(new Set());
+                      }}
+                    >
+                      ✓ Asignar
+                    </Button>
+                  )}
+                  {/* Bulk add tag */}
+                  <input
+                    type="text"
+                    value={bulkTag}
+                    onChange={(e) => setBulkTag(e.target.value)}
+                    placeholder="Añadir tag…"
+                    className="bg-ink-800 border border-ink-600 text-ink-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-amber-500 w-28"
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter' && bulkTag.trim()) {
+                        const tag = bulkTag.trim();
+                        for (const id of selectedIds) {
+                          const q = subjectQuestions.find((q) => q.id === id);
+                          if (q) await updateQuestion(id, { tags: [...new Set([...(q.tags ?? []), tag])] });
+                        }
+                        setBulkTag('');
+                        setSelectMode(false);
+                        setSelectedIds(new Set());
+                      }
+                    }}
+                  />
+                  {bulkTag.trim() && (
+                    <Button
+                      size="sm"
+                      onClick={async () => {
+                        const tag = bulkTag.trim();
+                        for (const id of selectedIds) {
+                          const q = subjectQuestions.find((q) => q.id === id);
+                          if (q) await updateQuestion(id, { tags: [...new Set([...(q.tags ?? []), tag])] });
+                        }
+                        setBulkTag('');
+                        setSelectMode(false);
+                        setSelectedIds(new Set());
+                      }}
+                    >
+                      + Tag
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
@@ -942,6 +1101,125 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
             downloadBlob(blob, `preguntas-${subject?.name ?? 'export'}.pdf`);
           }}
         />
+
+        {/* Contribution Pack Export modal */}
+        <PdfExportModal
+          open={contribExportOpen}
+          onClose={() => setContribExportOpen(false)}
+          title={`Exportar Contribution Pack${contribOnlyMine && settings?.alias ? ` · solo de "${settings.alias}"` : ''}`}
+          items={contribItems}
+          getId={(q) => q.id}
+          groupBy={(q) => subjectTopics.find((t) => t.id === q.topicId)?.title ?? 'Sin tema'}
+          groupOrder={subjectTopics.map((t) => t.title)}
+          renderItem={(q) => {
+            const topic = subjectTopics.find((t) => t.id === q.topicId);
+            return (
+              <div>
+                <div className="flex items-center gap-2">
+                  <TypeBadge type={q.type} />
+                  {topic && <span className="text-xs text-ink-500">{topic.title}</span>}
+                  {q.createdBy && <span className="text-xs text-ink-600 italic">by {q.createdBy}</span>}
+                </div>
+                <p className="text-xs text-ink-200 mt-0.5 line-clamp-2">{q.prompt}</p>
+              </div>
+            );
+          }}
+          onExport={async (selIds) => {
+            const date = new Date().toISOString().slice(0, 10);
+            const pack = await exportContributionPackByIds(settings?.alias ?? '', [...selIds]);
+            downloadJSON(pack, `contribution-${settings?.alias || 'pack'}-${subject?.name?.slice(0, 20).replace(/\s+/g, '-') ?? 'subject'}-${date}.json`);
+          }}
+        />
+
+        {/* Anki Export modal */}
+        <PdfExportModal
+          open={ankiExportOpen}
+          onClose={() => setAnkiExportOpen(false)}
+          title="Exportar para Anki (.txt TSV)"
+          items={filteredQuestions}
+          getId={(q) => q.id}
+          groupBy={(q) => subjectTopics.find((t) => t.id === q.topicId)?.title ?? 'Sin tema'}
+          groupOrder={subjectTopics.map((t) => t.title)}
+          renderItem={(q) => {
+            const topic = subjectTopics.find((t) => t.id === q.topicId);
+            return (
+              <div>
+                <div className="flex items-center gap-2">
+                  <TypeBadge type={q.type} />
+                  {topic && <span className="text-xs text-ink-500">{topic.title}</span>}
+                </div>
+                <p className="text-xs text-ink-200 mt-0.5 line-clamp-2">{q.prompt}</p>
+              </div>
+            );
+          }}
+          onExport={async (selIds) => {
+            const content = exportToAnkiTsv(filteredQuestions, subjectTopics, subject?.name ?? 'ExamCoach', selIds);
+            downloadAnkiFile(content, `anki-${subject?.name?.replace(/\s+/g, '-') ?? 'export'}.txt`);
+          }}
+        />
+
+        {/* Subject-level contribution pack import modal */}
+        {subjectPackPreview && (
+          <Modal
+            open={!!subjectPackPreview}
+            onClose={() => { setSubjectPackPreview(null); setSubjectImportMsg(''); }}
+            title="Importar Contribution Pack"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5 p-3 bg-ink-800 rounded-lg text-sm">
+                <p className="text-ink-200">
+                  Por: <span className="text-amber-300 font-medium">{subjectPackPreview.createdBy}</span>
+                </p>
+                <p className="text-xs text-ink-400">Asignaturas: {subjectPackPreview.subjects.join(', ')}</p>
+                <p className="text-xs text-ink-400">
+                  {subjectPackPreview.questionsCount} preguntas en total ·{' '}
+                  <span className="text-sage-400 font-medium">{subjectPackPreview.newQuestionsCount} nuevas</span>
+                  {subjectPackPreview.questionsCount - subjectPackPreview.newQuestionsCount > 0 && (
+                    <span className="text-ink-500"> · {subjectPackPreview.questionsCount - subjectPackPreview.newQuestionsCount} ya existentes</span>
+                  )}
+                </p>
+                {subjectPackPreview.alreadyImported && (
+                  <p className="text-xs text-amber-400">⚠ Este pack ya fue importado anteriormente</p>
+                )}
+              </div>
+              {subjectImportMsg && (
+                <p className={`text-xs ${subjectImportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+                  {subjectImportMsg}
+                </p>
+              )}
+              <div className="flex justify-end gap-2 pt-2 border-t border-ink-800">
+                <Button variant="ghost" size="sm" onClick={() => { setSubjectPackPreview(null); setSubjectImportMsg(''); }}>
+                  Cancelar
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={subjectImporting || subjectPackPreview.newQuestionsCount === 0}
+                  onClick={async () => {
+                    setSubjectImporting(true);
+                    try {
+                      const result = await importContributionPack(subjectPackPreview.rawPack);
+                      if (result.alreadyImported) {
+                        setSubjectImportMsg('ℹ Este pack ya fue importado anteriormente');
+                      } else if (result.errors.length > 0) {
+                        setSubjectImportMsg('Error: ' + result.errors[0]);
+                      } else {
+                        setSubjectImportMsg(`✓ ${result.newQuestions} preguntas importadas`);
+                        if (subjectId) await loadQuestions(subjectId);
+                        setTimeout(() => { setSubjectPackPreview(null); setSubjectImportMsg(''); }, 1800);
+                      }
+                    } catch (err) {
+                      setSubjectImportMsg('Error: ' + String(err));
+                    } finally {
+                      setSubjectImporting(false);
+                    }
+                  }}
+                >
+                  {subjectImporting ? 'Importando…' : `Importar (${subjectPackPreview.newQuestionsCount} preguntas)`}
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
 
         {/* PRACTICAR */}
         {tab === 'practice' && (

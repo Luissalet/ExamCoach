@@ -531,8 +531,8 @@ export function SettingsPage() {
 
             {/* URL raw generada — lista para copiar o pegar en "Importar por URL" */}
             {lastGistUrl && (
-              <div className="flex flex-col gap-1.5 p-3 bg-sage-600/10 border border-sage-600/20 rounded-lg">
-                <p className="text-xs text-sage-400 font-medium">Gist creado — URL para importar:</p>
+              <div className="flex flex-col gap-2 p-3 bg-sage-600/10 border border-sage-600/20 rounded-lg">
+                <p className="text-xs text-sage-400 font-medium">✓ Gist creado — URL para importar:</p>
                 <div className="flex items-center gap-2">
                   <code className="flex-1 text-xs text-ink-300 bg-ink-800 px-2 py-1 rounded font-mono break-all">
                     {lastGistUrl}
@@ -540,14 +540,34 @@ export function SettingsPage() {
                   <button
                     onClick={() => { navigator.clipboard.writeText(lastGistUrl); }}
                     className="flex-shrink-0 text-xs text-ink-400 hover:text-ink-200 border border-ink-600 hover:border-ink-500 px-2 py-1 rounded transition-colors"
-                    title="Copiar URL"
+                    title="Copiar URL al portapapeles"
                   >
                     Copiar
                   </button>
                 </div>
-                <p className="text-xs text-ink-500">
-                  Comparte esta URL con el mantenedor. También se descargó el JSON como copia de seguridad.
-                </p>
+                {/* QR code para compartir fácilmente en clase */}
+                <div className="flex items-start gap-3 pt-1 border-t border-sage-600/20 mt-1">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&bgcolor=0f0f14&color=e2e8f0&data=${encodeURIComponent(lastGistUrl)}`}
+                    alt="QR code para importar el pack"
+                    className="w-[70px] h-[70px] rounded border border-ink-700 flex-shrink-0"
+                    loading="lazy"
+                  />
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs text-ink-300 font-medium">Código QR para compartir</p>
+                    <p className="text-xs text-ink-500 leading-relaxed">
+                      Muéstralo en clase: tus compañeros escanean el QR, copian la URL y la pegan en{' '}
+                      <span className="text-ink-400">Ajustes → Importar contribuciones → Importar por URL</span>.
+                    </p>
+                    <button
+                      onClick={() => setImportUrl(lastGistUrl)}
+                      className="text-xs text-amber-400 hover:text-amber-300 text-left transition-colors mt-0.5 underline underline-offset-2"
+                      title="Usar esta URL para importar directamente aquí"
+                    >
+                      Usar para importar aquí →
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -921,15 +941,22 @@ export function SettingsPage() {
               <p className="text-sm text-ink-300 font-medium">Carpeta de disco para archivos</p>
               <p className="text-xs text-ink-500 mt-0.5">
                 Guarda PDFs y recursos directamente en una carpeta de tu ordenador.
-                Sin límite de quota. Requiere Chrome o Edge 86+.
+                Sin límite de quota. Requiere Chrome, Edge o Brave 86+.
               </p>
             </div>
 
             {!fsaSupported ? (
-              <div className="px-3 py-2 bg-ink-800 border border-ink-700 rounded-lg">
+              <div className="px-3 py-2 bg-ink-800 border border-ink-700 rounded-lg flex flex-col gap-1.5">
+                <p className="text-xs text-ink-400 font-medium">
+                  File System Access API no disponible en este navegador
+                </p>
                 <p className="text-xs text-ink-500">
-                  Tu navegador no soporta File System Access API.
-                  Usa Chrome o Edge para esta funcionalidad.
+                  Si usas <strong className="text-ink-400">Brave</strong>, la protección anti-huella digital bloquea esta API.
+                  Para activarla: haz clic en el icono de Brave Shields (🦁) en la barra de direcciones →
+                  cambia <em>Fingerprinting</em> a <strong className="text-ink-400">"Allow all fingerprinting"</strong> para esta página → recarga.
+                </p>
+                <p className="text-xs text-ink-500">
+                  En otros navegadores, usa Chrome o Edge 86+.
                 </p>
               </div>
             ) : fsaFolderName ? (
