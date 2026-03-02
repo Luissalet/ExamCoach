@@ -4,6 +4,11 @@
  * Wrapper sobre la Media Session API para mostrar controles de reproducción
  * en la pantalla de bloqueo y la barra de notificaciones del móvil.
  *
+ * En Android Chrome, la notificación de media SOLO aparece si hay un
+ * HTMLMediaElement (<audio> o <video>) activamente reproduciendo.
+ * Por eso este controlador acepta opcionalmente una referencia al
+ * <audio> del keepalive para garantizar que la notificación se muestre.
+ *
  * Degradación elegante: si el navegador no soporta Media Session,
  * todas las operaciones son no-ops silenciosos.
  */
@@ -25,6 +30,7 @@ export interface MediaSessionHandlers {
   onNextTrack?: () => void;
   onPreviousTrack?: () => void;
   onStop?: () => void;
+  onSeekTo?: (time: number) => void;
 }
 
 export interface MediaSessionController {
@@ -34,6 +40,11 @@ export interface MediaSessionController {
   setPlaybackState(state: 'playing' | 'paused' | 'none'): void;
   /** Registra los handlers de los botones del lock screen */
   setHandlers(handlers: MediaSessionHandlers): void;
+  /**
+   * Actualiza la posición de reproducción mostrada en la notificación.
+   * Esto permite que Android muestre una barra de progreso en la notificación.
+   */
+  setPositionState(currentBlock: number, totalBlocks: number): void;
   /** Limpia handlers y metadata */
   cleanup(): void;
 }
@@ -55,7 +66,6 @@ export function createMediaSessionController(): MediaSessionController {
           title: info.title,
           artist: info.artist ?? 'ExamCoach',
           album: info.album ?? '',
-          // Usar el icono de la PWA como artwork
           artwork: [
             { src: './icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
             { src: './icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
@@ -94,6 +104,34 @@ export function createMediaSessionController(): MediaSessionController {
           // Acción no soportada en este navegador — ignorar
         }
       }
+
+      // seekto handler para barra de progreso
+      if (handlers.onSeekTo) {
+        try {
+          navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.seekTime != null) {
+              handlers.onSeekTo!(details.seekTime);
+            }
+          });
+        } catch {
+          // seekto no soportado — ignorar
+        }
+      }
+    },
+
+    setPositionState(currentBlock: number, totalBlocks: number) {
+      if (!supported) return;
+      try {
+        // Usamos "segundos ficticios" donde cada bloque = 1 segundo
+        // para que la barra de progreso de la notificación funcione
+        navigator.mediaSession.setPositionState({
+          duration: totalBlocks,
+          playbackRate: 1,
+          position: Math.min(currentBlock, totalBlocks),
+        });
+      } catch {
+        // setPositionState no soportado o parámetros inválidos
+      }
     },
 
     cleanup() {
@@ -108,6 +146,9 @@ export function createMediaSessionController(): MediaSessionController {
           // Ignorar
         }
       }
+      try {
+        navigator.mediaSession.setActionHandler('seekto', null);
+      } catch { /* ignore */ }
       try {
         navigator.mediaSession.metadata = null;
         navigator.mediaSession.playbackState = 'none';

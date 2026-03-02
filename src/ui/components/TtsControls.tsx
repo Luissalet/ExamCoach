@@ -72,6 +72,7 @@ export function TtsControls({
   const isPlaying = state === 'playing';
   const isPaused = state === 'paused';
   const isIdle = state === 'idle';
+  const isLoading = state === 'loading';
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -88,7 +89,7 @@ export function TtsControls({
         <div className="flex items-center gap-1">
           <button
             onClick={onPrevious}
-            disabled={isIdle}
+            disabled={isIdle && !isLoading}
             className="p-1.5 text-ink-300 hover:text-amber-400 disabled:text-ink-600 disabled:cursor-not-allowed transition-colors"
             title="Anterior (←)"
           >
@@ -107,6 +108,20 @@ export function TtsControls({
             >
               <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
                 <polygon points="4,2 14,8 4,14" />
+              </svg>
+            </button>
+          ) : isLoading ? (
+            <button
+              disabled
+              className="p-2 bg-amber-500/20 text-amber-400 rounded-full transition-all animate-pulse"
+              title="Cargando audio…"
+            >
+              {/* Spinner: tres puntos girando */}
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" className="animate-spin">
+                <circle cx="8" cy="2" r="1.5" opacity="1" />
+                <circle cx="13" cy="8" r="1.5" opacity="0.6" />
+                <circle cx="8" cy="14" r="1.5" opacity="0.3" />
+                <circle cx="3" cy="8" r="1.5" opacity="0.15" />
               </svg>
             </button>
           ) : isPlaying ? (
@@ -134,7 +149,7 @@ export function TtsControls({
 
           <button
             onClick={onNext}
-            disabled={isIdle}
+            disabled={isIdle && !isLoading}
             className="p-1.5 text-ink-300 hover:text-amber-400 disabled:text-ink-600 disabled:cursor-not-allowed transition-colors"
             title="Siguiente (→)"
           >
@@ -146,7 +161,7 @@ export function TtsControls({
 
           <button
             onClick={onStop}
-            disabled={isIdle}
+            disabled={isIdle && !isLoading}
             className="p-1.5 text-ink-300 hover:text-red-400 disabled:text-ink-600 disabled:cursor-not-allowed transition-colors"
             title="Detener (Esc)"
           >

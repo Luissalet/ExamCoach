@@ -6,6 +6,8 @@
  *   - Control de reproducción (play/pause/skip/velocidad)
  *   - Callbacks para sincronizar UI
  *   - Audio keep-alive opcional para reproducción en segundo plano (móvil)
+ *   - Auto-resume en background: detecta cuándo Chrome Android suspende
+ *     speechSynthesis al minimizar el navegador y lo re-resume periódicamente.
  */
 
 import type { AudioKeepaliveManager } from './audioKeepalive';
@@ -74,6 +76,13 @@ export interface TtsEngineOptions {
   keepalive?: AudioKeepaliveManager;
 }
 
+/**
+ * Intervalo (ms) para re-resumir speechSynthesis en background.
+ * Chrome Android suspende speechSynthesis al minimizar el navegador.
+ * Llamar resume() periódicamente lo mantiene activo.
+ */
+const BG_RESUME_INTERVAL_MS = 3000;
+
 export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
   const keepalive = options?.keepalive;
   const synth = window.speechSynthesis;
@@ -86,6 +95,11 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
   let callbacks: TtsCallbacks = {};
   let destroyed = false;
   let blockStartTime = 0;
+
+  // ── Background resume state ─────────────────────────────────────────────
+  let bgResumeInterval: ReturnType<typeof setInterval> | null = null;
+  /** Track whether the user intentionally paused (not the browser) */
+  let userPaused = false;
 
   // ── Load voices ────────────────────────────────────────────────────────────
   function loadVoices() {
@@ -100,11 +114,77 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
     synth.onvoiceschanged = loadVoices;
   }
 
+  // ── Background resume logic ─────────────────────────────────────────────
+  /**
+   * Cuando el navegador va a background y speechSynthesis está reproduciendo,
+   * Chrome lo pausa automáticamente. Este interval lo re-resume periódicamente.
+   *
+   * También re-dispara la utterance actual si se detecta que se ha detenido
+   * completamente (algunos dispositivos cancelan en vez de pausar).
+   */
+  function startBgResumeInterval() {
+    stopBgResumeInterval();
+    bgResumeInterval = setInterval(() => {
+      if (destroyed || state !== 'playing' || userPaused) return;
+
+      // Si synth reporta que está pausado pero nosotros estamos "playing",
+      // significa que el navegador lo pausó → resumir
+      if (synth.paused) {
+        synth.resume();
+      }
+
+      // Algunos navegadores cancelan la utterance por completo en background.
+      // Si synth no está hablando ni pausado y nosotros creemos que está playing,
+      // re-disparar el bloque actual.
+      if (!synth.speaking && !synth.paused && !synth.pending) {
+        speakBlock(currentBlockIndex);
+      }
+    }, BG_RESUME_INTERVAL_MS);
+  }
+
+  function stopBgResumeInterval() {
+    if (bgResumeInterval != null) {
+      clearInterval(bgResumeInterval);
+      bgResumeInterval = null;
+    }
+  }
+
+  /**
+   * Handler de visibilitychange: cuando el tab se oculta durante reproducción,
+   * activa el interval de resume. Cuando vuelve al foreground, fuerza un resume
+   * inmediato y limpia el interval.
+   */
+  function onVisibilityChange() {
+    if (destroyed) return;
+
+    if (document.visibilityState === 'hidden' && state === 'playing') {
+      // Entrando a background con TTS activo → activar interval de resume
+      startBgResumeInterval();
+    } else if (document.visibilityState === 'visible') {
+      stopBgResumeInterval();
+      // Forzar resume inmediato al volver al foreground
+      if (state === 'playing' && !userPaused) {
+        if (synth.paused) {
+          synth.resume();
+        }
+        // Si synth murió completamente en background, re-lanzar bloque
+        if (!synth.speaking && !synth.paused && !synth.pending) {
+          speakBlock(currentBlockIndex);
+        }
+      }
+    }
+  }
+
+  // Registrar listener de visibilitychange
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
   // ── Speak a single block ───────────────────────────────────────────────────
   function speakBlock(index: number) {
     if (destroyed) return;
     if (index >= blocks.length) {
       state = 'idle';
+      userPaused = false;
+      stopBgResumeInterval();
       keepalive?.stop();
       callbacks.onFinish?.();
       callbacks.onStateChange?.('idle');
@@ -137,8 +217,7 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
       const elapsed = performance.now() - blockStartTime;
       callbacks.onBlockTiming?.(index, elapsed, text.length);
       callbacks.onBlockEnd?.(index);
-      // Encadenar inmediatamente al siguiente bloque — la separación natural
-      // entre utterances ya produce una micro-pausa suficiente.
+      // Encadenar inmediatamente al siguiente bloque
       if (state === 'playing' && !destroyed) {
         speakBlock(index + 1);
       }
@@ -192,24 +271,37 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
       callbacks = cbs ?? {};
       currentBlockIndex = 0;
       state = 'playing';
+      userPaused = false;
       keepalive?.start();
       callbacks.onStateChange?.('playing');
       speakBlock(0);
+
+      // Si ya estamos en background, activar interval de resume inmediatamente
+      if (document.visibilityState === 'hidden') {
+        startBgResumeInterval();
+      }
     },
 
     pause() {
       if (state === 'playing') {
+        userPaused = true;
         synth.pause();
         state = 'paused';
+        stopBgResumeInterval();
         callbacks.onStateChange?.('paused');
       }
     },
 
     resume() {
       if (state === 'paused') {
+        userPaused = false;
         synth.resume();
         state = 'playing';
         callbacks.onStateChange?.('playing');
+        // Re-activar interval si estamos en background
+        if (document.visibilityState === 'hidden') {
+          startBgResumeInterval();
+        }
       }
     },
 
@@ -217,6 +309,8 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
       synth.cancel();
       state = 'idle';
       currentBlockIndex = 0;
+      userPaused = false;
+      stopBgResumeInterval();
       keepalive?.stop();
       callbacks.onStateChange?.('idle');
     },
@@ -225,6 +319,7 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
       if (blockIndex < 0 || blockIndex >= blocks.length) return;
       synth.cancel();
       state = 'playing';
+      userPaused = false;
       callbacks.onStateChange?.('playing');
       speakBlock(blockIndex);
     },
@@ -256,6 +351,9 @@ export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
       destroyed = true;
       synth.cancel();
       state = 'idle';
+      userPaused = false;
+      stopBgResumeInterval();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       keepalive?.stop();
       blocks = [];
       callbacks = {};

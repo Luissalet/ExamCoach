@@ -18,6 +18,7 @@ import { TtsControls } from '@/ui/components/TtsControls';
 import { extractPdfText, type TextBlock } from '@/utils/pdfTextExtractor';
 import { mathToSpeech } from '@/utils/mathSymbolSpeech';
 import { createTtsEngine, type TtsEngine, type TtsState, type TtsVoiceInfo } from '@/utils/ttsEngine';
+import { createAudioTtsEngine } from '@/utils/audioTtsEngine';
 import { createAudioKeepalive, type AudioKeepaliveManager } from '@/utils/audioKeepalive';
 import { createMediaSessionController, type MediaSessionController } from '@/utils/mediaSessionController';
 import { getPdfBlobUrl } from '@/data/pdfStorage';
@@ -165,8 +166,94 @@ export function PdfListenMode() {
   }, [subjectId, topicId, isResourceMode, resourceFile]);
 
   // ── Initialize TTS engine + audio keepalive + media session ───────────────
+  //
+  // Estrategia de motor TTS:
+  //   - Motor principal: Piper TTS (VITS neural) → genera WAV real → funciona en 2º plano
+  //   - Fallback: speechSynthesis (solo funciona en primer plano en Android)
+  //
+  // Piper TTS corre 100% en el navegador vía WASM + Web Worker.
+  // Genera WAV de alta calidad con voces neurales y lo reproduce a través
+  // de un <audio> element real, que es lo que permite que Android mantenga
+  // el audio en segundo plano y muestre la notificación con controles
+  // play/pause (como YouTube/Rumble).
+  //
+  // Primera carga: descarga modelo de voz (~60MB) desde HuggingFace.
+  // Ejecuciones siguientes: cacheado en OPFS, arranque instantáneo.
+  //
+  const [ttsMode, setTtsMode] = useState<'audio' | 'speech'>('audio');
+  const [modelProgress, setModelProgress] = useState<number | null>(null);
+  // Ref para que el fallback callback pueda acceder a los textos y callbacks actuales
+  const processedTextsRef = useRef<string[]>([]);
+  processedTextsRef.current = processedTexts;
+
+  // ── Función para crear y registrar un motor TTS ──────────────────────────
+  const setupEngine = useCallback((engine: TtsEngine) => {
+    ttsRef.current = engine;
+    const spanishVoices = engine.getSpanishVoices();
+    setVoices(spanishVoices);
+    const currentVoice = engine.getVoice();
+    if (currentVoice) setSelectedVoice(currentVoice.name);
+  }, []);
+
+  // ── Fallback: Piper TTS falló → cambiar a speechSynthesis ─────────────────
+  const handleEdgeTtsFailed = useCallback(() => {
+    const keepalive = keepaliveRef.current;
+    // Destruir motor de audio
+    ttsRef.current?.destroy();
+
+    // Crear motor speechSynthesis
+    const fallback = createTtsEngine({ keepalive: keepalive ?? undefined });
+    setupEngine(fallback);
+    setTtsMode('speech');
+
+    // Re-check voices después de un tick (speechSynthesis carga async)
+    setTimeout(() => {
+      const v = fallback.getSpanishVoices();
+      if (v.length > 0) {
+        setVoices(v);
+        const cur = fallback.getVoice();
+        if (cur) setSelectedVoice(cur.name);
+      }
+    }, 500);
+
+    // Auto-iniciar reproducción con el motor de fallback
+    const texts = processedTextsRef.current;
+    if (texts.length > 0) {
+      timingRef.current = { totalBaseMs: 0, totalChars: 0 };
+      setEstimatedRemaining(null);
+      fallback.speak(texts, {
+        onBlockStart: (idx: number) => setCurrentBlock(idx),
+        onBlockEnd: () => {},
+        onBlockTiming: (idx: number, durationMs: number, charCount: number) => {
+          if (charCount <= 0) return;
+          const currentRate = fallback.getRate();
+          const baseMs = durationMs * currentRate;
+          const t = timingRef.current;
+          t.totalBaseMs += baseMs;
+          t.totalChars += charCount;
+          const remaining = texts.slice(idx + 1).reduce((sum, txt) => sum + txt.length, 0);
+          if (t.totalChars > 0 && remaining > 0) {
+            const baseMsPerChar = t.totalBaseMs / t.totalChars;
+            const remainingSecs = (remaining * baseMsPerChar) / (currentRate * 1000);
+            setEstimatedRemaining(Math.round(remainingSecs));
+          } else {
+            setEstimatedRemaining(0);
+          }
+        },
+        onFinish: () => {
+          setTtsState('idle');
+          setCurrentBlock(0);
+          setEstimatedRemaining(null);
+          timingRef.current = { totalBaseMs: 0, totalChars: 0 };
+        },
+        onError: (err: string) => console.warn('[TTS fallback]', err),
+        onStateChange: (s: TtsState) => setTtsState(s),
+      });
+    }
+  }, [setupEngine]);
+
   useEffect(() => {
-    // Audio keepalive: mantiene la sesión de audio activa en segundo plano (móvil)
+    // Audio keepalive: Wake Lock + sesión de audio activa
     const keepalive = createAudioKeepalive();
     keepaliveRef.current = keepalive;
 
@@ -174,20 +261,30 @@ export function PdfListenMode() {
     const mediaSession = createMediaSessionController();
     mediaSessionRef.current = mediaSession;
 
-    const engine = createTtsEngine({ keepalive });
-    ttsRef.current = engine;
+    // Crear motor: Piper TTS neural (genera WAV real → segundo plano), speechSynthesis como fallback
+    let engine: TtsEngine;
+    engine = createAudioTtsEngine({
+      keepalive,
+      onSynthesisFailed: handleEdgeTtsFailed,
+      mediaTitle: displayTitle.replace(/\.pdf$/i, ''),
+      mediaArtist: subject?.name ?? 'ExamCoach',
+      onModelProgress: (progress) => {
+        const ratio = progress.total > 0 ? progress.loaded / progress.total : 0;
+        setModelProgress(ratio);
+      },
+    });
+    setTtsMode('audio');
+    setupEngine(engine);
 
-    // Load voices (may be async)
-    const checkVoices = () => {
-      const spanishVoices = engine.getSpanishVoices();
-      setVoices(spanishVoices);
-      const currentVoice = engine.getVoice();
-      if (currentVoice) setSelectedVoice(currentVoice.name);
-    };
-
-    checkVoices();
-    // Re-check after a short delay (voices load async in some browsers)
-    const timer = setTimeout(checkVoices, 500);
+    // Re-check voices after a short delay (speechSynthesis voices load async)
+    const timer = setTimeout(() => {
+      const v = engine.getSpanishVoices();
+      if (v.length > 0) {
+        setVoices(v);
+        const cur = engine.getVoice();
+        if (cur) setSelectedVoice(cur.name);
+      }
+    }, 500);
 
     return () => {
       clearTimeout(timer);
@@ -198,23 +295,7 @@ export function PdfListenMode() {
       keepaliveRef.current = null;
       mediaSessionRef.current = null;
     };
-  }, []);
-
-  // ── Wire Media Session handlers ─────────────────────────────────────────────
-  useEffect(() => {
-    const ms = mediaSessionRef.current;
-    if (!ms) return;
-
-    ms.setHandlers({
-      onPlay: () => {
-        if (ttsRef.current?.getState() === 'paused') ttsRef.current.resume();
-      },
-      onPause: () => ttsRef.current?.pause(),
-      onNextTrack: () => ttsRef.current?.next(),
-      onPreviousTrack: () => ttsRef.current?.previous(),
-      onStop: () => ttsRef.current?.stop(),
-    });
-  }, []);
+  }, [setupEngine, handleEdgeTtsFailed]);
 
   // ── Update Media Session metadata on block/state changes ──────────────────
   useEffect(() => {
@@ -230,6 +311,10 @@ export function PdfListenMode() {
         artist: subject?.name ?? 'ExamCoach',
         album: blocks.length > 0 ? `Bloque ${currentBlock + 1} de ${blocks.length}` : '',
       });
+      // Actualizar posición para la barra de progreso de la notificación
+      if (blocks.length > 0) {
+        ms.setPositionState(currentBlock, blocks.length);
+      }
     }
   }, [ttsState, currentBlock, displayTitle, subject?.name, blocks.length]);
 
@@ -323,6 +408,31 @@ export function PdfListenMode() {
     [ttsState, processedTexts, ttsCallbacks],
   );
 
+  // ── Wire Media Session handlers (after handlePlay is defined) ──────────────
+  useEffect(() => {
+    const ms = mediaSessionRef.current;
+    if (!ms) return;
+
+    ms.setHandlers({
+      onPlay: () => {
+        const s = ttsRef.current?.getState();
+        if (s === 'paused') {
+          ttsRef.current!.resume();
+        } else if (s === 'idle' && processedTexts.length > 0) {
+          handlePlay();
+        }
+      },
+      onPause: () => ttsRef.current?.pause(),
+      onNextTrack: () => ttsRef.current?.next(),
+      onPreviousTrack: () => ttsRef.current?.previous(),
+      onStop: () => ttsRef.current?.stop(),
+      onSeekTo: (time: number) => {
+        const blockIdx = Math.max(0, Math.min(Math.floor(time), (processedTexts.length || 1) - 1));
+        ttsRef.current?.skipTo(blockIdx);
+      },
+    });
+  }, [processedTexts, handlePlay]);
+
   // ── Keyboard shortcuts ─────────────────────────────────────────────────────
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -365,8 +475,12 @@ export function PdfListenMode() {
     return () => window.removeEventListener('keydown', handler);
   }, [ttsState, rate, handlePlay, handlePause, handleResume, handleNext, handlePrevious, handleRateChange, handleStop, navigate]);
 
-  // ── Check Web Speech API support ───────────────────────────────────────────
-  const speechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  // ── Check TTS support ────────────────────────────────────────────────────
+  // Audio engine (Piper TTS WASM) funciona en cualquier navegador moderno con WASM.
+  // Speech engine necesita speechSynthesis.
+  const speechSupported =
+    ttsMode === 'audio' ||
+    (typeof window !== 'undefined' && 'speechSynthesis' in window);
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -460,12 +574,45 @@ export function PdfListenMode() {
             </div>
           )}
 
+          {/* Model download progress (first-time Piper TTS load) */}
+          {modelProgress !== null && modelProgress < 1 && (
+            <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-sm text-blue-300 animate-pulse">Descargando modelo de voz…</span>
+                <span className="text-xs text-blue-400 font-mono">
+                  {Math.round(modelProgress * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 bg-ink-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                  style={{ width: `${modelProgress * 100}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-blue-400/60 mt-1">Primera vez: ~27MB. Se cachea para siguiente uso.</p>
+            </div>
+          )}
+
           {/* No voices warning */}
           {!extracting && voices.length === 0 && blocks.length > 0 && (
             <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
               <p className="text-xs text-amber-400">
                 No se encontraron voces en español. La lectura usará la voz por defecto del sistema.
               </p>
+            </div>
+          )}
+
+          {/* TTS mode indicator */}
+          {!extracting && blocks.length > 0 && (
+            <div className="mb-4 flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                ttsMode === 'audio'
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+              }`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                {ttsMode === 'audio' ? 'Piper TTS · Segundo plano activo' : 'Voz del sistema · Solo primer plano'}
+              </span>
             </div>
           )}
 
