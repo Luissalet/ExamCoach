@@ -63,6 +63,9 @@ export function Dashboard() {
   const [dedupMsg, setDedupMsg] = useState('');
   const [deduping, setDeduping] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pwaPromptEvent, setPwaPromptEvent] = useState<Event | null>(null);
+  const [pwaIosHint, setPwaIosHint] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const [upcomingDeliverables, setUpcomingDeliverables] = useState<Deliverable[]>([]);
   // nextExamDates: subjectId → next upcoming exam dueDate (from exam deliverables)
   const [nextExamDates, setNextExamDates] = useState<Record<string, string>>({});
@@ -221,6 +224,16 @@ export function Dashboard() {
     }, 300);
     return () => clearTimeout(timer);
   }, [globalSearch, subjects]);
+
+  // ── PWA install prompt ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const handlePrompt = (e: Event) => {
+      e.preventDefault();
+      setPwaPromptEvent(e);
+    };
+    window.addEventListener('beforeinstallprompt', handlePrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handlePrompt);
+  }, []);
 
   // ── ITER3: ZIP import ──────────────────────────────────────────────────────
   const handleZipImport = async (file: File) => {
@@ -394,6 +407,19 @@ export function Dashboard() {
     setTimeout(() => setSyncMsg(''), 5000);
   };
 
+  const handlePwaInstall = async () => {
+    setMobileMenuOpen(false);
+    if (pwaPromptEvent) {
+      await (pwaPromptEvent as any).prompt();
+      const choice = await (pwaPromptEvent as any).userChoice;
+      if (choice.outcome === 'accepted') setPwaPromptEvent(null);
+    } else {
+      // iOS/Safari: no beforeinstallprompt — mostrar hint manual
+      setPwaIosHint(true);
+      setTimeout(() => setPwaIosHint(false), 8000);
+    }
+  };
+
   const pctCorrect = (s: Subject) => {
     const st = stats[s.id];
     if (!st || st.seen === 0) return 0;
@@ -430,14 +456,28 @@ export function Dashboard() {
             <span className="font-display text-xl text-ink-100">ExamCoach</span>
           </div>
 
-          {/* Mobile: nav icons + hamburger */}
-          <div className="flex items-center gap-1 lg:hidden">
+          {/* Nav: accesos rápidos + info + hamburger (todos los tamaños) */}
+          <div className="flex items-center gap-1">
             <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')}>📋</Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>📊</Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>⚙</Button>
+
+            {/* Botón info */}
+            <button
+              onClick={() => setInfoOpen(true)}
+              className="p-2 text-ink-400 hover:text-ink-200 hover:bg-ink-800 rounded-lg transition-colors"
+              title="Ayuda e información"
+            >
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </button>
+
+            {/* Hamburger — acciones avanzadas */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-ink-400 hover:text-ink-200 hover:bg-ink-800 rounded-lg transition-colors ml-1"
+              title="Menú"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                 {mobileMenuOpen
@@ -447,97 +487,22 @@ export function Dashboard() {
               </svg>
             </button>
           </div>
-
-          {/* Desktop: all buttons inline */}
-          <div className="hidden lg:flex items-center gap-2 flex-wrap">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSyncManual}
-              disabled={syncing}
-              title={lastSyncDate ? `Última sync: ${lastSyncDate}` : 'Nunca sincronizado'}
-            >
-              {syncing ? '⟳ Sincronizando…' : '⟳ Sincronizar banco'}
-            </Button>
-
-            <Button variant="ghost" size="sm" onClick={handleExportGlobal}>
-              ↑ Exportar banco global
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCommitAndClean}
-              disabled={committing}
-              title="Integra todos los packs en el banco global y actualiza el archivo"
-            >
-              {committing ? '⏳…' : '🔄 Integrar & limpiar'}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRemoveDuplicates}
-              disabled={deduping}
-              title="Detecta y elimina preguntas duplicadas (mismo contentHash)"
-            >
-              {deduping ? '⏳…' : '🔧 Eliminar duplicadas'}
-            </Button>
-
-            <Button variant="ghost" size="sm" onClick={handleExportPersonal}>
-              ↑ Backup personal
-            </Button>
-
-            <label className="cursor-pointer">
-              <input type="file" accept=".json" className="hidden" onChange={handleImport} disabled={importLoading} />
-              <span
-                className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all ${
-                  importLoading ? 'text-ink-500 bg-ink-800' : 'text-ink-300 hover:text-ink-100 hover:bg-ink-800'
-                }`}
-              >
-                ↓ Importar backup
-              </span>
-            </label>
-
-            <label className="cursor-pointer">
-              <input
-                ref={zipInputRef}
-                type="file"
-                accept=".zip"
-                className="hidden"
-                disabled={zipImporting}
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleZipImport(f);
-                  e.target.value = '';
-                }}
-              />
-              <span
-                className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all ${
-                  zipImporting
-                    ? 'text-ink-500 bg-ink-800 animate-pulse'
-                    : 'text-amber-400 hover:text-amber-300 hover:bg-ink-800 border border-amber-500/30'
-                }`}
-              >
-                {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
-              </span>
-            </label>
-
-            <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')}>
-              📋 Historial
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>
-              📊 Estadísticas
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
-              ⚙ Ajustes
-            </Button>
-          </div>
         </div>
 
-        {/* Mobile dropdown menu */}
+        {/* Dropdown menú — todos los tamaños */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-ink-800 bg-ink-900/95 backdrop-blur-sm px-4 py-3 flex flex-col gap-2 animate-slide-up">
+          <div className="border-t border-ink-800 bg-ink-900/95 backdrop-blur-sm px-4 py-3 flex flex-col gap-2 animate-slide-up">
+
+            {/* Instalar app — siempre visible */}
+            <button
+              onClick={handlePwaInstall}
+              className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg font-medium font-body transition-all justify-start w-full text-amber-300 hover:text-amber-200 hover:bg-ink-800 border border-amber-500/30"
+            >
+              📲 Instalar app
+            </button>
+
+            <div className="border-t border-ink-800/60 my-0.5" />
+
             <Button
               variant="ghost"
               size="sm"
@@ -579,30 +544,45 @@ export function Dashboard() {
                 ↓ Importar backup
               </span>
             </label>
-            <label className="cursor-pointer w-full">
-              <input
-                type="file"
-                accept=".zip"
-                className="hidden"
-                disabled={zipImporting}
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleZipImport(f);
-                  if (e.target) e.target.value = '';
-                  setMobileMenuOpen(false);
-                }}
-              />
-              <span className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all w-full ${
+            {/* ZIP: reusa el input permanente del DOM */}
+            <button
+              onClick={() => { zipInputRef.current?.click(); setMobileMenuOpen(false); }}
+              disabled={zipImporting}
+              className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all w-full ${
                 zipImporting
-                  ? 'text-ink-500 bg-ink-800 animate-pulse'
+                  ? 'text-ink-500 bg-ink-800 animate-pulse cursor-not-allowed'
                   : 'text-amber-400 hover:text-amber-300 hover:bg-ink-800 border border-amber-500/30'
-              }`}>
-                {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
-              </span>
-            </label>
+              }`}
+            >
+              {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
+            </button>
           </div>
         )}
       </header>
+
+      {/* Input ZIP siempre presente en el DOM (para el drop zone) */}
+      <input
+        ref={zipInputRef}
+        type="file"
+        accept=".zip"
+        className="hidden"
+        disabled={zipImporting}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleZipImport(f);
+          e.target.value = '';
+        }}
+      />
+
+      {/* iOS PWA hint */}
+      {pwaIosHint && (
+        <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 sm:px-6 py-2.5 flex items-center justify-between flex-shrink-0">
+          <span className="text-xs text-blue-300">
+            📱 <strong>iOS:</strong> pulsa el botón Compartir <span className="font-mono">⬆</span> en Safari → "Añadir a pantalla de inicio"
+          </span>
+          <button onClick={() => setPwaIosHint(false)} className="text-xs text-ink-600 hover:text-ink-400 transition-colors ml-3 flex-shrink-0">✕</button>
+        </div>
+      )}
 
       {/* C3: Stale sync banner */}
       {syncStale && (
@@ -1171,6 +1151,171 @@ export function Dashboard() {
         </aside>
 
       </div>{/* fin flex body */}
+
+      {/* ── Modal Info / Ayuda ─────────────────────────────────────────────── */}
+      <Modal open={infoOpen} onClose={() => setInfoOpen(false)} title="ExamCoach — Guía rápida">
+        <div className="flex flex-col gap-6 text-sm text-ink-300 font-body max-h-[75vh] overflow-y-auto pr-1">
+
+          <p className="text-ink-400 leading-relaxed">App web para estudiar con bancos de preguntas. Todo se guarda en tu navegador — sin registro, sin servidor, sin conexión necesaria.</p>
+
+          {/* ── DASHBOARD ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Dashboard</h3>
+            <ul className="flex flex-col gap-1.5 text-ink-400">
+              <li>Muestra todas tus <strong className="text-ink-300">asignaturas</strong> como tarjetas con su progreso de acierto y las preguntas pendientes de repaso del día.</li>
+              <li>El badge <strong className="text-blue-300">🧠 N por repasar hoy</strong> aparece cuando el algoritmo SM-2 tiene preguntas vencidas. Púlsalo para lanzar directamente el modo inteligente.</li>
+              <li>Si hay una sesión pausada, aparece el badge <strong className="text-orange-300">▶ Sesión en curso</strong> — púlsalo para reanudarla.</li>
+              <li>La barra lateral izquierda muestra las <strong className="text-ink-300">sesiones mixtas activas</strong> (práctica de varias asignaturas a la vez).</li>
+              <li>La barra lateral derecha (o abajo en móvil) muestra el <strong className="text-ink-300">calendario</strong> y las <strong className="text-ink-300">próximas entregas</strong>.</li>
+              <li>El botón <strong className="text-amber-300">🔀 Práctica mixta</strong> (aparece con 2+ asignaturas) lanza una sesión mezclando preguntas de todas.</li>
+              <li>El buscador del dashboard busca en tiempo real por todas las asignaturas y temas a la vez.</li>
+            </ul>
+          </section>
+
+          {/* ── CALENDARIO ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Calendario</h3>
+            <ul className="flex flex-col gap-1.5 text-ink-400">
+              <li>Muestra todos los <strong className="text-ink-300">exámenes y entregas</strong> que hayas registrado en la sección Entregas.</li>
+              <li>Los días con eventos llevan indicadores de color: un <strong className="text-ink-300">diamante ◆</strong> para exámenes y un <strong className="text-ink-300">punto •</strong> para el resto de actividades. El color corresponde al color de la asignatura.</li>
+              <li><strong className="text-ink-300">Pulsa cualquier día</strong> con eventos para ver el detalle: nombre de la actividad, asignatura, estado y hora si la tiene.</li>
+              <li>Navega entre meses con las flechas ‹ ›. El día de hoy aparece resaltado en ámbar.</li>
+            </ul>
+          </section>
+
+          {/* ── PESTAÑAS DE ASIGNATURA ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Pestañas dentro de una asignatura</h3>
+            <p className="text-ink-500 mb-3 text-xs">Al entrar en una asignatura encontrarás estas pestañas:</p>
+
+            <div className="flex flex-col gap-4">
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">📚 Temas</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Crea y organiza los <strong className="text-ink-300">temas</strong> de la asignatura. Las preguntas se agrupan por tema.</li>
+                  <li>Cada tema puede tener un <strong className="text-ink-300">PDF asociado</strong>: arrástralo encima del tema o súbelo desde el botón. El PDF queda vinculado y accesible desde la práctica.</li>
+                  <li>Puedes <strong className="text-ink-300">ver el PDF</strong> de un tema directamente en el visor integrado.</li>
+                  <li>Los temas se pueden <strong className="text-ink-300">reordenar</strong> arrastrando y soltando.</li>
+                  <li>Desde cada tema puedes lanzar práctica de ese tema, abrir las flashcards o escuchar el PDF con voz.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">❓ Preguntas</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Lista completa del banco de preguntas de la asignatura con <strong className="text-ink-300">filtros</strong> por tema, tipo, origen, autor y texto libre.</li>
+                  <li>Pulsa cualquier pregunta para <strong className="text-ink-300">previsualizarla</strong> con su respuesta y explicación renderizadas.</li>
+                  <li>Activa el <strong className="text-ink-300">modo selección</strong> para marcar preguntas concretas y exportarlas a PDF, contribution pack o Anki.</li>
+                  <li>Desde esta pestaña también puedes <strong className="text-ink-300">importar un contribution pack</strong> de otro usuario directamente sobre esta asignatura.</li>
+                  <li>Una pregunta puede pertenecer a <strong className="text-ink-300">varios temas</strong> a la vez.</li>
+                  <li>Cada pregunta puede llevar imágenes (arrastra o pega), tags, dificultad 1–5, origen y un ancla a una página de PDF.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">🎯 Práctica</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li><strong className="text-ink-300">Aleatorio N</strong> — elige cuántas preguntas al azar.</li>
+                  <li><strong className="text-ink-300">Todas</strong> — sesión completa con todas las preguntas.</li>
+                  <li><strong className="text-ink-300">Solo falladas</strong> — repasa únicamente las que has respondido mal.</li>
+                  <li><strong className="text-ink-300">Por tema</strong> — selecciona un tema concreto.</li>
+                  <li><strong className="text-ink-300">Inteligente (SM-2)</strong> — el algoritmo de repetición espaciada prioriza las preguntas vencidas según tu historial. Cada pregunta tiene su propia fecha de próximo repaso.</li>
+                  <li><strong className="text-ink-300">Modo examen</strong> — sesión cronometrada con cuenta atrás configurable.</li>
+                  <li>Puedes pausar cualquier sesión y reanudarla más tarde.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">📝 Exámenes</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Crea <strong className="text-ink-300">conjuntos de preguntas seleccionadas a mano</strong> para simular exámenes reales.</li>
+                  <li>Cada examen tiene su propio historial de resultados y se puede repetir independientemente.</li>
+                  <li>Útil para repasar exactamente las preguntas que suelen caer en el examen de la asignatura.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">📁 Recursos</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Acceso a los <strong className="text-ink-300">archivos de la asignatura</strong> organizados en categorías: <em>Resúmenes</em>, <em>Exámenes</em> y <em>Práctica</em>.</li>
+                  <li>Los archivos se cargan desde el ZIP de recursos que hayas importado (menú ☰ → Importar recursos) y se almacenan en tu navegador.</li>
+                  <li>Puedes abrir cualquier PDF directamente en el visor integrado o escucharlo con síntesis de voz.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">💡 Conceptos clave</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Almacena <strong className="text-ink-300">fórmulas, definiciones y observaciones</strong> organizadas por categoría.</li>
+                  <li>Admiten Markdown y LaTeX completo. Puedes buscar por texto dentro de los conceptos.</li>
+                  <li>Durante las sesiones de práctica puedes abrir la <strong className="text-ink-300">barra lateral de conceptos</strong> como referencia rápida sin salir de la sesión.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">🤖 IA</p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Sube un PDF y la IA <strong className="text-ink-300">extrae automáticamente las preguntas</strong> del documento y las añade al banco.</li>
+                  <li>Requiere configurar una API key de OpenAI o Anthropic en Ajustes (⚙).</li>
+                  <li>También disponible opción <strong className="text-ink-300">WebLLM</strong> (modelo local en el navegador, sin API key, más lento).</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-ink-200 font-semibold mb-1">💬 Chatbots <span className="text-xs text-ink-500 font-normal">(aparece si está configurado)</span></p>
+                <ul className="flex flex-col gap-1 text-ink-400 pl-3">
+                  <li>Accesos directos a <strong className="text-ink-300">GPTs personalizados</strong> vinculados a esa asignatura. Se abren en una pestaña nueva.</li>
+                </ul>
+              </div>
+
+            </div>
+          </section>
+
+          {/* ── TIPOS DE PREGUNTAS ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Tipos de preguntas</h3>
+            <ul className="flex flex-col gap-1.5 text-ink-400">
+              <li>✅ <strong className="text-ink-300">Test</strong> — opciones múltiples (una o varias correctas), corrección automática.</li>
+              <li>✏️ <strong className="text-ink-300">Completar</strong> — rellena los huecos marcados como <code className="bg-ink-800 px-1 rounded text-xs">{`{{respuesta}}`}</code>. Corrección automática con normalización de tildes y mayúsculas.</li>
+              <li>📝 <strong className="text-ink-300">Desarrollo</strong> — respuesta de texto libre. Tú decides si es correcta.</li>
+              <li>🔢 <strong className="text-ink-300">Práctico</strong> — texto libre más resultado numérico opcional. Corrección manual.</li>
+            </ul>
+          </section>
+
+          {/* ── FÓRMULAS ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Fórmulas LaTeX y Markdown</h3>
+            <p className="text-ink-400 mb-2">Todos los campos de texto admiten <strong className="text-ink-300">Markdown</strong> (negrita, cursiva, tablas, listas, código) y fórmulas <strong className="text-ink-300">LaTeX</strong> con KaTeX.</p>
+            <ul className="flex flex-col gap-1 text-ink-400">
+              <li>Fórmula en línea: <code className="bg-ink-800 px-1 rounded">$E = mc^2$</code></li>
+              <li>Fórmula en bloque: <code className="bg-ink-800 px-1 rounded">$$\int_a^b f(x)\,dx$$</code></li>
+            </ul>
+            <p className="text-ink-500 text-xs mt-2">Si usas ChatGPT para generar preguntas, dile que use <code className="bg-ink-800 px-0.5 rounded">$...$</code> y <code className="bg-ink-800 px-0.5 rounded">$$...$$</code> para las fórmulas.</p>
+          </section>
+
+          {/* ── MENÚ ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Menú (☰) — acciones avanzadas</h3>
+            <ul className="flex flex-col gap-1.5 text-ink-400">
+              <li>📲 <strong className="text-ink-300">Instalar app</strong> — añade ExamCoach a tu pantalla de inicio.</li>
+              <li>⟳ <strong className="text-ink-300">Sincronizar banco</strong> — descarga la última versión del banco global de preguntas compartido.</li>
+              <li>↑ <strong className="text-ink-300">Backup personal</strong> — exporta <em>todos</em> tus datos (preguntas, estadísticas, ajustes) a un JSON. Guárdalo como copia de seguridad.</li>
+              <li>↓ <strong className="text-ink-300">Importar backup</strong> — restaura un backup en este navegador o dispositivo.</li>
+              <li>📦 <strong className="text-ink-300">Importar recursos</strong> — sube un ZIP con PDFs organizados por asignatura. También puedes arrastrarlo a la zona inferior del dashboard.</li>
+            </ul>
+          </section>
+
+          {/* ── INSTALAR ── */}
+          <section>
+            <h3 className="font-display text-amber-400 mb-2.5 text-base border-b border-ink-800 pb-1">Instalar como app</h3>
+            <p className="text-ink-400 mb-1.5"><strong className="text-ink-300">Chrome / Edge / Android:</strong> pulsa "📲 Instalar app" en el menú (☰).</p>
+            <p className="text-ink-400"><strong className="text-ink-300">iOS / Safari:</strong> pulsa el botón Compartir ⬆ en la barra de Safari → "Añadir a pantalla de inicio".</p>
+          </section>
+
+          <p className="text-xs text-ink-600 border-t border-ink-800 pt-3">© 2026 Luis M. Salete · Código privado · Acceso vía GitHub Pages</p>
+        </div>
+      </Modal>
 
       {/* ── Modal crear asignatura ─────────────────────────────────────────── */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Nueva asignatura">
