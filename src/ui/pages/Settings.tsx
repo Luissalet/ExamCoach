@@ -627,6 +627,32 @@ export function SettingsPage() {
                 >
                   ↓ Descargar cambios
                 </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={async () => {
+                    setSyncing(true);
+                    setSyncMsg('');
+                    addLog('Forzando re-descarga completa…');
+                    const result = await pullFromGist(githubToken, true);
+                    if (result.success) {
+                      addLog(`✓ Merge completo: +${result.added ?? 0} nuevos, ~${result.updated ?? 0} actualizados, ${result.skipped ?? 0} sin cambios`);
+                      setSyncMsg(`✓ Re-descarga: ${result.added ?? 0} nuevos, ${result.updated ?? 0} actualizados`);
+                      await loadSettings();
+                      await loadSubjects();
+                    } else {
+                      addLog(`✗ Error: ${result.error ?? 'desconocido'}`, false);
+                      setSyncMsg('Error: ' + (result.error ?? 'desconocido'));
+                    }
+                    setSyncing(false);
+                    setTimeout(() => setSyncMsg(''), 8000);
+                  }}
+                  disabled={syncing || !settings.syncGistId}
+                  loading={syncing}
+                  title="Ignora el timestamp y fuerza merge completo (útil si faltan PDFs)"
+                >
+                  ↻ Forzar re-descarga
+                </Button>
               </div>
 
               {syncMsg && (

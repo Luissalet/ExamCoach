@@ -1083,7 +1083,7 @@ async function createNewGist(
  * Pull from Gist con merge inteligente.
  * Primero comprueba si el Gist cambió desde el último sync (como `git fetch`).
  */
-export async function pullFromGist(token: string): Promise<SyncResult> {
+export async function pullFromGist(token: string, force = false): Promise<SyncResult> {
   try {
     const settings = await getSettings();
     const gistId = settings.syncGistId;
@@ -1110,8 +1110,8 @@ export async function pullFromGist(token: string): Promise<SyncResult> {
       files: Record<string, { content: string; truncated?: boolean; raw_url?: string }>;
     };
 
-    // Si no ha cambiado desde nuestro último sync, skip
-    if (settings.lastSyncAt && gist.updated_at <= settings.lastSyncAt) {
+    // Si no ha cambiado desde nuestro último sync, skip (salvo si es forzado)
+    if (!force && settings.lastSyncAt && gist.updated_at <= settings.lastSyncAt) {
       return { success: true, direction: 'skip', skipped: 0, added: 0, updated: 0 };
     }
 
