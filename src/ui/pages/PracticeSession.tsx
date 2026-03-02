@@ -158,6 +158,19 @@ export function PracticeSessionPage() {
     setCurrentIndex((i) => i + 1);
   };
 
+  const handlePrev = () => {
+    if (currentIndex === 0) return;
+    const prevIdx = currentIndex - 1;
+    const prevAnswer = answers.find((a) => a.questionId === questions[prevIdx]?.id);
+    if (prevAnswer) {
+      resetAnswerState();
+      setCurrentIndex(prevIdx);
+      setSubmitted(true);
+    }
+  };
+
+  const canGoPrev = currentIndex > 0 && !!answers.find((a) => a.questionId === questions[currentIndex - 1]?.id);
+
   const handleFinish = async () => {
     if (!session) return;
     await sessionRepo.finish(session.id);
@@ -473,40 +486,52 @@ export function PracticeSessionPage() {
         )}
 
         {/* Action buttons */}
-        <div className="flex justify-between items-center pt-4 border-t border-ink-800">
-          {!submitted ? (
-            <Button
-              onClick={handleSubmitAnswer}
-              disabled={
-                (currentQuestion.type === 'TEST' && selectedOptions.length === 0) ||
-                (currentQuestion.type === 'COMPLETAR' && Object.keys(blankAnswers).length === 0)
-              }
-            >
-              Comprobar respuesta
-            </Button>
-          ) : (
-            <Button onClick={handleNext}>
-              {currentIndex < questions.length - 1 ? 'Siguiente →' : 'Finalizar sesión'}
-            </Button>
-          )}
-          {!submitted && (
-            <button
-              onClick={() => {
-                // Skip (empty answer)
-                const answer: UserAnswer = {
-                  questionId: currentQuestion.id,
-                  answeredAt: new Date().toISOString(),
-                  result: 'WRONG',
-                };
-                sessionRepo.addAnswer(session.id, answer);
-                setAnswers((prev) => [...prev, answer]);
-                setSubmitted(true);
-              }}
-              className="text-xs text-ink-600 hover:text-ink-400 transition-colors"
-            >
-              Saltar
-            </button>
-          )}
+        <div className="flex items-center gap-2 pt-4 border-t border-ink-800">
+          {/* ← Anterior — visible en móvil para navegar sin teclas de flecha */}
+          <button
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+            title="Pregunta anterior (←)"
+            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg border border-ink-700 bg-ink-900 text-ink-400 hover:text-ink-100 hover:border-ink-500 transition-colors disabled:opacity-25 disabled:cursor-not-allowed text-base"
+          >
+            ‹
+          </button>
+
+          <div className="flex-1 flex items-center justify-between gap-2">
+            {!submitted ? (
+              <Button
+                onClick={handleSubmitAnswer}
+                disabled={
+                  (currentQuestion.type === 'TEST' && selectedOptions.length === 0) ||
+                  (currentQuestion.type === 'COMPLETAR' && Object.keys(blankAnswers).length === 0)
+                }
+              >
+                Comprobar respuesta
+              </Button>
+            ) : (
+              <Button onClick={handleNext}>
+                {currentIndex < questions.length - 1 ? 'Siguiente →' : 'Finalizar sesión'}
+              </Button>
+            )}
+            {!submitted && (
+              <button
+                onClick={() => {
+                  // Skip (empty answer)
+                  const answer: UserAnswer = {
+                    questionId: currentQuestion.id,
+                    answeredAt: new Date().toISOString(),
+                    result: 'WRONG',
+                  };
+                  sessionRepo.addAnswer(session.id, answer);
+                  setAnswers((prev) => [...prev, answer]);
+                  setSubmitted(true);
+                }}
+                className="text-xs text-ink-600 hover:text-ink-400 transition-colors"
+              >
+                Saltar
+              </button>
+            )}
+          </div>
         </div>
       </main>
 

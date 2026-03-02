@@ -26,6 +26,8 @@ import type { GptLink } from '@/domain/models';
 import { exportContributionPackByIds, previewContributionPack, importContributionPack, type ContributionPackPreview } from '@/data/contributionImport';
 import { downloadJSON } from '@/data/exportImport';
 import { exportToAnkiTsv, downloadAnkiFile } from '@/utils/ankiExport';
+import { getTopicWavCacheKey, hasWavEntry } from '@/utils/backgroundSynthesis';
+import type { SynthesisProgress } from '@/utils/backgroundSynthesis';
 type TabId = 'topics' | 'questions' | 'practice' | 'exams' | 'resources' | 'concepts' | 'chatbots' | 'ia';
 
 const TYPE_LABELS_MAP: Record<QuestionType, string> = {
@@ -130,6 +132,75 @@ function CopyLinkButton({ subjectId, tab }: { subjectId: string | undefined; tab
         </>
       )}
     </button>
+  );
+}
+
+// ── WAV status icon ─────────────────────────────────────────────────────────
+/**
+ * Muestra el estado del caché WAV para un topic:
+ *   ○  sin caché (círculo vacío gris)
+ *   ⟳  sintetizando (spinner naranja)
+ *   ✓  cacheado (círculo con tick verde)
+ */
+function WavStatusIcon({
+  topicId,
+  synthesisJobs,
+}: {
+  topicId: string;
+  synthesisJobs: Record<string, SynthesisProgress>;
+}) {
+  const [cached, setCached] = useState<boolean | null>(null);
+
+  // Check active synthesis job for this topic
+  const job = Object.values(synthesisJobs).find((j) => j.topicId === topicId);
+  const isDownloading = !!job && job.status !== 'done' && job.status !== 'error';
+
+  useEffect(() => {
+    const cacheKey = getTopicWavCacheKey(topicId);
+    if (!cacheKey) {
+      setCached(false);
+      return;
+    }
+    hasWavEntry(cacheKey).then((has) => setCached(has));
+  }, [topicId, synthesisJobs]); // re-check when jobs change
+
+  if (isDownloading) {
+    const pct = job!.total > 0 ? Math.round((job!.current / job!.total) * 100) : 0;
+    return (
+      <span
+        title={`Generando audio WAV… ${pct}%`}
+        className="flex items-center gap-1 text-amber-400"
+      >
+        {/* Spinner */}
+        <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <circle cx="12" cy="12" r="9" strokeOpacity="0.25" />
+          <path d="M12 3a9 9 0 0 1 9 9" strokeLinecap="round" />
+        </svg>
+        <span className="text-[10px] font-mono">{pct}%</span>
+      </span>
+    );
+  }
+
+  if (cached) {
+    return (
+      <span title="Audio WAV cacheado" className="text-sage-400">
+        {/* Circle with tick */}
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <circle cx="12" cy="12" r="9" strokeOpacity="0.6" />
+          <path d="M8 12l3 3 5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+    );
+  }
+
+  // Not yet cached / unknown
+  return (
+    <span title="Audio WAV no generado" className="text-ink-600">
+      {/* Empty circle */}
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="9" />
+      </svg>
+    </span>
   );
 }
 
@@ -748,24 +819,11 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                                   e.stopPropagation();
                                   navigate(`/subject/${subjectId}/listen/${t.id}`);
                                 }}
-                                className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md"
+                                className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-2 py-0.5 rounded-md flex items-center gap-1"
                               >
                                 🎧 Escuchar
+                                <WavStatusIcon topicId={t.id} synthesisJobs={synthesisJobs} />
                               </button>
-                              {/* Background synthesis progress bar */}
-                              {(() => {
-                                const job = Object.values(synthesisJobs).find(j => j.topicId === t.id);
-                                if (!job || job.status === 'done') return null;
-                                const pct = job.total > 0 ? Math.round((job.current / job.total) * 100) : 0;
-                                return (
-                                  <span className="text-xs text-emerald-400 flex items-center gap-1" title={`Generando audio: ${job.current}/${job.total} bloques`}>
-                                    <span className="inline-block w-16 h-1.5 bg-ink-700 rounded-full overflow-hidden">
-                                      <span className="block h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
-                                    </span>
-                                    {job.status === 'error' ? '⚠ Error' : `${pct}%`}
-                                  </span>
-                                );
-                              })()}
                               <label
                                 onClick={(e) => e.stopPropagation()}
                                 className="text-xs text-ink-500 hover:text-ink-300 hover:bg-ink-700 transition-all px-1.5 py-0.5 rounded cursor-pointer"

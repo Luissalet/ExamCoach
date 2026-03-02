@@ -109,6 +109,30 @@ export async function isWavCached(cacheKey: string, blockCount: number, voiceId:
   return !!entry && entry.blockCount === blockCount && entry.voiceId === voiceId;
 }
 
+/** Check if any WAV entry exists for the given cache key (lightweight, no validation) */
+export async function hasWavEntry(cacheKey: string): Promise<boolean> {
+  const entry = await wavCacheGet(cacheKey);
+  return !!entry;
+}
+
+// ─── Topic → WAV cache key mapping (localStorage) ───────────────────────────
+
+const TOPIC_WAV_KEY_PREFIX = 'wav-topic-key:';
+
+/** Store the WAV cache key for a topic so its status can be shown in the topic list */
+export function storeTopicWavCacheKey(topicId: string, cacheKey: string): void {
+  try {
+    localStorage.setItem(TOPIC_WAV_KEY_PREFIX + topicId, cacheKey);
+  } catch { /* ignore quota errors */ }
+}
+
+/** Retrieve the WAV cache key previously stored for a topic */
+export function getTopicWavCacheKey(topicId: string): string | null {
+  try {
+    return localStorage.getItem(TOPIC_WAV_KEY_PREFIX + topicId);
+  } catch { return null; }
+}
+
 /** List all keys in the WAV cache with metadata */
 export async function listWavCacheEntries(): Promise<Array<{ key: string; entry: CachedWavEntry }>> {
   try {
