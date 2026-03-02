@@ -3,6 +3,7 @@ import type { Subject, Topic, Question, PracticeSession, AppSettings, KeyConcept
 import { subjectRepo, topicRepo, questionRepo, sessionRepo, keyConceptRepo, examRepo } from '@/data/repos';
 import { getSettings, saveSettings } from '@/data/db';
 import { syncWithGlobalBank, type GlobalBankSyncResult } from '@/data/globalBank';
+import type { SynthesisProgress } from '@/utils/backgroundSynthesis';
 
 interface AppStore {
   // Data
@@ -21,6 +22,10 @@ interface AppStore {
   // Global bank sync state
   syncing: boolean;
   lastSyncResult: GlobalBankSyncResult | null;
+
+  // Background synthesis state
+  synthesisJobs: Record<string, SynthesisProgress>;
+  setSynthesisProgress: (jobId: string, progress: SynthesisProgress | null) => void;
 
   // Actions - Subjects
   loadSubjects: () => Promise<void>;
@@ -84,6 +89,19 @@ export const useStore = create<AppStore>((set, get) => ({
   error: null,
   syncing: false,
   lastSyncResult: null,
+  synthesisJobs: {},
+
+  setSynthesisProgress: (jobId, progress) => {
+    set((s) => {
+      const jobs = { ...s.synthesisJobs };
+      if (progress === null) {
+        delete jobs[jobId];
+      } else {
+        jobs[jobId] = progress;
+      }
+      return { synthesisJobs: jobs };
+    });
+  },
 
   loadSubjects: async () => {
     set({ loading: true });

@@ -144,6 +144,7 @@ export function SubjectView() {
     createQuestion, updateQuestion, deleteQuestion, duplicateQuestion,
     createKeyConcept, updateKeyConcept, deleteKeyConcept,
     createExam, updateExam, deleteExam, duplicateExam,
+    synthesisJobs,
   } = useStore();
 
   const subject = subjects.find((s) => s.id === subjectId);
@@ -751,6 +752,20 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                               >
                                 🎧 Escuchar
                               </button>
+                              {/* Background synthesis progress bar */}
+                              {(() => {
+                                const job = Object.values(synthesisJobs).find(j => j.topicId === t.id);
+                                if (!job || job.status === 'done') return null;
+                                const pct = job.total > 0 ? Math.round((job.current / job.total) * 100) : 0;
+                                return (
+                                  <span className="text-xs text-emerald-400 flex items-center gap-1" title={`Generando audio: ${job.current}/${job.total} bloques`}>
+                                    <span className="inline-block w-16 h-1.5 bg-ink-700 rounded-full overflow-hidden">
+                                      <span className="block h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                                    </span>
+                                    {job.status === 'error' ? '⚠ Error' : `${pct}%`}
+                                  </span>
+                                );
+                              })()}
                               <label
                                 onClick={(e) => e.stopPropagation()}
                                 className="text-xs text-ink-500 hover:text-ink-300 hover:bg-ink-700 transition-all px-1.5 py-0.5 rounded cursor-pointer"

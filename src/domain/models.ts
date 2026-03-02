@@ -440,11 +440,22 @@ export interface AppSettings {
    */
   aiSettings?: AISettings;
   /**
-   * Token personal de GitHub para exportar contribution packs a Gists.
+   * Token personal de GitHub para exportar contribution packs a Gists y sync.
    * Se almacena solo en IndexedDB local, nunca se exporta.
    * Scope mínimo requerido: gist (create/read gists).
    */
   githubToken?: string;
+  /**
+   * ID del Gist privado usado para sincronización entre dispositivos.
+   * Se crea automáticamente en el primer push y se reutiliza.
+   * LOCAL — nunca se exporta (cada dispositivo lo configura).
+   */
+  syncGistId?: string;
+  /**
+   * ISO timestamp del último sync exitoso con el Gist.
+   * Se usa para saber si hay cambios remotos pendientes (como git fetch).
+   */
+  lastSyncAt?: string;
   /**
    * Contador de días consecutivos con actividad de estudio.
    * Se actualiza cuando el usuario completa una sesión de práctica.

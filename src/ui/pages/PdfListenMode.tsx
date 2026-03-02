@@ -19,6 +19,7 @@ import { extractPdfText, type TextBlock } from '@/utils/pdfTextExtractor';
 import { mathToSpeech } from '@/utils/mathSymbolSpeech';
 import { createTtsEngine, type TtsEngine, type TtsState, type TtsVoiceInfo } from '@/utils/ttsEngine';
 import { createAudioTtsEngine, hashBlockTexts } from '@/utils/audioTtsEngine';
+import { enqueueSynthesis, cancelSynthesis } from '@/utils/backgroundSynthesis';
 import { createAudioKeepalive, type AudioKeepaliveManager } from '@/utils/audioKeepalive';
 import { createMediaSessionController, type MediaSessionController } from '@/utils/mediaSessionController';
 import { getPdfBlobUrl } from '@/data/pdfStorage';
@@ -177,6 +178,10 @@ export function PdfListenMode() {
     }
     hashBlockTexts(processedTexts).then((hash) => {
       wavCacheKeyRef.current = hash;
+      // Cancel any background synthesis for this PDF (we're taking over)
+      const currentVoice = ttsRef.current?.getVoice();
+      const voiceId = currentVoice?.name ?? 'es_ES-carlfm-x_low';
+      cancelSynthesis(`${hash}:${voiceId}`);
     });
   }, [processedTexts]);
 
@@ -308,6 +313,30 @@ export function PdfListenMode() {
 
     return () => {
       clearTimeout(timer);
+
+      // Si la síntesis estaba en progreso (loading), transferir al background manager
+      const engineState = engine.getState();
+      if (engineState === 'loading' || engineState === 'playing' || engineState === 'paused') {
+        const texts = processedTextsRef.current;
+        const cacheKeyVal = wavCacheKeyRef.current;
+        // Solo transferir si hay textos y cacheKey (síntesis activa)
+        if (texts.length > 0 && cacheKeyVal && topicId) {
+          const currentVoice = engine.getVoice();
+          const voiceId = currentVoice?.name ?? 'es_ES-carlfm-x_low';
+          const jobId = `${cacheKeyVal}:${voiceId}`;
+
+          enqueueSynthesis({
+            jobId,
+            topicId,
+            pdfFilename: '', // will be filled from topic data
+            texts,
+            voiceId: voiceId as import('@mintplex-labs/piper-tts-web').VoiceId,
+            cacheKey: cacheKeyVal,
+            startFromBlock: 0,
+          });
+        }
+      }
+
       engine.destroy();
       keepalive.destroy();
       mediaSession.cleanup();

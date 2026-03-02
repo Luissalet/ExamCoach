@@ -5,7 +5,18 @@ import { PwaUpdateBanner } from './ui/components/PwaUpdateBanner';
 import { PwaInstallBanner } from './ui/components/PwaInstallBanner';
 import { StorageWarningBanner } from './ui/components/StorageWarningBanner';
 import { ThemeProvider } from './ui/context/ThemeContext';
+import { startAutoSync } from './data/gistSync';
+import { setProgressUpdater } from './utils/backgroundSynthesis';
+import { useStore } from './ui/store';
 import './index.css';
+
+// Arranca auto-sync con GitHub Gist (solo hace algo si hay token + gistId configurados)
+startAutoSync();
+
+// Conectar BackgroundSynthesisManager con el Zustand store
+setProgressUpdater((jobId, progress) => {
+  useStore.getState().setSynthesisProgress(jobId, progress);
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
