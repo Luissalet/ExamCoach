@@ -20,3 +20,24 @@
 - Idempotent sync functions must actually be idempotent — check "already synced" timestamps
 - Static data files (JSON banks) must be deduplicated and have correct hashes before shipping
 - When diagnosing duplication bugs, always check: (a) is the dedup key stable across algorithm versions? (b) does the sync run more often than intended?
+
+## 2026-03-02 — Gist sync duplicates subjects and questions across devices
+
+**Pattern:** `mergeBackup()` in `gistSync.ts` used only UUID-based matching (`mergeTable` with `id` as PK). Since each device generates its own UUIDs, the same subject/topic/question created on two devices has different IDs → both added as "new" → everything duplicated on every sync.
+
+**Root cause:** `mergeTable()` was a generic function that only matched by `id`. Unlike `globalBank.ts` which deduplicates by content (slug for subjects/topics, contentHash for questions), gist sync had no content-based deduplication.
+
+**Fixes applied:**
+1. Subjects: dedup by `slugify(name)` — if same slug exists, map remote ID → local ID
+2. Topics: dedup by `slugify(subjectName)::slugify(title)` composite key
+3. Questions: dedup by `contentHash` (recomputed with current algorithm)
+4. Key Concepts: dedup by `contentHash`
+5. All dependent tables (sessions, exams, deliverables, gradingConfigs, pdfAnchors): remap foreign keys (subjectId, topicId) using the ID maps built during subject/topic merge
+6. Stats merge: when duplicate question found, merge stats taking highest values (most progress)
+7. Local-only fields preserved: examDate, allowsNotes (subjects), notes, starred (questions)
+
+**Rules:**
+- Device sync must NEVER rely solely on UUID matching — different devices generate different UUIDs for the same logical entity
+- Always use content-based identity (slugs, hashes) for cross-device deduplication
+- When merging entities with parent-child relationships, build ID remapping maps and apply them to all child records
+- Stats should be merged (max of each field), not overwritten — user progress must never be lost

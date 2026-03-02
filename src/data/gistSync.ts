@@ -22,6 +22,8 @@ import { db, getSettings, saveSettings } from './db';
 import { PDFDocument } from 'pdf-lib';
 import { listStoredPdfs, getPdfBlobUrl } from './pdfStorage';
 import { savePdfBlob } from './pdfStorage';
+import { slugify } from '@/domain/normalize';
+import { computeContentHash } from '@/domain/hashing';
 import type {
   Subject,
   Topic,
@@ -210,8 +212,19 @@ async function buildPregenManifest(topics: Topic[]): Promise<PregenManifestEntry
 // ─── Merge (pull inteligente) ────────────────────────────────────────────────
 
 /**
- * Merge tipo git: para cada registro, gana el más reciente.
- * Registros nuevos se añaden; los que ya están actualizados se saltan.
+ * Merge inteligente con deduplicación por contenido.
+ *
+ * Estrategia (misma que globalBank.ts):
+ *  - Asignaturas → dedup por slugify(name)
+ *  - Temas       → dedup por slugify(subjectName)::slugify(title)
+ *  - Preguntas   → dedup por contentHash
+ *  - Conceptos   → dedup por contentHash
+ *  - Sesiones    → merge por ID (no hay duplicado semántico)
+ *  - Resto       → merge por ID + timestamp
+ *
+ * Cuando se detecta un registro duplicado con distinto ID,
+ * se construye un mapa de remapeo (remoteId → localId) para
+ * que los registros hijos referencien el ID local correcto.
  */
 export async function mergeBackup(backup: FullBackup): Promise<SyncResult> {
   let added = 0;
@@ -219,31 +232,73 @@ export async function mergeBackup(backup: FullBackup): Promise<SyncResult> {
   let skipped = 0;
 
   try {
-    // Merge each table
-    const mergeResults = await Promise.all([
-      mergeTable(db.subjects, backup.subjects, 'updatedAt'),
-      mergeTable(db.topics, backup.topics, 'updatedAt'),
-      mergeTable(db.questions, backup.questions, 'updatedAt'),
-      mergeSessions(backup.sessions),
-      mergeTable(db.pdfAnchors, backup.pdfAnchors, null), // pdfAnchors no tienen updatedAt
-      mergeTable(db.keyConcepts, backup.keyConcepts, 'updatedAt'),
-      mergeTable(db.exams, backup.exams, 'updatedAt'),
-      mergeTable(db.deliverables, backup.deliverables, 'updatedAt'),
-      mergeGradingConfigs(backup.gradingConfigs),
-    ]);
+    // ── 1. Dedup asignaturas por slug ─────────────────────────────────
+    const subjectIdMap = new Map<string, string>(); // remoteId → localId
+    const subjectResult = await mergeSubjects(backup.subjects, subjectIdMap);
+    added += subjectResult.added;
+    updated += subjectResult.updated;
+    skipped += subjectResult.skipped;
 
-    for (const r of mergeResults) {
-      added += r.added;
-      updated += r.updated;
-      skipped += r.skipped;
-    }
+    // ── 2. Dedup temas por composite slug ─────────────────────────────
+    const topicIdMap = new Map<string, string>(); // remoteId → localId
+    const topicResult = await mergeTopics(backup.topics, subjectIdMap, topicIdMap);
+    added += topicResult.added;
+    updated += topicResult.updated;
+    skipped += topicResult.skipped;
 
-    // Merge question images — solo las que no existen localmente
+    // ── 3. Dedup preguntas por contentHash ─────────────────────────────
+    const questionResult = await mergeQuestions(backup.questions, subjectIdMap, topicIdMap);
+    added += questionResult.added;
+    updated += questionResult.updated;
+    skipped += questionResult.skipped;
+
+    // ── 4. Sesiones: merge por ID, remapear subjectId/topicId ─────────
+    const sessionResult = await mergeSessions(backup.sessions, subjectIdMap, topicIdMap);
+    added += sessionResult.added;
+    updated += sessionResult.updated;
+    skipped += sessionResult.skipped;
+
+    // ── 5. PdfAnchors: merge por ID, remapear subjectId ───────────────
+    const anchorResult = await mergeTableWithRemap(
+      db.pdfAnchors, backup.pdfAnchors, null, subjectIdMap, 'subjectId',
+    );
+    added += anchorResult.added;
+    updated += anchorResult.updated;
+    skipped += anchorResult.skipped;
+
+    // ── 6. Dedup conceptos clave por contentHash ──────────────────────
+    const conceptResult = await mergeKeyConcepts(backup.keyConcepts, subjectIdMap, topicIdMap);
+    added += conceptResult.added;
+    updated += conceptResult.updated;
+    skipped += conceptResult.skipped;
+
+    // ── 7. Exams: merge por ID, remapear subjectId ────────────────────
+    const examResult = await mergeTableWithRemap(
+      db.exams, backup.exams, 'updatedAt', subjectIdMap, 'subjectId',
+    );
+    added += examResult.added;
+    updated += examResult.updated;
+    skipped += examResult.skipped;
+
+    // ── 8. Deliverables: merge por ID ─────────────────────────────────
+    const deliverableResult = await mergeTableWithRemap(
+      db.deliverables, backup.deliverables, 'updatedAt', subjectIdMap, 'subjectId',
+    );
+    added += deliverableResult.added;
+    updated += deliverableResult.updated;
+    skipped += deliverableResult.skipped;
+
+    // ── 9. GradingConfigs: merge por ID, remapear subjectId ───────────
+    const gradingResult = await mergeGradingConfigs(backup.gradingConfigs, subjectIdMap);
+    added += gradingResult.added;
+    skipped += gradingResult.skipped;
+
+    // ── 10. Question images ───────────────────────────────────────────
     const imgResult = await mergeQuestionImages(backup.questionImages);
     added += imgResult.added;
     skipped += imgResult.skipped;
 
-    // Merge synced settings (keep higher streak, merge goals, etc.)
+    // ── 11. Synced settings ───────────────────────────────────────────
     await mergeSyncedSettings(backup.syncedSettings);
 
     // Update lastSyncAt
@@ -257,37 +312,238 @@ export async function mergeBackup(backup: FullBackup): Promise<SyncResult> {
 
 interface MergeCount { added: number; updated: number; skipped: number }
 
-/**
- * Merge genérico para tablas con `id` como PK y opcionalmente `updatedAt`.
- */
-async function mergeTable<T extends { id: string }>(
-  table: import('dexie').Table<T, string>,
-  remoteRecords: T[],
-  timestampField: 'updatedAt' | 'createdAt' | null,
+// ─── Subject merge (dedup by slug) ────────────────────────────────────────────
+
+async function mergeSubjects(
+  remoteSubjects: Subject[],
+  idMap: Map<string, string>,
 ): Promise<MergeCount> {
   let added = 0, updated = 0, skipped = 0;
 
-  for (const remote of remoteRecords) {
-    const local = await table.get(remote.id);
+  const localSubjects = await db.subjects.toArray();
+  const bySlug = new Map<string, Subject>();
+  const byId = new Map<string, Subject>();
+  for (const s of localSubjects) {
+    bySlug.set(slugify(s.name), s);
+    byId.set(s.id, s);
+  }
 
-    if (!local) {
-      // Nuevo — añadir
-      await table.add(remote);
-      added++;
-    } else if (timestampField) {
-      // Comparar timestamps — gana el más reciente
-      const localTs = (local as any)[timestampField] as string | undefined;
-      const remoteTs = (remote as any)[timestampField] as string | undefined;
+  for (const remote of remoteSubjects) {
+    const slug = slugify(remote.name);
+    const localById = byId.get(remote.id);
+    const localBySlug = bySlug.get(slug);
 
-      if (remoteTs && localTs && remoteTs > localTs) {
-        await table.put(remote);
+    if (localById) {
+      // Mismo ID — LWW por updatedAt
+      idMap.set(remote.id, remote.id);
+      if (remote.updatedAt > localById.updatedAt) {
+        // Preservar campos locales: examDate, allowsNotes
+        await db.subjects.put({
+          ...remote,
+          examDate: localById.examDate,
+          allowsNotes: localById.allowsNotes,
+        });
+        updated++;
+      } else {
+        skipped++;
+      }
+    } else if (localBySlug) {
+      // Distinto ID pero mismo nombre → es la misma asignatura
+      idMap.set(remote.id, localBySlug.id);
+      if (remote.updatedAt > localBySlug.updatedAt) {
+        // Actualizar campos no-locales, mantener ID local
+        await db.subjects.put({
+          ...remote,
+          id: localBySlug.id,
+          examDate: localBySlug.examDate,
+          allowsNotes: localBySlug.allowsNotes,
+        });
         updated++;
       } else {
         skipped++;
       }
     } else {
-      // Sin timestamp — saltar si ya existe
+      // Realmente nueva
+      await db.subjects.add(remote);
+      idMap.set(remote.id, remote.id);
+      bySlug.set(slug, remote);
+      byId.set(remote.id, remote);
+      added++;
+    }
+  }
+
+  // Asignaturas solo locales: identidad (para que el mapa cubra todo)
+  for (const s of localSubjects) {
+    if (!idMap.has(s.id)) idMap.set(s.id, s.id);
+  }
+
+  return { added, updated, skipped };
+}
+
+// ─── Topic merge (dedup by subject::title slug) ──────────────────────────────
+
+async function mergeTopics(
+  remoteTopics: Topic[],
+  subjectIdMap: Map<string, string>,
+  topicIdMap: Map<string, string>,
+): Promise<MergeCount> {
+  let added = 0, updated = 0, skipped = 0;
+
+  const localTopics = await db.topics.toArray();
+  const localSubjects = await db.subjects.toArray();
+
+  // Construir lookup de nombre de asignatura por ID (local)
+  const subjectNameById = new Map<string, string>();
+  for (const s of localSubjects) subjectNameById.set(s.id, s.name);
+
+  // Construir lookup de nombre de asignatura remota por ID remoto
+  // (necesario para calcular el composite key de los remotos)
+  // Usamos los subjects del backup que ya fueron procesados, pero
+  // también podemos calcular indirectamente: remote.subjectId → localSubjectId → name
+  // Sin embargo, necesitamos el nombre remoto para el slug. Mejor: usamos
+  // el nombre local (al que se mapeó) ya que es el mismo slug.
+
+  // Index: compositeKey → Topic local
+  const byKey = new Map<string, Topic>();
+  const byId = new Map<string, Topic>();
+  for (const t of localTopics) {
+    const subjectName = subjectNameById.get(t.subjectId);
+    if (subjectName) {
+      byKey.set(`${slugify(subjectName)}::${slugify(t.title)}`, t);
+    }
+    byId.set(t.id, t);
+  }
+
+  for (const remote of remoteTopics) {
+    const localSubjectId = subjectIdMap.get(remote.subjectId) ?? remote.subjectId;
+    const subjectName = subjectNameById.get(localSubjectId);
+    if (!subjectName) {
+      // Asignatura no encontrada — skipear
       skipped++;
+      continue;
+    }
+
+    const compositeKey = `${slugify(subjectName)}::${slugify(remote.title)}`;
+    const localById = byId.get(remote.id);
+    const localByKey = byKey.get(compositeKey);
+
+    if (localById) {
+      // Mismo ID
+      topicIdMap.set(remote.id, remote.id);
+      if (remote.updatedAt > localById.updatedAt) {
+        await db.topics.put({ ...remote, subjectId: localSubjectId });
+        updated++;
+      } else {
+        skipped++;
+      }
+    } else if (localByKey) {
+      // Distinto ID pero mismo contenido → duplicado
+      topicIdMap.set(remote.id, localByKey.id);
+      if (remote.updatedAt > localByKey.updatedAt) {
+        await db.topics.put({
+          ...remote,
+          id: localByKey.id,
+          subjectId: localSubjectId,
+        });
+        updated++;
+      } else {
+        skipped++;
+      }
+    } else {
+      // Nuevo tema
+      const remapped: Topic = { ...remote, subjectId: localSubjectId };
+      await db.topics.add(remapped);
+      topicIdMap.set(remote.id, remote.id);
+      byKey.set(compositeKey, remapped);
+      byId.set(remote.id, remapped);
+      added++;
+    }
+  }
+
+  // Temas solo locales: identidad
+  for (const t of localTopics) {
+    if (!topicIdMap.has(t.id)) topicIdMap.set(t.id, t.id);
+  }
+
+  return { added, updated, skipped };
+}
+
+// ─── Question merge (dedup by contentHash) ────────────────────────────────────
+
+async function mergeQuestions(
+  remoteQuestions: Question[],
+  subjectIdMap: Map<string, string>,
+  topicIdMap: Map<string, string>,
+): Promise<MergeCount> {
+  let added = 0, updated = 0, skipped = 0;
+
+  const allLocal = await db.questions.toArray();
+  const byId = new Map<string, Question>();
+  const byHash = new Map<string, Question>();
+  for (const q of allLocal) {
+    byId.set(q.id, q);
+    if (q.contentHash) byHash.set(q.contentHash, q);
+  }
+
+  for (const remote of remoteQuestions) {
+    const localSubjectId = subjectIdMap.get(remote.subjectId) ?? remote.subjectId;
+    const localTopicId = topicIdMap.get(remote.topicId) ?? remote.topicId;
+    const localTopicIds = remote.topicIds?.map((id) => topicIdMap.get(id) ?? id);
+
+    // Recomputar hash para comparación robusta
+    const hash = await computeContentHash(remote);
+    const remapped: Question = {
+      ...remote,
+      subjectId: localSubjectId,
+      topicId: localTopicId,
+      topicIds: localTopicIds,
+      contentHash: hash,
+    };
+
+    const localById = byId.get(remote.id);
+
+    if (localById) {
+      // Mismo ID — LWW, pero merge stats inteligente
+      if (remote.updatedAt > localById.updatedAt) {
+        await db.questions.put({
+          ...remapped,
+          // Preservar campos locales
+          notes: localById.notes,
+          starred: localById.starred,
+          // Merge stats: quedarse con las más avanzadas
+          stats: mergeStats(localById.stats, remote.stats),
+        });
+        updated++;
+      } else {
+        // Aun así, merge stats si el remoto tiene más progreso
+        const merged = mergeStats(localById.stats, remote.stats);
+        if (merged !== localById.stats) {
+          await db.questions.update(localById.id, { stats: merged });
+          updated++;
+        } else {
+          skipped++;
+        }
+      }
+    } else {
+      // Distinto ID — comprobar por contentHash
+      const localByHash = byHash.get(hash);
+
+      if (localByHash) {
+        // Duplicado por contenido → merge stats, no añadir
+        const merged = mergeStats(localByHash.stats, remote.stats);
+        if (merged !== localByHash.stats) {
+          await db.questions.update(localByHash.id, { stats: merged });
+          updated++;
+        } else {
+          skipped++;
+        }
+      } else {
+        // Realmente nueva
+        await db.questions.add(remapped);
+        byHash.set(hash, remapped);
+        byId.set(remote.id, remapped);
+        added++;
+      }
     }
   }
 
@@ -295,25 +551,173 @@ async function mergeTable<T extends { id: string }>(
 }
 
 /**
- * Sessions: merge by ID + finishedAt (si la remota está terminada y la local no, actualizar).
+ * Merge de estadísticas: toma los valores más altos (más progreso).
+ * Devuelve el mismo objeto si no hay cambios.
  */
-async function mergeSessions(remoteSessions: PracticeSession[]): Promise<MergeCount> {
+function mergeStats(
+  local: Question['stats'],
+  remote: Question['stats'],
+): Question['stats'] {
+  const seen = Math.max(local.seen, remote.seen);
+  const correct = Math.max(local.correct, remote.correct);
+  const wrong = Math.max(local.wrong, remote.wrong);
+
+  // Última vez vista: la más reciente
+  const lastSeenAt = [local.lastSeenAt, remote.lastSeenAt]
+    .filter(Boolean)
+    .sort()
+    .pop() ?? undefined;
+
+  // SRS fields: toma los del que tiene más repeticiones
+  const localReps = (local as any).repetitions ?? 0;
+  const remoteReps = (remote as any).repetitions ?? 0;
+  const srsSource = remoteReps > localReps ? remote : local;
+
+  if (
+    seen === local.seen &&
+    correct === local.correct &&
+    wrong === local.wrong &&
+    lastSeenAt === local.lastSeenAt
+  ) {
+    return local; // sin cambios
+  }
+
+  return {
+    ...srsSource,
+    seen,
+    correct,
+    wrong,
+    lastSeenAt,
+    lastResult: lastSeenAt === remote.lastSeenAt ? remote.lastResult : local.lastResult,
+  };
+}
+
+// ─── KeyConcept merge (dedup by contentHash) ──────────────────────────────────
+
+async function mergeKeyConcepts(
+  remoteConcepts: KeyConcept[],
+  subjectIdMap: Map<string, string>,
+  topicIdMap: Map<string, string>,
+): Promise<MergeCount> {
+  let added = 0, updated = 0, skipped = 0;
+
+  const allLocal = await db.keyConcepts.toArray();
+  const byId = new Map<string, KeyConcept>();
+  const byHash = new Map<string, KeyConcept>();
+  for (const kc of allLocal) {
+    byId.set(kc.id, kc);
+    if (kc.contentHash) byHash.set(kc.contentHash, kc);
+  }
+
+  for (const remote of remoteConcepts) {
+    const localSubjectId = subjectIdMap.get(remote.subjectId) ?? remote.subjectId;
+    const localTopicId = remote.topicId ? (topicIdMap.get(remote.topicId) ?? remote.topicId) : undefined;
+    const remapped: KeyConcept = {
+      ...remote,
+      subjectId: localSubjectId,
+      topicId: localTopicId,
+    };
+
+    const localById = byId.get(remote.id);
+
+    if (localById) {
+      // Mismo ID — LWW
+      if (remote.updatedAt > localById.updatedAt) {
+        await db.keyConcepts.put(remapped);
+        updated++;
+      } else {
+        skipped++;
+      }
+    } else if (remote.contentHash && byHash.has(remote.contentHash)) {
+      // Duplicado por hash — skip
+      skipped++;
+    } else {
+      // Nuevo
+      await db.keyConcepts.add(remapped);
+      if (remote.contentHash) byHash.set(remote.contentHash, remapped);
+      byId.set(remote.id, remapped);
+      added++;
+    }
+  }
+
+  return { added, updated, skipped };
+}
+
+// ─── Sessions merge (by ID, remap foreign keys) ──────────────────────────────
+
+async function mergeSessions(
+  remoteSessions: PracticeSession[],
+  subjectIdMap: Map<string, string>,
+  topicIdMap: Map<string, string>,
+): Promise<MergeCount> {
   let added = 0, updated = 0, skipped = 0;
 
   for (const remote of remoteSessions) {
+    // Remapear foreign keys
+    const remapped = {
+      ...remote,
+      subjectId: subjectIdMap.get(remote.subjectId) ?? remote.subjectId,
+      topicId: remote.topicId ? (topicIdMap.get(remote.topicId) ?? remote.topicId) : remote.topicId,
+    } as PracticeSession;
+    // También remapear topicIds si existe
+    if ((remote as any).topicIds) {
+      (remapped as any).topicIds = (remote as any).topicIds.map(
+        (id: string) => topicIdMap.get(id) ?? id,
+      );
+    }
+
     const local = await db.sessions.get(remote.id);
 
     if (!local) {
-      await db.sessions.add(remote);
+      await db.sessions.add(remapped);
       added++;
     } else if (remote.finishedAt && !local.finishedAt) {
-      // Remote finished, local not — take remote
-      await db.sessions.put(remote);
+      await db.sessions.put(remapped);
       updated++;
     } else if (remote.answers.length > local.answers.length) {
-      // More answers in remote — take remote (more progress)
-      await db.sessions.put(remote);
+      await db.sessions.put(remapped);
       updated++;
+    } else {
+      skipped++;
+    }
+  }
+
+  return { added, updated, skipped };
+}
+
+// ─── Generic table merge with foreign key remap ──────────────────────────────
+
+async function mergeTableWithRemap<T extends { id: string }>(
+  table: import('dexie').Table<T, string>,
+  remoteRecords: T[],
+  timestampField: 'updatedAt' | 'createdAt' | null,
+  idMap: Map<string, string>,
+  foreignKey: string,
+): Promise<MergeCount> {
+  let added = 0, updated = 0, skipped = 0;
+
+  for (const remote of remoteRecords) {
+    // Remapear foreign key
+    const fkValue = (remote as any)[foreignKey];
+    const remapped = {
+      ...remote,
+      [foreignKey]: idMap.get(fkValue) ?? fkValue,
+    };
+
+    const local = await table.get(remote.id);
+
+    if (!local) {
+      await table.add(remapped);
+      added++;
+    } else if (timestampField) {
+      const localTs = (local as any)[timestampField] as string | undefined;
+      const remoteTs = (remapped as any)[timestampField] as string | undefined;
+      if (remoteTs && localTs && remoteTs > localTs) {
+        await table.put(remapped);
+        updated++;
+      } else {
+        skipped++;
+      }
     } else {
       skipped++;
     }
@@ -324,20 +728,25 @@ async function mergeSessions(remoteSessions: PracticeSession[]): Promise<MergeCo
 
 /**
  * GradingConfigs: id === subjectId, no tiene updatedAt.
- * Solo añadir si no existe localmente.
+ * Solo añadir si no existe localmente. Remapear subjectId.
  */
-async function mergeGradingConfigs(remoteConfigs: SubjectGradingConfig[]): Promise<MergeCount> {
+async function mergeGradingConfigs(
+  remoteConfigs: SubjectGradingConfig[],
+  subjectIdMap: Map<string, string>,
+): Promise<MergeCount> {
   let added = 0, skipped = 0;
 
   for (const remote of remoteConfigs) {
-    const local = await db.gradingConfigs.get(remote.id);
+    const localSubjectId = subjectIdMap.get(remote.id) ?? remote.id;
+    const remapped = { ...remote, id: localSubjectId };
+
+    const local = await db.gradingConfigs.get(localSubjectId);
     if (!local) {
-      await db.gradingConfigs.add(remote);
+      await db.gradingConfigs.add(remapped);
       added++;
     } else {
-      // Si el remoto tiene examGrade y el local no, actualizar
       if (remote.examGrade != null && local.examGrade == null) {
-        await db.gradingConfigs.put(remote);
+        await db.gradingConfigs.put(remapped);
         added++;
       } else {
         skipped++;
@@ -633,7 +1042,11 @@ export async function pushToGist(token: string): Promise<SyncResult> {
 
     return { success: true, direction: 'push' };
   } catch (err) {
-    return { success: false, direction: 'push', error: String(err) };
+    const msg = String(err);
+    const friendly = msg.includes('Failed to fetch')
+      ? 'Sin conexión con GitHub. Comprueba la red del dispositivo.'
+      : msg;
+    return { success: false, direction: 'push', error: friendly };
   }
 }
 
@@ -745,7 +1158,11 @@ export async function pullFromGist(token: string): Promise<SyncResult> {
 
     return result;
   } catch (err) {
-    return { success: false, direction: 'pull', error: String(err) };
+    const msg = String(err);
+    const friendly = msg.includes('Failed to fetch')
+      ? 'Sin conexión con GitHub. Comprueba la red del dispositivo.'
+      : msg;
+    return { success: false, direction: 'pull', error: friendly };
   }
 }
 
