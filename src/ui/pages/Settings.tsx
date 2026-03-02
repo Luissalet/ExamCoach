@@ -522,15 +522,40 @@ export function SettingsPage() {
             usando un GitHub Gist privado. Solo se descargan los cambios nuevos (como git).
           </p>
 
-          {!githubToken && (
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">
-              <p className="text-xs text-amber-400">
-                Necesitas configurar un token de GitHub primero (más abajo en "Exportar mis preguntas" → "Configurar token de GitHub").
+          {!githubToken ? (
+            /* ── Token no configurado — mostrar input directamente ── */
+            <div className="flex flex-col gap-3">
+              <p className="text-xs text-ink-400">
+                Necesitas un{' '}
+                <a
+                  href="https://github.com/settings/tokens/new?scopes=gist&description=ExamCoach"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
+                >
+                  Personal Access Token
+                </a>{' '}
+                de GitHub con scope <code className="text-amber-400 bg-ink-900 px-1 rounded text-xs">gist</code>.
+                Se guarda solo en tu IndexedDB local, nunca se exporta.
               </p>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  value={githubToken}
+                  onChange={(e) => setGithubToken(e.target.value)}
+                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                  className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
+                  autoComplete="off"
+                />
+                <Button size="sm" onClick={handleSaveGithubToken}>Guardar</Button>
+              </div>
+              {gistExportMsg && (
+                <p className={`text-xs ${gistExportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+                  {gistExportMsg}
+                </p>
+              )}
             </div>
-          )}
-
-          {githubToken && (
+          ) : (
             <div className="flex flex-col gap-4">
               {/* Status */}
               {settings.lastSyncAt && (
@@ -547,10 +572,13 @@ export function SettingsPage() {
                   onClick={async () => {
                     setSyncing(true);
                     setSyncMsg('');
+                    // Pull primero para no sobreescribir datos remotos que no tenemos
+                    await pullFromGist(githubToken);
                     const result = await pushToGist(githubToken);
                     if (result.success) {
                       setSyncMsg('✓ Datos subidos al Gist');
                       await loadSettings();
+                      await loadSubjects();
                     } else {
                       setSyncMsg('Error: ' + (result.error ?? 'desconocido'));
                     }
@@ -655,6 +683,36 @@ export function SettingsPage() {
                   </div>
                 </div>
               </details>
+
+              {/* Cambiar token — collapsible */}
+              <details className="group">
+                <summary className="cursor-pointer text-xs text-ink-500 hover:text-ink-300 transition-colors select-none">
+                  ⚙ Cambiar token de GitHub
+                </summary>
+                <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
+                  <p className="text-xs text-ink-500">
+                    Token actual activo. Pega uno nuevo para reemplazarlo.
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={githubToken}
+                      onChange={(e) => setGithubToken(e.target.value)}
+                      placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                      className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
+                      autoComplete="off"
+                    />
+                    <Button size="sm" variant="secondary" onClick={handleSaveGithubToken}>
+                      Guardar
+                    </Button>
+                  </div>
+                  {gistExportMsg && (
+                    <p className={`text-xs ${gistExportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+                      {gistExportMsg}
+                    </p>
+                  )}
+                </div>
+              </details>
             </div>
           )}
         </Card>
@@ -752,43 +810,6 @@ export function SettingsPage() {
               </div>
             )}
 
-            {/* Token de GitHub — se muestra siempre para facilitar configuración */}
-            <details className="group">
-              <summary className="cursor-pointer text-xs text-ink-500 hover:text-ink-300 transition-colors select-none">
-                ⚙ Configurar token de GitHub para Gists
-              </summary>
-              <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
-                <p className="text-xs text-ink-500">
-                  Necesitas un{' '}
-                  <a
-                    href="https://github.com/settings/tokens/new?scopes=gist&description=ExamCoach"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
-                  >
-                    Personal Access Token
-                  </a>{' '}
-                  con scope <code className="text-amber-400 bg-ink-900 px-1 rounded text-xs">gist</code>.
-                  Se guarda únicamente en tu IndexedDB local, nunca se exporta.
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="password"
-                    value={githubToken}
-                    onChange={(e) => setGithubToken(e.target.value)}
-                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                    className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
-                    autoComplete="off"
-                  />
-                  <Button size="sm" variant="secondary" onClick={handleSaveGithubToken}>
-                    Guardar
-                  </Button>
-                </div>
-                {githubToken && (
-                  <p className="text-xs text-sage-400">✓ Token configurado</p>
-                )}
-              </div>
-            </details>
           </div>
         </Card>
 

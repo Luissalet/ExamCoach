@@ -19,7 +19,7 @@ import { extractPdfText, type TextBlock } from '@/utils/pdfTextExtractor';
 import { mathToSpeech } from '@/utils/mathSymbolSpeech';
 import { createTtsEngine, type TtsEngine, type TtsState, type TtsVoiceInfo } from '@/utils/ttsEngine';
 import { createAudioTtsEngine, hashBlockTexts } from '@/utils/audioTtsEngine';
-import { enqueueSynthesis, cancelSynthesis, storeTopicWavCacheKey } from '@/utils/backgroundSynthesis';
+import { enqueueSynthesis, cancelSynthesis, storeTopicWavCacheKey, storeResourceWavCacheKey } from '@/utils/backgroundSynthesis';
 import { createAudioKeepalive, type AudioKeepaliveManager } from '@/utils/audioKeepalive';
 import { createMediaSessionController, type MediaSessionController } from '@/utils/mediaSessionController';
 import { getPdfBlobUrl } from '@/data/pdfStorage';
@@ -181,6 +181,10 @@ export function PdfListenMode() {
       // Store topicId → cacheKey so the topic list can show WAV status icons
       if (topicId && !isResourceMode) {
         storeTopicWavCacheKey(topicId, hash);
+      }
+      // Store resourceFile → cacheKey so the resource list can show WAV status icons
+      if (isResourceMode && resourceFile) {
+        storeResourceWavCacheKey(resourceFile, hash);
       }
       // Cancel any background synthesis for this PDF (we're taking over)
       const currentVoice = ttsRef.current?.getVoice();

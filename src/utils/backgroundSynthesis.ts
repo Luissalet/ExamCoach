@@ -133,6 +133,24 @@ export function getTopicWavCacheKey(topicId: string): string | null {
   } catch { return null; }
 }
 
+// ─── Resource file → WAV cache key mapping (localStorage) ───────────────────
+
+const RESOURCE_WAV_KEY_PREFIX = 'wav-resource-key:';
+
+/** Store the WAV cache key for a resource file so its status can be shown in the resource list */
+export function storeResourceWavCacheKey(resourceFile: string, cacheKey: string): void {
+  try {
+    localStorage.setItem(RESOURCE_WAV_KEY_PREFIX + resourceFile, cacheKey);
+  } catch { /* ignore quota errors */ }
+}
+
+/** Retrieve the WAV cache key previously stored for a resource file */
+export function getResourceWavCacheKey(resourceFile: string): string | null {
+  try {
+    return localStorage.getItem(RESOURCE_WAV_KEY_PREFIX + resourceFile);
+  } catch { return null; }
+}
+
 /** List all keys in the WAV cache with metadata */
 export async function listWavCacheEntries(): Promise<Array<{ key: string; entry: CachedWavEntry }>> {
   try {

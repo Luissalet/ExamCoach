@@ -26,7 +26,7 @@ import type { GptLink } from '@/domain/models';
 import { exportContributionPackByIds, previewContributionPack, importContributionPack, type ContributionPackPreview } from '@/data/contributionImport';
 import { downloadJSON } from '@/data/exportImport';
 import { exportToAnkiTsv, downloadAnkiFile } from '@/utils/ankiExport';
-import { getTopicWavCacheKey, hasWavEntry } from '@/utils/backgroundSynthesis';
+import { getTopicWavCacheKey, getResourceWavCacheKey, hasWavEntry } from '@/utils/backgroundSynthesis';
 import type { SynthesisProgress } from '@/utils/backgroundSynthesis';
 type TabId = 'topics' | 'questions' | 'practice' | 'exams' | 'resources' | 'concepts' | 'chatbots' | 'ia';
 
@@ -197,6 +197,40 @@ function WavStatusIcon({
   return (
     <span title="Audio WAV no generado" className="text-ink-600">
       {/* Empty circle */}
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="9" />
+      </svg>
+    </span>
+  );
+}
+
+// ── Resource WAV status icon ─────────────────────────────────────────────────
+/**
+ * Muestra el estado del caché WAV para un recurso (PDF de Otros recursos):
+ *   ○  sin caché (gris)   ✓  cacheado (verde)
+ */
+function ResourceWavStatusIcon({ resourceFile }: { resourceFile: string }) {
+  const [cached, setCached] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const cacheKey = getResourceWavCacheKey(resourceFile);
+    if (!cacheKey) { setCached(false); return; }
+    hasWavEntry(cacheKey).then((has) => setCached(has));
+  }, [resourceFile]);
+
+  if (cached) {
+    return (
+      <span title="Audio WAV cacheado" className="text-sage-400">
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <circle cx="12" cy="12" r="9" strokeOpacity="0.6" />
+          <path d="M8 12l3 3 5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+    );
+  }
+
+  return (
+    <span title="Audio WAV no generado" className="text-ink-600">
       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="9" />
       </svg>
@@ -1825,10 +1859,11 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
                       {f.name.toLowerCase().endsWith('.pdf') && (
                         <button
                           onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${f.name}`)}`)}
-                          className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded"
+                          className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded flex items-center gap-1"
                           title="Escuchar PDF"
                         >
                           🎧
+                          <ResourceWavStatusIcon resourceFile={`${cat.slug}/${f.name}`} />
                         </button>
                       )}
                       {isDbFile(cat.slug, f.name) && (
@@ -1867,10 +1902,11 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
                         {f.name.toLowerCase().endsWith('.pdf') && (
                           <button
                             onClick={() => navigate(`/subject/${subject.id}/listen-resource?file=${encodeURIComponent(`${cat.slug}/${sc.name}/${f.name}`)}`)}
-                            className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded"
+                            className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:text-blue-300 transition-all font-medium px-1.5 py-0.5 rounded flex items-center gap-1"
                             title="Escuchar PDF"
                           >
                             🎧
+                            <ResourceWavStatusIcon resourceFile={`${cat.slug}/${sc.name}/${f.name}`} />
                           </button>
                         )}
                         {isDbFile(cat.slug, f.name, sc.name) && (
