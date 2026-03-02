@@ -120,3 +120,53 @@
 
 /* Ring offsets */
 [data-theme="light"] .ring-offset-ink-950 { --tw-ring-offset-color: #e0f2fe !important; }
+
+/* ─── Dark theme gradient ─────────────────────────────────────────────────────
+   Deep purple-to-navy gradient replaces the flat sepia dark background.
+   bg-ink-950 containers are made transparent so the gradient shows through.
+   ─────────────────────────────────────────────────────────────────────────── */
+[data-theme="dark"] body {
+  background: linear-gradient(145deg, rgb(0, 0, 0) 0%, rgb(17, 0, 24) 55%, rgb(29, 0, 0) 100%) fixed;
+  color: #e8e5dc;
+}
+[data-theme="dark"] .bg-ink-950 { background-color: transparent !important; }
+[data-theme="dark"] .bg-ink-950\/50 { background-color: rgba(8, 9, 20, 0.22) !important; }
+
+/* ─── Light mode: fix "light-tint" text colors ──────────────────────────────
+   blue/orange/amber -300/-400 are near-white on dark bg → invisible on white.
+   Map them to deep, accessible equivalents.
+   ─────────────────────────────────────────────────────────────────────────── */
+[data-theme="light"] .text-blue-300    { color: #1d4ed8 !important; }
+[data-theme="light"] .text-blue-400    { color: #2563eb !important; }
+[data-theme="light"] .hover\:text-blue-300:hover { color: #1e40af !important; }
+[data-theme="light"] .text-orange-300  { color: #c2410c !important; }
+[data-theme="light"] .text-orange-400  { color: #ea580c !important; }
+[data-theme="light"] .text-amber-300   { color: #b45309 !important; }
+[data-theme="light"] .text-amber-400   { color: #b45309 !important; }
+[data-theme="light"] .text-amber-500   { color: #92400e !important; }
+[data-theme="light"] .hover\:text-amber-300:hover { color: #92400e !important; }
+[data-theme="light"] .hover\:text-amber-200:hover { color: #b45309 !important; }
+[data-theme="light"] .text-sage-400    { color: #2d6a2b !important; }
+[data-theme="light"] .text-sage-500    { color: #1f521d !important; }
+[data-theme="light"] .text-rose-400    { color: #b91c1c !important; }
+
+/* Badge backgrounds — keep subtle tint, darken borders for readability */
+[data-theme="light"] .bg-blue-500\/10   { background-color: rgba(29, 78, 216, 0.07) !important; }
+[data-theme="light"] .bg-blue-500\/20   { background-color: rgba(29, 78, 216, 0.1) !important; }
+[data-theme="light"] .bg-orange-500\/20 { background-color: rgba(194, 65, 12, 0.1) !important; }
+[data-theme="light"] .bg-amber-500\/10  { background-color: rgba(180, 83, 9, 0.08) !important; }
+[data-theme="light"] .bg-amber-500\/20  { background-color: rgba(180, 83, 9, 0.12) !important; }
+[data-theme="light"] .bg-sage-600\/10   { background-color: rgba(45, 106, 43, 0.08) !important; }
+[data-theme="light"] .bg-rose-500\/10   { background-color: rgba(185, 28, 28, 0.08) !important; }
+
+/* Badge borders */
+[data-theme="light"] .border-blue-500\/30   { border-color: rgba(29, 78, 216, 0.35) !important; }
+[data-theme="light"] .border-orange-500\/30 { border-color: rgba(194, 65, 12, 0.35) !important; }
+[data-theme="light"] .border-amber-500\/30  { border-color: rgba(180, 83, 9, 0.35) !important; }
+[data-theme="light"] .border-amber-500\/20  { border-color: rgba(180, 83, 9, 0.25) !important; }
+[data-theme="light"] .border-sage-600\/30   { border-color: rgba(45, 106, 43, 0.3) !important; }
+[data-theme="light"] .border-rose-500\/30   { border-color: rgba(185, 28, 28, 0.3) !important; }
+
+/* Badge hover states */
+[data-theme="light"] .hover\:bg-blue-500\/30:hover   { background-color: rgba(29, 78, 216, 0.15) !important; }
+[data-theme="light"] .hover\:bg-orange-500\/30:hover { background-color: rgba(194, 65, 12, 0.15) !important; }

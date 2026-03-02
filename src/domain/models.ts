@@ -24,6 +24,12 @@ export interface Subject {
    * desde él. Cada usuario la configura localmente.
    */
   examDate?: string; // ISO YYYY-MM-DD
+  /**
+   * Si la asignatura permite apuntes/chuleta en el examen.
+   * Cuando está definido, tiene prioridad sobre extra_info.json.
+   * undefined = no configurado (se usa el valor de extra_info.json si existe).
+   */
+  allowsNotes?: boolean;
   createdAt: string;
   updatedAt: string;
 }

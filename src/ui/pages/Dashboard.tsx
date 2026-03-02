@@ -22,7 +22,7 @@ export function Dashboard() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const {
-    subjects, loadSubjects, createSubject, deleteSubject,
+    subjects, loadSubjects, createSubject, deleteSubject, updateSubject,
     settings, loadSettings,
     syncGlobalBank, syncing, lastSyncResult,
   } = useStore();
@@ -424,6 +424,17 @@ export function Dashboard() {
     }
   };
 
+  // ── Toggle apuntes en examen ───────────────────────────────────────────────
+  const handleToggleAllowsNotes = async (e: React.MouseEvent, s: Subject) => {
+    e.stopPropagation();
+    // Cicla: undefined → true → false → undefined
+    let next: boolean | undefined;
+    if (s.allowsNotes === undefined) next = true;
+    else if (s.allowsNotes === true) next = false;
+    else next = undefined;
+    await updateSubject(s.id, { allowsNotes: next });
+  };
+
   const pctCorrect = (s: Subject) => {
     const st = stats[s.id];
     if (!st || st.seen === 0) return 0;
@@ -462,17 +473,38 @@ export function Dashboard() {
 
           {/* Nav: accesos rápidos + info + hamburger (todos los tamaños) */}
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')}>📋</Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/stats')}>📊</Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>⚙</Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')} title="Historial de sesiones">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd"/>
+              </svg>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/stats')} title="Estadísticas">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+              </svg>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/settings')} title="Ajustes">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd"/>
+              </svg>
+            </Button>
 
             {/* Botón tema */}
             <button
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-              className="text-ink-400 hover:text-ink-200 transition-colors text-lg px-2 py-1 rounded-lg hover:bg-ink-800"
+              className="p-2 text-ink-400 hover:text-ink-200 hover:bg-ink-800 rounded-lg transition-colors"
             >
-              {theme === 'dark' ? '☀️' : '🌙'}
+              {theme === 'dark' ? (
+                <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd"/>
+                </svg>
+              ) : (
+                <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                </svg>
+              )}
             </button>
 
             {/* Botón info */}
@@ -511,7 +543,10 @@ export function Dashboard() {
               onClick={handlePwaInstall}
               className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg font-medium font-body transition-all justify-start w-full text-amber-300 hover:text-amber-200 hover:bg-ink-800 border border-amber-500/30"
             >
-              📲 Instalar app
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/>
+              </svg>
+              Instalar app
             </button>
 
             <div className="border-t border-ink-800/60 my-0.5" />
@@ -535,7 +570,14 @@ export function Dashboard() {
               disabled={committing}
               className="justify-start w-full"
             >
-              {committing ? '⏳…' : '🔄 Integrar & limpiar'}
+              {committing ? (
+                <svg className="animate-spin h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd"/>
+                </svg>
+              )}
+              Integrar & limpiar
             </Button>
             <Button
               variant="ghost"
@@ -544,7 +586,14 @@ export function Dashboard() {
               disabled={deduping}
               className="justify-start w-full"
             >
-              {deduping ? '⏳…' : '🔧 Eliminar duplicadas'}
+              {deduping ? (
+                <svg className="animate-spin h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+                  <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clipRule="evenodd"/>
+                </svg>
+              )}
+              Eliminar duplicadas
             </Button>
             <Button variant="ghost" size="sm" onClick={() => { handleExportPersonal(); setMobileMenuOpen(false); }} className="justify-start w-full">
               ↑ Backup personal
@@ -567,7 +616,19 @@ export function Dashboard() {
                   : 'text-amber-400 hover:text-amber-300 hover:bg-ink-800 border border-amber-500/30'
               }`}
             >
-              {zipImporting ? '⏳ Importando…' : '📦 Importar recursos'}
+              {zipImporting ? (
+                <>
+                  <svg className="animate-spin h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                  Importando…
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/>
+                  </svg>
+                  Importar recursos
+                </>
+              )}
             </button>
           </div>
         )}
@@ -647,7 +708,13 @@ export function Dashboard() {
                   onClick={() => navigate('/global-practice')}
                   className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-300 hover:text-amber-200 hover:border-amber-400/40 rounded-xl text-sm font-medium transition-all"
                 >
-                  <span>🔀</span> Práctica mixta
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+                    <polyline points="16 3 21 3 21 8"/>
+                    <line x1="4" y1="20" x2="21" y2="3"/>
+                    <polyline points="21 16 21 21 16 21"/>
+                    <line x1="15" y1="15" x2="21" y2="21"/>
+                  </svg>
+                  Práctica mixta
                 </button>
               )}
             </div>
@@ -655,7 +722,9 @@ export function Dashboard() {
             {/* Study streak */}
             {streak > 0 && (
               <div className="mb-6 flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
-                <span className="text-2xl">🔥</span>
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor" className="text-amber-400 flex-shrink-0">
+                  <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd"/>
+                </svg>
                 <div>
                   <p className="font-bold text-amber-400 text-sm">{streak} día{streak !== 1 ? 's' : ''} de racha</p>
                   <p className="text-xs text-ink-500">Sigue practicando para mantener la racha</p>
@@ -672,7 +741,11 @@ export function Dashboard() {
                 placeholder="Buscar en todas las asignaturas…"
                 className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 pl-9 text-sm text-ink-100 placeholder:text-ink-600 focus:outline-none focus:border-amber-500/60 transition-colors"
               />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-600 text-sm">🔍</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-600">
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/>
+                </svg>
+              </span>
               {globalSearch && (
                 <button
                   onClick={() => { setGlobalSearch(''); setGlobalSearchResults([]); }}
@@ -811,19 +884,41 @@ export function Dashboard() {
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            {/* ── ITER2: indicador de apuntes ─────────────────── */}
-                            {extra?.allowsNotes !== undefined && (
-                              <span
-                                title={extra.allowsNotes ? 'Permite apuntes en el examen' : 'Sin apuntes en el examen'}
-                                className={`text-xs px-1.5 py-0.5 rounded ${
-                                  extra.allowsNotes
-                                    ? 'bg-sage-600/20 text-sage-400'
-                                    : 'bg-rose-500/20 text-rose-400'
-                                }`}
-                              >
-                                {extra.allowsNotes ? '📝' : '🚫'}
-                              </span>
-                            )}
+                            {/* ── Indicador de apuntes — siempre clickable ──── */}
+                            {(() => {
+                              const effective = s.allowsNotes !== undefined ? s.allowsNotes : extra?.allowsNotes;
+                              return (
+                                <button
+                                  onClick={(e) => handleToggleAllowsNotes(e, s)}
+                                  title={
+                                    effective === true  ? 'Permite apuntes · pulsa para cambiar'
+                                    : effective === false ? 'Sin apuntes · pulsa para cambiar'
+                                    : 'Configura si permite apuntes (pulsa para activar)'
+                                  }
+                                  className={`flex items-center justify-center w-6 h-6 rounded transition-all ${
+                                    effective === true
+                                      ? 'bg-sage-600/20 text-sage-400 hover:bg-sage-600/30'
+                                      : effective === false
+                                      ? 'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30'
+                                      : 'text-ink-700 hover:text-ink-500 hover:bg-ink-700/60 opacity-0 group-hover:opacity-100'
+                                  }`}
+                                >
+                                  {effective === true ? (
+                                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+                                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                    </svg>
+                                  ) : effective === false ? (
+                                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd"/>
+                                    </svg>
+                                  ) : (
+                                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd"/>
+                                    </svg>
+                                  )}
+                                </button>
+                              );
+                            })()}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -848,8 +943,9 @@ export function Dashboard() {
                           {nextExamDates[s.id] ? (
                             <div>
                               <Countdown examDate={nextExamDates[s.id]} />
-                              <span className="text-[10px] text-ink-600 block -mt-0.5">
-                                🎓 próximo examen
+                              <span className="text-[10px] text-ink-600 block -mt-0.5 flex items-center gap-1">
+                                <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor" className="inline-block opacity-70"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>
+                                próximo examen
                               </span>
                             </div>
                           ) : (
@@ -903,7 +999,11 @@ export function Dashboard() {
                 onClick={() => navigate('/pdf-tools')}
                 className="w-full flex items-center gap-4 bg-ink-800 border border-ink-700 rounded-xl p-5 hover:border-amber-500/30 hover:bg-ink-800/80 transition-all group text-left"
               >
-                <span className="text-3xl">🛠️</span>
+                <div className="w-10 h-10 rounded-xl bg-ink-700 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500/20 transition-colors">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" className="text-ink-400 group-hover:text-amber-400 transition-colors">
+                    <path fillRule="evenodd" d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z" clipRule="evenodd"/>
+                  </svg>
+                </div>
                 <div>
                   <h3 className="font-display text-lg text-ink-100 group-hover:text-amber-300 transition-colors">
                     Herramientas PDF
@@ -976,12 +1076,23 @@ export function Dashboard() {
               }`}
               onClick={() => !zipImporting && zipInputRef.current?.click()}
             >
-              <p className="text-sm font-body">
-                {zipImporting
-                  ? '⏳ Importando recursos…'
-                  : zipDragOver
-                  ? '📦 Suelta el ZIP aquí'
-                  : '📦 Arrastra un ZIP de recursos aquí o haz clic para importar'}
+              <p className="text-sm font-body flex items-center justify-center gap-2">
+                {zipImporting ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4 flex-shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    Importando recursos…
+                  </>
+                ) : zipDragOver ? (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                    Suelta el ZIP aquí
+                  </>
+                ) : (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0 opacity-60"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                    Arrastra un ZIP de recursos aquí o haz clic para importar
+                  </>
+                )}
               </p>
               <p className="text-xs text-ink-600 mt-1">
                 Estructura: resources/[asignatura]/Temas|Examenes|Practica|Resumenes
