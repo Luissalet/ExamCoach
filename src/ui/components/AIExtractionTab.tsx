@@ -16,6 +16,7 @@ import {
   type ExtractionMode,
 } from '@/services/aiEngine';
 import { generateSubjectGuide } from '@/services/generateSubjectGuide';
+import { downloadContributionGuide } from '@/data/generateContributionGuide';
 import { getSettings } from '@/data/db';
 import { slugify } from '@/domain/normalize';
 import type { Topic, Question, Subject } from '@/domain/models';
@@ -31,6 +32,31 @@ interface AIExtractionTabProps {
 // ─── Accepted file extensions ────────────────────────────────────────────────
 
 const ACCEPT = '.pdf,.docx,.txt,.md,.markdown,.jpg,.jpeg,.png,.webp';
+
+// ─── Prompt templates for external LLM ──────────────────────────────────────
+
+const PROMPT_GENERATE = `[Adjunta aquí tus apuntes/resúmenes/PDFs del tema como contexto]
+
+Usando ese contexto, crea [N] preguntas para la asignatura "[NOMBRE ASIGNATURA]", tema "[NOMBRE TEMA]", siguiendo estrictamente las normas del documento adjunto GUIA_CONTRIBUTION_PACKS.md.
+
+🚨 Slugs obligatorios (del Anexo de la guía — no inventar):
+  subjectKey: "[SLUG ASIGNATURA]"
+  topicKey:   "[SLUG TEMA]"
+
+Devuelve únicamente el JSON válido del contribution pack, sin texto adicional.`.trim();
+
+const PROMPT_EXTRACT = `[Adjunta aquí el examen, test o extracto con las preguntas]
+
+Extrae todas las preguntas de ese documento y genera un contribution pack según las especificaciones exactas de GUIA_CONTRIBUTION_PACKS.md (adjunta también). Para cada pregunta:
+- Determina su tipo: TEST, DESARROLLO, COMPLETAR o PRACTICO
+- Determina su tema de origen consultando el Anexo de la guía
+- Si el documento no incluye respuestas, resuélvelas basándote en el contexto del temario
+- Asigna dificultad (1–5) y origin: "examen_anterior" | "test" | "clase" | "alumno"
+
+🚨 Slugs obligatorios (del Anexo de la guía — no inventar):
+  subjectKey: "[SLUG ASIGNATURA]"
+
+Devuelve únicamente el JSON válido del contribution pack, sin texto adicional.`.trim();
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -60,6 +86,11 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
   // Drag & drop
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Contribution pack section
+  const [copiedGenerate, setCopiedGenerate] = useState(false);
+  const [copiedExtract, setCopiedExtract] = useState(false);
+  const [downloadingGuide, setDownloadingGuide] = useState(false);
 
   // Check API key on mount
   useEffect(() => {
@@ -199,6 +230,31 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
     }
   };
 
+  // ── Contribution guide ──
+
+  const handleDownloadGuide = async () => {
+    setDownloadingGuide(true);
+    try {
+      await downloadContributionGuide();
+    } finally {
+      setDownloadingGuide(false);
+    }
+  };
+
+  const handleCopyGenerate = () => {
+    navigator.clipboard.writeText(PROMPT_GENERATE).then(() => {
+      setCopiedGenerate(true);
+      setTimeout(() => setCopiedGenerate(false), 2000);
+    });
+  };
+
+  const handleCopyExtract = () => {
+    navigator.clipboard.writeText(PROMPT_EXTRACT).then(() => {
+      setCopiedExtract(true);
+      setTimeout(() => setCopiedExtract(false), 2000);
+    });
+  };
+
   // ── Import accepted questions ──
 
   const handleImport = async (accepted: AcceptedQuestion[]) => {
@@ -268,6 +324,12 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
           </Button>
         </div>
       )}
+
+      {/* ── Section: Hazlo tu mismo ── */}
+      <div className="flex items-center gap-3">
+        <span className="text-sm font-semibold text-ink-200">✨ Hazlo tu mismo</span>
+        <div className="flex-1 border-t border-ink-700" />
+      </div>
 
       {/* ── Mode selector ── */}
       <div className="flex gap-2">
@@ -479,6 +541,101 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
           Cambiar configuración de IA
         </button>
       )}
+
+      {/* ── Divider: or use external LLM ── */}
+      <div className="relative my-1">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-ink-700" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-ink-950 px-3 text-xs text-ink-500 uppercase tracking-widest">
+            o con un LLM externo
+          </span>
+        </div>
+      </div>
+
+      {/* ── Section: Crea con ChatGPT / Claude ── */}
+      <div className="flex flex-col gap-4 p-4 border border-ink-700/60 rounded-xl bg-ink-900/30">
+        {/* Header */}
+        <div>
+          <p className="text-sm font-semibold text-ink-200">🤖 Crea con ChatGPT / Claude</p>
+          <p className="text-xs text-ink-400 mt-1">
+            Descarga la guía personalizada con tus asignaturas y temas exactos, y úsala con cualquier
+            LLM para generar preguntas en el formato correcto.
+          </p>
+        </div>
+
+        {/* Download button */}
+        <Button
+          variant="secondary"
+          onClick={handleDownloadGuide}
+          loading={downloadingGuide}
+          disabled={downloadingGuide}
+        >
+          📥 Descargar guía de contribution pack
+        </Button>
+
+        {/* Instructions */}
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-ink-400 font-medium uppercase tracking-widest">Cómo usarla</p>
+          <ol className="flex flex-col gap-1.5 text-xs text-ink-400 list-decimal list-inside">
+            <li>Descarga la guía — contiene tus asignaturas, temas y slugs exactos.</li>
+            <li>
+              Abre ChatGPT, Claude o cualquier LLM y adjunta (o pega) el archivo.
+            </li>
+            <li>Usa el prompt de abajo como punto de partida, rellenando los corchetes.</li>
+            <li>
+              Importa el JSON resultante en{' '}
+              <span className="text-ink-300">Ajustes → Importar contribuciones</span>.
+            </li>
+          </ol>
+        </div>
+
+        {/* Prompt templates */}
+        <div className="flex flex-col gap-3">
+          <p className="text-xs text-ink-400 font-medium uppercase tracking-widest">Prompts de ejemplo</p>
+
+          {/* Generate prompt */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-ink-300">✏️ Generar preguntas desde apuntes</span>
+              <button
+                onClick={handleCopyGenerate}
+                className={`text-xs px-2 py-0.5 rounded border transition-colors ${
+                  copiedGenerate
+                    ? 'border-sage-500/50 text-sage-400 bg-sage-500/10'
+                    : 'border-ink-600 text-ink-400 hover:border-ink-400 hover:text-ink-200'
+                }`}
+              >
+                {copiedGenerate ? '✓ Copiado' : 'Copiar'}
+              </button>
+            </div>
+            <pre className="text-xs text-ink-500 bg-ink-800/60 border border-ink-700 rounded-lg p-3 whitespace-pre-wrap font-mono leading-relaxed overflow-x-auto">
+              {PROMPT_GENERATE}
+            </pre>
+          </div>
+
+          {/* Extract prompt */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-ink-300">📄 Extraer desde examen o test</span>
+              <button
+                onClick={handleCopyExtract}
+                className={`text-xs px-2 py-0.5 rounded border transition-colors ${
+                  copiedExtract
+                    ? 'border-sage-500/50 text-sage-400 bg-sage-500/10'
+                    : 'border-ink-600 text-ink-400 hover:border-ink-400 hover:text-ink-200'
+                }`}
+              >
+                {copiedExtract ? '✓ Copiado' : 'Copiar'}
+              </button>
+            </div>
+            <pre className="text-xs text-ink-500 bg-ink-800/60 border border-ink-700 rounded-lg p-3 whitespace-pre-wrap font-mono leading-relaxed overflow-x-auto">
+              {PROMPT_EXTRACT}
+            </pre>
+          </div>
+        </div>
+      </div>
 
       {/* ── Settings modal ── */}
       <AISettingsPanel
