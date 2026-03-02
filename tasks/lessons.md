@@ -41,3 +41,4 @@
 - Always use content-based identity (slugs, hashes) for cross-device deduplication
 - When merging entities with parent-child relationships, build ID remapping maps and apply them to all child records
 - Stats should be merged (max of each field), not overwritten — user progress must never be lost
+- When introducing ID remapping, audit ALL consumers of those IDs — including PDF manifests, file storage keys, and any other path that references entity IDs outside the DB merge functions

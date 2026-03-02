@@ -116,6 +116,8 @@ export interface SyncResult {
   added?: number;
   updated?: number;
   skipped?: number;
+  /** Mapa de remapeo de IDs de asignaturas (remoteId → localId) para uso interno */
+  _subjectIdMap?: Map<string, string>;
 }
 
 // ─── Device ID ──────────────────────────────────────────────────────────────
@@ -304,7 +306,7 @@ export async function mergeBackup(backup: FullBackup): Promise<SyncResult> {
     // Update lastSyncAt
     await saveSettings({ lastSyncAt: new Date().toISOString() });
 
-    return { success: true, direction: 'pull', added, updated, skipped };
+    return { success: true, direction: 'pull', added, updated, skipped, _subjectIdMap: subjectIdMap };
   } catch (err) {
     return { success: false, direction: 'pull', error: String(err) };
   }
@@ -1150,8 +1152,16 @@ export async function pullFromGist(token: string): Promise<SyncResult> {
     const result = await mergeBackup(backup);
 
     // 4. Merge PDFs — solo descarga los que no existen localmente
+    //    Remapear subjectId del manifiesto con el mapa de IDs de asignaturas
     if (backup.pdfManifest && backup.pdfManifest.length > 0) {
-      const pdfResult = await importPdfsFromGist(backup.pdfManifest, gist.files);
+      const idMap = result._subjectIdMap;
+      const remappedManifest = idMap
+        ? backup.pdfManifest.map((entry) => ({
+            ...entry,
+            subjectId: idMap.get(entry.subjectId) ?? entry.subjectId,
+          }))
+        : backup.pdfManifest;
+      const pdfResult = await importPdfsFromGist(remappedManifest, gist.files);
       result.added = (result.added ?? 0) + pdfResult.imported;
       result.skipped = (result.skipped ?? 0) + pdfResult.skipped;
     }
