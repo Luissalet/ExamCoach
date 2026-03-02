@@ -433,6 +433,12 @@ export interface AppSettings {
    * API keys se almacenan solo en IndexedDB local.
    */
   aiSettings?: AISettings;
+  /**
+   * Token personal de GitHub para exportar contribution packs a Gists.
+   * Se almacena solo en IndexedDB local, nunca se exporta.
+   * Scope mínimo requerido: gist (create/read gists).
+   */
+  githubToken?: string;
 }
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────

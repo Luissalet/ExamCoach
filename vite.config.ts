@@ -4,6 +4,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 import { initResourcesPlugin } from './vite-plugin-init-resources'
 
+// Base URL configurable: se puede sobreescribir con la variable de entorno VITE_BASE_URL.
+// Útil para forks o despliegues en rutas distintas a /ExamCoach/.
+// En GitHub Actions se puede pasar: VITE_BASE_URL=/${{ github.event.repository.name }}/
+const BASE_URL = process.env.VITE_BASE_URL ?? '/ExamCoach/'
+
 export default defineConfig({
   plugins: [
     react(),
@@ -16,7 +21,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/.*\.github\.io\/study-app\/resources\/.*/i,
+            // Cachea recursos estáticos (PDFs, imágenes) de cualquier GitHub Pages
+            urlPattern: /^https:\/\/[^/]+\.github\.io\/.*\/resources\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'resources-cache',
@@ -25,7 +31,8 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https:\/\/.*\.github\.io\/study-app\/data\/.*/i,
+            // Cachea datos JSON (banco global) con NetworkFirst para tener siempre lo más reciente
+            urlPattern: /^https:\/\/[^/]+\.github\.io\/.*\/data\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'data-cache',
@@ -59,8 +66,8 @@ export default defineConfig({
         background_color: '#0a0907',
         display: 'standalone',
         orientation: 'any',
-        scope: '/ExamCoach/',
-        start_url: '/ExamCoach/',
+        scope: BASE_URL,
+        start_url: BASE_URL,
         lang: 'es',
         categories: ['education'],
         icons: [
@@ -84,7 +91,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/ExamCoach/',
+  base: BASE_URL,
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

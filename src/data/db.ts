@@ -14,6 +14,16 @@ import type {
   Exam,
 } from '@/domain/models';
 
+/** Registro para guardar un FileSystemDirectoryHandle en IndexedDB. */
+export interface FsaHandleRecord {
+  key: string;
+  handle: FileSystemDirectoryHandle;
+  /** Nombre visible del directorio elegido por el usuario */
+  name: string;
+  /** ISO timestamp de cuándo se configuró */
+  savedAt: string;
+}
+
 export class StudyDB extends Dexie {
   subjects!: Table<Subject, string>;
   topics!: Table<Topic, string>;
@@ -27,6 +37,8 @@ export class StudyDB extends Dexie {
   gradingConfigs!: Table<SubjectGradingConfig, string>;
   keyConcepts!: Table<KeyConcept, string>;
   exams!: Table<Exam, string>;
+  /** Almacena FileSystemDirectoryHandle para File System Access API */
+  fsaHandles!: Table<FsaHandleRecord, string>;
 
   constructor() {
     super('StudyAppDB');
@@ -137,6 +149,25 @@ export class StudyDB extends Dexie {
       gradingConfigs: 'id',
       keyConcepts: 'id, subjectId, category, order, contentHash, createdAt',
       exams: 'id, subjectId, createdAt',
+    });
+
+    // v7: File System Access API handles — permite almacenar PDFs directamente en disco
+    this.version(7).stores({
+      subjects: 'id, name, examDate, createdAt',
+      topics: 'id, subjectId, order, createdAt',
+      questions:
+        'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+      sessions: 'id, subjectId, mode, createdAt',
+      pdfResources: 'id, subjectId, createdAt',
+      pdfAnchors: 'id, subjectId, pdfId',
+      settings: 'id',
+      questionImages: 'id, filename, createdAt',
+      deliverables: 'id, subjectId, type, dueDate, status, createdAt',
+      gradingConfigs: 'id',
+      keyConcepts: 'id, subjectId, category, order, contentHash, createdAt',
+      exams: 'id, subjectId, createdAt',
+      // Solo se indexa la clave primaria; el handle se almacena como objeto opaco
+      fsaHandles: 'key',
     });
   }
 }

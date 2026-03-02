@@ -16,6 +16,7 @@ import { PdfExportModal } from '@/ui/components/PdfExportModal';
 import { generateQuestionsPDF, downloadBlob } from '@/utils/pdfExport';
 
 import { savePdfBlob, savePdfToServer, getPdfBlobUrl, listStoredPdfs, deleteStoredPdf } from '@/data/pdfStorage';
+import { checkStorageQuota, isFsaSupported } from '@/data/fsaStorage';
 import type { Topic, Question, QuestionOrigin, QuestionType, Exam } from '@/domain/models';
 import { ExamsTab } from '@/ui/components/ExamsTab';
 import { slugify } from '@/domain/normalize';
@@ -137,6 +138,9 @@ export function SubjectView() {
 
   // Resources tab state
   const [resources, setResources] = useState<ResourceCategory[]>([]);
+
+  // Aviso de almacenamiento lleno al intentar subir archivos
+  const [storageAlert, setStorageAlert] = useState<{ msg: string; suggestFsa: boolean } | null>(null);
   const [resourcesLoading, setResourcesLoading] = useState(false);
 
   useEffect(() => {
@@ -304,9 +308,25 @@ export function SubjectView() {
   setResourcesLoading(false);
 };
 
-// ── Upload resources to IndexedDB ────────────────────────────────────────
+// ── Upload resources to IndexedDB / FSA ──────────────────────────────────
 const handleResourceUpload = async (categorySlug: string, files: FileList) => {
   if (!subjectId) return;
+  const totalSize = Array.from(files).reduce((sum, f) => sum + f.size, 0);
+  const quota = await checkStorageQuota(totalSize);
+  if (!quota.ok) {
+    setStorageAlert({
+      msg: `No hay espacio suficiente en el navegador para estos archivos (${(totalSize / 1024 / 1024).toFixed(1)} MB necesarios, ${(quota.availableBytes / 1024 / 1024).toFixed(0)} MB libres).`,
+      suggestFsa: isFsaSupported() && !quota.fsaConfigured,
+    });
+    return;
+  }
+  if (!quota.fsaConfigured && quota.percentUsed > 80) {
+    setStorageAlert({
+      msg: `Almacenamiento al ${Math.round(quota.percentUsed)}%. Los archivos se subirán pero puede que quede poco espacio.`,
+      suggestFsa: isFsaSupported(),
+    });
+    // No bloqueamos — dejamos subir con la advertencia visible
+  }
   for (const file of Array.from(files)) {
     const prefixedFilename = `${categorySlug}/${file.name}`;
     await savePdfBlob(subjectId, prefixedFilename, file);
@@ -381,9 +401,25 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
   // ── Guardar PDF (drag drop o file input) ──────────────────────────────────
   const handlePdfFile = async (topic: Topic, file: File) => {
     if (!subjectId || file.type !== 'application/pdf') return;
+
+    // Comprobar quota antes de subir
+    const quota = await checkStorageQuota(file.size);
+    if (!quota.ok) {
+      setStorageAlert({
+        msg: `Sin espacio para guardar el PDF (${(file.size / 1024 / 1024).toFixed(1)} MB), solo quedan ${(quota.availableBytes / 1024 / 1024).toFixed(0)} MB libres en el navegador.`,
+        suggestFsa: isFsaSupported() && !quota.fsaConfigured,
+      });
+      return;
+    }
+    if (!quota.fsaConfigured && quota.percentUsed > 80) {
+      setStorageAlert({
+        msg: `Almacenamiento al ${Math.round(quota.percentUsed)}%. El PDF se guardará pero queda poco espacio.`,
+        suggestFsa: isFsaSupported(),
+      });
+    }
+
     setUploading(topic.id);
     try {
-      // Guardar en IndexedDB (siempre) y en resources/ vía dev server (si disponible)
       await Promise.all([
         savePdfBlob(subjectId, file.name, file),
         savePdfToServer(subject.name, file.name, file, topic.title),
@@ -1074,6 +1110,39 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
           </div>
         </Modal>
       )}
+
+      {/* Modal aviso de almacenamiento insuficiente */}
+      <Modal
+        open={!!storageAlert}
+        onClose={() => setStorageAlert(null)}
+        title={storageAlert?.suggestFsa ? '⚠ Almacenamiento casi lleno' : '⚠ Sin espacio disponible'}
+        size="sm"
+      >
+        {storageAlert && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-ink-300">{storageAlert.msg}</p>
+            {storageAlert.suggestFsa && (
+              <div className="flex flex-col gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                <p className="text-sm text-amber-300 font-medium">💡 Solución recomendada</p>
+                <p className="text-xs text-ink-400">
+                  Configura una <strong>carpeta de disco</strong> en Ajustes → Almacenamiento para guardar
+                  archivos directamente en tu ordenador, sin límite de quota del navegador.
+                </p>
+              </div>
+            )}
+            <div className="flex justify-end gap-2 pt-2 border-t border-ink-800">
+              <Button variant="ghost" size="sm" onClick={() => setStorageAlert(null)}>
+                Cerrar
+              </Button>
+              {storageAlert.suggestFsa && (
+                <Button size="sm" onClick={() => { setStorageAlert(null); navigate('/settings'); }}>
+                  Ir a Ajustes
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

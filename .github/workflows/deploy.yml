@@ -29,9 +29,15 @@ jobs:
           node-version: 20
           cache: npm
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npm run build
+      - name: Build
+        # VITE_BASE_URL se calcula automáticamente a partir del nombre del repo.
+        # Si usas dominio personalizado (CNAME), cambia el valor a "/" o al subpath que uses.
+        env:
+          VITE_BASE_URL: /${{ github.event.repository.name }}/
+        run: npm run build
 
       - uses: actions/configure-pages@v4
 

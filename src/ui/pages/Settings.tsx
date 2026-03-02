@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { db, getSettings } from '@/data/db';
@@ -10,7 +10,34 @@ import { parseImportFile, downloadJSON } from '@/data/exportImport';
 import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
 import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
 import type { ImportHistoryEntry, Question } from '@/domain/models';
+import {
+  isFsaSupported,
+  selectPdfFolder,
+  getStoredFolderRecord,
+  clearPdfFolder,
+  migrateAllPdfsToFolder,
+  type MigrationResult,
+} from '@/data/fsaStorage';
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Convierte URLs de Gist (interfaz de usuario) a URL raw para fetch directo. */
+function toRawUrl(url: string): string {
+  // https://gist.github.com/{user}/{id}  →  https://gist.githubusercontent.com/{user}/{id}/raw
+  const gistMatch = url.match(/^https?:\/\/gist\.github\.com\/([^/]+)\/([a-f0-9]+)\/?$/i);
+  if (gistMatch) {
+    return `https://gist.githubusercontent.com/${gistMatch[1]}/${gistMatch[2]}/raw`;
+  }
+  return url;
+}
+
+/** Formatea bytes en unidad legible (KB, MB, GB). */
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
 
 export function SettingsPage() {
   const navigate = useNavigate();
@@ -36,15 +63,55 @@ export function SettingsPage() {
   const [topicMappings, setTopicMappings] = useState<TopicMappings>({});
   const [allTopicsForMapping, setAllTopicsForMapping] = useState<{ id: string; title: string; subjectName: string }[]>([]);
 
+  // ── Import por URL ──────────────────────────────────────────────────────────
+  const [importUrl, setImportUrl] = useState('');
+  const [importingUrl, setImportingUrl] = useState(false);
+
+  // ── GitHub Gist export ──────────────────────────────────────────────────────
+  const [githubToken, setGithubToken] = useState('');
+  const [gistExportMsg, setGistExportMsg] = useState('');
+  const [exportingGist, setExportingGist] = useState(false);
+  const [lastGistUrl, setLastGistUrl] = useState('');
+
+  // ── Cuota de almacenamiento ─────────────────────────────────────────────────
+  const [storageInfo, setStorageInfo] = useState<{ used: number; quota: number } | null>(null);
+  const [isPersistent, setIsPersistent] = useState<boolean | null>(null);
+  const [requestingPersistence, setRequestingPersistence] = useState(false);
+
+  // ── File System Access API ──────────────────────────────────────────────────
+  const fsaSupported = isFsaSupported();
+  const [fsaFolderName, setFsaFolderName] = useState<string | null>(null);
+  const [fsaMsg, setFsaMsg] = useState('');
+  const [selectingFolder, setSelectingFolder] = useState(false);
+  const [migrating, setMigrating] = useState(false);
+  const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(null);
+
+  const refreshStorageStatus = useCallback(async () => {
+    // Quota de IndexedDB
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+      const est = await navigator.storage.estimate();
+      setStorageInfo({ used: est.usage ?? 0, quota: est.quota ?? 0 });
+    }
+    // Storage persistence
+    if ('storage' in navigator && 'persisted' in navigator.storage) {
+      setIsPersistent(await navigator.storage.persisted());
+    }
+    // FSA folder configurada
+    const rec = await getStoredFolderRecord();
+    setFsaFolderName(rec?.name ?? null);
+  }, []);
+
   useEffect(() => {
     loadSettings();
     loadSubjects();
+    refreshStorageStatus();
   }, []);
 
   useEffect(() => {
     setAlias(settings.alias);
     setImportedPacks(settings.importedPackIds);
     setImportHistory(settings.importHistory ?? []);
+    setGithubToken(settings.githubToken ?? '');
   }, [settings]);
 
 
@@ -226,6 +293,150 @@ export function SettingsPage() {
     }
   };
 
+  // ── Handler: importar contribution pack desde URL ────────────────────────────
+  const handleImportFromUrl = useCallback(async () => {
+    const url = importUrl.trim();
+    if (!url) return;
+    setImportingUrl(true);
+    setImportMsg('');
+    try {
+      const rawUrl = toRawUrl(url);
+      const response = await fetch(rawUrl);
+      if (!response.ok) throw new Error(`HTTP ${response.status} – ${response.statusText}`);
+      const raw = await response.json();
+      const preview = await previewContributionPack(raw);
+      if ('error' in preview) {
+        setImportMsg('Error: ' + preview.error);
+      } else {
+        setPackPreview(preview);
+        setImportUrl('');
+      }
+    } catch (err) {
+      setImportMsg('Error al obtener la URL: ' + String(err));
+    } finally {
+      setImportingUrl(false);
+    }
+  }, [importUrl]);
+
+  // ── Handler: guardar token de GitHub ─────────────────────────────────────────
+  const handleSaveGithubToken = async () => {
+    await updateSettings({ githubToken });
+    setGistExportMsg('✓ Token guardado');
+    setTimeout(() => setGistExportMsg(''), 3000);
+  };
+
+  // ── Handler: exportar contribution pack a GitHub Gist ─────────────────────
+  const handleExportToGist = async () => {
+    if (!exportSubjectId) return;
+    if (!githubToken) {
+      setGistExportMsg('Error: introduce y guarda un token de GitHub primero');
+      return;
+    }
+    setExportingGist(true);
+    setGistExportMsg('');
+    setLastGistUrl('');
+    try {
+      const pack = await exportContributionPack(alias, exportSubjectId);
+      const subject = subjects.find((s) => s.id === exportSubjectId);
+      const filename = `contribution-${alias || 'yo'}-${subject?.name.slice(0, 20).replace(/\s+/g, '-') ?? exportSubjectId}-${new Date().toISOString().split('T')[0]}.json`;
+
+      const response = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: {
+          Authorization: `token ${githubToken}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/vnd.github+json',
+        },
+        body: JSON.stringify({
+          description: `ExamCoach contribution pack — ${subject?.name ?? exportSubjectId} — ${alias || 'anónimo'}`,
+          public: false,
+          files: {
+            [filename]: { content: JSON.stringify(pack, null, 2) },
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error((body as any).message ?? `HTTP ${response.status}`);
+      }
+
+      const gist = await response.json() as {
+        html_url: string;
+        files: Record<string, { raw_url: string }>;
+      };
+
+      // URL raw directa (válida para importar desde URL en esta misma pantalla)
+      const rawUrl = Object.values(gist.files)[0]?.raw_url ?? gist.html_url;
+      setLastGistUrl(rawUrl);
+      setGistExportMsg(`✓ Gist creado`);
+
+      // También descarga el JSON localmente como respaldo
+      downloadJSON(pack, filename);
+    } catch (err) {
+      setGistExportMsg('Error: ' + String(err));
+    } finally {
+      setExportingGist(false);
+    }
+  };
+
+  // ── Handler: solicitar storage persistente ───────────────────────────────────
+  const handleRequestPersistence = async () => {
+    if (!('storage' in navigator && 'persist' in navigator.storage)) return;
+    setRequestingPersistence(true);
+    try {
+      const granted = await navigator.storage.persist();
+      setIsPersistent(granted);
+    } finally {
+      setRequestingPersistence(false);
+    }
+  };
+
+  // ── Handlers: File System Access API ─────────────────────────────────────────
+  const handleSelectFolder = async () => {
+    setSelectingFolder(true);
+    setFsaMsg('');
+    try {
+      const handle = await selectPdfFolder();
+      if (handle) {
+        setFsaFolderName(handle.name);
+        setFsaMsg('✓ Carpeta configurada. Los nuevos PDFs se guardarán aquí.');
+        await refreshStorageStatus();
+      }
+    } finally {
+      setSelectingFolder(false);
+    }
+  };
+
+  const handleClearFolder = async () => {
+    if (!confirm('¿Desconectar la carpeta de PDFs? Los PDFs del disco NO se eliminan, pero la app dejará de usarla y volverá a IndexedDB.')) return;
+    await clearPdfFolder();
+    setFsaFolderName(null);
+    setFsaMsg('Carpeta desconectada. La app usará IndexedDB para los próximos PDFs.');
+    setMigrationResult(null);
+  };
+
+  const handleMigrate = async () => {
+    if (!confirm('¿Mover todos los PDFs de IndexedDB a la carpeta del disco? Esto liberará quota del navegador. Los PDFs que ya estén en disco se saltan automáticamente.')) return;
+    setMigrating(true);
+    setFsaMsg('');
+    setMigrationResult(null);
+    try {
+      const result = await migrateAllPdfsToFolder();
+      setMigrationResult(result);
+      if (result.failed === 0) {
+        setFsaMsg(`✓ Migración completa: ${result.migrated} PDFs movidos, ${formatBytes(result.freedBytes)} liberados de IndexedDB.`);
+      } else {
+        setFsaMsg(`⚠ ${result.migrated} PDFs migrados, ${result.failed} fallaron (se mantienen en IndexedDB).`);
+      }
+      await refreshStorageStatus();
+    } catch (err) {
+      setFsaMsg('Error en migración: ' + String(err));
+    } finally {
+      setMigrating(false);
+    }
+  };
+
   const handleClearData = async () => {
     if (!confirm('¿Eliminar TODOS los datos? Esta acción es irreversible.')) return;
     await db.subjects.clear();
@@ -272,6 +483,7 @@ export function SettingsPage() {
           <h2 className="font-display text-base text-ink-200 mb-1">Exportar mis preguntas</h2>
           <p className="text-sm text-ink-500 mb-4">
             Genera un <code className="text-amber-400 bg-ink-900 px-1 py-0.5 rounded text-xs">contribution pack</code> para compartir con el mantenedor del banco global.
+            Puedes descargarlo como JSON o publicarlo directamente como GitHub Gist para compartir por URL.
           </p>
           {!alias && (
             <p className="text-xs text-amber-400 mb-3">⚠ Define tu alias antes de exportar</p>
@@ -287,15 +499,95 @@ export function SettingsPage() {
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </Select>
-            <div className="flex justify-end">
+
+            {/* Botones de exportación */}
+            <div className="flex flex-wrap gap-2 justify-end">
               <Button
                 size="sm"
+                variant="secondary"
                 onClick={handleExportContribution}
                 disabled={!exportSubjectId}
+                title="Descarga el pack como archivo JSON"
               >
-                ↑ Exportar contribution pack
+                ↓ Descargar JSON
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleExportToGist}
+                disabled={!exportSubjectId || exportingGist}
+                loading={exportingGist}
+                title="Publica el pack como Gist privado en GitHub y obtén una URL para importar"
+              >
+                ⬡ Publicar en Gist
               </Button>
             </div>
+
+            {/* Mensaje de resultado del Gist */}
+            {gistExportMsg && (
+              <p className={`text-xs ${gistExportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
+                {gistExportMsg}
+              </p>
+            )}
+
+            {/* URL raw generada — lista para copiar o pegar en "Importar por URL" */}
+            {lastGistUrl && (
+              <div className="flex flex-col gap-1.5 p-3 bg-sage-600/10 border border-sage-600/20 rounded-lg">
+                <p className="text-xs text-sage-400 font-medium">Gist creado — URL para importar:</p>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 text-xs text-ink-300 bg-ink-800 px-2 py-1 rounded font-mono break-all">
+                    {lastGistUrl}
+                  </code>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(lastGistUrl); }}
+                    className="flex-shrink-0 text-xs text-ink-400 hover:text-ink-200 border border-ink-600 hover:border-ink-500 px-2 py-1 rounded transition-colors"
+                    title="Copiar URL"
+                  >
+                    Copiar
+                  </button>
+                </div>
+                <p className="text-xs text-ink-500">
+                  Comparte esta URL con el mantenedor. También se descargó el JSON como copia de seguridad.
+                </p>
+              </div>
+            )}
+
+            {/* Token de GitHub — se muestra siempre para facilitar configuración */}
+            <details className="group">
+              <summary className="cursor-pointer text-xs text-ink-500 hover:text-ink-300 transition-colors select-none">
+                ⚙ Configurar token de GitHub para Gists
+              </summary>
+              <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
+                <p className="text-xs text-ink-500">
+                  Necesitas un{' '}
+                  <a
+                    href="https://github.com/settings/tokens/new?scopes=gist&description=ExamCoach"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
+                  >
+                    Personal Access Token
+                  </a>{' '}
+                  con scope <code className="text-amber-400 bg-ink-900 px-1 rounded text-xs">gist</code>.
+                  Se guarda únicamente en tu IndexedDB local, nunca se exporta.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    value={githubToken}
+                    onChange={(e) => setGithubToken(e.target.value)}
+                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                    className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60 font-mono"
+                    autoComplete="off"
+                  />
+                  <Button size="sm" variant="secondary" onClick={handleSaveGithubToken}>
+                    Guardar
+                  </Button>
+                </div>
+                {githubToken && (
+                  <p className="text-xs text-sage-400">✓ Token configurado</p>
+                )}
+              </div>
+            </details>
           </div>
         </Card>
 
@@ -389,6 +681,7 @@ export function SettingsPage() {
           <h2 className="font-display text-base text-ink-200 mb-1">Importar contribuciones</h2>
           <p className="text-sm text-ink-500 mb-4">
             Modo mantenedor: importa packs de tus compañeros y fusiónelos con el banco global. Dedupe automático por contenido.
+            Puedes seleccionar un archivo JSON o pegar directamente una URL (GitHub Gist u otra URL pública al JSON).
           </p>
 
           {importMsg && (
@@ -401,12 +694,41 @@ export function SettingsPage() {
             </div>
           )}
 
-          <label className="cursor-pointer">
-            <input type="file" accept=".json" multiple className="hidden" onChange={handleImportContribution} />
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-ink-600 bg-ink-800 text-ink-300 hover:text-ink-100 hover:border-ink-500 text-sm font-medium font-body transition-all cursor-pointer">
-              ↓ Seleccionar contribution pack(s)
-            </span>
-          </label>
+          {/* Opción A: archivo JSON (comportamiento original) */}
+          <div className="flex flex-col gap-3">
+            <label className="cursor-pointer">
+              <input type="file" accept=".json" multiple className="hidden" onChange={handleImportContribution} />
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-ink-600 bg-ink-800 text-ink-300 hover:text-ink-100 hover:border-ink-500 text-sm font-medium font-body transition-all cursor-pointer">
+                ↓ Seleccionar contribution pack(s) · JSON
+              </span>
+            </label>
+
+            {/* Opción B: URL (Gist u otra) */}
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-ink-500 font-medium uppercase tracking-widest">O importar desde URL</p>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={importUrl}
+                  onChange={(e) => setImportUrl(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleImportFromUrl(); }}
+                  placeholder="https://gist.github.com/usuario/abc123 o URL directa al JSON"
+                  className="flex-1 bg-ink-800 border border-ink-600 rounded-lg px-3 py-1.5 text-sm text-ink-200 placeholder-ink-600 focus:outline-none focus:border-amber-500/60"
+                />
+                <Button
+                  size="sm"
+                  onClick={handleImportFromUrl}
+                  disabled={!importUrl.trim() || importingUrl}
+                  loading={importingUrl}
+                >
+                  Importar
+                </Button>
+              </div>
+              <p className="text-xs text-ink-600">
+                Las URLs de GitHub Gist se convierten automáticamente a su versión raw.
+              </p>
+            </div>
+          </div>
 
           {unmatchedTopics.length > 0 && (
             <div className="mt-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
@@ -502,6 +824,181 @@ export function SettingsPage() {
 
 
 
+
+        {/* ── Almacenamiento ─────────────────────────────────────────────────── */}
+        <Card>
+          <h2 className="font-display text-base text-ink-200 mb-4">Almacenamiento</h2>
+
+          {/* Barra de quota IndexedDB */}
+          {storageInfo && (
+            <div className="flex flex-col gap-2 mb-5">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-ink-400">Quota IndexedDB</p>
+                <button
+                  onClick={refreshStorageStatus}
+                  className="text-xs text-ink-600 hover:text-ink-400 transition-colors"
+                  title="Actualizar"
+                >
+                  ↺ Actualizar
+                </button>
+              </div>
+              <div className="w-full h-2.5 bg-ink-800 rounded-full overflow-hidden">
+                {storageInfo.quota > 0 && (
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      storageInfo.used / storageInfo.quota > 0.95
+                        ? 'bg-rose-500'
+                        : storageInfo.used / storageInfo.quota > 0.8
+                        ? 'bg-amber-500'
+                        : 'bg-sage-500'
+                    }`}
+                    style={{ width: `${Math.min(100, (storageInfo.used / storageInfo.quota) * 100).toFixed(1)}%` }}
+                  />
+                )}
+              </div>
+              <div className="flex justify-between text-xs text-ink-500">
+                <span>Usado: <span className="text-ink-300 font-medium">{formatBytes(storageInfo.used)}</span></span>
+                {storageInfo.quota > 0 && (
+                  <span>
+                    Libre: <span className={`font-medium ${storageInfo.used / storageInfo.quota > 0.8 ? 'text-amber-400' : 'text-ink-300'}`}>
+                      {formatBytes(storageInfo.quota - storageInfo.used)}
+                    </span>
+                    {' '}/ {formatBytes(storageInfo.quota)}
+                  </span>
+                )}
+              </div>
+              {storageInfo.quota > 0 && storageInfo.used / storageInfo.quota > 0.8 && (
+                <div className="flex items-start gap-2 px-3 py-2.5 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <span className="text-amber-400 text-base leading-none mt-0.5">⚠</span>
+                  <p className="text-xs text-amber-300">
+                    Más del 80% de la quota ocupada. Considera activar la carpeta de disco (abajo)
+                    para guardar los PDFs fuera de IndexedDB y liberar espacio.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Storage persistence */}
+          <div className="flex flex-col gap-2 pb-5 border-b border-ink-800 mb-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-ink-300 font-medium">Protección contra borrado automático</p>
+                <p className="text-xs text-ink-500 mt-0.5">
+                  Chrome puede borrar datos de IndexedDB cuando el disco está lleno.
+                  El storage persistente lo evita.
+                </p>
+              </div>
+              {isPersistent === null ? (
+                <span className="text-xs text-ink-600">–</span>
+              ) : isPersistent ? (
+                <span className="flex items-center gap-1.5 text-xs text-sage-400 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-sage-400 flex-shrink-0" />
+                  Protegido
+                </span>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleRequestPersistence}
+                  loading={requestingPersistence}
+                >
+                  Activar protección
+                </Button>
+              )}
+            </div>
+            {isPersistent === false && (
+              <p className="text-xs text-ink-600">
+                Chrome suele conceder el permiso automáticamente si la app está instalada como PWA
+                o si la usas frecuentemente.
+              </p>
+            )}
+          </div>
+
+          {/* File System Access API */}
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-sm text-ink-300 font-medium">Carpeta de disco para archivos</p>
+              <p className="text-xs text-ink-500 mt-0.5">
+                Guarda PDFs y recursos directamente en una carpeta de tu ordenador.
+                Sin límite de quota. Requiere Chrome o Edge 86+.
+              </p>
+            </div>
+
+            {!fsaSupported ? (
+              <div className="px-3 py-2 bg-ink-800 border border-ink-700 rounded-lg">
+                <p className="text-xs text-ink-500">
+                  Tu navegador no soporta File System Access API.
+                  Usa Chrome o Edge para esta funcionalidad.
+                </p>
+              </div>
+            ) : fsaFolderName ? (
+              <div className="flex flex-col gap-3">
+                {/* Carpeta activa */}
+                <div className="flex items-center gap-3 px-3 py-2.5 bg-sage-600/10 border border-sage-600/20 rounded-lg">
+                  <span className="text-sage-400 text-base">📁</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-sage-300 font-medium truncate">{fsaFolderName}</p>
+                    <p className="text-xs text-ink-500">Los nuevos archivos se guardan en esta carpeta</p>
+                  </div>
+                  <button
+                    onClick={handleClearFolder}
+                    className="text-xs text-ink-500 hover:text-rose-400 transition-colors flex-shrink-0"
+                    title="Desconectar carpeta"
+                  >
+                    Desconectar
+                  </button>
+                </div>
+
+                {/* Migración */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-ink-500">
+                    ¿Tienes PDFs en IndexedDB? Muévelos al disco para liberar quota.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={handleMigrate}
+                    loading={migrating}
+                    disabled={migrating}
+                  >
+                    📦 Migrar archivos de IndexedDB al disco
+                  </Button>
+                  {migrationResult && (
+                    <p className="text-xs text-ink-400">
+                      {migrationResult.migrated} archivos migrados
+                      {migrationResult.freedBytes > 0 && ` · ${formatBytes(migrationResult.freedBytes)} liberados`}
+                      {migrationResult.failed > 0 && ` · ${migrationResult.failed} fallaron`}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleSelectFolder}
+                  loading={selectingFolder}
+                  disabled={selectingFolder}
+                >
+                  📂 Elegir carpeta de disco
+                </Button>
+                <p className="text-xs text-ink-600">
+                  Se pedirá permiso de lectura/escritura. El permiso se renueva automáticamente
+                  en Chrome cada vez que abres la app.
+                </p>
+              </div>
+            )}
+
+            {/* Mensaje de estado FSA */}
+            {fsaMsg && (
+              <p className={`text-xs ${fsaMsg.startsWith('Error') || fsaMsg.startsWith('⚠') ? 'text-amber-400' : 'text-sage-400'}`}>
+                {fsaMsg}
+              </p>
+            )}
+          </div>
+        </Card>
 
         {/* Danger zone */}
         <Card className="border-rose-500/20">
