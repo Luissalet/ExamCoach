@@ -28,6 +28,7 @@ import JSZip from 'jszip';
 import { db } from './db';
 import { v4 as uuidv4 } from 'uuid';
 import { slugify } from '@/domain/normalize';
+import type { PdfMapping } from './resourceLoader';
 
 export interface ImportResourcesResult {
   totalFiles: number;
@@ -214,6 +215,99 @@ export async function importResourceZip(
           result.errors.push(`Error procesando ${fileEntry.path}: ${String(err)}`);
           processed++;
         }
+      }
+    }
+
+    // ── Phase 5: Asociar PDFs de Temas a Topics vía index.json del ZIP ────
+    for (const [subjectSlug, files] of subjectFiles) {
+      const subject = subjectMap.get(subjectSlug);
+      if (!subject) continue;
+
+      // Buscar Temas/index.json en el ZIP
+      const indexEntry = files.find(
+        (f) => f.category === 'Temas' && f.relativePath === 'index.json',
+      );
+      if (!indexEntry) continue;
+
+      try {
+        const zipFile = zip.file(indexEntry.path);
+        if (!zipFile) continue;
+
+        const raw = JSON.parse(await zipFile.async('string'));
+        // El index.json puede ser un array mixto: objetos {topicTitle, pdf} + strings sueltos
+        const mapping: PdfMapping[] = [];
+        if (Array.isArray(raw)) {
+          for (const item of raw) {
+            if (typeof item === 'string') {
+              mapping.push({ topicTitle: '', pdf: item });
+            } else if (item && typeof item === 'object' && item.pdf) {
+              mapping.push({ topicTitle: item.topicTitle ?? '', pdf: item.pdf });
+            }
+          }
+        }
+
+        // Deduplicar: preferir entradas con topicTitle sobre las que no tienen
+        const seenPdfs = new Set<string>();
+        const dedupedMapping: PdfMapping[] = [];
+        // Primero las que tienen topicTitle
+        for (const m of mapping) {
+          if (m.topicTitle && !seenPdfs.has(m.pdf)) {
+            dedupedMapping.push(m);
+            seenPdfs.add(m.pdf);
+          }
+        }
+        // Luego las que no tienen (si no están ya)
+        for (const m of mapping) {
+          if (!seenPdfs.has(m.pdf)) {
+            dedupedMapping.push(m);
+            seenPdfs.add(m.pdf);
+          }
+        }
+
+        // Cargar los temas de esta asignatura
+        const subjectTopics = await db.topics
+          .where('subjectId')
+          .equals(subject.id)
+          .toArray();
+
+        for (const entry of dedupedMapping) {
+          if (!entry.pdf) continue;
+
+          // Si tiene topicTitle, buscar coincidencia exacta (case-insensitive)
+          if (entry.topicTitle) {
+            const normalTitle = entry.topicTitle.trim().toLowerCase();
+            const topic = subjectTopics.find(
+              (t) => !t.pdfFilename && t.title.trim().toLowerCase() === normalTitle,
+            );
+            if (topic) {
+              await db.topics.update(topic.id, { pdfFilename: entry.pdf });
+              topic.pdfFilename = entry.pdf; // actualizar en memoria para no reasignar
+            }
+          }
+
+          // Fallback: si no hay topicTitle, intentar por nombre de archivo
+          // (ej. "Tema_1._Origen..." → buscar un tema cuyo título contenga "Tema 1")
+          if (!entry.topicTitle || entry.topicTitle === '') {
+            const pdfBase = entry.pdf
+              .replace(/\.pdf$/i, '')
+              .replace(/_/g, ' ')
+              .replace(/\./g, ' ')
+              .trim()
+              .toLowerCase();
+            const topic = subjectTopics.find(
+              (t) =>
+                !t.pdfFilename &&
+                (t.title.trim().toLowerCase().startsWith(pdfBase.slice(0, 10)) ||
+                  pdfBase.startsWith(t.title.trim().toLowerCase().slice(0, 10))),
+            );
+            if (topic) {
+              await db.topics.update(topic.id, { pdfFilename: entry.pdf });
+              topic.pdfFilename = entry.pdf;
+            }
+          }
+        }
+      } catch {
+        // index.json inválido o no existe — los PDFs ya se guardaron igualmente
       }
     }
 
