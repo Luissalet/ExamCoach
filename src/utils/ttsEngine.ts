@@ -5,7 +5,10 @@
  *   - Selección de voz española (prioriza Google/MS neural)
  *   - Control de reproducción (play/pause/skip/velocidad)
  *   - Callbacks para sincronizar UI
+ *   - Audio keep-alive opcional para reproducción en segundo plano (móvil)
  */
+
+import type { AudioKeepaliveManager } from './audioKeepalive';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -66,7 +69,13 @@ function pickBestSpanishVoice(allVoices: SpeechSynthesisVoice[]): SpeechSynthesi
   return prioritized[0];
 }
 
-export function createTtsEngine(): TtsEngine {
+export interface TtsEngineOptions {
+  /** Audio keep-alive para reproducción en segundo plano en móvil */
+  keepalive?: AudioKeepaliveManager;
+}
+
+export function createTtsEngine(options?: TtsEngineOptions): TtsEngine {
+  const keepalive = options?.keepalive;
   const synth = window.speechSynthesis;
   let voices: SpeechSynthesisVoice[] = [];
   let selectedVoice: SpeechSynthesisVoice | null = null;
@@ -96,6 +105,7 @@ export function createTtsEngine(): TtsEngine {
     if (destroyed) return;
     if (index >= blocks.length) {
       state = 'idle';
+      keepalive?.stop();
       callbacks.onFinish?.();
       callbacks.onStateChange?.('idle');
       return;
@@ -182,6 +192,7 @@ export function createTtsEngine(): TtsEngine {
       callbacks = cbs ?? {};
       currentBlockIndex = 0;
       state = 'playing';
+      keepalive?.start();
       callbacks.onStateChange?.('playing');
       speakBlock(0);
     },
@@ -206,6 +217,7 @@ export function createTtsEngine(): TtsEngine {
       synth.cancel();
       state = 'idle';
       currentBlockIndex = 0;
+      keepalive?.stop();
       callbacks.onStateChange?.('idle');
     },
 
@@ -244,6 +256,7 @@ export function createTtsEngine(): TtsEngine {
       destroyed = true;
       synth.cancel();
       state = 'idle';
+      keepalive?.stop();
       blocks = [];
       callbacks = {};
     },

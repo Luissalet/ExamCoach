@@ -18,6 +18,8 @@ import { TtsControls } from '@/ui/components/TtsControls';
 import { extractPdfText, type TextBlock } from '@/utils/pdfTextExtractor';
 import { mathToSpeech } from '@/utils/mathSymbolSpeech';
 import { createTtsEngine, type TtsEngine, type TtsState, type TtsVoiceInfo } from '@/utils/ttsEngine';
+import { createAudioKeepalive, type AudioKeepaliveManager } from '@/utils/audioKeepalive';
+import { createMediaSessionController, type MediaSessionController } from '@/utils/mediaSessionController';
 import { getPdfBlobUrl } from '@/data/pdfStorage';
 import { getResourceBlobUrl } from '@/data/resourceFromDB';
 import { getPdfUrl, resourcesUrl } from '@/data/resourceLoader';
@@ -55,6 +57,8 @@ export function PdfListenMode() {
   const timingRef = useRef({ totalBaseMs: 0, totalChars: 0 });
 
   const ttsRef = useRef<TtsEngine | null>(null);
+  const keepaliveRef = useRef<AudioKeepaliveManager | null>(null);
+  const mediaSessionRef = useRef<MediaSessionController | null>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -160,9 +164,17 @@ export function PdfListenMode() {
     return () => { cancelled = true; };
   }, [subjectId, topicId, isResourceMode, resourceFile]);
 
-  // ── Initialize TTS engine ──────────────────────────────────────────────────
+  // ── Initialize TTS engine + audio keepalive + media session ───────────────
   useEffect(() => {
-    const engine = createTtsEngine();
+    // Audio keepalive: mantiene la sesión de audio activa en segundo plano (móvil)
+    const keepalive = createAudioKeepalive();
+    keepaliveRef.current = keepalive;
+
+    // Media Session: controles en la pantalla de bloqueo
+    const mediaSession = createMediaSessionController();
+    mediaSessionRef.current = mediaSession;
+
+    const engine = createTtsEngine({ keepalive });
     ttsRef.current = engine;
 
     // Load voices (may be async)
@@ -180,9 +192,46 @@ export function PdfListenMode() {
     return () => {
       clearTimeout(timer);
       engine.destroy();
+      keepalive.destroy();
+      mediaSession.cleanup();
       ttsRef.current = null;
+      keepaliveRef.current = null;
+      mediaSessionRef.current = null;
     };
   }, []);
+
+  // ── Wire Media Session handlers ─────────────────────────────────────────────
+  useEffect(() => {
+    const ms = mediaSessionRef.current;
+    if (!ms) return;
+
+    ms.setHandlers({
+      onPlay: () => {
+        if (ttsRef.current?.getState() === 'paused') ttsRef.current.resume();
+      },
+      onPause: () => ttsRef.current?.pause(),
+      onNextTrack: () => ttsRef.current?.next(),
+      onPreviousTrack: () => ttsRef.current?.previous(),
+      onStop: () => ttsRef.current?.stop(),
+    });
+  }, []);
+
+  // ── Update Media Session metadata on block/state changes ──────────────────
+  useEffect(() => {
+    const ms = mediaSessionRef.current;
+    if (!ms) return;
+
+    if (ttsState === 'idle') {
+      ms.setPlaybackState('none');
+    } else {
+      ms.setPlaybackState(ttsState === 'playing' ? 'playing' : 'paused');
+      ms.updateMetadata({
+        title: displayTitle.replace(/\.pdf$/i, ''),
+        artist: subject?.name ?? 'ExamCoach',
+        album: blocks.length > 0 ? `Bloque ${currentBlock + 1} de ${blocks.length}` : '',
+      });
+    }
+  }, [ttsState, currentBlock, displayTitle, subject?.name, blocks.length]);
 
   // ── Auto scroll to active block ────────────────────────────────────────────
   useEffect(() => {
