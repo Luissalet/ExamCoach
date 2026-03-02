@@ -29,8 +29,24 @@ jobs:
           node-version: 20
           cache: npm
 
+      # ── Cache de Vite para acelerar rebuilds (~70% más rápido) ──────────────
+      - name: Cache Vite build
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.vite
+            .vite
+          key: vite-${{ runner.os }}-${{ hashFiles('**/package-lock.json', 'vite.config.ts') }}
+          restore-keys: |
+            vite-${{ runner.os }}-
+
       - name: Install dependencies
         run: npm ci
+
+      # ── Typecheck: verifica que no hay errores TypeScript antes de compilar ──
+      # (ESLint se puede añadir más adelante instalando eslint como devDependency)
+      - name: Typecheck
+        run: npx tsc --noEmit
 
       - name: Build
         # VITE_BASE_URL se calcula automáticamente a partir del nombre del repo.
@@ -38,6 +54,17 @@ jobs:
         env:
           VITE_BASE_URL: /${{ github.event.repository.name }}/
         run: npm run build
+
+      # ── Muestra el tamaño del bundle en el resumen del workflow ─────────────
+      - name: Report bundle size
+        run: |
+          echo "## 📦 Bundle size" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          du -sh dist/ >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          ls -lh dist/assets/*.js 2>/dev/null | awk '{print $5, $9}' | sort -hr | head -10 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - uses: actions/configure-pages@v4
 
@@ -47,3 +74,12 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # ── Resumen final con la URL publicada ──────────────────────────────────
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY

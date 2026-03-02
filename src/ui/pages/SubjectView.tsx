@@ -78,6 +78,61 @@ interface ResourceCategory {
 // ── Preview: enunciado + respuesta resuelta ─────────────────────────────────
 // (QuestionPreviewContent is now imported from @/ui/components/QuestionPreview)
 
+// ── Botón "Copiar enlace" — copia la URL actual al portapapeles ──────────────
+function CopyLinkButton({ subjectId, tab }: { subjectId: string | undefined; tab: string }) {
+  const [copied, setCopied] = useState(false);
+
+  if (!subjectId) return null;
+
+  const handleCopy = async () => {
+    // Construimos la URL con hash que apunta directamente a esta asignatura y pestaña
+    const url = `${window.location.origin}${window.location.pathname}#/subject/${subjectId}?tab=${tab}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback para navegadores sin Clipboard API
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      title={copied ? '¡Enlace copiado!' : 'Copiar enlace a esta asignatura'}
+      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
+        copied
+          ? 'bg-sage-600/20 text-sage-400 border border-sage-600/30'
+          : 'text-ink-400 hover:text-ink-200 hover:bg-ink-800 border border-transparent'
+      }`}
+    >
+      {copied ? (
+        <>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          Copiado
+        </>
+      ) : (
+        <>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" />
+          </svg>
+          Copiar enlace
+        </>
+      )}
+    </button>
+  );
+}
+
 export function SubjectView() {
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
@@ -559,9 +614,12 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color ?? '#f59e0b' }} />
               <h1 className="font-display text-xl text-ink-100">{subject.name}</h1>
             </div>
-            <Button size="sm" variant="ghost" onClick={handleStatsClick}>
-              📊 Estadísticas
-            </Button>
+            <div className="flex items-center gap-2">
+              <CopyLinkButton subjectId={subjectId} tab={tab} />
+              <Button size="sm" variant="ghost" onClick={handleStatsClick}>
+                📊 Estadísticas
+              </Button>
+            </div>
           </div>
           <div className="mt-3">
             <Tabs tabs={tabs} active={tab} onChange={(id) => setTab(id as TabId)} />
