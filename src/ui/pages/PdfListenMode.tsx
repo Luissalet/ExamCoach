@@ -195,8 +195,12 @@ export function PdfListenMode() {
     if (currentVoice) setSelectedVoice(currentVoice.name);
   }, []);
 
+  const [piperError, setPiperError] = useState<string | null>(null);
+
   // ── Fallback: Piper TTS falló → cambiar a speechSynthesis ─────────────────
-  const handleEdgeTtsFailed = useCallback(() => {
+  const handleEdgeTtsFailed = useCallback((errorDetail?: string) => {
+    console.error('[PdfListenMode] Piper TTS failed, falling back to speechSynthesis. Detail:', errorDetail);
+    setPiperError(errorDetail ?? 'Unknown error');
     const keepalive = keepaliveRef.current;
     // Destruir motor de audio
     ttsRef.current?.destroy();
@@ -590,6 +594,14 @@ export function PdfListenMode() {
                 />
               </div>
               <p className="text-[10px] text-blue-400/60 mt-1">Primera vez: ~27MB. Se cachea para siguiente uso.</p>
+            </div>
+          )}
+
+          {/* Piper TTS error detail (for debugging) */}
+          {piperError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-xs text-red-400 font-medium mb-1">Piper TTS falló → usando voz del sistema</p>
+              <p className="text-[10px] text-red-400/70 font-mono break-all">{piperError}</p>
             </div>
           )}
 

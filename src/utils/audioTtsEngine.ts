@@ -13,7 +13,10 @@
  * Estrategia:
  *   - Cada bloque de texto se sintetiza con Piper → WAV Blob
  *   - El WAV se reproduce vía blob URL → <audio>.src → audio.play()
- *   - Los bloques se encadenan secuencialmente vía audio.onended
+ *   - PRE-BUFFERING: Mientras bloque N suena, bloque N+1 se sintetiza en paralelo
+ *   - Cuando termina bloque N, bloque N+1 se reproduce INMEDIATAMENTE (sin gap)
+ *   - Esto es CRÍTICO en Android: si el <audio> deja de sonar entre bloques,
+ *     Android mata el tab en segundo plano y la notificación desaparece
  *   - La velocidad se controla con audio.playbackRate
  */
 
@@ -37,7 +40,7 @@ export interface AudioTtsEngineOptions {
    * Callback invocado si Piper TTS no funciona (WASM no carga, modelo falla, etc.)
    * Permite hacer fallback a speechSynthesis.
    */
-  onSynthesisFailed?: () => void;
+  onSynthesisFailed?: (errorDetail?: string) => void;
   /**
    * Callback de progreso de descarga del modelo.
    * Se invoca durante la primera carga (o al cambiar de voz).
@@ -74,24 +77,70 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
   // URL del blob actual (para revocar cuando cambie)
   let currentBlobUrl: string | null = null;
 
+  // ── Pre-buffer: sintetizar bloque N+1 mientras N suena ──────────────────
+  // Esto elimina el gap entre bloques que causa que Android mate el tab
+  let prefetchedBlobUrl: string | null = null;
+  let prefetchedBlockIdx: number = -1;
+  let prefetchPromise: Promise<void> | null = null;
+
+  function clearPrefetch() {
+    if (prefetchedBlobUrl) {
+      URL.revokeObjectURL(prefetchedBlobUrl);
+      prefetchedBlobUrl = null;
+    }
+    prefetchedBlockIdx = -1;
+    prefetchPromise = null;
+  }
+
+  /** Inicia la síntesis del siguiente bloque en background (fire-and-forget) */
+  function startPrefetch(nextIdx: number) {
+    if (destroyed) return;
+    if (nextIdx >= blocks.length) return;
+
+    const text = blocks[nextIdx];
+    if (!text || !text.trim()) return; // bloque vacío, no pre-fetch
+
+    // Si ya tenemos este bloque pre-fetched, no hacer nada
+    if (prefetchedBlockIdx === nextIdx && prefetchedBlobUrl) return;
+
+    // Limpiar prefetch anterior
+    if (prefetchedBlobUrl) {
+      URL.revokeObjectURL(prefetchedBlobUrl);
+      prefetchedBlobUrl = null;
+    }
+    prefetchedBlockIdx = nextIdx;
+
+    prefetchPromise = (async () => {
+      try {
+        const url = await synthesizeToBlobUrl(text);
+        if (destroyed || prefetchedBlockIdx !== nextIdx) {
+          // Estado cambió mientras sintetizábamos → descartar
+          if (url) URL.revokeObjectURL(url);
+          return;
+        }
+        prefetchedBlobUrl = url;
+        console.log(`[AudioTTS] Pre-buffered block ${nextIdx + 1}`);
+      } catch {
+        // No es fatal — playBlock sintetizará bajo demanda
+        console.warn(`[AudioTTS] Pre-buffer failed for block ${nextIdx + 1}`);
+      }
+    })();
+  }
+
   // Timing
   let blockStartTime = 0;
 
   // ── Media Session (notificación de Android) ──────────────────────────────
+  // NOTA: NO creamos MediaMetadata aquí. La metadata (con artwork, etc.) la
+  // maneja mediaSessionController desde PdfListenMode. Aquí solo actualizamos
+  // el playbackState para que Android sepa si estamos playing/paused/none.
 
   function updateMediaSession(playing: boolean) {
     if (!('mediaSession' in navigator)) return;
     try {
-      if (playing) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: options?.mediaTitle ?? 'Lectura PDF',
-          artist: options?.mediaArtist ?? 'ExamCoach',
-          album: blocks.length > 0 ? `Bloque ${currentBlockIndex + 1} de ${blocks.length}` : '',
-        });
-        navigator.mediaSession.playbackState = 'playing';
-      } else {
-        navigator.mediaSession.playbackState = state === 'paused' ? 'paused' : 'none';
-      }
+      navigator.mediaSession.playbackState = playing
+        ? 'playing'
+        : (state === 'paused' ? 'paused' : 'none');
     } catch { /* ignore */ }
   }
 
@@ -111,6 +160,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
     // ¿Ya terminamos todos los bloques?
     if (blockIdx >= blocks.length) {
+      clearPrefetch();
       finishPlayback();
       return;
     }
@@ -133,10 +183,34 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     blockStartTime = performance.now();
     callbacks.onBlockStart?.(blockIdx);
 
-    // Sintetizar audio con Piper (async - corre en Web Worker)
-    const blobUrl = await synthesizeToBlobUrl(text);
+    // ── Intentar usar el pre-buffer primero ──────────────────────────────
+    let blobUrl: string | null = null;
 
-    if (destroyed) return; // Check again after async
+    if (prefetchedBlockIdx === blockIdx && prefetchedBlobUrl) {
+      // Pre-buffer listo → usar inmediatamente (0 gap!)
+      blobUrl = prefetchedBlobUrl;
+      prefetchedBlobUrl = null; // transferir ownership
+      prefetchedBlockIdx = -1;
+      console.log(`[AudioTTS] Using pre-buffered block ${blockIdx + 1} (zero gap)`);
+    } else if (prefetchedBlockIdx === blockIdx && prefetchPromise) {
+      // Pre-buffer en progreso → esperar a que termine
+      console.log(`[AudioTTS] Waiting for pre-buffer of block ${blockIdx + 1}...`);
+      await prefetchPromise;
+      if (destroyed) return;
+      if (prefetchedBlockIdx === blockIdx && prefetchedBlobUrl) {
+        blobUrl = prefetchedBlobUrl;
+        prefetchedBlobUrl = null;
+        prefetchedBlockIdx = -1;
+      }
+    }
+
+    // Si no hay pre-buffer, sintetizar bajo demanda
+    if (!blobUrl) {
+      console.log(`[AudioTTS] Synthesizing block ${blockIdx + 1} on demand (no pre-buffer)`);
+      blobUrl = await synthesizeToBlobUrl(text);
+    }
+
+    if (destroyed) return;
 
     if (!blobUrl) {
       // Síntesis falló
@@ -171,6 +245,12 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       }
       // Activar notificación de media (Android)
       updateMediaSession(true);
+
+      // ── CLAVE: iniciar pre-buffer del SIGUIENTE bloque AHORA ──────
+      // Mientras este bloque suena, sintetizamos el siguiente en paralelo.
+      // Cuando audio.onended dispare, el siguiente ya estará listo → 0 gap.
+      startPrefetch(blockIdx + 1);
+
     } catch (err) {
       if (destroyed) return;
       console.warn('[AudioTTS] Error playing block:', err);
@@ -214,7 +294,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     callbacks.onBlockTiming?.(currentBlockIndex, elapsed, text.length);
     callbacks.onBlockEnd?.(currentBlockIndex);
 
-    // Siguiente bloque
+    // Siguiente bloque — si pre-buffer está listo, será instantáneo
     playBlock(currentBlockIndex + 1);
   };
 
@@ -286,6 +366,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     speak(newBlocks: string[], cbs?: TtsCallbacks) {
       audio.pause();
       revokePreviousBlob();
+      clearPrefetch();
 
       blocks = newBlocks;
       callbacks = cbs ?? {};
@@ -315,19 +396,19 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
                 state = 'idle';
                 keepalive?.stop();
                 callbacks.onStateChange?.('idle');
-                onSynthesisFailed();
+                onSynthesisFailed('initPiperTts returned false (session not ready)');
               }
               return;
             }
             startPlayback();
           })
-          .catch(() => {
+          .catch((err) => {
             if (!synthFailReported && onSynthesisFailed) {
               synthFailReported = true;
               state = 'idle';
               keepalive?.stop();
               callbacks.onStateChange?.('idle');
-              onSynthesisFailed();
+              onSynthesisFailed(`initPiperTts threw: ${err?.message ?? err}`);
             }
           });
       }
@@ -354,6 +435,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
     stop() {
       audio.pause();
       revokePreviousBlob();
+      clearPrefetch();
       state = 'idle';
       currentBlockIndex = 0;
       keepalive?.stop();
@@ -365,6 +447,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       if (blockIndex < 0 || blockIndex >= blocks.length) return;
       audio.pause();
       revokePreviousBlob();
+      clearPrefetch();
       state = 'loading';
       callbacks.onStateChange?.('loading');
       playBlock(blockIndex);
@@ -374,6 +457,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       if (currentBlockIndex < blocks.length - 1) {
         audio.pause();
         revokePreviousBlob();
+        clearPrefetch();
         playBlock(currentBlockIndex + 1);
       }
     },
@@ -382,6 +466,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       if (currentBlockIndex > 0) {
         audio.pause();
         revokePreviousBlob();
+        clearPrefetch();
         playBlock(currentBlockIndex - 1);
       }
     },
@@ -398,6 +483,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
       destroyed = true;
       audio.pause();
       revokePreviousBlob();
+      clearPrefetch();
       audio.removeAttribute('src');
       audio.onended = null;
       audio.onerror = null;

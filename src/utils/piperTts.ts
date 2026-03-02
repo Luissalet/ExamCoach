@@ -308,7 +308,8 @@ export async function initPiperTts(
   voiceId: VoiceId = DEFAULT_VOICE_ID,
   onProgress?: ProgressCallback,
 ): Promise<boolean> {
-  if (session?.ready && sessionVoiceId === voiceId) return true;
+  // session.ready is always false (library bug) — check session exists instead
+  if (session && sessionVoiceId === voiceId) return true;
 
   if (initPromise && sessionVoiceId === voiceId) {
     return initPromise;
@@ -330,45 +331,52 @@ async function _doInit(
   voiceId: VoiceId,
   onProgress?: ProgressCallback,
 ): Promise<boolean> {
+  // Step 1: Download and cache model (IndexedDB + memory)
+  const cached = await ensureModelCached(voiceId, onProgress);
+  if (!cached) {
+    console.error('[piperTts] Could not cache model');
+    // Still try — library will attempt its own download
+  }
+
+  // Step 2: Install fetch interceptor so library gets our cached blobs
+  const removeFetchInterceptor = installFetchInterceptor();
+
   try {
-    // Step 1: Download and cache model (IndexedDB + memory)
-    const cached = await ensureModelCached(voiceId, onProgress);
-    if (!cached) {
-      console.error('[piperTts] Could not cache model');
-      // Still try — library will attempt its own download
-    }
-
-    // Step 2: Install fetch interceptor so library gets our cached blobs
-    const removeFetchInterceptor = installFetchInterceptor();
-
-    try {
-      // Step 3: Create TTS session
-      session = await TtsSession.create({
-        voiceId,
-        progress: onProgress,
-      });
-      return session.ready;
-    } finally {
-      // Step 4: Always restore original fetch
-      removeFetchInterceptor();
-    }
+    // Step 3: Create TTS session
+    console.log('[piperTts] Creating TtsSession...');
+    session = await TtsSession.create({
+      voiceId,
+      progress: onProgress,
+    });
+    // NOTE: session.ready is ALWAYS false due to a bug in piper-tts-web
+    // (it's initialized to false and never set to true).
+    // If TtsSession.create() resolves without throwing, the session works.
+    console.log('[piperTts] TtsSession created successfully');
+    return true;
   } catch (err) {
-    console.error('[piperTts] Initialization failed:', err);
+    console.error('[piperTts] TtsSession.create failed:', err);
     session = null;
     sessionVoiceId = null;
-    return false;
+    // Re-throw with detail so the caller can show it
+    throw new Error(
+      `TtsSession.create: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  } finally {
+    // Step 4: Always restore original fetch
+    removeFetchInterceptor();
   }
 }
 
 export function isPiperReady(): boolean {
-  return session?.ready ?? false;
+  // session.ready is always false (library bug), so we check if session exists
+  return session !== null;
 }
 
 // ─── Synthesis ──────────────────────────────────────────────────────────────
 
 export async function synthesizeToBlob(text: string): Promise<Blob | null> {
-  if (!session?.ready) {
-    console.warn('[piperTts] Session not ready');
+  if (!session) {
+    console.warn('[piperTts] Session not initialized');
     return null;
   }
 
