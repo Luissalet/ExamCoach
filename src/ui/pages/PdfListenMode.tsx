@@ -53,8 +53,8 @@ export function PdfListenMode() {
   const [selectedVoice, setSelectedVoice] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [estimatedRemaining, setEstimatedRemaining] = useState<number | null>(null);
-  /** Progreso de síntesis del audio concatenado: { current, total } */
-  const [synthProgress, setSynthProgress] = useState<{ current: number; total: number } | null>(null);
+  /** Progreso de síntesis del audio concatenado */
+  const [synthProgress, setSynthProgress] = useState<{ current: number; total: number; bytes: number } | null>(null);
 
   // Timing accumulator: normalized to rate 1.0 so speed changes don't invalidate data
   const timingRef = useRef({ totalBaseMs: 0, totalChars: 0 });
@@ -385,8 +385,8 @@ export function PdfListenMode() {
         // Limpiar progreso de síntesis cuando empieza a reproducir
         if (s === 'playing') setSynthProgress(null);
       },
-      onSynthesisProgress: (current: number, total: number) => {
-        setSynthProgress({ current, total });
+      onSynthesisProgress: (current: number, total: number, bytesGenerated?: number) => {
+        setSynthProgress({ current, total, bytes: bytesGenerated ?? 0 });
       },
     }),
     [processedTexts],
@@ -629,6 +629,16 @@ export function PdfListenMode() {
                 <span className="text-xs text-purple-400 font-mono">
                   Bloque {synthProgress.current} de {synthProgress.total}
                 </span>
+                {synthProgress.bytes > 0 && (
+                  <span className="text-[10px] text-purple-400/70 font-mono ml-auto">
+                    {synthProgress.bytes < 1024 * 1024
+                      ? `${(synthProgress.bytes / 1024).toFixed(0)} KB`
+                      : `${(synthProgress.bytes / (1024 * 1024)).toFixed(1)} MB`}
+                    {synthProgress.current > 0 && (
+                      <> · ~{((synthProgress.bytes / synthProgress.current) * synthProgress.total / (1024 * 1024)).toFixed(1)} MB total</>
+                    )}
+                  </span>
+                )}
               </div>
               <div className="h-1.5 bg-ink-800 rounded-full overflow-hidden">
                 <div

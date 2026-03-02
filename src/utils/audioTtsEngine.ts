@@ -430,6 +430,7 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
 
     // ── Sintetizar TODOS los bloques ─────────────────────────────────────
     const wavBlobs: Blob[] = [];
+    let accumulatedBytes = 0;
 
     for (let i = 0; i < blocks.length; i++) {
       if (synthAborted || destroyed) return;
@@ -439,7 +440,8 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
         // Bloque vacío — generar 200ms de silencio para mantener el mapeo
         const silenceBlob = createSilenceWav(0.2);
         wavBlobs.push(silenceBlob);
-        callbacks.onSynthesisProgress?.(i + 1, blocks.length);
+        accumulatedBytes += silenceBlob.size;
+        callbacks.onSynthesisProgress?.(i + 1, blocks.length, accumulatedBytes);
         continue;
       }
 
@@ -456,10 +458,13 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
             onSynthesisFailed('First block synthesis returned null');
             return;
           }
-          wavBlobs.push(createSilenceWav(0.5));
+          const silence = createSilenceWav(0.5);
+          wavBlobs.push(silence);
+          accumulatedBytes += silence.size;
           callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
         } else {
           wavBlobs.push(blob);
+          accumulatedBytes += blob.size;
         }
       } catch (err) {
         if (synthAborted || destroyed) return;
@@ -473,11 +478,13 @@ export function createAudioTtsEngine(options?: AudioTtsEngineOptions): TtsEngine
           );
           return;
         }
-        wavBlobs.push(createSilenceWav(0.5));
+        const silence = createSilenceWav(0.5);
+        wavBlobs.push(silence);
+        accumulatedBytes += silence.size;
         callbacks.onError?.(`Error sintetizando bloque ${i + 1}`);
       }
 
-      callbacks.onSynthesisProgress?.(i + 1, blocks.length);
+      callbacks.onSynthesisProgress?.(i + 1, blocks.length, accumulatedBytes);
     }
 
     if (synthAborted || destroyed) return;
