@@ -548,9 +548,15 @@ export function SettingsPage() {
                     setSyncing(true);
                     setSyncMsg('');
                     // Si el Gist ID del input difiere del guardado, guardarlo antes de sync
-                    if (syncGistId.trim() && syncGistId.trim() !== settings.syncGistId) {
-                      await updateSettings({ syncGistId: syncGistId.trim() });
-                      addLog(`Gist ID actualizado: ${syncGistId.trim().slice(0, 12)}…`);
+                    const pendingGistId = syncGistId.trim();
+                    if (pendingGistId && pendingGistId !== settings.syncGistId) {
+                      if (pendingGistId.startsWith('ghp_') || pendingGistId.startsWith('github_pat_')) {
+                        addLog('✗ El Gist ID parece ser el Token — déjalo vacío y sube primero', false);
+                        setSyncing(false);
+                        return;
+                      }
+                      await updateSettings({ syncGistId: pendingGistId });
+                      addLog(`Gist ID actualizado: ${pendingGistId.slice(0, 12)}…`);
                     }
                     addLog('Descargando cambios remotos antes de subir…');
                     const pullResult = await pullFromGist(githubToken);
@@ -587,9 +593,15 @@ export function SettingsPage() {
                     setSyncing(true);
                     setSyncMsg('');
                     // Si el Gist ID del input difiere del guardado, guardarlo antes de sync
-                    if (syncGistId.trim() && syncGistId.trim() !== settings.syncGistId) {
-                      await updateSettings({ syncGistId: syncGistId.trim() });
-                      addLog(`Gist ID actualizado: ${syncGistId.trim().slice(0, 12)}…`);
+                    const pendingGistId = syncGistId.trim();
+                    if (pendingGistId && pendingGistId !== settings.syncGistId) {
+                      if (pendingGistId.startsWith('ghp_') || pendingGistId.startsWith('github_pat_')) {
+                        addLog('✗ El Gist ID parece ser el Token — no es lo mismo', false);
+                        setSyncing(false);
+                        return;
+                      }
+                      await updateSettings({ syncGistId: pendingGistId });
+                      addLog(`Gist ID actualizado: ${pendingGistId.slice(0, 12)}…`);
                     }
                     addLog('Conectando con GitHub…');
                     const result = await pullFromGist(githubToken);
@@ -667,8 +679,13 @@ export function SettingsPage() {
                     size="sm"
                     variant="secondary"
                     onClick={async () => {
-                      if (!syncGistId.trim()) return;
-                      await updateSettings({ syncGistId: syncGistId.trim() });
+                      const val = syncGistId.trim();
+                      if (val.startsWith('ghp_') || val.startsWith('github_pat_')) {
+                        setSyncMsg('⚠ Eso es el Token, no el Gist ID. El Gist ID se genera solo al subir por primera vez.');
+                        setTimeout(() => setSyncMsg(''), 6000);
+                        return;
+                      }
+                      await updateSettings({ syncGistId: val });
                       setSyncMsg('✓ Gist ID guardado.');
                       setTimeout(() => setSyncMsg(''), 4000);
                     }}
