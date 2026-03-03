@@ -700,7 +700,20 @@ async function mergeSessions(
       await db.sessions.put(remapped);
       updated++;
     } else {
-      skipped++;
+      // Aunque la sesión no sea "mejor", reparar questionIds rotos
+      // (de syncs anteriores que no remapeaban IDs de preguntas)
+      const needsQuestionRemap = local.questionIds.some(
+        (id, i) => id !== remapped.questionIds[i],
+      );
+      if (needsQuestionRemap) {
+        await db.sessions.update(local.id, {
+          questionIds: remapped.questionIds,
+          answers: remapped.answers,
+        });
+        updated++;
+      } else {
+        skipped++;
+      }
     }
   }
 
