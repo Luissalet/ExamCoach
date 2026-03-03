@@ -110,6 +110,7 @@ interface SyncedSettings {
   studyStreak?: number;
   lastStudyDate?: string;
   subjectGoals?: Record<string, number>;
+  marketplacePasswords?: Record<string, string>;
 }
 
 export interface SyncResult {
@@ -180,6 +181,7 @@ export async function exportFullBackup(): Promise<FullBackup> {
       studyStreak: settings.studyStreak,
       lastStudyDate: settings.lastStudyDate,
       subjectGoals: settings.subjectGoals,
+      marketplacePasswords: settings.marketplacePasswords,
     },
     questionImages,
     pregenManifest: await buildPregenManifest(topics),
@@ -868,6 +870,8 @@ async function mergeSyncedSettings(remote: SyncedSettings): Promise<void> {
       .pop() ?? undefined,
     // Merge import history (union by packId)
     importHistory: mergeImportHistory(local.importHistory, remote.importHistory),
+    // Merge marketplace passwords (remote fills gaps, local wins on conflict)
+    marketplacePasswords: { ...(remote.marketplacePasswords ?? {}), ...(local.marketplacePasswords ?? {}) },
   });
 }
 
