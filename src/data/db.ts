@@ -12,6 +12,7 @@ import type {
   SubjectGradingConfig,
   KeyConcept,
   Exam,
+  InstalledPackage,
 } from '@/domain/models';
 
 /** Registro para guardar un FileSystemDirectoryHandle en IndexedDB. */
@@ -44,6 +45,8 @@ export class StudyDB extends Dexie {
   exams!: Table<Exam, string>;
   /** Almacena FileSystemDirectoryHandle para File System Access API */
   fsaHandles!: Table<FsaHandleRecord, string>;
+  /** Paquetes instalados desde el marketplace */
+  installedPackages!: Table<InstalledPackage, string>;
 
   constructor() {
     super('StudyAppDB');
@@ -173,6 +176,25 @@ export class StudyDB extends Dexie {
       exams: 'id, subjectId, createdAt',
       // Solo se indexa la clave primaria; el handle se almacena como objeto opaco
       fsaHandles: 'key',
+    });
+
+    // v8: installed packages (marketplace)
+    this.version(8).stores({
+      subjects: 'id, name, examDate, createdAt',
+      topics: 'id, subjectId, order, createdAt',
+      questions:
+        'id, subjectId, topicId, type, difficulty, contentHash, createdAt',
+      sessions: 'id, subjectId, mode, createdAt',
+      pdfResources: 'id, subjectId, createdAt',
+      pdfAnchors: 'id, subjectId, pdfId',
+      settings: 'id',
+      questionImages: 'id, filename, createdAt',
+      deliverables: 'id, subjectId, type, dueDate, status, createdAt',
+      gradingConfigs: 'id',
+      keyConcepts: 'id, subjectId, category, order, contentHash, createdAt',
+      exams: 'id, subjectId, createdAt',
+      fsaHandles: 'key',
+      installedPackages: 'id, subjectId, installedAt',
     });
   }
 }

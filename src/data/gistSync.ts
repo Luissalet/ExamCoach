@@ -36,6 +36,7 @@ import type {
   PdfAnchor,
   AppSettings,
   QuestionImageRecord,
+  InstalledPackage,
 } from '@/domain/models';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -70,6 +71,8 @@ export interface FullBackup {
    * solo el manifiesto para que el otro dispositivo los regenere.
    */
   pregenManifest?: PregenManifestEntry[];
+  /** Paquetes instalados desde el marketplace (para que el otro dispositivo sepa qué descargar). */
+  installedPackages?: InstalledPackage[];
 }
 
 /** Entrada en el manifiesto de WAVs pre-generados */
@@ -138,7 +141,7 @@ export async function exportFullBackup(): Promise<FullBackup> {
   const [
     subjects, topics, questions, sessions, pdfAnchors,
     keyConcepts, exams, deliverables, gradingConfigs,
-    questionImageRecords, settings,
+    questionImageRecords, settings, installedPackages,
   ] = await Promise.all([
     db.subjects.toArray(),
     db.topics.toArray(),
@@ -151,6 +154,7 @@ export async function exportFullBackup(): Promise<FullBackup> {
     db.gradingConfigs.toArray(),
     db.questionImages.toArray(),
     getSettings(),
+    db.installedPackages.toArray(),
   ]);
 
   const questionImages: Record<string, { base64: string; mimeType: string }> = {};
@@ -179,6 +183,7 @@ export async function exportFullBackup(): Promise<FullBackup> {
     },
     questionImages,
     pregenManifest: await buildPregenManifest(topics),
+    installedPackages,
   };
 }
 
@@ -301,7 +306,22 @@ export async function mergeBackup(backup: FullBackup): Promise<SyncResult> {
     added += imgResult.added;
     skipped += imgResult.skipped;
 
-    // ── 11. Synced settings ───────────────────────────────────────────
+    // ── 11. Installed packages: merge por ID ───────────────────────────
+    if (backup.installedPackages) {
+      for (const pkg of backup.installedPackages) {
+        const localSubjectId = subjectIdMap.get(pkg.subjectId) ?? pkg.subjectId;
+        const remapped = { ...pkg, subjectId: localSubjectId };
+        const local = await db.installedPackages.get(pkg.id);
+        if (!local) {
+          await db.installedPackages.add(remapped);
+          added++;
+        } else {
+          skipped++;
+        }
+      }
+    }
+
+    // ── 12. Synced settings ───────────────────────────────────────────
     await mergeSyncedSettings(backup.syncedSettings);
 
     // Update lastSyncAt

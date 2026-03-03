@@ -21,6 +21,7 @@ const PdfListenMode        = lazy(() => import('./pages/PdfListenMode').then(m =
 const SessionHistoryPage   = lazy(() => import('./pages/SessionHistory').then(m => ({ default: m.SessionHistoryPage })));
 const GlobalPracticePage   = lazy(() => import('./pages/GlobalPracticePage').then(m => ({ default: m.GlobalPracticePage })));
 const PdfToolsPage         = lazy(() => import('./pages/PdfToolsPage').then(m => ({ default: m.PdfToolsPage })));
+const MarketplacePage      = lazy(() => import('./pages/Marketplace').then(m => ({ default: m.MarketplacePage })));
 
 // ── Spinner de carga para rutas diferidas ──────────────────────────────────
 function PageLoader() {
@@ -43,6 +44,7 @@ export function AppRouter() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/"                                      element={<Dashboard />} />
+          <Route path="/marketplace"                              element={<MarketplacePage />} />
           <Route path="/pdf-tools"                             element={<PdfToolsPage />} />
           <Route path="/global-practice"                       element={<GlobalPracticePage />} />
           <Route path="/subject/:subjectId"                    element={<SubjectView />} />

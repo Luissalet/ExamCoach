@@ -53,6 +53,7 @@ jobs:
         # Si usas dominio personalizado (CNAME), cambia el valor a "/" o al subpath que uses.
         env:
           VITE_BASE_URL: /${{ github.event.repository.name }}/
+          VITE_GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: npm run build
 
       # ── Muestra el tamaño del bundle en el resumen del workflow ─────────────

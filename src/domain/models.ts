@@ -407,6 +407,95 @@ export interface ImportHistoryEntry {
   subjectNames: string[];
 }
 
+// ─── Packages & Marketplace ───────────────────────────────────────────────
+
+/**
+ * Manifiesto de un paquete de asignatura (.examcoach.zip).
+ * Absorbe lo que antes era extra_info.json + metadatos de distribución.
+ */
+export interface PackageManifest {
+  formatVersion: 1;
+  /** Slug único del paquete (e.g. "ingenieria-del-software") */
+  id: string;
+  /** Nombre visible */
+  name: string;
+  /** Versión semántica del paquete */
+  version: string;
+  description?: string;
+  authors?: string[];
+  university?: string;
+  degree?: string;
+  year?: string;
+  credits?: number;
+  professor?: string;
+  allowsNotes?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  /** Estadísticas para mostrar en el marketplace sin descomprimir el banco */
+  stats: {
+    questions: number;
+    topics: number;
+    exams: number;
+    keyConcepts: number;
+  };
+  /** Versión mínima de la app requerida */
+  minAppVersion?: string;
+  gptLinks?: GptLink[];
+  externalLinks?: ExternalLink[];
+}
+
+/**
+ * Banco de preguntas de una asignatura dentro de un paquete.
+ * Independiente y autocontenido.
+ */
+export interface SubjectBank {
+  formatVersion: 1;
+  /** Slug del paquete al que pertenece */
+  subject: string;
+  topics: Topic[];
+  questions: Question[];
+  keyConcepts?: KeyConcept[];
+  exams?: Exam[];
+  pdfAnchors?: PdfAnchor[];
+}
+
+/**
+ * Registro de un paquete instalado en la app.
+ * Se almacena en IndexedDB para tracking de versiones y actualizaciones.
+ */
+export interface InstalledPackage {
+  /** Slug del paquete (= manifest.id) */
+  id: string;
+  /** ID local de la asignatura creada al instalar */
+  subjectId: string;
+  /** Versión instalada */
+  version: string;
+  /** Nombre visible */
+  name: string;
+  /** ISO timestamp de la instalación */
+  installedAt: string;
+  /** Manifest completo (para comparar con el registry) */
+  manifest: PackageManifest;
+}
+
+/**
+ * Entrada del catálogo remoto (parseada de GitHub Releases).
+ */
+export interface RegistryEntry {
+  /** Slug del paquete */
+  id: string;
+  /** Manifest completo del paquete */
+  manifest: PackageManifest;
+  /** URL de descarga del ZIP (GitHub Release asset) */
+  downloadUrl: string;
+  /** Tamaño del archivo en bytes */
+  size?: number;
+  /** Fecha de publicación del release */
+  publishedAt: string;
+  /** Si el archivo está cifrado con AES-256-GCM */
+  encrypted?: boolean;
+}
+
 // ─── AI Settings ──────────────────────────────────────────────────────────────
 
 export type AIProviderType = 'openai' | 'anthropic' | 'webllm';
@@ -445,6 +534,8 @@ export interface AppSettings {
    * Scope mínimo requerido: gist (create/read gists).
    */
   githubToken?: string;
+  /** Contraseñas por paquete del marketplace { packageId: password } */
+  marketplacePasswords?: Record<string, string>;
   /**
    * ID del Gist privado usado para sincronización entre dispositivos.
    * Se crea automáticamente en el primer push y se reutiliza.

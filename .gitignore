@@ -15,3 +15,10 @@ vite.config.ts.timestamp*
 resources.zip
 
 CLAUDE.md
+
+# Env files con tokens
+.env.local
+.env*.local
+
+# Scripts locales (contraseñas, generadores, etc.)
+/scripts

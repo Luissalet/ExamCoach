@@ -1,11 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/ui/store';
 import { Button, Card, Modal, Input, Countdown, Progress, EmptyState } from '@/ui/components';
-import { exportBank, exportGlobalBank, importBank, parseImportFile, downloadJSON, removeDuplicateQuestions, commitAndCleanContributions } from '@/data/exportImport';
+import { removeDuplicateQuestions, commitAndCleanContributions } from '@/data/exportImport';
 import { loadSubjectExtraInfo } from '@/data/resourceLoader';
-import { importResourceZip } from '@/data/resourceImporter';
-import type { ImportProgressEvent } from '@/data/resourceImporter';
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
 import { db, getSettings } from '@/data/db';
 import { CalendarWidget } from '@/ui/components/CalendarWidget';
@@ -35,9 +33,6 @@ export function Dashboard() {
   const [dueToday, setDueToday] = useState<Record<string, number>>({});
   const [incompleteSessions, setIncompleteSessions] = useState<Record<string, string>>({}); // subjectId → sessionId
   const [extraInfo, setExtraInfo] = useState<Record<string, SubjectExtraInfo | null>>({});
-  const [importLoading, setImportLoading] = useState(false);
-  const [importMsg, setImportMsg] = useState('');
-  const [syncMsg, setSyncMsg] = useState('');
   const [pendingCorrectionCount, setPendingCorrectionCount] = useState<Record<string, number>>({});
 
   // Global search state
@@ -52,11 +47,6 @@ export function Dashboard() {
   }>>([]);
   const [globalSearching, setGlobalSearching] = useState(false);
 
-  const [zipImporting, setZipImporting] = useState(false);
-  const [zipMsg, setZipMsg] = useState('');
-  const [zipDragOver, setZipDragOver] = useState(false);
-  const zipInputRef = useRef<HTMLInputElement>(null);
-  const [zipProgress, setZipProgress] = useState<ImportProgressEvent | null>(null);
   const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
 
   const [commitMsg, setCommitMsg] = useState('');
@@ -76,16 +66,7 @@ export function Dashboard() {
 
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
-    loadSettings().then(() => {
-      syncGlobalBank(false).then((result) => {
-        if (result && (result.subjectsAdded + result.topicsAdded + result.questionsAdded) > 0) {
-          setSyncMsg(
-            `✓ Banco global: +${result.subjectsAdded} asignaturas, +${result.topicsAdded} temas, +${result.questionsAdded} preguntas`
-          );
-          setTimeout(() => setSyncMsg(''), 5000);
-        }
-      });
-    });
+    loadSettings();
     loadSubjects();
     getSettings().then(s => setStreak(s.studyStreak ?? 0));
     deliverableRepo.getAll().then(all => {
@@ -240,60 +221,6 @@ export function Dashboard() {
     return () => window.removeEventListener('beforeinstallprompt', handlePrompt);
   }, []);
 
-  // ── ITER3: ZIP import ──────────────────────────────────────────────────────
-  const handleZipImport = async (file: File) => {
-    if (!file.name.endsWith('.zip')) {
-      setZipMsg('Error: solo se aceptan archivos .zip');
-      return;
-    }
-    setZipImporting(true);
-    setZipMsg('');
-    setZipProgress(null);
-    try {
-      const result = await importResourceZip(file, (event) => {
-        setZipProgress(event);
-      });
-
-      // Missing subjects → clear actionable message
-      if (result.missingSubjects && result.missingSubjects.length > 0) {
-        setZipMsg(
-          `Error: No se encontraron estas asignaturas en tu banco:\n` +
-          result.missingSubjects.map((s) => `  · ${s}`).join('\n') +
-          `\n\nImporta primero el banco de preguntas (JSON) que contiene las asignaturas.`,
-        );
-        return;
-      }
-
-      // Quota exceeded
-      if (result.quotaWarning) {
-        setZipMsg(
-          `⚠ Almacenamiento insuficiente. Se importaron ${result.totalFiles} archivos parcialmente.\n` +
-          `Intenta liberar espacio en el navegador o no usar modo incógnito.`,
-        );
-        return;
-      }
-
-      // Errors during processing
-      if (result.errors.length > 0) {
-        const shown = result.errors.slice(0, 10);
-        const extra = result.errors.length - shown.length;
-        setZipMsg(
-          `⚠ Importado con errores (${result.totalFiles} archivos):\n` +
-          shown.map((e) => `  · ${e}`).join('\n') +
-          (extra > 0 ? `\n  … y ${extra} error(es) más` : ''),
-        );
-      } else {
-        const cats = Object.entries(result.categories).map(([k, v]) => `${k}: ${v}`).join(', ');
-        setZipMsg(`✓ Importados ${result.totalFiles} archivos de ${result.subjects.length} asignatura(s). ${cats}`);
-      }
-    } catch (err) {
-      setZipMsg('Error: ' + String(err));
-    } finally {
-      setZipImporting(false);
-      setZipProgress(null);
-      setZipDragOver(false);
-    }
-  };
 
   // ── Crear asignatura ───────────────────────────────────────────────────────
   const handleCreate = async () => {
@@ -308,16 +235,6 @@ export function Dashboard() {
     navigate(`/subject/${s.id}`);
   };
 
-  // ── Export ─────────────────────────────────────────────────────────────────
-  const handleExportPersonal = async () => {
-    const bank = await exportBank();
-    downloadJSON(bank, `backup-personal-${new Date().toISOString().split('T')[0]}.json`);
-  };
-
-  const handleExportGlobal = async () => {
-    const bank = await exportGlobalBank();
-    downloadJSON(bank, `global-bank.json`);
-  };
 
   const handleCommitAndClean = async () => {
     if (!confirm(
@@ -372,45 +289,7 @@ export function Dashboard() {
     }
   };
 
-  // ── Import (backup personal) ───────────────────────────────────────────────
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImportLoading(true);
-    setImportMsg('');
-    try {
-      const raw = await parseImportFile(file);
-      const result = await importBank(raw);
-      if (result.errors.length > 0) {
-        setImportMsg('Error: ' + result.errors[0]);
-      } else {
-        setImportMsg(`✓ Importado: ${result.subjectsAdded} asignaturas, ${result.topicsAdded} temas, ${result.questionsAdded} preguntas`);
-        await loadSubjects();
-      }
-    } catch (err) {
-      setImportMsg('Error: ' + String(err));
-    } finally {
-      setImportLoading(false);
-      e.target.value = '';
-    }
-  };
 
-  // ── Sync manual ────────────────────────────────────────────────────────────
-  const handleSyncManual = async () => {
-    setSyncMsg('');
-    const result = await syncGlobalBank(true);
-    if (!result) return;
-    if (result.errors.length > 0) {
-      setSyncMsg('Error al sincronizar: ' + result.errors[0]);
-    } else if (result.subjectsAdded + result.topicsAdded + result.questionsAdded === 0) {
-      setSyncMsg('✓ Ya estás al día con el banco global');
-    } else {
-      setSyncMsg(
-        `✓ Sincronizado: +${result.subjectsAdded} asignaturas, +${result.topicsAdded} temas, +${result.questionsAdded} preguntas`
-      );
-    }
-    setTimeout(() => setSyncMsg(''), 5000);
-  };
 
   const handlePwaInstall = async () => {
     setMobileMenuOpen(false);
@@ -442,21 +321,6 @@ export function Dashboard() {
     return Math.round((st.correct / st.seen) * 100);
   };
 
-  const lastSyncDate = settings.globalBankSyncedAt
-    ? new Date(settings.globalBankSyncedAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })
-    : null;
-
-  // C3: Check if global bank sync is stale (>7 days or never synced)
-  const [syncBannerDismissed, setSyncBannerDismissed] = useState(false);
-  const syncStale = (() => {
-    if (syncBannerDismissed) return false;
-    if (!settings.globalBankSyncedAt) return true;
-    const daysSince = (Date.now() - new Date(settings.globalBankSyncedAt).getTime()) / (1000 * 60 * 60 * 24);
-    return daysSince > 7;
-  })();
-  const syncStaleDays = settings.globalBankSyncedAt
-    ? Math.floor((Date.now() - new Date(settings.globalBankSyncedAt).getTime()) / (1000 * 60 * 60 * 24))
-    : null;
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -535,6 +399,11 @@ export function Dashboard() {
               )}
             </div>
 
+            <Button variant="ghost" size="sm" onClick={() => navigate('/marketplace')} title="Marketplace">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd"/>
+              </svg>
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/settings')} title="Ajustes">
               <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd"/>
@@ -618,14 +487,13 @@ export function Dashboard() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => { handleSyncManual(); setMobileMenuOpen(false); }}
-              disabled={syncing}
+              onClick={() => { navigate('/marketplace'); setMobileMenuOpen(false); }}
               className="justify-start w-full"
             >
-              {syncing ? '⟳ Sincronizando…' : '⟳ Sincronizar banco'}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => { handleExportGlobal(); setMobileMenuOpen(false); }} className="justify-start w-full">
-              ↑ Exportar banco global
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+                <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd"/>
+              </svg>
+              Marketplace
             </Button>
             <Button
               variant="ghost"
@@ -659,58 +527,10 @@ export function Dashboard() {
               )}
               Eliminar duplicadas
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => { handleExportPersonal(); setMobileMenuOpen(false); }} className="justify-start w-full">
-              ↑ Backup personal
-            </Button>
-            <label className="cursor-pointer w-full">
-              <input type="file" accept=".json" className="hidden" onChange={(e) => { handleImport(e); setMobileMenuOpen(false); }} disabled={importLoading} />
-              <span className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all w-full ${
-                importLoading ? 'text-ink-500 bg-ink-800' : 'text-ink-300 hover:text-ink-100 hover:bg-ink-800'
-              }`}>
-                ↓ Importar backup
-              </span>
-            </label>
-            {/* ZIP: reusa el input permanente del DOM */}
-            <button
-              onClick={() => { zipInputRef.current?.click(); setMobileMenuOpen(false); }}
-              disabled={zipImporting}
-              className={`inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg font-medium font-body transition-all w-full ${
-                zipImporting
-                  ? 'text-ink-500 bg-ink-800 animate-pulse cursor-not-allowed'
-                  : 'text-amber-400 hover:text-amber-300 hover:bg-ink-800 border border-amber-500/30'
-              }`}
-            >
-              {zipImporting ? (
-                <>
-                  <svg className="animate-spin h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                  Importando…
-                </>
-              ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
-                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/>
-                  </svg>
-                  Importar recursos
-                </>
-              )}
-            </button>
           </div>
         )}
       </header>
 
-      {/* Input ZIP siempre presente en el DOM (para el drop zone) */}
-      <input
-        ref={zipInputRef}
-        type="file"
-        accept=".zip"
-        className="hidden"
-        disabled={zipImporting}
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) handleZipImport(f);
-          e.target.value = '';
-        }}
-      />
 
       {/* iOS PWA hint */}
       {pwaIosHint && (
@@ -722,30 +542,6 @@ export function Dashboard() {
         </div>
       )}
 
-      {/* C3: Stale sync banner */}
-      {syncStale && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 sm:px-6 py-2 flex items-center justify-between flex-shrink-0">
-          <span className="text-xs text-amber-400">
-            {syncStaleDays != null
-              ? `El banco global no se ha sincronizado en ${syncStaleDays} días.`
-              : 'El banco global nunca se ha sincronizado.'}
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => { handleSyncManual(); setSyncBannerDismissed(true); }}
-              className="text-xs text-amber-400 hover:text-amber-300 font-medium underline underline-offset-2"
-            >
-              Sincronizar ahora
-            </button>
-            <button
-              onClick={() => setSyncBannerDismissed(true)}
-              className="text-xs text-ink-600 hover:text-ink-400 transition-colors"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* ── Body: left sidebar + main + right sidebar ────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
@@ -763,7 +559,7 @@ export function Dashboard() {
                 <h1 className="font-display text-2xl sm:text-3xl text-ink-100 mb-1">Mis asignaturas</h1>
                 <p className="text-ink-500 text-sm">
                   {subjects.length === 0
-                    ? 'Crea tu primera asignatura para empezar'
+                    ? 'Instala asignaturas desde el marketplace'
                     : `${subjects.length} asignatura${subjects.length !== 1 ? 's' : ''} · ${Object.values(stats).reduce((k, b) => k + b.total, 0)} preguntas`}
                 </p>
               </div>
@@ -849,20 +645,6 @@ export function Dashboard() {
             </div>
 
             {/* Mensajes de estado */}
-            {syncMsg && (
-              <div className="mb-4 px-4 py-3 rounded-lg text-sm font-body border bg-sage-600/10 border-sage-600/30 text-sage-400">
-                {syncMsg}
-              </div>
-            )}
-            {importMsg && (
-              <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-body border ${
-                importMsg.startsWith('Error')
-                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                  : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
-              }`}>
-                {importMsg}
-              </div>
-            )}
             {commitMsg && (
               <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-body border ${
                 commitMsg.startsWith('Error')
@@ -886,12 +668,24 @@ export function Dashboard() {
 
             {/* Grid de asignaturas */}
             {subjects.length === 0 ? (
-              <EmptyState
-                icon={<span>📚</span>}
-                title="Sin asignaturas"
-                description="El banco global se carga automáticamente. Si está vacío, crea una asignatura."
-                action={<Button onClick={() => setShowCreate(true)}>+ Nueva asignatura</Button>}
-              />
+              <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
+                <svg width="56" height="56" viewBox="0 0 20 20" fill="currentColor" className="text-ink-700">
+                  <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd"/>
+                </svg>
+                <div>
+                  <p className="font-display text-lg text-ink-300 mb-1">Sin asignaturas</p>
+                  <p className="text-sm text-ink-500 max-w-xs">Instala paquetes de asignaturas desde el marketplace o crea una manualmente.</p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => navigate('/marketplace')}
+                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-ink-900 text-sm font-semibold transition-colors"
+                  >
+                    Ir al Marketplace
+                  </button>
+                  <Button variant="ghost" onClick={() => setShowCreate(true)}>+ Crear manual</Button>
+                </div>
+              </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {subjects.map((s) => {
@@ -1080,88 +874,6 @@ export function Dashboard() {
               </button>
             </div>
 
-            {/* ZIP progress bar */}
-            {zipProgress && zipProgress.phase !== 'complete' && (
-              <div className="mt-6 bg-ink-800 rounded-lg p-4 border border-amber-500/30">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-amber-400 font-medium font-body">
-                    {zipProgress.phase === 'reading' && '📖 Leyendo ZIP…'}
-                    {zipProgress.phase === 'validating' && '🔍 Validando asignaturas…'}
-                    {zipProgress.phase === 'processing' &&
-                      `⏳ Importando: ${zipProgress.filesProcessed}/${zipProgress.totalFiles}`}
-                  </span>
-                  {zipProgress.totalFiles > 0 && (
-                    <span className="text-xs text-ink-400 font-body">
-                      {Math.round((zipProgress.filesProcessed / zipProgress.totalFiles) * 100)}%
-                    </span>
-                  )}
-                </div>
-                {zipProgress.totalFiles > 0 && (
-                  <Progress value={zipProgress.filesProcessed} max={zipProgress.totalFiles} color="amber" />
-                )}
-                {zipProgress.currentFile && (
-                  <p className="text-xs text-ink-500 mt-2 truncate font-body">
-                    {zipProgress.currentFile}
-                  </p>
-                )}
-                <p className="text-xs text-ink-600 mt-1 font-body">
-                  No cierres esta pestaña. Puede tardar varios minutos con archivos grandes.
-                </p>
-              </div>
-            )}
-
-            {/* ZIP result message */}
-            {zipMsg && (
-              <div className={`mt-6 px-4 py-3 rounded-lg text-sm font-body border whitespace-pre-wrap ${
-                zipMsg.startsWith('Error') || zipMsg.startsWith('⚠')
-                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                  : 'bg-sage-600/10 border-sage-600/30 text-sage-400'
-              }`}>
-                {zipMsg}
-              </div>
-            )}
-
-            {/* ZIP drop zone */}
-            <div
-              onDragOver={(e) => { e.preventDefault(); if (!zipImporting) setZipDragOver(true); }}
-              onDragLeave={() => setZipDragOver(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                if (zipImporting) return;
-                const file = e.dataTransfer.files[0];
-                if (file) handleZipImport(file);
-              }}
-              className={`mt-8 border-2 border-dashed rounded-xl p-6 text-center transition-all ${
-                zipImporting
-                  ? 'border-ink-700 bg-ink-800/50 text-ink-600 cursor-not-allowed opacity-50'
-                  : zipDragOver
-                  ? 'border-amber-500 bg-amber-500/5 text-amber-300 cursor-pointer'
-                  : 'border-ink-700 text-ink-600 hover:border-ink-500 hover:text-ink-400 cursor-pointer'
-              }`}
-              onClick={() => !zipImporting && zipInputRef.current?.click()}
-            >
-              <p className="text-sm font-body flex items-center justify-center gap-2">
-                {zipImporting ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4 flex-shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                    Importando recursos…
-                  </>
-                ) : zipDragOver ? (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
-                    Suelta el ZIP aquí
-                  </>
-                ) : (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0 opacity-60"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
-                    Arrastra un ZIP de recursos aquí o haz clic para importar
-                  </>
-                )}
-              </p>
-              <p className="text-xs text-ink-600 mt-1">
-                Estructura: resources/[asignatura]/Temas|Examenes|Practica|Resumenes
-              </p>
-            </div>
 
             {/* ── Botones link externos ───────────────────────────────────── */}
             {externalLinks.length > 0 && (
