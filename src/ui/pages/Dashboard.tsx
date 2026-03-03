@@ -602,6 +602,19 @@ export function Dashboard() {
 
             <div className="border-t border-ink-800/60 my-0.5" />
 
+            {/* Actualizar app — siempre visible */}
+            <button
+              onClick={() => { window.location.reload(); }}
+              className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg font-medium font-body transition-all justify-start w-full text-emerald-300 hover:text-emerald-200 hover:bg-ink-800 border border-emerald-500/30"
+            >
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd"/>
+              </svg>
+              Actualizar app
+            </button>
+
+            <div className="border-t border-ink-800/60 my-0.5" />
+
             <Button
               variant="ghost"
               size="sm"
