@@ -533,6 +533,160 @@ export async function migrateOrphanSubjects(): Promise<number> {
   return migrated;
 }
 
+// ─── Repair orphan deliverables / sessions / gradingConfigs ──────────────────
+
+/**
+ * Repara registros (deliverables, sessions, exams, gradingConfigs, etc.)
+ * que apuntan a un subjectId que ya no existe, intentando reasignarlos
+ * a la asignatura correcta por slug del nombre.
+ *
+ * Esto ocurre cuando la reinstalación desde marketplace creó nuevos UUIDs
+ * para asignaturas que ya existían, dejando huérfanos los registros
+ * que apuntaban a los IDs viejos.
+ */
+export async function repairOrphanRecords(): Promise<number> {
+  const allSubjects = await db.subjects.toArray();
+  const subjectById = new Map(allSubjects.map(s => [s.id, s]));
+
+  // Build a remap: oldSubjectId → currentSubjectId
+  // Fuente 1: InstalledPackages (manifest.id = slug, subjectId = actual local ID)
+  // Fuente 2: Topics con el mismo slug title en una asignatura existente
+  const remapCache = new Map<string, string | null>();
+
+  // Pre-build topic slug index: slug → subjectId (de asignaturas que existen)
+  const allTopics = await db.topics.toArray();
+  const topicSlugToSubjectId = new Map<string, string>();
+  for (const t of allTopics) {
+    if (subjectById.has(t.subjectId)) {
+      topicSlugToSubjectId.set(slugify(t.title), t.subjectId);
+    }
+  }
+
+  const findReplacement = async (orphanId: string): Promise<string | null> => {
+    if (remapCache.has(orphanId)) return remapCache.get(orphanId)!;
+
+    // Estrategia 1: buscar topics huérfanos de este subjectId y matchear por slug
+    const orphanTopics = allTopics.filter(t => t.subjectId === orphanId);
+    for (const topic of orphanTopics) {
+      const match = topicSlugToSubjectId.get(slugify(topic.title));
+      if (match && match !== orphanId) {
+        remapCache.set(orphanId, match);
+        return match;
+      }
+    }
+
+    // Estrategia 2: si hay un solo subject, redirigir todo ahí
+    if (allSubjects.length === 1) {
+      remapCache.set(orphanId, allSubjects[0].id);
+      return allSubjects[0].id;
+    }
+
+    remapCache.set(orphanId, null);
+    return null;
+  };
+
+  let repaired = 0;
+
+  // 1. Reparar deliverables
+  const allDeliverables = await db.deliverables.toArray();
+  for (const d of allDeliverables) {
+    if (subjectById.has(d.subjectId)) continue;
+    const newId = await findReplacement(d.subjectId);
+    if (newId) {
+      await db.deliverables.update(d.id, { subjectId: newId });
+      repaired++;
+    }
+  }
+
+  // 2. Reparar sessions
+  const allSessions = await db.sessions.toArray();
+  for (const s of allSessions) {
+    if (subjectById.has(s.subjectId)) continue;
+    const newId = await findReplacement(s.subjectId);
+    if (newId) {
+      await db.sessions.update(s.id, { subjectId: newId });
+      repaired++;
+    }
+  }
+
+  // 3. Reparar gradingConfigs (id === subjectId)
+  const allGradingConfigs = await db.gradingConfigs.toArray();
+  for (const gc of allGradingConfigs) {
+    if (subjectById.has(gc.id)) continue;
+    const newId = await findReplacement(gc.id);
+    if (newId) {
+      const existing = await db.gradingConfigs.get(newId);
+      if (!existing) {
+        await db.gradingConfigs.put({ ...gc, id: newId });
+      }
+      await db.gradingConfigs.delete(gc.id);
+      repaired++;
+    }
+  }
+
+  // 4. Reparar topics y questions huérfanos
+  for (const t of allTopics) {
+    if (subjectById.has(t.subjectId)) continue;
+    const newId = await findReplacement(t.subjectId);
+    if (newId) {
+      // Buscar topic equivalente en la asignatura correcta
+      const localTopics = await db.topics.where('subjectId').equals(newId).toArray();
+      const match = localTopics.find(lt => slugify(lt.title) === slugify(t.title));
+      if (match) {
+        // Reasignar preguntas del topic huérfano al topic correcto
+        const orphanQs = await db.questions.where('topicId').equals(t.id).toArray();
+        for (const q of orphanQs) {
+          await db.questions.update(q.id, { subjectId: newId, topicId: match.id });
+        }
+        await db.topics.delete(t.id);
+      } else {
+        // No hay match — mover el topic entero a la asignatura correcta
+        await db.topics.update(t.id, { subjectId: newId });
+        const orphanQs = await db.questions.where('topicId').equals(t.id).toArray();
+        for (const q of orphanQs) {
+          await db.questions.update(q.id, { subjectId: newId });
+        }
+      }
+      repaired++;
+    }
+  }
+
+  // 5. Reparar questions sueltas (sin topic huérfano ya tratado)
+  const allQuestions = await db.questions.toArray();
+  for (const q of allQuestions) {
+    if (subjectById.has(q.subjectId)) continue;
+    const newId = await findReplacement(q.subjectId);
+    if (newId) {
+      await db.questions.update(q.id, { subjectId: newId });
+      repaired++;
+    }
+  }
+
+  return repaired;
+}
+
+// ─── Fix missing subject colors ──────────────────────────────────────────────
+
+/**
+ * Asigna colores distintos a asignaturas que no tengan uno asignado.
+ * Esto ocurre con asignaturas importadas desde el viejo global-bank,
+ * que no incluían color.
+ */
+export async function assignMissingSubjectColors(): Promise<number> {
+  const allSubjects = await db.subjects.toArray();
+  const needsColor = allSubjects.filter(s => !s.color);
+  if (needsColor.length === 0) return 0;
+
+  // Use total subject count as offset so colors don't collide with existing ones
+  let assigned = 0;
+  for (const subject of needsColor) {
+    const idx = allSubjects.indexOf(subject);
+    await db.subjects.update(subject.id, { color: pickColor(idx) });
+    assigned++;
+  }
+  return assigned;
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const COLORS = [

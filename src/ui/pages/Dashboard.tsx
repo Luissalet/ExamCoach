@@ -6,7 +6,7 @@ import { removeDuplicateQuestions, commitAndCleanContributions } from '@/data/ex
 import { loadSubjectExtraInfo } from '@/data/resourceLoader';
 import type { Subject, SubjectExtraInfo, ExternalLink } from '@/domain/models';
 import { db, getSettings } from '@/data/db';
-import { migrateOrphanSubjects } from '@/data/packageManager';
+import { migrateOrphanSubjects, assignMissingSubjectColors, repairOrphanRecords } from '@/data/packageManager';
 import { CalendarWidget } from '@/ui/components/CalendarWidget';
 import { ActiveSessionsSidebar } from '@/ui/components/ActiveSessionsSidebar';
 import { deliverableRepo } from '@/data/deliverableRepo';
@@ -67,8 +67,12 @@ export function Dashboard() {
 
   // ── Inicialización ─────────────────────────────────────────────────────────
   useEffect(() => {
-    // Migrar asignaturas pre-marketplace a InstalledPackage (una sola vez)
-    migrateOrphanSubjects().catch(() => {/* silencioso */});
+    // Reparar registros huérfanos + asignar colores + migrar a marketplace
+    Promise.all([
+      repairOrphanRecords(),
+      assignMissingSubjectColors(),
+      migrateOrphanSubjects(),
+    ]).then(() => loadSubjects()).catch(() => {/* silencioso */});
     loadSettings();
     loadSubjects();
     getSettings().then(s => setStreak(s.studyStreak ?? 0));
