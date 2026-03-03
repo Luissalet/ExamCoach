@@ -561,6 +561,11 @@ export interface AppSettings {
    * LOCAL — nunca se exporta.
    */
   subjectGoals?: Record<string, number>;
+  /**
+   * Flag que indica que la migración de asignaturas huérfanas (pre-marketplace)
+   * ya se ejecutó. Evita re-ejecutar la migración en cada arranque.
+   */
+  orphanMigrationDone?: boolean;
 }
 
 // ─── Deliverables & Grading (LOCAL — never exported to global bank) ───────────

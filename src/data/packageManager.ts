@@ -462,6 +462,77 @@ export async function listInstalled(): Promise<InstalledPackage[]> {
   return db.installedPackages.toArray();
 }
 
+// ─── Migration: adopt orphan subjects ────────────────────────────────────────
+
+/**
+ * Detecta asignaturas que ya existen en IndexedDB (importadas desde el viejo
+ * global-bank) pero no tienen un InstalledPackage asociado.
+ * Para cada una, crea un registro InstalledPackage con version "0.0.0"
+ * para que el Marketplace las reconozca como instaladas y ofrezca la
+ * actualización al paquete completo.
+ *
+ * Solo se ejecuta una vez (guarda un flag en settings).
+ */
+export async function migrateOrphanSubjects(): Promise<number> {
+  const settings = await import('./db').then(m => m.getSettings());
+  if (settings.orphanMigrationDone) return 0;
+
+  const allSubjects = await db.subjects.toArray();
+  const installedPackages = await db.installedPackages.toArray();
+  const installedSubjectIds = new Set(installedPackages.map(p => p.subjectId));
+
+  const orphans = allSubjects.filter(s => !installedSubjectIds.has(s.id));
+  if (orphans.length === 0) {
+    await import('./db').then(m => m.saveSettings({ orphanMigrationDone: true }));
+    return 0;
+  }
+
+  // Count content per subject for synthetic manifest stats
+  let migrated = 0;
+  for (const subject of orphans) {
+    const slug = slugify(subject.name);
+    if (!slug) continue;
+
+    // Don't create duplicates if package ID already exists
+    const existing = await db.installedPackages.get(slug);
+    if (existing) continue;
+
+    const [topics, questions, keyConcepts, exams] = await Promise.all([
+      db.topics.where('subjectId').equals(subject.id).count(),
+      db.questions.where('subjectId').equals(subject.id).count(),
+      db.keyConcepts.where('subjectId').equals(subject.id).count(),
+      db.exams.where('subjectId').equals(subject.id).count(),
+    ]);
+
+    const now = new Date().toISOString();
+    const manifest: PackageManifest = {
+      formatVersion: 1,
+      id: slug,
+      name: subject.name,
+      version: '0.0.0',
+      allowsNotes: subject.allowsNotes,
+      createdAt: subject.createdAt,
+      updatedAt: now,
+      stats: { questions, topics, exams, keyConcepts },
+    };
+
+    const record: InstalledPackage = {
+      id: slug,
+      subjectId: subject.id,
+      version: '0.0.0',
+      name: subject.name,
+      installedAt: now,
+      manifest,
+    };
+
+    await db.installedPackages.put(record);
+    migrated++;
+  }
+
+  await import('./db').then(m => m.saveSettings({ orphanMigrationDone: true }));
+  return migrated;
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const COLORS = [
