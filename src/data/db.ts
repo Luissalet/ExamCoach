@@ -210,6 +210,9 @@ export async function getSettings(): Promise<AppSettings> {
 }
 
 export async function saveSettings(settings: Partial<AppSettings>): Promise<void> {
-  const current = await getSettings();
-  await db.settings.put({ ...current, ...settings, id: SETTINGS_ID });
+  await db.transaction('rw', db.settings, async () => {
+    const row = await db.settings.get(SETTINGS_ID);
+    const current: AppSettings = row ?? { alias: '', importedPackIds: [] };
+    await db.settings.put({ ...current, ...settings, id: SETTINGS_ID });
+  });
 }
