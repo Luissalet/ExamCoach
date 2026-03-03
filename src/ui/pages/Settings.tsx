@@ -346,9 +346,19 @@ export function SettingsPage() {
 
   // ── Handler: guardar token de GitHub ─────────────────────────────────────────
   const handleSaveGithubToken = async () => {
-    await updateSettings({ githubToken });
-    setGistExportMsg('✓ Token guardado');
-    setTimeout(() => setGistExportMsg(''), 3000);
+    if (!githubToken.trim()) {
+      setGistExportMsg('⚠ El token está vacío');
+      setTimeout(() => setGistExportMsg(''), 4000);
+      return;
+    }
+    try {
+      await updateSettings({ githubToken: githubToken.trim() });
+      setGistExportMsg('✓ Token guardado');
+      setTimeout(() => setGistExportMsg(''), 3000);
+    } catch (err) {
+      setGistExportMsg('Error al guardar: ' + String(err));
+      setTimeout(() => setGistExportMsg(''), 8000);
+    }
   };
 
   // ── Handler: exportar contribution pack a GitHub Gist ─────────────────────
@@ -711,9 +721,14 @@ export function SettingsPage() {
                         setTimeout(() => setSyncMsg(''), 6000);
                         return;
                       }
-                      await updateSettings({ syncGistId: val });
-                      setSyncMsg('✓ Gist ID guardado.');
-                      setTimeout(() => setSyncMsg(''), 4000);
+                      try {
+                        await updateSettings({ syncGistId: val });
+                        setSyncMsg('✓ Gist ID guardado.');
+                        setTimeout(() => setSyncMsg(''), 4000);
+                      } catch (err) {
+                        setSyncMsg('Error al guardar Gist ID: ' + String(err));
+                        setTimeout(() => setSyncMsg(''), 8000);
+                      }
                     }}
                   >
                     Guardar
