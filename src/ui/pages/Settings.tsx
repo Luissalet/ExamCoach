@@ -353,6 +353,13 @@ export function SettingsPage() {
     }
     try {
       await updateSettings({ githubToken: githubToken.trim() });
+      // Verificar que se guardó leyendo de vuelta de IndexedDB
+      const check = await getSettings();
+      if (check.githubToken !== githubToken.trim()) {
+        setGistExportMsg('⚠ El token no se persistió en IndexedDB — revisa permisos del navegador');
+        setTimeout(() => setGistExportMsg(''), 8000);
+        return;
+      }
       setGistExportMsg('✓ Token guardado');
       setTimeout(() => setGistExportMsg(''), 3000);
     } catch (err) {
@@ -723,6 +730,13 @@ export function SettingsPage() {
                       }
                       try {
                         await updateSettings({ syncGistId: val });
+                        // Verificar persistencia
+                        const check = await getSettings();
+                        if (check.syncGistId !== val) {
+                          setSyncMsg('⚠ El Gist ID no se persistió — revisa permisos del navegador');
+                          setTimeout(() => setSyncMsg(''), 8000);
+                          return;
+                        }
                         setSyncMsg('✓ Gist ID guardado.');
                         setTimeout(() => setSyncMsg(''), 4000);
                       } catch (err) {

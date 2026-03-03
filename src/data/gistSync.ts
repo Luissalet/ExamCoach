@@ -1039,74 +1039,97 @@ const CHUNK_SIZE = 9 * 1024 * 1024;
  */
 export async function pushToGist(token: string): Promise<SyncResult> {
   try {
-    const backup = await exportFullBackup();
-
-    // Exportar PDFs como archivos Gist separados
-    const subjectIds = backup.subjects.map((s) => s.id);
-    const pdfExport = await exportPdfsForGist(subjectIds);
-    backup.pdfManifest = pdfExport.manifest;
-
-    const json = JSON.stringify(backup);
-    const settings = await getSettings();
-    const gistId = settings.syncGistId;
-
-    const files: Record<string, { content: string } | null> = {};
-
-    // Añadir archivos de PDFs
-    Object.assign(files, pdfExport.files);
-
-    if (json.length <= CHUNK_SIZE) {
-      files[GIST_FILENAME] = { content: json };
-    } else {
-      const totalChunks = Math.ceil(json.length / CHUNK_SIZE);
-      for (let i = 0; i < totalChunks; i++) {
-        const chunkName = `examcoach-backup-${String(i).padStart(3, '0')}.json`;
-        files[chunkName] = { content: json.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE) };
-      }
-      files['examcoach-manifest.json'] = {
-        content: JSON.stringify({ chunks: totalChunks, exportedAt: backup.exportedAt }),
-      };
-      if (gistId) files[GIST_FILENAME] = null;
-    }
-
-    let resultGistId: string;
-
-    if (gistId) {
-      const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `token ${token}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/vnd.github+json',
-        },
-        body: JSON.stringify({ files }),
-      });
-
-      if (res.status === 404) {
-        resultGistId = await createNewGist(token, files as Record<string, { content: string }>, backup.exportedAt);
-      } else if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error((body as any).message ?? `HTTP ${res.status}`);
-      } else {
-        resultGistId = gistId;
-      }
-    } else {
-      resultGistId = await createNewGist(token, files as Record<string, { content: string }>, backup.exportedAt);
-    }
-
-    await saveSettings({
-      syncGistId: resultGistId,
-      lastSyncAt: new Date().toISOString(),
-    });
-
-    return { success: true, direction: 'push' };
+    const result = await _pushToGistInner(token, true);
+    return result;
   } catch (err) {
     const msg = String(err);
+    // Si falla por Validation Failed, reintentar sin PDFs (payload demasiado grande)
+    if (msg.includes('Validation Failed')) {
+      console.warn('[gistSync] Push con PDFs falló por Validation — reintentando sin PDFs…');
+      try {
+        const retryResult = await _pushToGistInner(token, false);
+        return {
+          ...retryResult,
+          error: retryResult.error ?? undefined,
+        };
+      } catch (retryErr) {
+        return { success: false, direction: 'push', error: 'Reintento sin PDFs falló: ' + String(retryErr) };
+      }
+    }
     const friendly = msg.includes('Failed to fetch')
       ? 'Sin conexión con GitHub. Comprueba la red del dispositivo.'
       : msg;
     return { success: false, direction: 'push', error: friendly };
   }
+}
+
+async function _pushToGistInner(token: string, includePdfs: boolean): Promise<SyncResult> {
+  const backup = await exportFullBackup();
+
+  const files: Record<string, { content: string } | null> = {};
+
+  if (includePdfs) {
+    // Exportar PDFs como archivos Gist separados
+    const subjectIds = backup.subjects.map((s) => s.id);
+    const pdfExport = await exportPdfsForGist(subjectIds);
+    backup.pdfManifest = pdfExport.manifest;
+    Object.assign(files, pdfExport.files);
+  } else {
+    backup.pdfManifest = [];
+  }
+
+  const json = JSON.stringify(backup);
+  const settings = await getSettings();
+  const gistId = settings.syncGistId;
+
+  if (json.length <= CHUNK_SIZE) {
+    files[GIST_FILENAME] = { content: json };
+  } else {
+    const totalChunks = Math.ceil(json.length / CHUNK_SIZE);
+    for (let i = 0; i < totalChunks; i++) {
+      const chunkName = `examcoach-backup-${String(i).padStart(3, '0')}.json`;
+      files[chunkName] = { content: json.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE) };
+    }
+    files['examcoach-manifest.json'] = {
+      content: JSON.stringify({ chunks: totalChunks, exportedAt: backup.exportedAt }),
+    };
+    if (gistId) files[GIST_FILENAME] = null;
+  }
+
+  let resultGistId: string;
+
+  if (gistId) {
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${token}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github+json',
+      },
+      body: JSON.stringify({ files }),
+    });
+
+    if (res.status === 404) {
+      resultGistId = await createNewGist(token, files as Record<string, { content: string }>, backup.exportedAt);
+    } else if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const details = (body as any).errors
+        ? ': ' + JSON.stringify((body as any).errors)
+        : '';
+      throw new Error(((body as any).message ?? `HTTP ${res.status}`) + details);
+    } else {
+      resultGistId = gistId;
+    }
+  } else {
+    resultGistId = await createNewGist(token, files as Record<string, { content: string }>, backup.exportedAt);
+  }
+
+  await saveSettings({
+    syncGistId: resultGistId,
+    lastSyncAt: new Date().toISOString(),
+  });
+
+  return { success: true, direction: 'push' };
 }
 
 async function createNewGist(
