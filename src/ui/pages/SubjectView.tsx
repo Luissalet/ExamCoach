@@ -282,6 +282,7 @@ export function SubjectView() {
   const [subjectPackPreview, setSubjectPackPreview] = useState<ContributionPackPreview | null>(null);
   const [subjectImporting, setSubjectImporting] = useState(false);
   const [subjectImportMsg, setSubjectImportMsg] = useState('');
+  const [subjectPreviewSampleQuestion, setSubjectPreviewSampleQuestion] = useState<Question | null>(null);
   // Bulk operations
   const [bulkTopicId, setBulkTopicId] = useState('');
   const [bulkTag, setBulkTag] = useState('');
@@ -1391,36 +1392,112 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
           <Modal
             open={!!subjectPackPreview}
             onClose={() => { setSubjectPackPreview(null); setSubjectImportMsg(''); }}
-            title="Importar Contribution Pack"
+            title="Vista previa del Contribution Pack"
+            size="lg"
           >
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5 p-3 bg-ink-800 rounded-lg text-sm">
-                <p className="text-ink-200">
-                  Por: <span className="text-amber-300 font-medium">{subjectPackPreview.createdBy}</span>
-                </p>
-                <p className="text-xs text-ink-400">Asignaturas: {subjectPackPreview.subjects.join(', ')}</p>
-                <p className="text-xs text-ink-400">
-                  {subjectPackPreview.questionsCount} preguntas en total ·{' '}
-                  <span className="text-sage-400 font-medium">{subjectPackPreview.newQuestionsCount} nuevas</span>
-                  {subjectPackPreview.questionsCount - subjectPackPreview.newQuestionsCount > 0 && (
-                    <span className="text-ink-500"> · {subjectPackPreview.questionsCount - subjectPackPreview.newQuestionsCount} ya existentes</span>
-                  )}
-                </p>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-sm text-ink-500 uppercase tracking-widest">Autor</p>
+                    <p className="text-base text-ink-100 font-medium">{subjectPackPreview.createdBy}</p>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-ink-500 uppercase tracking-widest">Exportado</p>
+                    <p className="text-base text-ink-100 font-medium">
+                      {new Date(subjectPackPreview.exportedAt).toLocaleDateString('es-ES')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <Card className="text-center py-3">
+                    <p className="text-2xl font-display text-amber-400">{subjectPackPreview.topicsCount}</p>
+                    <p className="text-xs text-ink-500 mt-1">Temas</p>
+                  </Card>
+                  <Card className="text-center py-3">
+                    <p className="text-2xl font-display text-sage-400">{subjectPackPreview.questionsCount}</p>
+                    <p className="text-xs text-ink-500 mt-1">Total preguntas</p>
+                  </Card>
+                  <Card className="text-center py-3 border-sage-600/30">
+                    <p className="text-2xl font-display text-sage-300">{subjectPackPreview.newQuestionsCount}</p>
+                    <p className="text-xs text-ink-500 mt-1">Nuevas</p>
+                  </Card>
+                </div>
+
                 {subjectPackPreview.alreadyImported && (
-                  <p className="text-xs text-amber-400">⚠ Este pack ya fue importado anteriormente</p>
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                    <p className="text-sm text-amber-400">
+                      ⚠ Este pack ya fue importado previamente.
+                    </p>
+                  </div>
+                )}
+
+                {/* Detailed per-topic breakdown table */}
+                {subjectPackPreview.rows && subjectPackPreview.rows.length > 0 && (
+                  <div>
+                    <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">Desglose por tema</p>
+                    <div className="overflow-x-auto max-h-48 overflow-y-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b border-ink-700 text-ink-500 text-left">
+                            <th className="pb-1.5 font-normal">Asignatura</th>
+                            <th className="pb-1.5 font-normal">Tema</th>
+                            <th className="pb-1.5 font-normal text-center">Preguntas</th>
+                            <th className="pb-1.5 font-normal text-center">Nuevas</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {subjectPackPreview.rows.map((r: any, i: number) => (
+                            <tr key={i} className="border-b border-ink-800 last:border-0">
+                              <td className="py-1.5 text-ink-300">{r.subjectName}</td>
+                              <td className="py-1.5 text-ink-300">{r.topicName}</td>
+                              <td className="py-1.5 text-center text-ink-400">{r.questionsCount}</td>
+                              <td className="py-1.5 text-center text-sage-400 font-medium">{r.newCount}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Clickable question list with preview */}
+                {subjectPackPreview.questionsSampleFull.length > 0 && (
+                  <div>
+                    <p className="text-sm text-ink-500 uppercase tracking-widest mb-2">
+                      Preguntas nuevas ({subjectPackPreview.questionsSampleFull.length})
+                    </p>
+                    <div className="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
+                      {subjectPackPreview.questionsSampleFull.map((q, i) => (
+                        <button
+                          key={q.id ?? i}
+                          onClick={() => setSubjectPreviewSampleQuestion(q)}
+                          className="w-full text-left group flex items-start gap-3 p-3 bg-ink-800 rounded-lg border border-ink-700 hover:border-ink-500 hover:bg-ink-750 transition-all duration-150 cursor-pointer"
+                        >
+                          <TypeBadge type={q.type} />
+                          <span className="text-xs text-ink-300 group-hover:text-ink-100 transition-colors line-clamp-2 flex-1">
+                            {q.prompt.replace(/[#*`]/g, '').trim()}
+                          </span>
+                          <span className="text-ink-600 group-hover:text-ink-400 text-xs flex-shrink-0 mt-0.5">›</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
+
               {subjectImportMsg && (
                 <p className={`text-xs ${subjectImportMsg.startsWith('Error') ? 'text-rose-400' : 'text-sage-400'}`}>
                   {subjectImportMsg}
                 </p>
               )}
-              <div className="flex justify-end gap-2 pt-2 border-t border-ink-800">
-                <Button variant="ghost" size="sm" onClick={() => { setSubjectPackPreview(null); setSubjectImportMsg(''); }}>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-ink-800">
+                <Button variant="ghost" onClick={() => { setSubjectPackPreview(null); setSubjectImportMsg(''); }}>
                   Cancelar
                 </Button>
                 <Button
-                  size="sm"
                   disabled={subjectImporting || subjectPackPreview.newQuestionsCount === 0}
                   onClick={async () => {
                     setSubjectImporting(true);
@@ -1442,7 +1519,34 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                     }
                   }}
                 >
-                  {subjectImporting ? 'Importando…' : `Importar (${subjectPackPreview.newQuestionsCount} preguntas)`}
+                  {subjectImporting ? 'Importando...' : subjectPackPreview.newQuestionsCount > 0
+                    ? `Importar ${subjectPackPreview.newQuestionsCount} preguntas nuevas`
+                    : 'Sin preguntas nuevas'}
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+
+        {/* Modal preview pregunta individual (desde contribution pack en subject) */}
+        {subjectPreviewSampleQuestion && (
+          <Modal
+            open={!!subjectPreviewSampleQuestion}
+            onClose={() => setSubjectPreviewSampleQuestion(null)}
+            title={subjectPreviewSampleQuestion.prompt.replace(/[#*`]/g, '').trim().slice(0, 60) + (subjectPreviewSampleQuestion.prompt.length > 60 ? '...' : '')}
+            size="lg"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <TypeBadge type={subjectPreviewSampleQuestion.type} />
+                {subjectPreviewSampleQuestion.difficulty && (
+                  <span className="text-xs text-ink-500">{'★'.repeat(subjectPreviewSampleQuestion.difficulty)}</span>
+                )}
+              </div>
+              <QuestionPreviewContent question={subjectPreviewSampleQuestion} />
+              <div className="flex justify-end pt-2 border-t border-ink-800">
+                <Button size="sm" variant="ghost" onClick={() => setSubjectPreviewSampleQuestion(null)}>
+                  Cerrar
                 </Button>
               </div>
             </div>
