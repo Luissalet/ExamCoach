@@ -50,6 +50,8 @@ export interface ExtractionParams {
   imageBase64?: string;
   /** Guía de contribución generada para la asignatura actual (slugs exactos) */
   contributionGuide?: string;
+  /** Texto extraído de un PDF de contexto (temario/resumen) para ayudar al modelo */
+  contextText?: string;
 }
 
 export interface AIProvider {

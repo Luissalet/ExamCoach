@@ -21,6 +21,10 @@ import { getSettings } from '@/data/db';
 import { slugify } from '@/domain/normalize';
 import type { Topic, Question, Subject } from '@/domain/models';
 import { useStore } from '@/ui/store';
+import { listStoredPdfs, getPdfBlobUrl } from '@/data/pdfStorage';
+import { extractPdfText } from '@/utils/pdfTextExtractor';
+import { loadPdfMapping, getPdfUrl } from '@/data/resourceLoader';
+import { loadCategoryFromDB } from '@/data/resourceFromDB';
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
@@ -87,15 +91,65 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Context PDF — each entry has a label for display and info to retrieve it
+  const [availablePdfs, setAvailablePdfs] = useState<
+    { label: string; filename: string; category: 'temas' | 'resumenes' }[]
+  >([]);
+  const [contextPdf, setContextPdf] = useState<string>(''); // filename or ''
+
   // Contribution pack section
   const [copiedGenerate, setCopiedGenerate] = useState(false);
   const [copiedExtract, setCopiedExtract] = useState(false);
   const [downloadingGuide, setDownloadingGuide] = useState(false);
 
-  // Check API key on mount
+  // Check API key and load available PDFs on mount
   useEffect(() => {
     checkApiKey();
-  }, []);
+
+    // Cargar PDFs de Temas + Resúmenes de ambas fuentes (estáticos + IndexedDB)
+    (async () => {
+      const pdfs: { label: string; filename: string; category: 'temas' | 'resumenes' }[] = [];
+      const seen = new Set<string>();
+
+      // 1. Temas desde index.json estático
+      try {
+        const mapping = await loadPdfMapping(subject.name);
+        for (const entry of mapping) {
+          if (!seen.has(entry.pdf)) {
+            seen.add(entry.pdf);
+            pdfs.push({
+              label: `Temas / ${entry.topicTitle || entry.pdf}`,
+              filename: entry.pdf,
+              category: 'temas',
+            });
+          }
+        }
+      } catch { /* sin temas estáticos */ }
+
+      // 2. Temas desde IndexedDB (sin prefijo de categoría)
+      try {
+        const dbPdfs = await listStoredPdfs(subject.id);
+        for (const f of dbPdfs) {
+          // Los de Temas en DB no tienen prefijo; los de Resumenes sí
+          if (!f.includes('/') && !seen.has(f)) {
+            seen.add(f);
+            pdfs.push({ label: `Temas / ${f}`, filename: f, category: 'temas' });
+          }
+        }
+
+        // 3. Resúmenes desde IndexedDB (prefijo Resumenes/)
+        for (const f of dbPdfs) {
+          if (f.startsWith('Resumenes/') && !seen.has(f)) {
+            seen.add(f);
+            const name = f.replace(/^Resumenes\//, '');
+            pdfs.push({ label: `Resúmenes / ${name}`, filename: f, category: 'resumenes' });
+          }
+        }
+      } catch { /* sin PDFs en DB */ }
+
+      setAvailablePdfs(pdfs);
+    })();
+  }, [subject.id, subject.name]);
 
   const checkApiKey = async () => {
     const settings = await getSettings();
@@ -181,6 +235,32 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
       // Step 2: Generate contribution guide for this subject (exact slugs)
       const contributionGuide = await generateSubjectGuide(subject.id);
 
+      // Step 2b: Extract context PDF text if selected
+      let contextText: string | undefined;
+      if (contextPdf) {
+        setProgressLabel('Extrayendo texto del PDF de contexto...');
+        const selected = availablePdfs.find((p) => p.filename === contextPdf);
+
+        // Intentar IndexedDB/FSA primero
+        let pdfUrl = await getPdfBlobUrl(subject.id, contextPdf);
+        let isBlob = !!pdfUrl;
+
+        // Fallback a recurso estático (solo para Temas)
+        if (!pdfUrl && selected?.category === 'temas') {
+          pdfUrl = getPdfUrl(subject.name, contextPdf);
+          isBlob = false;
+        }
+
+        if (pdfUrl) {
+          try {
+            const pdfResult = await extractPdfText(pdfUrl);
+            contextText = pdfResult.blocks.map((b) => b.text).join('\n\n');
+          } finally {
+            if (isBlob) URL.revokeObjectURL(pdfUrl);
+          }
+        }
+      }
+
       setProgress(0.35);
       setProgressLabel('Enviando a la IA...');
 
@@ -210,6 +290,7 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
         maxQuestions,
         imageBase64,
         contributionGuide,
+        contextText,
       });
 
       setProgress(1);
@@ -491,6 +572,30 @@ export function AIExtractionTab({ subject, topics }: AIExtractionTabProps) {
           </div>
         )}
       </div>
+
+      {/* ── Context PDF selector ── */}
+      {availablePdfs.length > 0 && (
+        <div>
+          <label className="text-xs text-ink-400 uppercase tracking-widest block mb-1">
+            PDF de contexto (opcional)
+          </label>
+          <select
+            value={contextPdf}
+            onChange={(e) => setContextPdf(e.target.value)}
+            className="w-full bg-ink-800 border border-ink-700 rounded-lg px-3 py-2 text-sm text-ink-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+          >
+            <option value="">Sin contexto adicional</option>
+            {availablePdfs.map((pdf) => (
+              <option key={pdf.filename} value={pdf.filename}>
+                {pdf.label}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-ink-500 mt-1">
+            Selecciona un PDF del temario o resumen para que la IA pueda detectar mejor los temas de cada pregunta.
+          </p>
+        </div>
+      )}
 
       {/* ── Progress ── */}
       {extracting && (

@@ -256,7 +256,7 @@ export function AISettingsPanel({ open, onClose, onSaved }: AISettingsPanelProps
             variant="ghost"
             onClick={handleTestConnection}
             loading={testing}
-            disabled={!currentKey.trim()}
+            disabled={provider !== 'webllm' && !currentKey.trim()}
           >
             Probar conexión
           </Button>

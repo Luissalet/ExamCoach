@@ -38,43 +38,32 @@ const ExtractedQuestionsArraySchema = z.array(ExtractedQuestionSchema);
 let cachedEngine: any = null;
 let cachedModelId: string | null = null;
 
-// ─── System prompt ──────────────────────────────────────────────────────────
+// ─── System prompt (optimizado para modelos pequeños 8B) ─────────────────────
 
 function buildSystemPrompt(params: ExtractionParams): string {
-  // Use contribution guide if available (better slugs reference)
-  const guideSection = params.contributionGuide
-    ? `\n\nGUÍA DE REFERENCIA DE LA ASIGNATURA:\n${params.contributionGuide}`
-    : '';
-
   const topicList = params.topics
-    .map((t) => `  - topicKey: "${t.topicKey}" → ${t.topicTitle}`)
-    .join('\n');
+    .map((t) => `"${t.topicKey}"`)
+    .join(', ');
 
-  const modeInstruction =
-    params.mode === 'generate'
-      ? `TAREA: Genera ${params.maxQuestions ?? 10} preguntas de estudio basadas en el contenido. Varía los tipos (TEST, DESARROLLO, COMPLETAR, PRACTICO) y dificultades (1-5).`
-      : `TAREA: Extrae TODAS las preguntas del documento. Mantén el texto original fielmente.`;
+  const isExtract = params.mode === 'extract';
+  const count = params.maxQuestions ?? 10;
 
-  const originHint =
-    params.mode === 'generate' ? '"alumno"' : '"examen_anterior" o "test"';
+  // Prompt ultra-conciso con ejemplo concreto — modelos 8B necesitan esto
+  return `Devuelve SOLO un JSON array con preguntas tipo test.
 
-  // Prompt más conciso para modelos pequeños locales
-  return `Eres un extractor de preguntas educativas. Devuelves SOLO un JSON array.
+Asignatura: ${params.subjectName}
+Temas válidos: [${topicList}]
 
-ASIGNATURA: ${params.subjectName} (subjectKey: "${params.subjectKey}")
+${isExtract ? 'Extrae las preguntas del documento.' : `Genera ${count} preguntas del contenido.`}
 
-TEMAS VÁLIDOS:
-${topicList}
+Ejemplo de formato exacto:
+[{"type":"TEST","prompt":"¿Cuál es la capital de Francia?","options":[{"id":"a","text":"Madrid"},{"id":"b","text":"París"},{"id":"c","text":"Roma"},{"id":"d","text":"Berlín"}],"correctOptionIds":["b"],"explanation":"París es la capital de Francia.","difficulty":1,"origin":"${isExtract ? 'examen_anterior' : 'alumno'}","topicKey":"${params.topics[0]?.topicKey ?? 'tema-1'}"}]
 
-${modeInstruction}
-
-Formato: JSON array sin markdown fences. Cada pregunta:
-{"type":"TEST","prompt":"...","options":[{"id":"a","text":"..."}],"correctOptionIds":["a"],"explanation":"...","difficulty":3,"origin":${originHint},"tags":["..."],"topicKey":"slug"}
-
-Tipos: TEST (options+correctOptionIds), DESARROLLO (modelAnswer+keywords), COMPLETAR (clozeText con {{huecos}}+blanks), PRACTICO (numericAnswer+modelAnswer).
-IDs opciones: "a","b","c","d". Blanks: "b1","b2". difficulty: 1-5. topicKey de la lista.${guideSection}
-
-RESPONDE SOLO CON EL JSON ARRAY:`;
+Reglas:
+- SOLO JSON array, sin texto antes ni después
+- Cada pregunta tiene 4 opciones con ids "a","b","c","d"
+- topicKey debe ser uno de los temas válidos
+- difficulty de 1 a 5`;
 }
 
 // ─── WebLLM Provider ─────────────────────────────────────────────────────────
@@ -93,15 +82,14 @@ export class WebLLMProvider implements AIProvider {
       );
     }
 
-    // Dynamic import of @mlc-ai/web-llm — use variable to avoid Rollup static analysis
+    // Dynamic import from CDN — no npm install needed
     let webllm: any;
-    const mlcPkg = '@mlc-ai/web-llm';
+    const cdnUrl = 'https://esm.run/@mlc-ai/web-llm@0.2.81';
     try {
-      webllm = await import(/* @vite-ignore */ mlcPkg);
+      webllm = await import(/* @vite-ignore */ cdnUrl);
     } catch {
       throw new Error(
-        'La librería WebLLM no está instalada. ' +
-        'Ejecuta: npm install @mlc-ai/web-llm\n\n' +
+        'No se pudo cargar WebLLM. Comprueba tu conexión a internet.\n\n' +
         'Nota: WebLLM requiere ~4GB de descarga la primera vez para el modelo. ' +
         'Las siguientes ejecuciones usan la caché del navegador.'
       );
@@ -128,10 +116,6 @@ export class WebLLMProvider implements AIProvider {
 
     const systemPrompt = buildSystemPrompt(params);
 
-    // Truncate more aggressively for local models (smaller context windows)
-    const maxChars = 8000; // ~2000 tokens, safe for 8B models
-    let userContent: string;
-
     if (params.imageBase64) {
       throw new Error(
         'Los modelos locales (WebLLM) no soportan análisis de imágenes. ' +
@@ -139,15 +123,26 @@ export class WebLLMProvider implements AIProvider {
       );
     }
 
-    const textTruncated = params.documentText.slice(0, maxChars);
-    userContent = `Documento:\n\n${textTruncated}\n\nDevuelve SOLO el JSON array:`;
+    // Repartir contexto entre el PDF de referencia y el documento
+    const hasContext = !!params.contextText?.trim();
+    const maxTotal = 12000; // chars totales para el modelo
+    const contextMax = hasContext ? Math.min(params.contextText!.length, 4000) : 0;
+    const docMax = maxTotal - contextMax;
+
+    let userContent = '';
+    if (hasContext) {
+      const ctxTruncated = params.contextText!.slice(0, contextMax);
+      userContent += `Temario de referencia (usa esto para detectar los temas):\n\n${ctxTruncated}\n\n---\n\n`;
+    }
+    const textTruncated = params.documentText.slice(0, docMax);
+    userContent += `Documento con las preguntas:\n\n${textTruncated}\n\nJSON array:`;
 
     const response = await cachedEngine.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userContent },
       ],
-      temperature: 0.3,
+      temperature: 0.2, // Más determinista para JSON
       max_tokens: 8000,
     });
 
@@ -156,48 +151,203 @@ export class WebLLMProvider implements AIProvider {
   }
 }
 
+// ─── JSON recovery (robusto para modelos pequeños) ───────────────────────────
+
+/**
+ * Intenta reparar JSON malformado común en modelos pequeños:
+ * - Trailing commas: [{"a":1},]
+ * - JSON truncado: [{"a":1},{"a":2  (sin cerrar)
+ * - Objetos sueltos sin array: {"a":1}{"a":2}
+ * - Markdown fences: ```json ... ```
+ */
+function repairJson(raw: string): string {
+  let s = raw.trim();
+
+  // Quitar markdown fences
+  s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+  s = s.trim();
+
+  // Si empieza con texto antes del [, cortarlo
+  const arrStart = s.indexOf('[');
+  if (arrStart > 0) {
+    s = s.slice(arrStart);
+  }
+
+  // Si no tiene [ pero tiene {, intentar envolver en array
+  if (!s.startsWith('[') && s.startsWith('{')) {
+    // Puede ser objetos concatenados: {...}{...}
+    s = '[' + s.replace(/\}\s*\{/g, '},{') + ']';
+  }
+
+  // Quitar trailing commas antes de ] o }
+  s = s.replace(/,\s*([}\]])/g, '$1');
+
+  // Si el JSON está truncado (no termina en ]), intentar cerrarlo
+  if (s.startsWith('[') && !s.endsWith(']')) {
+    // Buscar el último objeto completo (termina en })
+    const lastCloseBrace = s.lastIndexOf('}');
+    if (lastCloseBrace > 0) {
+      s = s.slice(0, lastCloseBrace + 1) + ']';
+    }
+  }
+
+  return s;
+}
+
 // ─── Response parsing ────────────────────────────────────────────────────────
 
 function parseAndValidateQuestions(raw: string): ExtractedQuestion[] {
-  let cleaned = raw.trim();
-  if (cleaned.startsWith('```json')) cleaned = cleaned.slice(7);
-  else if (cleaned.startsWith('```')) cleaned = cleaned.slice(3);
-  if (cleaned.endsWith('```')) cleaned = cleaned.slice(0, -3);
-  cleaned = cleaned.trim();
-
-  const startIdx = cleaned.indexOf('[');
-  const endIdx = cleaned.lastIndexOf(']');
-  if (startIdx === -1 || endIdx === -1) {
+  if (!raw.trim()) {
     throw new Error(
-      'El modelo local no devolvió un JSON array válido. ' +
-      'Los modelos pequeños a veces tienen dificultades con output estructurado. ' +
-      'Prueba con un documento más corto o usa un provider de API.'
+      'El modelo no generó respuesta. Prueba de nuevo o usa un documento más corto.'
     );
   }
-  cleaned = cleaned.slice(startIdx, endIdx + 1);
 
+  // Intentar parsear directamente primero
   let parsed: unknown;
+  const cleaned = repairJson(raw);
+
   try {
     parsed = JSON.parse(cleaned);
   } catch {
+    // Segundo intento: buscar cualquier substring que sea JSON válido
+    const startIdx = raw.indexOf('[');
+    const endIdx = raw.lastIndexOf(']');
+    if (startIdx !== -1 && endIdx > startIdx) {
+      try {
+        const subset = repairJson(raw.slice(startIdx, endIdx + 1));
+        parsed = JSON.parse(subset);
+      } catch {
+        // Último intento: extraer objetos individuales con regex
+        parsed = extractObjectsManually(raw);
+      }
+    } else {
+      parsed = extractObjectsManually(raw);
+    }
+  }
+
+  if (!parsed || (Array.isArray(parsed) && parsed.length === 0)) {
     throw new Error(
-      'Error parseando JSON del modelo local. ' +
-      'Intenta de nuevo o usa un provider de API para mejores resultados.'
+      'El modelo local no devolvió preguntas válidas. ' +
+      'Los modelos pequeños a veces fallan con documentos largos. ' +
+      'Prueba con un texto más corto o usa OpenAI/Anthropic.'
     );
   }
 
-  const result = ExtractedQuestionsArraySchema.safeParse(parsed);
-  if (!result.success) {
-    if (Array.isArray(parsed)) {
-      const salvaged: ExtractedQuestion[] = [];
-      for (const item of parsed) {
-        const single = ExtractedQuestionSchema.safeParse(item);
-        if (single.success) salvaged.push(single.data as ExtractedQuestion);
-      }
-      if (salvaged.length > 0) return salvaged;
+  // Validar con Zod, rescatando las que sean válidas
+  const items = Array.isArray(parsed) ? parsed : [parsed];
+  const salvaged: ExtractedQuestion[] = [];
+
+  for (const item of items) {
+    // Intentar normalizar campos comunes que el modelo puede escribir mal
+    const normalized = normalizeQuestion(item);
+    const result = ExtractedQuestionSchema.safeParse(normalized);
+    if (result.success) {
+      salvaged.push(result.data as ExtractedQuestion);
     }
-    throw new Error(`Formato inválido del modelo local: ${result.error.message.slice(0, 200)}`);
   }
 
-  return result.data as ExtractedQuestion[];
+  if (salvaged.length === 0) {
+    throw new Error(
+      `El modelo generó ${items.length} respuesta(s) pero ninguna tiene el formato correcto. ` +
+      'Prueba de nuevo o usa un provider de API para mejores resultados.'
+    );
+  }
+
+  return salvaged;
+}
+
+/**
+ * Intenta extraer objetos JSON individuales del texto con regex.
+ * Útil cuando el modelo mezcla texto con JSON.
+ */
+function extractObjectsManually(raw: string): unknown[] {
+  const results: unknown[] = [];
+  // Buscar patrones que parezcan objetos JSON con "type" y "prompt"
+  const regex = /\{[^{}]*"type"\s*:\s*"[^"]*"[^{}]*"prompt"\s*:\s*"[^"]*"[^{}]*\}/g;
+  let match;
+  while ((match = regex.exec(raw)) !== null) {
+    try {
+      const repaired = repairJson(match[0]);
+      const obj = JSON.parse(repaired);
+      results.push(obj);
+    } catch {
+      // Skip malformed objects
+    }
+  }
+
+  // Si el regex simple no funciona, intentar con objetos anidados
+  if (results.length === 0) {
+    const deepRegex = /\{(?:[^{}]|\{[^{}]*\}|\[(?:[^\[\]]|\[[^\[\]]*\])*\])*\}/g;
+    while ((match = deepRegex.exec(raw)) !== null) {
+      try {
+        const obj = JSON.parse(match[0]);
+        if (obj && typeof obj === 'object' && obj.type && obj.prompt) {
+          results.push(obj);
+        }
+      } catch {
+        // Skip
+      }
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Normaliza campos que modelos pequeños suelen escribir mal.
+ */
+function normalizeQuestion(item: any): any {
+  if (!item || typeof item !== 'object') return item;
+
+  const q = { ...item };
+
+  // type en minúsculas → mayúsculas
+  if (typeof q.type === 'string') {
+    q.type = q.type.toUpperCase();
+    // Aliases comunes
+    if (q.type === 'MULTIPLE_CHOICE' || q.type === 'CHOICE' || q.type === 'MCQ') q.type = 'TEST';
+    if (q.type === 'ESSAY' || q.type === 'OPEN') q.type = 'DESARROLLO';
+    if (q.type === 'FILL' || q.type === 'FILL_BLANK' || q.type === 'CLOZE') q.type = 'COMPLETAR';
+    if (q.type === 'NUMERIC' || q.type === 'CALCULATION') q.type = 'PRACTICO';
+  }
+
+  // correctOptionIds como string → array
+  if (typeof q.correctOptionIds === 'string') {
+    q.correctOptionIds = [q.correctOptionIds];
+  }
+
+  // Si "answer" existe pero "correctOptionIds" no, intentar mapear
+  if (!q.correctOptionIds && q.answer && q.type === 'TEST') {
+    const ans = String(q.answer).toLowerCase().trim();
+    if (['a', 'b', 'c', 'd', 'e'].includes(ans)) {
+      q.correctOptionIds = [ans];
+    }
+    delete q.answer;
+  }
+
+  // difficulty como string → number
+  if (typeof q.difficulty === 'string') {
+    const n = parseInt(q.difficulty, 10);
+    if (!isNaN(n) && n >= 1 && n <= 5) q.difficulty = n;
+    else delete q.difficulty;
+  }
+
+  // Asegurar que options tiene formato correcto
+  if (Array.isArray(q.options)) {
+    q.options = q.options.map((opt: any, i: number) => {
+      if (typeof opt === 'string') {
+        return { id: String.fromCharCode(97 + i), text: opt };
+      }
+      if (opt && typeof opt === 'object') {
+        return {
+          id: opt.id ?? String.fromCharCode(97 + i),
+          text: opt.text ?? opt.label ?? opt.value ?? String(opt),
+        };
+      }
+      return { id: String.fromCharCode(97 + i), text: String(opt) };
+    });
+  }
+
+  return q;
 }

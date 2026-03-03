@@ -123,9 +123,15 @@ export class AnthropicProvider implements AIProvider {
       });
     } else {
       const textTruncated = params.documentText.slice(0, 30000);
+      let userText = '';
+      if (params.contextText?.trim()) {
+        const ctxTruncated = params.contextText.slice(0, 15000);
+        userText += `Temario de referencia (usa esto para detectar los temas de cada pregunta):\n\n---\n${ctxTruncated}\n---\n\n`;
+      }
+      userText += `Documento a analizar:\n\n---\n${textTruncated}\n---\n\nDevuelve SOLO el JSON array.`;
       content.push({
         type: 'text',
-        text: `Documento a analizar:\n\n---\n${textTruncated}\n---\n\nDevuelve SOLO el JSON array.`,
+        text: userText,
       });
     }
 
