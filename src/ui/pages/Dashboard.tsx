@@ -66,16 +66,8 @@ export function Dashboard() {
   const [streak, setStreak] = useState(0);
 
   // ── Inicialización ─────────────────────────────────────────────────────────
-  useEffect(() => {
-    // Reparar registros huérfanos + asignar colores + migrar a marketplace
-    Promise.all([
-      repairOrphanRecords(),
-      assignMissingSubjectColors(),
-      migrateOrphanSubjects(),
-    ]).then(() => loadSubjects()).catch(() => {/* silencioso */});
-    loadSettings();
-    loadSubjects();
-    getSettings().then(s => setStreak(s.studyStreak ?? 0));
+
+  const loadDeliverables = () => {
     deliverableRepo.getAll().then(all => {
       const now = new Date();
       const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -85,7 +77,6 @@ export function Dashboard() {
         .slice(0, 10);
       setUpcomingDeliverables(upcoming);
 
-      // Compute next exam date per subject from exam-type deliverables
       const examMap: Record<string, string> = {};
       const upcomingExams = all
         .filter(d => d.type === 'exam' && d.dueDate && d.dueDate >= today)
@@ -96,6 +87,25 @@ export function Dashboard() {
         }
       }
       setNextExamDates(examMap);
+    });
+  };
+
+  useEffect(() => {
+    loadSettings();
+    getSettings().then(s => setStreak(s.studyStreak ?? 0));
+
+    // Primero reparar huérfanos, luego cargar todo con datos correctos
+    Promise.all([
+      repairOrphanRecords(),
+      assignMissingSubjectColors(),
+      migrateOrphanSubjects(),
+    ]).then(() => {
+      loadSubjects();
+      loadDeliverables();
+    }).catch(() => {
+      // Fallback: cargar igualmente aunque falle la reparación
+      loadSubjects();
+      loadDeliverables();
     });
   }, []);
 

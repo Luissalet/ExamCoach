@@ -547,13 +547,29 @@ export async function migrateOrphanSubjects(): Promise<number> {
 export async function repairOrphanRecords(): Promise<number> {
   const allSubjects = await db.subjects.toArray();
   const subjectById = new Map(allSubjects.map(s => [s.id, s]));
+  const subjectBySlug = new Map(allSubjects.map(s => [slugify(s.name), s]));
 
-  // Build a remap: oldSubjectId → currentSubjectId
-  // Fuente 1: InstalledPackages (manifest.id = slug, subjectId = actual local ID)
-  // Fuente 2: Topics con el mismo slug title en una asignatura existente
+  // ── Build remap: oldSubjectId → currentSubjectId ──────────────────────────
+
   const remapCache = new Map<string, string | null>();
 
-  // Pre-build topic slug index: slug → subjectId (de asignaturas que existen)
+  // Estrategia A: usar global-bank.json embebido como tabla de lookup
+  // Contiene los IDs originales + nombres → podemos slugificar y buscar la asignatura actual
+  try {
+    const bankJson = (await import('./global-bank.json')).default as {
+      subjects: Array<{ id: string; name: string }>;
+    };
+    for (const bankSubject of bankJson.subjects) {
+      if (subjectById.has(bankSubject.id)) continue; // no es huérfano
+      const slug = slugify(bankSubject.name);
+      const currentSubject = subjectBySlug.get(slug);
+      if (currentSubject) {
+        remapCache.set(bankSubject.id, currentSubject.id);
+      }
+    }
+  } catch { /* global-bank.json no disponible, continuar con otras estrategias */ }
+
+  // Estrategia B: buscar topics huérfanos y matchear por slug con topics de asignaturas existentes
   const allTopics = await db.topics.toArray();
   const topicSlugToSubjectId = new Map<string, string>();
   for (const t of allTopics) {
@@ -562,10 +578,13 @@ export async function repairOrphanRecords(): Promise<number> {
     }
   }
 
+  // Estrategia C: buscar preguntas huérfanas y matchear por contentHash
+  // (preguntas duplicadas en asignaturas válidas → el hash las conecta)
+
   const findReplacement = async (orphanId: string): Promise<string | null> => {
     if (remapCache.has(orphanId)) return remapCache.get(orphanId)!;
 
-    // Estrategia 1: buscar topics huérfanos de este subjectId y matchear por slug
+    // B: topics huérfanos de este subjectId → matchear por slug
     const orphanTopics = allTopics.filter(t => t.subjectId === orphanId);
     for (const topic of orphanTopics) {
       const match = topicSlugToSubjectId.get(slugify(topic.title));
@@ -575,7 +594,22 @@ export async function repairOrphanRecords(): Promise<number> {
       }
     }
 
-    // Estrategia 2: si hay un solo subject, redirigir todo ahí
+    // C: preguntas huérfanas → matchear por contentHash
+    const orphanQuestions = await db.questions.where('subjectId').equals(orphanId).toArray();
+    for (const q of orphanQuestions) {
+      if (!q.contentHash) continue;
+      // Buscar la misma pregunta en una asignatura válida
+      const allWithHash = await db.questions
+        .where('contentHash').equals(q.contentHash)
+        .toArray();
+      const validMatch = allWithHash.find(m => subjectById.has(m.subjectId) && m.subjectId !== orphanId);
+      if (validMatch) {
+        remapCache.set(orphanId, validMatch.subjectId);
+        return validMatch.subjectId;
+      }
+    }
+
+    // D: si hay un solo subject, redirigir todo ahí
     if (allSubjects.length === 1) {
       remapCache.set(orphanId, allSubjects[0].id);
       return allSubjects[0].id;
@@ -629,18 +663,15 @@ export async function repairOrphanRecords(): Promise<number> {
     if (subjectById.has(t.subjectId)) continue;
     const newId = await findReplacement(t.subjectId);
     if (newId) {
-      // Buscar topic equivalente en la asignatura correcta
       const localTopics = await db.topics.where('subjectId').equals(newId).toArray();
       const match = localTopics.find(lt => slugify(lt.title) === slugify(t.title));
       if (match) {
-        // Reasignar preguntas del topic huérfano al topic correcto
         const orphanQs = await db.questions.where('topicId').equals(t.id).toArray();
         for (const q of orphanQs) {
           await db.questions.update(q.id, { subjectId: newId, topicId: match.id });
         }
         await db.topics.delete(t.id);
       } else {
-        // No hay match — mover el topic entero a la asignatura correcta
         await db.topics.update(t.id, { subjectId: newId });
         const orphanQs = await db.questions.where('topicId').equals(t.id).toArray();
         for (const q of orphanQs) {
@@ -651,7 +682,7 @@ export async function repairOrphanRecords(): Promise<number> {
     }
   }
 
-  // 5. Reparar questions sueltas (sin topic huérfano ya tratado)
+  // 5. Reparar questions sueltas
   const allQuestions = await db.questions.toArray();
   for (const q of allQuestions) {
     if (subjectById.has(q.subjectId)) continue;
