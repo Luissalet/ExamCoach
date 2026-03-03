@@ -249,13 +249,14 @@ export async function mergeBackup(backup: FullBackup): Promise<SyncResult> {
     skipped += topicResult.skipped;
 
     // ── 3. Dedup preguntas por contentHash ─────────────────────────────
-    const questionResult = await mergeQuestions(backup.questions, subjectIdMap, topicIdMap);
+    const questionIdMap = new Map<string, string>(); // remoteId → localId
+    const questionResult = await mergeQuestions(backup.questions, subjectIdMap, topicIdMap, questionIdMap);
     added += questionResult.added;
     updated += questionResult.updated;
     skipped += questionResult.skipped;
 
-    // ── 4. Sesiones: merge por ID, remapear subjectId/topicId ─────────
-    const sessionResult = await mergeSessions(backup.sessions, subjectIdMap, topicIdMap);
+    // ── 4. Sesiones: merge por ID, remapear subjectId/topicId/questionIds ─
+    const sessionResult = await mergeSessions(backup.sessions, subjectIdMap, topicIdMap, questionIdMap);
     added += sessionResult.added;
     updated += sessionResult.updated;
     skipped += sessionResult.skipped;
@@ -476,6 +477,7 @@ async function mergeQuestions(
   remoteQuestions: Question[],
   subjectIdMap: Map<string, string>,
   topicIdMap: Map<string, string>,
+  questionIdMap: Map<string, string>,
 ): Promise<MergeCount> {
   let added = 0, updated = 0, skipped = 0;
 
@@ -505,7 +507,9 @@ async function mergeQuestions(
     const localById = byId.get(remote.id);
 
     if (localById) {
-      // Mismo ID — LWW, pero merge stats inteligente
+      // Mismo ID — identidad directa
+      questionIdMap.set(remote.id, localById.id);
+      // LWW, pero merge stats inteligente
       if (remote.updatedAt > localById.updatedAt) {
         await db.questions.put({
           ...remapped,
@@ -531,7 +535,8 @@ async function mergeQuestions(
       const localByHash = byHash.get(hash);
 
       if (localByHash) {
-        // Duplicado por contenido → merge stats, no añadir
+        // Duplicado por contenido → mapear remoteId → localId
+        questionIdMap.set(remote.id, localByHash.id);
         const merged = mergeStats(localByHash.stats, remote.stats);
         if (merged !== localByHash.stats) {
           await db.questions.update(localByHash.id, { stats: merged });
@@ -540,7 +545,8 @@ async function mergeQuestions(
           skipped++;
         }
       } else {
-        // Realmente nueva
+        // Realmente nueva — identidad directa
+        questionIdMap.set(remote.id, remote.id);
         await db.questions.add(remapped);
         byHash.set(hash, remapped);
         byId.set(remote.id, remapped);
@@ -651,6 +657,7 @@ async function mergeSessions(
   remoteSessions: PracticeSession[],
   subjectIdMap: Map<string, string>,
   topicIdMap: Map<string, string>,
+  questionIdMap: Map<string, string>,
 ): Promise<MergeCount> {
   let added = 0, updated = 0, skipped = 0;
 
@@ -660,7 +667,20 @@ async function mergeSessions(
       ...remote,
       subjectId: subjectIdMap.get(remote.subjectId) ?? remote.subjectId,
       topicId: remote.topicId ? (topicIdMap.get(remote.topicId) ?? remote.topicId) : remote.topicId,
+      // Remapear questionIds al espacio local
+      questionIds: remote.questionIds.map((id) => questionIdMap.get(id) ?? id),
+      // Remapear questionId dentro de cada respuesta
+      answers: remote.answers.map((a) => ({
+        ...a,
+        questionId: questionIdMap.get(a.questionId) ?? a.questionId,
+      })),
     } as PracticeSession;
+    // También remapear subjectIds si existe (sesiones multi-asignatura)
+    if ((remote as any).subjectIds) {
+      (remapped as any).subjectIds = (remote as any).subjectIds.map(
+        (id: string) => subjectIdMap.get(id) ?? id,
+      );
+    }
     // También remapear topicIds si existe
     if ((remote as any).topicIds) {
       (remapped as any).topicIds = (remote as any).topicIds.map(
