@@ -42,3 +42,23 @@
 - When merging entities with parent-child relationships, build ID remapping maps and apply them to all child records
 - Stats should be merged (max of each field), not overwritten — user progress must never be lost
 - When introducing ID remapping, audit ALL consumers of those IDs — including PDF manifests, file storage keys, and any other path that references entity IDs outside the DB merge functions
+
+## 2026-03-04 — Background WAV synthesis not triggered for resource PDFs + crash on re-entry
+
+**Pattern:** Exiting listen mode while generating WAV for a resource PDF (Otros recursos) did not transfer synthesis to background. Re-entering caused a crash. The resource list never showed a loading spinner.
+
+**Root causes (3):**
+1. `PdfListenMode` cleanup checked `topicId` before calling `enqueueSynthesis()`, but in resource mode `topicId` is `undefined` from `useParams` → background synthesis never enqueued
+2. `ResourceWavStatusIcon` only checked cache status (cached/not cached). Unlike `WavStatusIcon` for topics, it did NOT receive `synthesisJobs` from the store and never showed a spinner for active synthesis
+3. `piperTts.synthesizeToBlob()` had no serialization — if `backgroundSynthesis` and `audioTtsEngine` called `session.predict()` concurrently (e.g., re-entering listen mode while background job running), the Piper WASM session crashed
+
+**Fixes applied:**
+1. Changed cleanup condition from `topicId` to `topicId ?? resourceFile` — resource mode now correctly enqueues background synthesis using `resourceFile` as identifier
+2. Added `synthesisJobs` prop to `ResourceWavStatusIcon` and `ResourcesTab`, matching the pattern already used by `WavStatusIcon` for topics — now shows spinner with percentage
+3. Added a promise-based mutex (`_synthLock`) in `piperTts.ts` to serialize all `synthesizeToBlob()` calls — prevents concurrent `session.predict()` crashes
+
+**Rules:**
+- When a feature works for one entity type (topics), audit that it also works for all other entity types (resources) that share the same code path
+- Singleton resources (WASM sessions, DB connections) must have serialization guards if accessed from multiple async flows (foreground engine + background manager)
+- Status icons for background processes must always check the active jobs store, not just the final cached state — otherwise the user sees no feedback during processing
+- When `useParams` provides an optional value, never use it as a required guard without a fallback for the alternative mode

@@ -374,6 +374,11 @@ export function isPiperReady(): boolean {
 
 // ─── Synthesis ──────────────────────────────────────────────────────────────
 
+// Mutex para serializar llamadas a session.predict().
+// Piper WASM no es thread-safe: si backgroundSynthesis y audioTtsEngine
+// llaman a predict() concurrentemente, la sesión crashea.
+let _synthLock: Promise<void> = Promise.resolve();
+
 export async function synthesizeToBlob(text: string): Promise<Blob | null> {
   if (!session) {
     console.warn('[piperTts] Session not initialized');
@@ -383,11 +388,20 @@ export async function synthesizeToBlob(text: string): Promise<Blob | null> {
   const trimmed = text.trim();
   if (!trimmed) return null;
 
+  // Serializar: esperar a que termine la síntesis anterior
+  let release: () => void;
+  const prev = _synthLock;
+  _synthLock = new Promise<void>((res) => { release = res; });
+  await prev;
+
   try {
+    if (!session) return null; // pudo destruirse mientras esperábamos
     return await session.predict(trimmed);
   } catch (err) {
     console.error('[piperTts] Synthesis error:', err);
     return null;
+  } finally {
+    release!();
   }
 }
 

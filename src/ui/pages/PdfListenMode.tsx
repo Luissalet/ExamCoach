@@ -327,16 +327,17 @@ export function PdfListenMode() {
       if (engineState === 'loading' || engineState === 'playing' || engineState === 'paused') {
         const texts = processedTextsRef.current;
         const cacheKeyVal = wavCacheKeyRef.current;
-        // Solo transferir si hay textos y cacheKey (síntesis activa)
-        if (texts.length > 0 && cacheKeyVal && topicId) {
+        // Transferir si hay textos y cacheKey — soportar tanto topic como resource mode
+        const identifier = topicId ?? resourceFile;
+        if (texts.length > 0 && cacheKeyVal && identifier) {
           const currentVoice = engine.getVoice();
           const voiceId = currentVoice?.name ?? 'es_ES-carlfm-x_low';
           const jobId = `${cacheKeyVal}:${voiceId}`;
 
           enqueueSynthesis({
             jobId,
-            topicId,
-            pdfFilename: '', // will be filled from topic data
+            topicId: identifier,
+            pdfFilename: resourceFile ?? '',
             texts,
             voiceId: voiceId as import('@mintplex-labs/piper-tts-web').VoiceId,
             cacheKey: cacheKeyVal,

@@ -209,16 +209,48 @@ function WavStatusIcon({
 // ── Resource WAV status icon ─────────────────────────────────────────────────
 /**
  * Muestra el estado del caché WAV para un recurso (PDF de Otros recursos):
- *   ○  sin caché (gris)   ✓  cacheado (verde)
+ *   ○  sin caché (gris)
+ *   ⟳  sintetizando (spinner naranja)
+ *   ✓  cacheado (verde)
  */
-function ResourceWavStatusIcon({ resourceFile }: { resourceFile: string }) {
+function ResourceWavStatusIcon({
+  resourceFile,
+  synthesisJobs,
+}: {
+  resourceFile: string;
+  synthesisJobs: Record<string, SynthesisProgress>;
+}) {
   const [cached, setCached] = useState<boolean | null>(null);
+
+  // Check active synthesis job for this resource file
+  // Jobs for resources use resourceFile as pdfFilename, and resourceFile as topicId
+  const job = Object.values(synthesisJobs).find(
+    (j) => j.pdfFilename === resourceFile || j.topicId === resourceFile,
+  );
+  const isDownloading = !!job && job.status !== 'done' && job.status !== 'error';
 
   useEffect(() => {
     const cacheKey = getResourceWavCacheKey(resourceFile);
     if (!cacheKey) { setCached(false); return; }
     hasWavEntry(cacheKey).then((has) => setCached(has));
-  }, [resourceFile]);
+  }, [resourceFile, synthesisJobs]); // re-check when jobs change (may have finished)
+
+  if (isDownloading) {
+    const pct = job!.total > 0 ? Math.round((job!.current / job!.total) * 100) : 0;
+    return (
+      <span
+        title={`Generando audio WAV… ${pct}%`}
+        className="flex items-center gap-1 text-amber-400"
+      >
+        {/* Spinner */}
+        <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <circle cx="12" cy="12" r="9" strokeOpacity="0.25" />
+          <path d="M12 3a9 9 0 0 1 9 9" strokeLinecap="round" />
+        </svg>
+        <span className="text-[10px] font-mono">{pct}%</span>
+      </span>
+    );
+  }
 
   if (cached) {
     return (
@@ -1582,6 +1614,7 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
             dbFiles={resourceDbFiles}
             onUpload={handleResourceUpload}
             onDelete={handleResourceDelete}
+            synthesisJobs={synthesisJobs}
           />
         )}
 
@@ -1806,6 +1839,7 @@ interface ResourcesTabProps {
   dbFiles: Set<string>;
   onUpload: (categorySlug: string, files: FileList) => Promise<void>;
   onDelete: (categorySlug: string, filename: string) => Promise<void>;
+  synthesisJobs: Record<string, SynthesisProgress>;
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -1815,7 +1849,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   'Práctica': '💻',
 };
 
-function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUpload, onDelete }: ResourcesTabProps) {
+function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUpload, onDelete, synthesisJobs }: ResourcesTabProps) {
   const slug = slugify(subject.name);
   const navigate = useNavigate();
 
@@ -2042,7 +2076,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
                           title="Escuchar PDF"
                         >
                           🎧
-                          {!isTemas && <ResourceWavStatusIcon resourceFile={`${cat.slug}/${f.name}`} />}
+                          {!isTemas && <ResourceWavStatusIcon resourceFile={`${cat.slug}/${f.name}`} synthesisJobs={synthesisJobs} />}
                         </button>
                       )}
                       {!isTemas && isDbFile(cat.slug, f.name) && (
@@ -2085,7 +2119,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
                             title="Escuchar PDF"
                           >
                             🎧
-                            <ResourceWavStatusIcon resourceFile={`${cat.slug}/${sc.name}/${f.name}`} />
+                            <ResourceWavStatusIcon resourceFile={`${cat.slug}/${sc.name}/${f.name}`} synthesisJobs={synthesisJobs} />
                           </button>
                         )}
                         {isDbFile(cat.slug, f.name, sc.name) && (
