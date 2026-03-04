@@ -6,6 +6,10 @@
  * Soporta los delimitadores más habituales:
  *   - $...$ y $$...$$ (estilo pandoc/KaTeX)
  *   - \(...\) y \[...\]  (estilo LaTeX)
+ *
+ * Preprocesa el texto para:
+ *   1. Normalizar \(...\)/\[...\] → $...$/$$..$$ (marked-katex-extension format)
+ *   2. Colapsar saltos de línea dentro de $$...$$ (marked los rompería como párrafos)
  */
 
 import { marked } from 'marked';
@@ -32,11 +36,30 @@ function normalizeLatexDelimiters(text: string): string {
     .replace(/\\\(([\s\S]+?)\\\)/g, (_m, math) => `$${math}$`);
 }
 
+/**
+ * Colapsa saltos de línea dentro de bloques $$...$$ a espacios.
+ *
+ * marked-katex-extension no soporta display math multilínea: si el contenido
+ * entre $$ tiene \n, marked lo trata como párrafos Markdown normales y KaTeX
+ * nunca lo procesa. Esta función convierte esos \n en espacios para que el
+ * bloque se mantenga íntegro.
+ *
+ * Esto es especialmente importante para matrices, aligned, cases, etc. que
+ * los LLMs suelen generar con saltos de línea reales.
+ */
+function collapseDisplayMathNewlines(text: string): string {
+  return text.replace(/\$\$([\s\S]+?)\$\$/g, (_m, math) => {
+    return '$$' + math.replace(/\n/g, ' ') + '$$';
+  });
+}
+
 /** Renderiza texto Markdown (con LaTeX) a HTML. */
 export function renderMd(text: string): string {
   if (!text) return '';
   try {
-    return marked.parse(normalizeLatexDelimiters(text), { async: false }) as string;
+    let processed = normalizeLatexDelimiters(text);
+    processed = collapseDisplayMathNewlines(processed);
+    return marked.parse(processed, { async: false }) as string;
   } catch {
     return text;
   }
