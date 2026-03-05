@@ -110,7 +110,7 @@ async function renderMdToImage(
   await new Promise((r) => setTimeout(r, 150));
 
   const canvas = await html2canvas(container, {
-    scale: 2,
+    scale: 1.5,
     backgroundColor: '#ffffff',
     logging: false,
     useCORS: true,
@@ -119,7 +119,7 @@ async function renderMdToImage(
   document.body.removeChild(container);
 
   return {
-    dataUrl: canvas.toDataURL('image/png'),
+    dataUrl: canvas.toDataURL('image/jpeg', 0.85),
     width: canvas.width,
     height: canvas.height,
   };
@@ -143,9 +143,9 @@ async function addMdImageToPdf(
 
   const { dataUrl, width, height } = await renderMdToImage(mdText);
 
-  // Canvas was rendered at scale=2, so real pixel dims are /2
-  const realW = width / 2;
-  const realH = height / 2;
+  // Canvas was rendered at scale=1.5, so real pixel dims are /1.5
+  const realW = width / 1.5;
+  const realH = height / 1.5;
 
   // Convert to mm
   const naturalWMm = realW * PX_TO_MM;
@@ -162,7 +162,7 @@ async function addMdImageToPdf(
     y = MARGIN_T;
   }
 
-  pdf.addImage(dataUrl, 'PNG', MARGIN_L, y, imgWMm, imgHMm);
+  pdf.addImage(dataUrl, 'JPEG', MARGIN_L, y, imgWMm, imgHMm);
   return y + imgHMm + 3;
 }
 
@@ -256,12 +256,27 @@ function addText(
 // ─── Check if text contains LaTeX or Markdown formatting ───────────────────
 
 /**
- * Detects if text has LaTeX expressions OR markdown formatting that
- * needs to be rendered via the HTML→image pipeline rather than as
- * plain jsPDF text (which can't handle bold, italic, fractions, etc.).
+ * Detects if text contains LaTeX expressions that REQUIRE the
+ * HTML→image pipeline.  Simple markdown (bold, italic, code) is
+ * handled by stripping the markers and using native jsPDF text,
+ * which is orders of magnitude lighter than rasterising to PNG.
  */
-function hasRichContent(text: string): boolean {
-  return /\$[^$]+\$|\\\(|\\\[|\\frac|\\sqrt|\\sum|\\int|\\begin\{|\*\*[^*]+\*\*|\*[^*]+\*|__|~~|`[^`]+`/.test(text);
+function hasLatex(text: string): boolean {
+  return /\$[^$]+\$|\\\(|\\\[|\\frac|\\sqrt|\\sum|\\int|\\begin\{/.test(text);
+}
+
+/**
+ * Strip simple markdown markers so the text reads well as plain text.
+ * Does NOT handle LaTeX – that still goes through the image pipeline.
+ */
+function stripMd(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')   // bold
+    .replace(/\*([^*]+)\*/g, '$1')        // italic
+    .replace(/__([^_]+)__/g, '$1')        // bold alt
+    .replace(/~~([^~]+)~~/g, '$1')        // strikethrough
+    .replace(/`([^`]+)`/g, '$1')          // inline code
+    .trim();
 }
 
 // ─── Render question content (plain or with LaTeX) ─────────────────────────
@@ -275,11 +290,11 @@ async function renderQuestionContent(
   // Question number + prompt
   const promptText = `${idx}. ${q.prompt}`;
 
-  if (hasRichContent(q.prompt)) {
-    // Render with html2canvas for LaTeX support
+  if (hasLatex(q.prompt)) {
+    // Render with html2canvas only for LaTeX content
     y = await addMdImageToPdf(pdf, `**${idx}.** ${q.prompt}`, y);
   } else {
-    y = addText(pdf, promptText, y, { bold: true, size: 10 });
+    y = addText(pdf, `${idx}. ${stripMd(q.prompt)}`, y, { bold: true, size: 10 });
   }
 
   // Options for TEST type
@@ -291,11 +306,11 @@ async function renderQuestionContent(
       const prefix = `${letters[i]}) `;
       const optText = prefix + opt.text;
 
-      if (hasRichContent(opt.text)) {
+      if (hasLatex(opt.text)) {
         const md = `${prefix}${opt.text}${isCorrect ? ' **(correcta)**' : ''}`;
         y = await addMdImageToPdf(pdf, md, y, CONTENT_W - 8);
       } else {
-        y = addText(pdf, optText, y, {
+        y = addText(pdf, prefix + stripMd(opt.text) + (isCorrect ? ' (correcta)' : ''), y, {
           indent: 6,
           size: 9,
           color: isCorrect ? [34, 120, 60] : [60, 60, 80],
@@ -308,10 +323,10 @@ async function renderQuestionContent(
   // Model answer for DESARROLLO / PRACTICO
   if ((q.type === 'DESARROLLO' || q.type === 'PRACTICO') && q.modelAnswer) {
     y = addText(pdf, 'Respuesta modelo:', y + 1, { bold: true, size: 9, color: [80, 80, 100] });
-    if (hasRichContent(q.modelAnswer)) {
+    if (hasLatex(q.modelAnswer)) {
       y = await addMdImageToPdf(pdf, q.modelAnswer, y, CONTENT_W - 6);
     } else {
-      y = addText(pdf, q.modelAnswer, y, { indent: 4, size: 9, color: [60, 60, 80] });
+      y = addText(pdf, stripMd(q.modelAnswer), y, { indent: 4, size: 9, color: [60, 60, 80] });
     }
   }
 
@@ -323,10 +338,10 @@ async function renderQuestionContent(
   // Cloze text for COMPLETAR
   if (q.type === 'COMPLETAR' && q.clozeText) {
     y = addText(pdf, 'Texto completo:', y + 1, { bold: true, size: 9, color: [80, 80, 100] });
-    if (hasRichContent(q.clozeText)) {
+    if (hasLatex(q.clozeText)) {
       y = await addMdImageToPdf(pdf, q.clozeText, y, CONTENT_W - 6);
     } else {
-      y = addText(pdf, q.clozeText, y, { indent: 4, size: 9, color: [60, 60, 80] });
+      y = addText(pdf, stripMd(q.clozeText), y, { indent: 4, size: 9, color: [60, 60, 80] });
     }
     if (q.blanks && q.blanks.length > 0) {
       const blanksStr = q.blanks.map((b, i) => `Hueco ${i + 1}: ${b.accepted.join(' / ')}`).join('  |  ');
@@ -337,10 +352,10 @@ async function renderQuestionContent(
   // Explanation
   if (q.explanation) {
     y = addText(pdf, 'Explicación:', y + 1, { bold: true, size: 9, color: [100, 90, 130] });
-    if (hasRichContent(q.explanation)) {
+    if (hasLatex(q.explanation)) {
       y = await addMdImageToPdf(pdf, q.explanation, y, CONTENT_W - 6);
     } else {
-      y = addText(pdf, q.explanation, y, { indent: 4, size: 9, color: [100, 90, 130] });
+      y = addText(pdf, stripMd(q.explanation), y, { indent: 4, size: 9, color: [100, 90, 130] });
     }
   }
 
@@ -453,10 +468,10 @@ export async function generateKeyConceptsPDF(
       y = addText(pdf, `• ${c.title}`, y, { bold: true, size: 10 });
 
       // Content (may have LaTeX)
-      if (hasRichContent(c.content)) {
+      if (hasLatex(c.content)) {
         y = await addMdImageToPdf(pdf, c.content, y, CONTENT_W - 8);
       } else {
-        y = addText(pdf, c.content, y, { indent: 6, size: 9, color: [60, 60, 80] });
+        y = addText(pdf, stripMd(c.content), y, { indent: 6, size: 9, color: [60, 60, 80] });
       }
 
       y += 3;
