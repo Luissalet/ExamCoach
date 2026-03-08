@@ -28,6 +28,8 @@ interface PdfExportModalProps<T> {
   /** Group order (labels in order). If not given, groups appear naturally */
   groupOrder?: string[];
   onExport: (selectedIds: Set<string>) => Promise<void>;
+  /** Optional render prop for extra filters above the item list */
+  renderFilters?: () => React.ReactNode;
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -42,6 +44,7 @@ export function PdfExportModal<T>({
   groupBy,
   groupOrder,
   onExport,
+  renderFilters,
 }: PdfExportModalProps<T>) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     () => new Set(items.map(getId)),
@@ -146,6 +149,9 @@ export function PdfExportModal<T>({
             {selectedIds.size} de {items.length} seleccionado{selectedIds.size !== 1 ? 's' : ''}
           </span>
         </div>
+
+        {/* Optional extra filters */}
+        {renderFilters?.()}
 
         {/* Item list */}
         <div className="max-h-[50vh] overflow-y-auto space-y-3">

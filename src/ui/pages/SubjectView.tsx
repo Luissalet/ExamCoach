@@ -305,6 +305,7 @@ export function SubjectView() {
   const [questionView, setQuestionView] = useState<'card' | 'list'>('card');
   // PDF export modal
   const [pdfExportOpen, setPdfExportOpen] = useState(false);
+  const [pdfOriginFilter, setPdfOriginFilter] = useState<string>('');
   // Contribution pack export modal
   const [contribExportOpen, setContribExportOpen] = useState(false);
   const [contribOnlyMine, setContribOnlyMine] = useState(false);
@@ -1334,12 +1335,44 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
         {/* PDF Export modal for questions */}
         <PdfExportModal
           open={pdfExportOpen}
-          onClose={() => setPdfExportOpen(false)}
+          onClose={() => { setPdfExportOpen(false); setPdfOriginFilter(''); }}
           title="Exportar preguntas como PDF"
-          items={filteredQuestions}
+          items={pdfOriginFilter ? filteredQuestions.filter((q) => q.origin === pdfOriginFilter) : filteredQuestions}
           getId={(q) => q.id}
           groupBy={(q) => TYPE_LABELS_MAP[q.type] ?? q.type}
           groupOrder={['Test', 'Desarrollo', 'Completar', 'Práctico']}
+          renderFilters={() => (
+            <div>
+              <p className="text-xs font-medium text-ink-400 uppercase tracking-widest mb-1.5">Filtrar por origen</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { value: '', label: 'Todos' },
+                  { value: 'test', label: 'Test / Práctica' },
+                  { value: 'examen_anterior', label: 'Examen anterior' },
+                  { value: 'clase', label: 'Clase' },
+                  { value: 'alumno', label: 'Alumno' },
+                ].map(({ value, label }) => {
+                  const active = pdfOriginFilter === value;
+                  const count = value
+                    ? filteredQuestions.filter((q) => q.origin === value).length
+                    : filteredQuestions.length;
+                  return (
+                    <button
+                      key={value}
+                      onClick={() => setPdfOriginFilter(value)}
+                      className={`px-2.5 py-1 rounded-lg text-xs border transition-all ${
+                        active
+                          ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                          : 'bg-ink-800 border-ink-700 text-ink-400 hover:border-ink-500'
+                      }`}
+                    >
+                      {label} <span className="opacity-60">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           renderItem={(q) => {
             const topic = subjectTopics.find((t) => t.id === q.topicId);
             return (
@@ -1347,14 +1380,18 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                 <div className="flex items-center gap-2">
                   <TypeBadge type={q.type} />
                   {topic && <span className="text-xs text-ink-500">{topic.title}</span>}
+                  {q.origin && <span className="text-[10px] text-ink-500 bg-ink-800 px-1.5 py-0.5 rounded">{ORIGIN_LABELS[q.origin]}</span>}
                 </div>
                 <p className="text-xs text-ink-200 mt-0.5 line-clamp-2">{q.prompt}</p>
               </div>
             );
           }}
           onExport={async (selIds) => {
+            const exportQuestions = pdfOriginFilter
+              ? filteredQuestions.filter((q) => q.origin === pdfOriginFilter)
+              : filteredQuestions;
             const blob = await generateQuestionsPDF(
-              filteredQuestions,
+              exportQuestions,
               subjectTopics,
               subject?.name ?? '',
               selIds,
