@@ -721,9 +721,9 @@ export function Dashboard() {
                         style={{ backgroundColor: s.color ?? '#f59e0b' }}
                       />
                       <div className="pt-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex flex-col gap-1">
-                            <h2 className="font-display text-lg text-ink-100 leading-tight group-hover:text-amber-300 transition-colors">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex flex-col gap-1 min-w-0 flex-1">
+                            <h2 className="font-display text-lg text-ink-100 leading-tight break-words line-clamp-3 group-hover:text-amber-300 transition-colors">
                               {s.name}
                             </h2>
                             {pendingCorrectionCount[s.id] > 0 && (
@@ -758,7 +758,7 @@ export function Dashboard() {
                               </button>
                             )}
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-shrink-0">
                             {/* ── Indicador de apuntes — siempre clickable ──── */}
                             {(() => {
                               const effective = s.allowsNotes !== undefined ? s.allowsNotes : extra?.allowsNotes;
