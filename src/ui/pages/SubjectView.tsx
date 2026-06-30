@@ -1886,6 +1886,32 @@ const CATEGORY_ICONS: Record<string, string> = {
   'Práctica': '💻',
 };
 
+// Extensiones que el navegador puede renderizar en una pestaña; el resto se descarga.
+const INLINE_VIEWABLE = new Set([
+  'pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp',
+  'txt', 'md', 'html', 'htm', 'json', 'csv',
+]);
+
+/**
+ * Abre el archivo en una pestaña nueva si el navegador puede mostrarlo (PDF, imágenes…);
+ * en caso contrario (docx, pptx, xlsx, zip…) lo descarga con su nombre original en lugar
+ * de abrir una pestaña con el binario en crudo.
+ */
+function openOrDownload(url: string, filename: string) {
+  const dot = filename.lastIndexOf('.');
+  const ext = dot >= 0 ? filename.slice(dot + 1).toLowerCase() : '';
+  if (INLINE_VIEWABLE.has(ext)) {
+    window.open(url, '_blank');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUpload, onDelete, synthesisJobs }: ResourcesTabProps) {
   const slug = slugify(subject.name);
   const navigate = useNavigate();
@@ -1914,7 +1940,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
         if (res.ok) {
           const ct = res.headers.get('Content-Type') ?? '';
           if (!ct.includes('text/html')) {
-            window.open(staticUrl, '_blank');
+            openOrDownload(staticUrl, file.name);
             return;
           }
         }
@@ -1922,7 +1948,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
       // 2. Intentar desde pdfStorage (IndexedDB/FSA)
       const blobUrl = await getPdfBlobUrl(subjectId, file.name);
       if (blobUrl) {
-        window.open(blobUrl, '_blank');
+        openOrDownload(blobUrl, file.name);
         setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
       } else {
         alert('Archivo no encontrado');
@@ -1940,7 +1966,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
       if (res.ok) {
         const ct = res.headers.get('Content-Type') ?? '';
         if (!ct.includes('text/html')) {
-          window.open(staticUrl, '_blank');
+          openOrDownload(staticUrl, file.name);
           return;
         }
       }
@@ -1952,7 +1978,7 @@ function ResourcesTab({ subject, subjectId, resources, loading, dbFiles, onUploa
     const blobUrl = await getResourceBlobUrl(subject.id, dbPath);
 
     if (blobUrl) {
-      window.open(blobUrl, '_blank');
+      openOrDownload(blobUrl, file.name);
       setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
     } else {
       alert('Archivo no encontrado');
