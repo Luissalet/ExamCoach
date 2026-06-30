@@ -8,6 +8,9 @@ import { exportContributionPack, importContributionPack, undoContributionImport,
 import { downloadContributionGuide } from '@/data/generateContributionGuide';
 import { exportCompactSubject, exportAllCompactSubjects } from '@/data/exportCompact';
 import { parseImportFile, downloadJSON } from '@/data/exportImport';
+import { exportPackage } from '@/data/packageManager';
+import { downloadBlob } from '@/utils/pdfExport';
+import { slugify } from '@/domain/normalize';
 import { syncImagesToDevServer, type ImageSyncResult } from '@/data/questionImageStorage';
 import { pushToGist, pullFromGist, type SyncResult } from '@/data/gistSync';
 import { QuestionPreviewContent } from '@/ui/components/QuestionPreview';
@@ -51,6 +54,8 @@ export function SettingsPage() {
   const [exportSubjectId, setExportSubjectId] = useState('');
   const [importedPacks, setImportedPacks] = useState<string[]>([]);
   const [compactExportSubjectId, setCompactExportSubjectId] = useState('');
+  const [pkgExportSubjectId, setPkgExportSubjectId] = useState('');
+  const [exportingPkg, setExportingPkg] = useState(false);
   const [imageSyncResult, setImageSyncResult] = useState<ImageSyncResult | null>(null);
   const [syncingImages, setSyncingImages] = useState(false);
   const [importHistory, setImportHistory] = useState<ImportHistoryEntry[]>([]);
@@ -316,6 +321,45 @@ export function SettingsPage() {
       setImportMsg(`✓ Exportado ${allCompact.length} asignaturas, ${totalQuestions} preguntas en total`);
     } catch (err) {
       setImportMsg('Error al exportar: ' + String(err));
+    }
+  };
+
+  // ── Handler: exportar paquete del marketplace (.examcoach.zip) ───────────────
+  const handleExportMarketplacePackage = async () => {
+    if (!pkgExportSubjectId || exportingPkg) return;
+    setExportingPkg(true);
+    try {
+      const subject = subjects.find((s) => s.id === pkgExportSubjectId);
+      const blob = await exportPackage(pkgExportSubjectId);
+      const slug = subject ? slugify(subject.name) : pkgExportSubjectId;
+      downloadBlob(blob, `${slug}.examcoach.zip`);
+      setImportMsg(`✓ Paquete exportado: ${subject?.name ?? slug}`);
+    } catch (err) {
+      setImportMsg('Error al exportar paquete: ' + String(err));
+    } finally {
+      setExportingPkg(false);
+    }
+  };
+
+  const handleExportAllMarketplacePackages = async () => {
+    if (exportingPkg || subjects.length === 0) return;
+    setExportingPkg(true);
+    try {
+      let ok = 0;
+      for (const subject of subjects) {
+        try {
+          const blob = await exportPackage(subject.id);
+          downloadBlob(blob, `${slugify(subject.name)}.examcoach.zip`);
+          ok++;
+        } catch (err) {
+          console.error(`Error exportando ${subject.name}:`, err);
+        }
+      }
+      setImportMsg(`✓ Exportados ${ok}/${subjects.length} paquetes del marketplace`);
+    } catch (err) {
+      setImportMsg('Error al exportar paquetes: ' + String(err));
+    } finally {
+      setExportingPkg(false);
     }
   };
 
@@ -851,6 +895,50 @@ export function SettingsPage() {
               </div>
             )}
 
+          </div>
+        </Card>
+
+        {/* Exportar paquete del marketplace */}
+        <Card>
+          <h2 className="font-display text-base text-ink-200 mb-1">Exportar paquete del marketplace</h2>
+          <p className="text-sm text-ink-500 mb-4">
+            Genera un paquete <code className="text-amber-400 bg-ink-900 px-1 py-0.5 rounded text-xs">.examcoach.zip</code> (manifest + banco de preguntas + recursos)
+            listo para subir como <span className="text-ink-400">GitHub Release</span> y publicarlo en el marketplace.
+            Útil para mover las asignaturas que creaste en la app desplegada a paquetes instalables.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Select
+              label="Asignatura"
+              value={pkgExportSubjectId}
+              onChange={(e) => setPkgExportSubjectId(e.target.value)}
+            >
+              <option value="">Selecciona una asignatura...</option>
+              {subjects.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </Select>
+
+            <div className="flex flex-wrap gap-2 justify-end">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={handleExportAllMarketplacePackages}
+                disabled={exportingPkg || subjects.length === 0}
+                loading={exportingPkg && !pkgExportSubjectId}
+                title="Descarga un .examcoach.zip por cada asignatura"
+              >
+                ↓ Descargar todas ({subjects.length})
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleExportMarketplacePackage}
+                disabled={!pkgExportSubjectId || exportingPkg}
+                loading={exportingPkg && !!pkgExportSubjectId}
+                title="Descarga el paquete .examcoach.zip de la asignatura seleccionada"
+              >
+                ↓ Descargar paquete
+              </Button>
+            </div>
           </div>
         </Card>
 
