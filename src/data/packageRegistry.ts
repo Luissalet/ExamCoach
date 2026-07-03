@@ -74,7 +74,10 @@ export async function fetchRegistry(forceRefresh = false): Promise<RegistryEntry
   }
 
   const releases: GitHubRelease[] = await res.json();
-  const entries: RegistryEntry[] = [];
+
+  // Dedup por id de paquete: puede haber varias releases del mismo paquete
+  // (pkg-<id>-v1.0.0, pkg-<id>-v1.1.0...). Nos quedamos con la versión más alta.
+  const byId = new Map<string, RegistryEntry>();
 
   for (const release of releases) {
     // Solo releases que tengan un asset .examcoach.enc (cifrado) o .examcoach.zip
@@ -87,15 +90,22 @@ export async function fetchRegistry(forceRefresh = false): Promise<RegistryEntry
     const manifest = parseManifestFromBody(release.body);
     if (!manifest) continue;
 
-    entries.push({
+    const entry: RegistryEntry = {
       id: manifest.id,
       manifest,
       downloadUrl: `${PROXY_BASE}/${asset.id}`,
       size: asset.size,
       publishedAt: release.published_at,
       encrypted: asset.name.endsWith('.enc'),
-    });
+    };
+
+    const existing = byId.get(manifest.id);
+    if (!existing || compareVersions(manifest.version, existing.manifest.version) > 0) {
+      byId.set(manifest.id, entry);
+    }
   }
+
+  const entries = [...byId.values()];
 
   // Save to cache
   saveCache(entries);
