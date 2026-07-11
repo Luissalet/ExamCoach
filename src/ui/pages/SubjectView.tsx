@@ -316,6 +316,27 @@ export function SubjectView() {
   const [subjectImporting, setSubjectImporting] = useState(false);
   const [subjectImportMsg, setSubjectImportMsg] = useState('');
   const [subjectPreviewSampleQuestion, setSubjectPreviewSampleQuestion] = useState<Question | null>(null);
+
+  // Importa un contribution pack (normal o "loose") directamente en esta asignatura.
+  const handleSubjectPackFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    try {
+      const { parseImportFile } = await import('@/data/exportImport');
+      const raw = await parseImportFile(file);
+      const preview = await previewContributionPack(raw, subjectId);
+      if ('error' in preview) {
+        alert('Error al leer el pack: ' + preview.error);
+      } else {
+        setSubjectImportMsg('');
+        setSubjectPackPreview(preview);
+      }
+    } catch (err) {
+      alert('Error: ' + String(err));
+    }
+  };
+
   // Bulk operations
   const [bulkTopicId, setBulkTopicId] = useState('');
   const [bulkTag, setBulkTag] = useState('');
@@ -980,6 +1001,15 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
               <div className="flex items-center gap-2">
                 <Button size="sm" variant={questionView === 'card' ? 'primary' : 'ghost'} onClick={() => setQuestionView('card')} title="Vista tarjeta">⊟</Button>
                 <Button size="sm" variant={questionView === 'list' ? 'primary' : 'ghost'} onClick={() => setQuestionView('list')} title="Vista lista densa">≡</Button>
+                {/* Import contribution pack — siempre visible (incl. asignatura vacía) */}
+                {!selectMode && (
+                  <label className="cursor-pointer" title="Importar contribution pack JSON directamente en esta asignatura">
+                    <input type="file" accept=".json" className="hidden" onChange={handleSubjectPackFile} />
+                    <span className="inline-flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg font-medium font-body transition-all text-ink-300 hover:text-ink-100 hover:bg-ink-800 cursor-pointer">
+                      ↓ Pack
+                    </span>
+                  </label>
+                )}
                 <Button size="sm" onClick={() => { setEditingQuestion(null); setQuestionModal(true); }}>+ Nueva pregunta</Button>
               </div>
             </div>
@@ -1067,37 +1097,6 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                   <Button size="sm" variant="ghost" onClick={() => setAnkiExportOpen(true)} title="Exportar preguntas para importar en Anki">
                     Anki
                   </Button>
-                )}
-                {/* Import contribution pack */}
-                {!selectMode && (
-                  <label className="cursor-pointer" title="Importar contribution pack JSON directamente en esta asignatura">
-                    <input
-                      type="file"
-                      accept=".json"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        e.target.value = '';
-                        try {
-                          const { parseImportFile } = await import('@/data/exportImport');
-                          const raw = await parseImportFile(file);
-                          const preview = await previewContributionPack(raw, subjectId);
-                          if ('error' in preview) {
-                            alert('Error al leer el pack: ' + preview.error);
-                          } else {
-                            setSubjectImportMsg('');
-                            setSubjectPackPreview(preview);
-                          }
-                        } catch (err) {
-                          alert('Error: ' + String(err));
-                        }
-                      }}
-                    />
-                    <span className="inline-flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg font-medium font-body transition-all text-ink-300 hover:text-ink-100 hover:bg-ink-800 cursor-pointer">
-                      ↓ Pack
-                    </span>
-                  </label>
                 )}
                 {/* C2: Selection mode toggle */}
                 <Button

@@ -417,6 +417,81 @@ Al importar el pack, las imágenes se restauran automáticamente en el IndexedDB
 
 ---
 
+## 📦 Loose packs (asignaturas sin temas)
+
+A veces creas una asignatura rápida para repasar, **sin temas**. Para esos casos existe el **loose pack**: un contribution pack que **no especifica asignatura ni tema por pregunta**.
+
+### ¿Cuándo se pueden importar?
+
+Un loose pack **solo puede importarse desde DENTRO de una asignatura** (botón **"↓ Pack"**, que aparece siempre en la vista de la asignatura). Al importarse desde ahí:
+
+- Todas las preguntas se asignan **a esa asignatura** (por eso no hace falta `subjectKey`).
+- Cada pregunta entra **sin tema** (`topicId` vacío), salvo que traiga un `topicKey` que coincida por título con un tema existente de esa asignatura.
+
+> ⚠️ Si intentas importar un loose pack desde **Ajustes → Importar contribuciones**, fallará: al no traer asignatura, no hay a dónde asignar las preguntas. Impórtalo siempre desde dentro de la asignatura.
+
+### Diferencias con un pack normal
+
+| | Pack normal | Loose pack |
+|---|---|---|
+| `targets` | Lista de asignaturas y temas | `[]` (vacío) |
+| `subjectKey` por pregunta | Obligatorio (del Anexo) | Se omite |
+| `topicKey` por pregunta | Obligatorio (del Anexo) | Se omite (o opcional) |
+| Dónde se importa | Ajustes **o** dentro de una asignatura | **Solo** dentro de la asignatura |
+| Asignatura destino | La del `subjectKey` | La asignatura desde la que importas |
+
+### Estructura de un loose pack
+
+```json
+{
+  "version": 1,
+  "kind": "contribution",
+  "packId": "uuid-único-del-pack",
+  "createdBy": "Nombre del Contribuidor",
+  "exportedAt": "2026-07-11T12:00:00.000Z",
+  "targets": [],
+  "questions": [
+    {
+      "id": "uuid-de-la-pregunta",
+      "type": "TEST",
+      "prompt": "Texto de la pregunta",
+      "origin": "alumno",
+      "difficulty": 2,
+      "options": [
+        { "id": "a", "text": "Opción A" },
+        { "id": "b", "text": "Opción B" }
+      ],
+      "correctOptionIds": ["a"],
+      "explanation": "Explicación opcional",
+      "tags": ["etiqueta1"]
+    }
+  ]
+}
+```
+
+Los campos por tipo de pregunta (TEST / DESARROLLO / COMPLETAR / PRACTICO) y el formato Markdown+LaTeX son **idénticos** a los de un pack normal; lo único que cambia es que **`targets` va vacío** y las preguntas **no llevan `subjectKey` ni `topicKey`**.
+
+> 💡 Hay un esqueleto listo para copiar en `GUIA_LOOSE_PACK_esqueleto.json`.
+
+### Prompt para ChatGPT (loose pack)
+
+```
+Crea un contribution pack tipo "loose" (asignatura sin temas).
+NO incluyas "subjectKey" ni "topicKey" en las preguntas, y pon "targets": [].
+El pack se importará desde dentro de una asignatura, así que las preguntas
+se asignarán automáticamente a esa asignatura.
+
+Sigue el resto del formato de GUIA_CONTRIBUTION_PACKS.md:
+- kind: "contribution", version: 1
+- cada pregunta con "id" único, "type", "prompt", "origin", "difficulty"
+- campos por tipo (options/correctOptionIds, modelAnswer, clozeText/blanks, etc.)
+- Markdown y LaTeX ($...$ inline, $$...$$ bloque)
+
+TAREA: crea 20 preguntas tipo TEST sobre [TEMA A REPASAR].
+```
+
+---
+
 ## Proceso recomendado para crear contribution packs con ChatGPT
 
 1. **Exporta el banco actual** en formato compacto (Ajustes > Exportar banco compacto) para evitar duplicados
