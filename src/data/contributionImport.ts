@@ -11,8 +11,11 @@ import type { ContributionPack, Subject, Topic, Question,ImportHistoryEntry } fr
 
 const ContributionQuestionSchema = z.object({
   id: z.string(),
-  subjectKey: z.string(),
-  topicKey: z.string(),
+  // Optional: "loose" packs (creados para una asignatura sin temas) omiten
+  // subjectKey/topicKey. Al importarse desde dentro de una asignatura, las
+  // preguntas se asignan automáticamente a esa asignatura (sin tema).
+  subjectKey: z.string().optional(),
+  topicKey: z.string().optional(),
   type: z.enum(['TEST', 'DESARROLLO', 'COMPLETAR', 'PRACTICO']),
   prompt: z.string(),
   origin: z.enum(['test', 'examen_anterior', 'clase', 'alumno']).optional(),
@@ -86,7 +89,15 @@ export type TopicMappings = Record<string, string>;
 
 let _importInProgress = false;
 
-export async function importContributionPack(raw: unknown, topicMappings?: TopicMappings): Promise<ContributionImportResult> {
+/**
+ * @param targetSubjectId  Si se especifica (import desde DENTRO de una asignatura),
+ *   TODAS las preguntas del pack se asignan a esa asignatura, ignorando el
+ *   subjectKey del pack. El tema se resuelve por título dentro de esa asignatura
+ *   si la pregunta trae topicKey; si no coincide (o no hay topicKey) la pregunta
+ *   se importa sin tema (topicId ''). Esto habilita los "loose packs" que no
+ *   especifican asignatura ni temas por pregunta.
+ */
+export async function importContributionPack(raw: unknown, topicMappings?: TopicMappings, targetSubjectId?: string): Promise<ContributionImportResult> {
   // Guard against concurrent calls (prevents duplicates from double-clicks / re-entry)
   if (_importInProgress) {
     return {
@@ -159,36 +170,58 @@ export async function importContributionPack(raw: unknown, topicMappings?: Topic
     }
   }
 
+  // Import "into current subject": all questions land in this subject, topic optional.
+  const forcedSubject = targetSubjectId
+    ? allSubjects.find((s) => s.id === targetSubjectId)
+    : undefined;
+  if (targetSubjectId && !forcedSubject) {
+    result.errors.push('Asignatura destino no encontrada');
+    return result;
+  }
+
   // Process each question
   for (const cq of pack.questions) {
     try {
-      const subjectKey = cq.subjectKey;
+      // ── Resolve subject ──────────────────────────────────────────────
+      let subject: Subject | undefined;
+      let subjectKey: string;
 
-      // Resolve or create subject
-      let subject = subjectByKey.get(subjectKey);
-      if (!subject) {
-        // Find the target info for this subject
-        const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
-        const subjectName = targetInfo?.subjectName ?? subjectKey;
-
-        subject = {
-          id: uuidv4(),
-          name: subjectName,
-          createdAt: now,
-          updatedAt: now,
-        };
-        await db.subjects.add(subject);
-        subjectByKey.set(subjectKey, subject);
-        result.newSubjectsCreated++;
+      if (forcedSubject) {
+        // Import desde dentro de una asignatura → forzar esa asignatura
+        subject = forcedSubject;
+        subjectKey = slugify(forcedSubject.name);
+      } else {
+        // Import global (Ajustes) → usar subjectKey del pack (loose packs no valen aquí)
+        if (!cq.subjectKey) {
+          result.errors.push(
+            `La pregunta ${cq.id} no especifica asignatura. Importa este pack desde dentro de una asignatura.`
+          );
+          continue;
+        }
+        subjectKey = cq.subjectKey;
+        subject = subjectByKey.get(subjectKey);
+        if (!subject) {
+          const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
+          const subjectName = targetInfo?.subjectName ?? subjectKey;
+          subject = {
+            id: uuidv4(),
+            name: subjectName,
+            createdAt: now,
+            updatedAt: now,
+          };
+          await db.subjects.add(subject);
+          subjectByKey.set(subjectKey, subject);
+          result.newSubjectsCreated++;
+        }
       }
 
-      // Resolve topic — never create new topics, only match existing ones
+      // ── Resolve topic — never create topics, only match existing ones ──
       const topicKey = cq.topicKey;
-      const topicMapKey = `${subjectKey}::${topicKey}`;
-      let topic = topicByKey.get(topicMapKey);
+      const topicMapKey = topicKey ? `${subjectKey}::${topicKey}` : '';
+      let topic = topicKey ? topicByKey.get(topicMapKey) : undefined;
 
       // Check manual topic mappings if provided
-      if (!topic && topicMappings) {
+      if (!topic && topicKey && topicMappings) {
         const mappedTopicId = topicMappings[topicMapKey];
         if (mappedTopicId) {
           const mappedTopic = allTopics.find((t) => t.id === mappedTopicId);
@@ -199,21 +232,22 @@ export async function importContributionPack(raw: unknown, topicMappings?: Topic
         }
       }
 
-      if (!topic) {
-        // Track the unmatched topic (avoid duplicates in the list)
+      if (!topic && !forcedSubject) {
+        // Modo global: sin tema que coincida, se salta (comportamiento original)
         const alreadyTracked = result.unmatchedTopics.some(
-          (ut) => ut.subjectKey === subjectKey && ut.topicKey === topicKey
+          (ut) => ut.subjectKey === subjectKey && ut.topicKey === (topicKey ?? '')
         );
         if (!alreadyTracked) {
           const targetInfo = pack.targets.find((t) => t.subjectKey === subjectKey);
           const topicInfo = targetInfo?.topics.find((t) => t.topicKey === topicKey);
-          const topicTitle = topicInfo?.topicTitle ?? topicKey;
+          const topicTitle = topicInfo?.topicTitle ?? topicKey ?? '';
           const questionCount = pack.questions.filter((q) => q.topicKey === topicKey && q.subjectKey === subjectKey).length;
-          result.unmatchedTopics.push({ subjectKey, topicKey, topicTitle, questionCount });
+          result.unmatchedTopics.push({ subjectKey, topicKey: topicKey ?? '', topicTitle, questionCount });
         }
         result.skippedUnmatched++;
         continue;
       }
+      // Modo asignatura (forcedSubject): si no hay tema que coincida, se importa sin tema (topicId '')
 
       // Compute content hash for deduplication
       const hashToCheck = cq.contentHash ?? await computeContentHash(cq, cq.topicKey);
@@ -249,8 +283,8 @@ export async function importContributionPack(raw: unknown, topicMappings?: Topic
       // Insert new question
       const newQuestion: Question = {
         id: uuidv4(),
-        subjectId: subject.id,
-        topicId: topic.id,
+        subjectId: subject!.id,
+        topicId: topic?.id ?? '',
         topicIds: finalTopicIds,
         type: cq.type,
         prompt: cq.prompt,
@@ -278,7 +312,7 @@ export async function importContributionPack(raw: unknown, topicMappings?: Topic
       if (cq.pdfAnchor) {
         const anchor = {
           id: uuidv4(),
-          subjectId: subject.id,
+          subjectId: subject!.id,
           pdfId: 'pending',
           page: cq.pdfAnchor.page,
           label: cq.pdfAnchor.label,
@@ -298,7 +332,9 @@ export async function importContributionPack(raw: unknown, topicMappings?: Topic
   const updatedSettings = await getSettings();
 
   // Nombre de las asignaturas afectadas
-  const affectedSubjectNames = pack.targets.map(t => t.subjectName);
+  const affectedSubjectNames = forcedSubject
+    ? [forcedSubject.name]
+    : pack.targets.map(t => t.subjectName);
 
   const historyEntry: ImportHistoryEntry = {
     packId: pack.packId,
@@ -536,10 +572,18 @@ export interface ContributionPackPreview {
   rawPack: unknown;
 }
 
-export async function previewContributionPack(raw: unknown): Promise<ContributionPackPreview | { error: string }> {
+export async function previewContributionPack(raw: unknown, targetSubjectId?: string): Promise<ContributionPackPreview | { error: string }> {
   const parsed = ContributionPackSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.message };
   const pack = parsed.data;
+
+  // Loose pack: no trae targets (asignatura/temas). Solo importable desde dentro
+  // de una asignatura; el nombre lo aporta targetSubjectId.
+  const isLoose = pack.targets.length === 0;
+  let targetSubjectName: string | undefined;
+  if (targetSubjectId) {
+    targetSubjectName = (await db.subjects.get(targetSubjectId))?.name;
+  }
 
   const settings = await getSettings();
   const alreadyImported = settings.importedPackIds.includes(pack.packId);
@@ -570,6 +614,17 @@ export async function previewContributionPack(raw: unknown): Promise<Contributio
   }
 
   const newQuestions = pack.questions.filter((q) => !q.contentHash || !existingHashes.has(q.contentHash));
+
+  // Loose pack: sin targets, construimos una fila resumen para la asignatura destino.
+  if (isLoose) {
+    totalNew = newQuestions.length;
+    rows.push({
+      subjectName: targetSubjectName ?? 'Esta asignatura',
+      topicName: '(sin tema)',
+      questionsCount: pack.questions.length,
+      newCount: newQuestions.length,
+    });
+  }
 
   // Map contribution questions to Question-shaped objects for interactive preview
   const now = new Date().toISOString();
@@ -602,7 +657,7 @@ export async function previewContributionPack(raw: unknown): Promise<Contributio
     packId: pack.packId,
     createdBy: pack.createdBy,
     exportedAt: pack.exportedAt,
-    subjects: pack.targets.map((t) => t.subjectName),
+    subjects: isLoose ? [targetSubjectName ?? 'Esta asignatura'] : pack.targets.map((t) => t.subjectName),
     topicsCount: pack.targets.reduce((acc, t) => acc + t.topics.length, 0),
     questionsCount: pack.questions.length,
     newQuestionsCount: totalNew,

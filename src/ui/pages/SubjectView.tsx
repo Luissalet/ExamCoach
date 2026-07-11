@@ -1082,7 +1082,7 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                         try {
                           const { parseImportFile } = await import('@/data/exportImport');
                           const raw = await parseImportFile(file);
-                          const preview = await previewContributionPack(raw);
+                          const preview = await previewContributionPack(raw, subjectId);
                           if ('error' in preview) {
                             alert('Error al leer el pack: ' + preview.error);
                           } else {
@@ -1571,7 +1571,7 @@ const handleResourceDelete = async (categorySlug: string, filename: string) => {
                   onClick={async () => {
                     setSubjectImporting(true);
                     try {
-                      const result = await importContributionPack(subjectPackPreview.rawPack);
+                      const result = await importContributionPack(subjectPackPreview.rawPack, undefined, subjectId);
                       if (result.alreadyImported) {
                         setSubjectImportMsg('ℹ Este pack ya fue importado anteriormente');
                       } else if (result.errors.length > 0) {

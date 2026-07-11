@@ -1,0 +1,46 @@
+[
+  {
+    "topicTitle": "Tema 1 - Introduccion al aprendizaje profundo",
+    "pdf": "Tema 1.pdf"
+  },
+  {
+    "topicTitle": "Tema 2 - Entrenamiento de redes neuronales",
+    "pdf": "Tema 2.pdf"
+  },
+  {
+    "topicTitle": "Tema 3 - Frameworks de aprendizaje profundo",
+    "pdf": "Tema 3.pdf"
+  },
+  {
+    "topicTitle": "Tema 4 - Aspectos practicos del entrenamiento",
+    "pdf": "Tema 4.pdf"
+  },
+  {
+    "topicTitle": "Tema 5 - Convolutional Neural Networks (CNN)",
+    "pdf": "Tema 5.pdf"
+  },
+  {
+    "topicTitle": "Tema 6 - Word Vectors (Word2Vec)",
+    "pdf": "Tema 6.pdf"
+  },
+  {
+    "topicTitle": "Tema 7 - Recurrent Neural Networks (RNN)",
+    "pdf": "Tema 7.pdf"
+  },
+  {
+    "topicTitle": "Tema 8 - Deep Reinforcement Learning",
+    "pdf": "Tema 8.pdf"
+  },
+  {
+    "topicTitle": "Tema 9 - Redes neuronales en entornos Big Data",
+    "pdf": "Tema 9.pdf"
+  },
+  {
+    "topicTitle": "Tema 10 - Ecosistemas en la nube y puesta en produccion",
+    "pdf": "Tema 10.pdf"
+  },
+  {
+    "topicTitle": "Tema 11 - Ultimos avances (GAN y Meta-learning)",
+    "pdf": "Tema 11.pdf"
+  }
+]

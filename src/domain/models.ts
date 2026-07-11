@@ -349,8 +349,13 @@ export interface BankExport {
 
 export interface ContributionQuestion {
   id: string;
-  subjectKey: string;
-  topicKey: string;
+  /**
+   * Opcionales para "loose packs": packs creados para una asignatura sin temas.
+   * Si se omiten, la pregunta solo puede importarse desde DENTRO de una
+   * asignatura, y se asigna a esa asignatura (sin tema).
+   */
+  subjectKey?: string;
+  topicKey?: string;
   topicKeys?: string[]; // ITER3 — temas adicionales
   type: QuestionType;
   prompt: string;
